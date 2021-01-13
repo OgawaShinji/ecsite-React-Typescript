@@ -1,8 +1,8 @@
 import {FC} from "react";
 
-const Items: FC = () => {
+const ItemList: FC = () => {
     return (
         <></>
     )
 }
-export default Items;
+export default ItemList;
