@@ -1,8 +1,8 @@
 import {FC} from "react";
 
-const Cart:FC=props => {
+const Cart: FC = () => {
     return (
-        <div></div>
+        <></>
     )
 }
 export default Cart;

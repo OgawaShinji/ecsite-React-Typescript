@@ -1,8 +1,8 @@
 import {FC} from "react";
 
-const OrderConfirm: FC = () => {
+const History: FC = () => {
     return (
         <></>
     )
 }
-export default OrderConfirm;
+export default History;

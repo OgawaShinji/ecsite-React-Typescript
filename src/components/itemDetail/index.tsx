@@ -1,8 +1,8 @@
 import {FC} from "react";
 
-const ItemDetail: FC = props => {
+const ItemDetail: FC = () => {
     return (
-        <div></div>
+        <></>
     )
 }
 export default ItemDetail;
