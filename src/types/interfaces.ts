@@ -39,12 +39,12 @@ export interface Order {
 
 export interface OrderItem {
     itemId: number
-    name: number
+    name: string
     price: number
     size: string
     orderToppingList?: Array<Topping>
     quantity: number
-    subTotalprice: number
+    subTotalPrice: number
 }
 
 export interface OrderTopping {
