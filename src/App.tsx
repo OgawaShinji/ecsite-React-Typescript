@@ -11,7 +11,7 @@ function App() {
     useEffect(() => {
         localStorage.setItem('token', 'this is token')
         dispatch(logout())
-    }, [])
+    }, [dispatch])
     return (
         <div className="App">
             <BrowserRouter>
