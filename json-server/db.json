@@ -2,18 +2,20 @@
   "logout_PUT": {
     "message": "success"
   },
-  "topping": {
-    "toppings": [
-      {
-        "toppingId": 1,
-        "name": "topping 1"
-      },
-      {
-        "toppingId": 2,
-        "name": "topping 2"
-      }
-    ]
-  },
+  "topping": [
+    {
+      "id": 1,
+      "name": "topping 1",
+      "price_m": 20,
+      "price_l": 50
+    },
+    {
+      "id": 2,
+      "name": "topping 2",
+      "price_m": 15,
+      "price_l": 30
+    }
+  ],
   "cart": {
     "order": {
       "orderId": null,
