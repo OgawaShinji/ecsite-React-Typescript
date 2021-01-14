@@ -2,6 +2,31 @@
   "logout_PUT": {
     "message": "success"
   },
+  "items": [
+    {
+      "item_id": 1,
+      "name": "item1",
+      "image_path": "image1",
+      "price_m": 100,
+      "price_l": 200,
+      "description": "desc1"
+    },
+    {
+      "item_id": 2,
+      "name": "item2",
+      "image_path": "image2",
+      "price_m": 200,
+      "price_l": 300,
+      "description": "desc2"
+    }
+  ],
+  "itemNames": [
+    "item1",
+    "item2",
+    "item3",
+    "item4",
+    "item5"
+  ],
   "topping": [
     {
       "id": 1,
