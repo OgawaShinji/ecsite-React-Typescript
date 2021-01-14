@@ -2,6 +2,7 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Order} from '../../../types/interfaces'
 import {RootState} from "../../index";
 import axios from "axios";
+import {API_URL} from "../../api"
 
 type orderState = {
     order: Order,
@@ -9,18 +10,7 @@ type orderState = {
 }
 
 const initialState: orderState = {
-    order: {
-        orderId: undefined,
-        totalPrice: 0,
-        destinationAddress: '',
-        destinationName: '',
-        orderDate: undefined,
-        deliveryTime: undefined,
-        status: undefined,
-        orderItems: [],
-        destinationZipcode: '',
-        paymentMethod: ''
-    },
+    order: {},
     subTotalPrice: 0
 }
 
@@ -34,12 +24,15 @@ const initialState: orderState = {
 export const fetchOrderItems = createAsyncThunk(
     'order/fetchOrderItems',
     async () => {
-        const {data} = await axios.get(`http://localhost:3000/cart`, {
+        const {data} = await axios.get(`${API_URL}/cart`, {
             method: 'GET',
             headers: {
                 token: localStorage.getItem("token")
             }
-        })
+        }).catch(err => {
+            throw new Error(err);
+        });
+
         return {data: data}
     }
 )
@@ -52,8 +45,15 @@ export const fetchOrderItems = createAsyncThunk(
 
 export const postOrderItem = createAsyncThunk(
     'order/postOrderItem',
-    async () => {
-
+    async (order: Order) => {
+        await axios.post(`${API_URL}/cart`, {order}, {
+            method: 'POST',
+            headers: {
+                token: localStorage.getItem("token")
+            }
+        }).catch(err => {
+            throw new Error(err)
+        })
     }
 )
 
@@ -65,8 +65,15 @@ export const postOrderItem = createAsyncThunk(
 
 export const updateOrderItem = createAsyncThunk(
     'order/updateOrderItem',
-    async () => {
-
+    async (order: Order) => {
+        await axios.post(`${API_URL}/cart`, {order}, {
+            method: 'PUT',
+            headers: {
+                token: localStorage.getItem("token")
+            }
+        }).catch(err => {
+            throw new Error(err)
+        })
     }
 )
 
@@ -78,8 +85,18 @@ export const updateOrderItem = createAsyncThunk(
 
 export const deleteOrderItem = createAsyncThunk(
     'order/deleteOrderItem',
-    async () => {
-
+    async (orderItemId: number) => {
+        await axios.delete(`${API_URL}/cart`, {
+            method: 'DELETE',
+            headers: {
+                token: localStorage.getItem("token")
+            },
+            params: {
+                orderItemId: orderItemId
+            }
+        }).catch(err => {
+            throw new Error(err)
+        })
     }
 )
 
@@ -103,23 +120,42 @@ export const orderSlice = createSlice({
     name: 'order',
     initialState: initialState,
     reducers: {
-        setOrderItems: ((state: orderState, action) => {
-            state.order = action.payload
+        setOrderItemsAndSubTotalPrice: ((state: orderState, action) => {
+            state.order.orderItems = action.payload
+            // TODO: setSubTotalPriceの処理追加
         }),
         setOrderUserInfo: ((state, action) => {
 
         }),
         setOrder: ((state, action) => {
-
+            state.order = action.payload
         })
     },
     extraReducers: (builder => {
         builder.addCase(fetchOrderItems.fulfilled, (state, action) => {
-            console.log(action.payload.data.order.orderItems)
-            const _action = orderSlice.actions.setOrderItems(action.payload.data.order)
-            orderSlice.caseReducers.setOrderItems(state, _action)
+            const _action = orderSlice.actions.setOrderItemsAndSubTotalPrice(action.payload.data.order.orderItems)
+            orderSlice.caseReducers.setOrderItemsAndSubTotalPrice(state, _action)
+        })
+        builder.addCase(fetchOrderItems.rejected, (state, action) => {
+            console.log(action.error)
+        })
+        builder.addCase(postOrderItem.fulfilled, (state, action) => {
+        })
+        builder.addCase(postOrderItem.rejected, (state, action) => {
+            console.log(action.error)
+        })
+        builder.addCase(updateOrderItem.fulfilled, (state, action) => {
+        })
+        builder.addCase(updateOrderItem.rejected, (state, action) => {
+            console.log(action.error)
+        })
+        builder.addCase(deleteOrderItem.fulfilled, (state, action) => {
+        })
+        builder.addCase(deleteOrderItem.rejected, (state, action) => {
+            console.log(action.error)
         })
     })
 })
 
-export const selectOrder = (state: RootState) => state.order.order.orderItems
+export const selectOrder = (state: RootState) => state.order.order
+export const selectOrderItems = (state: RootState) => state.order.order.orderItems
