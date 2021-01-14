@@ -10,19 +10,20 @@ export interface User {
 }
 
 export interface Item {
-    itemId: number
-    name: string
-    imagePath: string
-    priceM: number
-    priceL: number
-    description?: string
+    id: number;
+    name: string;
+    description: string;
+    priceM: number;
+    priceL: number;
+    imagePath: string;
+    deleted: number;
 }
 
 export interface Topping {
-    id: number
-    name: string
-    priceM?: number
-    priceL?: number
+    id: number;
+    name: string;
+    priceM?: number;
+    priceL?: number;
 }
 
 export interface Order {

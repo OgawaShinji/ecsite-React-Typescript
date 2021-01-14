@@ -5,7 +5,7 @@
   "items": [
     {
       "item_id": 1,
-      "name": "item1",
+      "name": "item_name1",
       "image_path": "image1",
       "price_m": 100,
       "price_l": 200,
@@ -13,7 +13,7 @@
     },
     {
       "item_id": 2,
-      "name": "item2",
+      "name": "item_name2",
       "image_path": "image2",
       "price_m": 200,
       "price_l": 300,
