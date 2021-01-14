@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {User} from "../../../types/interfaces";
-import {RootState} from "../../index";
-import {API_URL} from "../../api";
+import {User} from "~/types/interfaces";
+import {RootState} from "~/store/index";
+import {API_URL} from "~/store/api";
 import axios from "axios";
 
 type authState = {
