@@ -30,10 +30,12 @@ export interface Order {
     totalPrice?: number
     destinationAddress?: string
     destinationName?: string
+    destinationEmail?: string
     // 日付のみ
     orderDate?: Date
     // 時間まで
     deliveryTime?: Date
+    destinationTel?: string
     status?: number
     orderItems: Array<OrderItem>
     destinationZipcode?: string
