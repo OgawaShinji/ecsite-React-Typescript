@@ -3,6 +3,7 @@ import {Topping} from "~/types/interfaces"
 import axios from "axios";
 import {API_URL} from "~/store/api";
 import {RootState} from "~/store/index";
+import camelcaseKeys from "camelcase-keys";
 
 type toppingState = {
     toppings: Topping[]
@@ -17,7 +18,7 @@ export const fetchToppings = createAsyncThunk(
             const {data} = await axios.get(`${API_URL}/topping`, {
                 method: "GET",
                 headers: {
-                    token: localStorage.getItem("token")
+                    Authorization: localStorage.getItem("Authorization")
                 }
             })
             return data
@@ -37,7 +38,8 @@ export const toppingSlice = createSlice({
     },
     extraReducers: ((builder) => {
         builder.addCase(fetchToppings.fulfilled, (((state, action) => {
-            toppingSlice.caseReducers.setToppings(state, toppingSlice.actions.setToppings(action.payload))
+            const camelPayload = camelcaseKeys(action.payload)
+            toppingSlice.caseReducers.setToppings(state, toppingSlice.actions.setToppings(camelPayload))
         })));
         builder.addCase(fetchToppings.rejected, ((state, action) => {
             console.log(action.error)
