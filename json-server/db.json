@@ -1,6 +1,16 @@
 {
-  "logout_PUT": {
+  "logout": {
     "message": "success"
+  },
+  "login": {
+    "token": "this is token"
+  },
+  "user": {
+    "name": "名前",
+    "email": "メールアドレス",
+    "zipcode": "郵便番号",
+    "address": "住所",
+    "telephone": "電話番号"
   },
   "items": [
     {
