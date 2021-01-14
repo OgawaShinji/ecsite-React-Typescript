@@ -3,7 +3,7 @@ import {useDispatch} from "react-redux";
 import '~/assets/css/App.css';
 import {BrowserRouter} from "react-router-dom";
 import routes from '~/router/routes';
-import {AppDispatch} from "~/store/index";
+import {AppDispatch} from "~/store";
 import {logout} from "~/store/slices/App/auth.slice";
 
 function App() {
