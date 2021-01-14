@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {User} from "../../../types/interfaces";
-import {API_URL, RootState} from "../../index";
+import {RootState} from "../../index";
+import {API_URL} from "../../api";
 import axios from "axios";
 
 type authState = {
@@ -11,7 +12,7 @@ const initialAuthState: authState = {
 }
 
 export const logout = createAsyncThunk(
-    'user/logout',
+    'auth/logout',
     async () => {
         await axios.put(`${API_URL}/logout`, {}, {
             method: "PUT",
@@ -36,8 +37,7 @@ export const authSlice = createSlice({
     },
     extraReducers: ((builder) => {
         builder.addCase(logout.fulfilled, ((state, action) => {
-            const _action = authSlice.actions.setLoginUser(action.payload);
-            authSlice.caseReducers.setLoginUser(state, _action);
+            authSlice.caseReducers.setLoginUser(state, authSlice.actions.setLoginUser(null));
             //上記2文は次と同義 state.loginUser=action.payload
             localStorage.removeItem("token")
         }));
