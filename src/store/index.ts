@@ -1,4 +1,4 @@
-import {combineReducers, configureStore} from '@reduxjs/toolkit'
+import {configureStore} from '@reduxjs/toolkit'
 import {itemSlice} from "./slices/Domain/item.slice";
 import {historySlice} from "./slices/Domain/history.slice";
 import {orderSlice} from "./slices/Domain/order.slice";
@@ -18,5 +18,4 @@ const store = configureStore({
 });
 export default store;
 export type RootState = ReturnType<typeof store.getState>;
-export const API_URL = "http://localhost:3000"
 export type AppDispatch = typeof store.dispatch
