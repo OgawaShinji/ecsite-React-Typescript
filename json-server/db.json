@@ -1,5 +1,17 @@
 {
   "logout_PUT": {
     "message": "success"
+  },
+  "topping": {
+    "toppings": [
+      {
+        "toppingId": 1,
+        "name": "topping 1"
+      },
+      {
+        "toppingId": 2,
+        "name": "topping 2"
+      }
+    ]
   }
 }
