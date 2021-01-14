@@ -30,7 +30,10 @@ export interface Order {
     totalPrice?: number
     destinationAddress?: string
     destinationName?: string
-    deliveryDate?: Date
+    // 日付のみ
+    orderDate?: Date
+    // 時間まで
+    deliveryTime?: Date
     status?: number
     orderItems: Array<OrderItem>
     destinationZipcode?: string
@@ -44,7 +47,7 @@ export interface OrderItem {
     size: string
     orderToppingList?: Array<Topping>
     quantity: number
-    subTotalPrice: number
+    subTotalPrice?: number
 }
 
 export interface OrderTopping {
