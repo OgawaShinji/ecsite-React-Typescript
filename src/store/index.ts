@@ -1,4 +1,4 @@
-import {combineReducers, configureStore} from '@reduxjs/toolkit'
+import {configureStore} from '@reduxjs/toolkit'
 import {itemSlice} from "./slices/Domain/item.slice";
 import {historySlice} from "./slices/Domain/history.slice";
 import {orderSlice} from "./slices/Domain/order.slice";
