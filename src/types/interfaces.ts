@@ -19,7 +19,7 @@ export interface Item {
 }
 
 export interface Topping {
-    toppingId: number
+    id: number
     name: string
     priceM?: number
     priceL?: number
