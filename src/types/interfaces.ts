@@ -10,56 +10,56 @@ export interface User {
 }
 
 export interface Item {
-    itemId: number
-    name: string
-    imagePath: string
-    priceM: number
-    priceL: number
-    description?: string
+    id: number;
+    name: string;
+    description: string;
+    priceM: number;
+    priceL: number;
+    imagePath: string;
+    deleted: number;
 }
 
 export interface Topping {
-    toppingId: number
-    name: string
-    priceM?: number
-    priceL?: number
+    id: number;
+    name: string;
+    priceM?: number;
+    priceL?: number;
 }
 
 export interface Order {
-    orderId?: number
-    totalPrice?: number
-    destinationAddress?: string
-    destinationName?: string
-    destinationEmail?: string
+    id?: number
+    status?: number
     // 日付のみ
     orderDate?: Date
     // 時間まで
     deliveryTime?: Date
-    destinationTel?: string
-    status?: number
-    orderItems: Array<OrderItem>
+    destinationName?: string
+    destinationEmail?: string
     destinationZipcode?: string
+    destinationAddress?: string
+    destinationTel?: string
     paymentMethod?: string
+    totalPrice?: number
+    orderItems?: Array<OrderItem>
 }
 
 export interface OrderItem {
-    itemId: number
-    name: string
-    price: number
-    size: string
-    orderToppingList?: Array<Topping>
+    id: number
+    item: Item
+    orderToppings?: Array<OrderTopping>
     quantity: number
+    size: string
     subTotalPrice?: number
 }
 
 export interface OrderTopping {
-    orderToppingId?: number
-    toppingId?: number
-    orderItemId: number
+    id?: number
     topping: Topping
+    quantity: number
+    size: string
 }
 
 export interface SearchForm {
-    searchKey: string
+    itemName: string
     sortId: number
 }

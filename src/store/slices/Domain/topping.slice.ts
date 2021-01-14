@@ -1,7 +1,8 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {Topping} from "../../../types/interfaces"
+import {Topping} from "~/types/interfaces"
 import axios from "axios";
-import {API_URL} from "../../api";
+import {API_URL} from "~/store/api";
+import {RootState} from "~/store/index";
 
 type toppingState = {
     toppings: Topping[]
@@ -30,7 +31,7 @@ export const toppingSlice = createSlice({
     name: 'topping',
     initialState: initialToppingState,
     reducers: {
-        setToppings: (((state, action) => {
+        setToppings: (((state: toppingState, action) => {
             state.toppings = action.payload
         }))
     },
@@ -44,3 +45,4 @@ export const toppingSlice = createSlice({
         }))
     })
 })
+export const selectToppings = (state: RootState) => state.topping.toppings
