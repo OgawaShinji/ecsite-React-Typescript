@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 export const toppingSlice = createSlice({
-    name: '',
+    name: 'topping',
     initialState: {},
     reducers: {}
 })

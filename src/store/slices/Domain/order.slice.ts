@@ -22,7 +22,7 @@ const initialState: orderState = {
 }
 
 export const orderSlice = createSlice({
-    name: '',
+    name: 'order',
     initialState: initialState,
     reducers: {}
 })
