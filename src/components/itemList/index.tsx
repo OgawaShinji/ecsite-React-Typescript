@@ -19,7 +19,7 @@ const ItemList: React.FC = () => {
     return (
         <>
             {items && items.map((item) => (
-                <div key={item.itemId}>Mサイズ価格：{item.priceM}</div>
+                <div key={item.id}>Mサイズ価格：{item.priceM}</div>
             ))}
 
             {itemNames && itemNames.map((itemName, index) => (
