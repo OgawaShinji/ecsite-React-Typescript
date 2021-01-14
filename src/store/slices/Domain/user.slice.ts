@@ -1,6 +1,5 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
-import {API_URL} from "../../index";
 import {User} from "../../../types/interfaces";
 import capitalize from "@material-ui/core/utils/capitalize";
 import {userInfo} from "os";
