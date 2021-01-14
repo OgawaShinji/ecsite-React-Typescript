@@ -58,6 +58,6 @@ export interface OrderTopping {
 }
 
 export interface SearchForm {
-    searchKey: string
+    itemName: string
     sortId: number
 }
