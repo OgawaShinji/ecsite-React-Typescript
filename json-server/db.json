@@ -26,5 +26,85 @@
     "item3",
     "item4",
     "item5"
-  ]
+  ],
+  "topping": [
+    {
+      "id": 1,
+      "name": "topping 1",
+      "price_m": 20,
+      "price_l": 50
+    },
+    {
+      "id": 2,
+      "name": "topping 2",
+      "price_m": 15,
+      "price_l": 30
+    }
+  ],
+  "cart": {
+    "order": {
+      "orderId": null,
+      "totalPrice": 0,
+      "destinationAddress": "",
+      "destinationName": "",
+      "orderDate": null,
+      "deliveryTime": null,
+      "status": null,
+      "orderItems": [
+        {
+          "itemId": 1,
+          "name": "pasta",
+          "price": 500,
+          "size": "M",
+          "orderToppingList": [
+            {
+              "orderToppingId": 1,
+              "toppingId": 2,
+              "orderItemId": 1,
+              "topping": {
+                "toppingId": 1,
+                "name": "rice",
+                "priceM": 200,
+                "priceL": 300
+              }
+            },
+            {
+              "orderToppingId": 1,
+              "toppingId": 2,
+              "orderItemId": 1,
+              "topping": {
+                "toppingId": 1,
+                "name": "pan",
+                "priceM": 200,
+                "priceL": 300
+              }
+            }
+          ],
+          "quantity": 1
+        },
+        {
+          "itemId": 2,
+          "name": "udon",
+          "price": 300,
+          "size": "L",
+          "orderToppingList": [
+            {
+              "orderToppingId": 1,
+              "toppingId": 2,
+              "orderItemId": 1,
+              "topping": {
+                "toppingId": 1,
+                "name": "negi",
+                "priceM": 200,
+                "priceL": 300
+              }
+            }
+          ],
+          "quantity": 1
+        }
+      ],
+      "destinationZipcode": "",
+      "paymentMethod": ""
+    }
+  }
 }

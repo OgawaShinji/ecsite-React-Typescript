@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {User} from "../../../types/interfaces";
-import {API_URL, RootState} from "../../index";
+import {RootState} from "../../index";
+import {API_URL} from "../../api";
 import axios from "axios";
 
 type authState = {
@@ -11,19 +12,19 @@ const initialAuthState: authState = {
 }
 
 export const logout = createAsyncThunk(
-    'user/logout',
+    'auth/logout',
     async () => {
-        await axios.put(`${API_URL}/logout`, {}, {
-            method: "PUT",
-            headers: {
-                token: localStorage.getItem("token")
-            }
-        }).then((res) => {
-            return res.status
-        }).catch((e) => {
+        try {
+            const {data} = await axios.put(`${API_URL}/logout`, {}, {
+                method: "PUT",
+                headers: {
+                    token: localStorage.getItem("token")
+                }
+            })
+            return {data}
+        } catch (e) {
             console.log(e)
-            return e
-        });
+        }
     })
 //--------------------------------------------
 export const authSlice = createSlice({
@@ -36,13 +37,13 @@ export const authSlice = createSlice({
     },
     extraReducers: ((builder) => {
         builder.addCase(logout.fulfilled, ((state, action) => {
-            const _action = authSlice.actions.setLoginUser(action.payload);
-            authSlice.caseReducers.setLoginUser(state, _action);
-            //上記2文は次と同義 state.loginUser=action.payload
+            //authSlice.caseReducers.setLoginUser(state, authSlice.actions.setLoginUser(null));
+            //上記2文は次と同義
+            state.loginUser = null;
             localStorage.removeItem("token")
         }));
-        builder.addCase(logout.rejected, (((state, action) => {
-            console.log(action.payload)
+        builder.addCase(logout.rejected, (((state) => {
+            //商品一覧画面遷移もしくはエラー画面？
         })))
     })
 })

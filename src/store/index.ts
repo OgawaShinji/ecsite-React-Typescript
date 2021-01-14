@@ -18,5 +18,4 @@ const store = configureStore({
 });
 export default store;
 export type RootState = ReturnType<typeof store.getState>;
-export const API_URL = "http://localhost:3000"
 export type AppDispatch = typeof store.dispatch
