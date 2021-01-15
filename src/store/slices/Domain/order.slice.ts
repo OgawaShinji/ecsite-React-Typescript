@@ -231,4 +231,4 @@ export const selectOrderUserInfo = (state: RootState) => state.order.order.user
 
 export const selectOrder = (state: RootState) => state.order.order
 export const selectOrderItems = (state: RootState) => state.order.order.orderItems
-
+export const selectOrderSubTotalPrice=(state: RootState) => state.order.orderSubTotalPrice
