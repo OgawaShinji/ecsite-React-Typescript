@@ -70,21 +70,24 @@ export const authSlice = createSlice({
         })
     },
     extraReducers: ((builder) => {
+        //logout
         builder.addCase(logout.fulfilled, ((state, action) => {
-            //authSlice.caseReducers.setLoginUser(state, authSlice.actions.
-            //上記は次と同義
             state.loginUser = null;
             localStorage.removeItem("Authorization")
         }));
         builder.addCase(logout.rejected, (((state) => {
             //商品一覧画面遷移もしくはエラー画面？
         })));
+
+        //login
         builder.addCase(login.fulfilled, (state, action) => {
             const camelPayload = camelcaseKeys(action.payload['token'])
             localStorage.setItem("Authorization", camelPayload)
         })
         builder.addCase(login.rejected, (state) => {
         })
+
+        //fetchLoginUser
         builder.addCase(fetchLoginUser.fulfilled, ((state, action) => {
             const camelPayload = camelcaseKeys(action.payload)
             authSlice.caseReducers.setLoginUser(state, authSlice.actions.setLoginUser(camelPayload))

@@ -14,6 +14,8 @@ module.exports = function (req, res, next) {
         req.url = "/user"
     } else if (req.url === "/django/cart") {
         req.url = "/cart"
+    } else if (req.url === "/item/") {
+        req.url = "/item"
     }
     next()
 }
