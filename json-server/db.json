@@ -5,6 +5,9 @@
   "login": {
     "token": "this is token"
   },
+  "register": {
+    "message": "register success"
+  },
   "user": {
     "name": "名前",
     "email": "メールアドレス",
@@ -111,5 +114,8 @@
   },
   "cart_DELETE": {
     "message": "delete success"
+  },
+  "order": {
+    "message": "order success"
   }
 }
