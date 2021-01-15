@@ -12,6 +12,8 @@ module.exports = function (req, res, next) {
         req.method = 'GET' // GETに偽装
     } else if (req.url === "/auth/user/") {
         req.url = "/user"
+    } else if (req.url === "/django/cart") {
+        req.url = "/cart"
     }
     next()
 }
