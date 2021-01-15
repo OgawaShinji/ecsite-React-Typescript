@@ -54,8 +54,9 @@ export interface OrderItem {
 }
 
 export interface OrderTopping {
-    id?: number;
-    topping: Topping;
+    id: number
+    topping: Topping
+    orderItem: number
 }
 
 export interface SearchForm {

@@ -3,7 +3,7 @@ module.exports = function (req, res, next) {
         req.url += '_' + req.method // POSTもしくはPUTの時はreq.urlの語尾に'_POST'(もしくは'_PUT')をつける
         if (req.url === "/auth/login/_POST") {
             req.url = "/login"
-        } else if (req.url === "/auth/logout/_PUT") {
+        } else if (req.url === "/auth/logout/_POST") {
             req.url = "/logout"
         } else {//以下に表示したい物や加えたい処理を書いて下さい
             console.log(req.body)
@@ -12,6 +12,10 @@ module.exports = function (req, res, next) {
         req.method = 'GET' // GETに偽装
     } else if (req.url === "/auth/user/") {
         req.url = "/user"
+    } else if (req.url === "/django/cart") {
+        req.url = "/cart"
+    } else if (req.url === "/item/") {
+        req.url = "/item"
     }
     next()
 }

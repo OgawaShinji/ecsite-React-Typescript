@@ -1,19 +1,19 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {Order, OrderItem, User} from '../../../types/interfaces'
+import {Order} from '../../../types/interfaces'
 import {RootState} from "../../index";
 import axios from "axios";
 import {API_URL} from "../../api";
-// TODO: camelCaseに変換処理
+import camelcaseKeys from "camelcase-keys";
 
 
 type orderState = {
     order: Order,
-    subTotalPrice: number,
+    orderSubTotalPrice: number,
 }
 
 const initialState: orderState = {
     order: {},
-    subTotalPrice: 0
+    orderSubTotalPrice: 0
 }
 
 // --------------------------------  async progress  -----------------------------------------------------
@@ -27,17 +27,16 @@ export const fetchOrderItems = createAsyncThunk(
     'order/fetchOrderItems',
     async () => {
         // TODO: pass決まり次第変更
-        const {data} = await axios.get(`${API_URL}/cart`, {
+        const {data} = await axios.get(`${API_URL}/django/cart`, {
             method: 'GET',
             headers: {
-                Authorization: localStorage.getItem("token")
-
+                Authorization: localStorage.getItem("Authorization")
             }
         }).catch(err => {
             throw new Error(err);
         });
 
-        return {data: data}
+        return data
     }
 )
 
@@ -51,10 +50,10 @@ export const postOrderItem = createAsyncThunk(
     'order/postOrderItem',
     async (order: Order) => {
         // TODO: pass決まり次第変更
-        await axios.post(`${API_URL}/cart`, {order}, {
+        await axios.post(`${API_URL}/django/cart`, {order}, {
             method: 'POST',
             headers: {
-                Authorization: localStorage.getItem("token")
+                Authorization: localStorage.getItem("Authorization")
             }
         }).catch(err => {
             throw new Error(err)
@@ -72,10 +71,10 @@ export const updateOrderItem = createAsyncThunk(
     'order/updateOrderItem',
     async (order: Order) => {
         // TODO: pass決まり次第変更
-        await axios.post(`${API_URL}/cart`, {order}, {
+        await axios.post(`${API_URL}/django/cart`, {order}, {
             method: 'PUT',
             headers: {
-                Authorization: localStorage.getItem("token")
+                Authorization: localStorage.getItem("Authorization")
             }
         }).catch(err => {
             throw new Error(err)
@@ -93,10 +92,10 @@ export const deleteOrderItem = createAsyncThunk(
     'order/deleteOrderItem',
     async (orderItemId: number) => {
         // TODO: pass決まり次第変更
-        await axios.delete(`${API_URL}/cart`, {
+        await axios.delete(`${API_URL}/django/cart`, {
             method: 'DELETE',
             headers: {
-                Authorization: localStorage.getItem("token")
+                Authorization: localStorage.getItem("Authorization")
             },
             params: {
                 orderItemId: orderItemId
@@ -115,7 +114,7 @@ export const deleteOrderItem = createAsyncThunk(
 
 export const postOrder = createAsyncThunk(
     'order/postOrder',
-    async (orderInfo:Order) => {
+    async (orderInfo: Order) => {
         await axios.post(
             `${API_URL}/django/order/`,
             {orderInfo},
@@ -136,7 +135,7 @@ export const orderSlice = createSlice({
     name: 'order',
     initialState: initialState,
     reducers: {
-        setOrderUserInfo: ((state:orderState, action) => {
+        setOrderUserInfo: ((state: orderState, action) => {
             state.order.user = action.payload
         }),
         setOrderDate: ((state: orderState, action) => {
@@ -150,8 +149,28 @@ export const orderSlice = createSlice({
         }),
         setOrderItemsAndSubTotalPrice: ((state: orderState, action) => {
             state.order.orderItems = action.payload
-            // TODO: orderItemごとのsubTotalPrice
-            // TODO: setSubTotalPriceの処理追加
+            let subTotalPrice = state.orderSubTotalPrice
+
+            // orderItemごとのsubTotalPriceをset, stateのorder全体のsubTotalPriceをset
+            state.order.orderItems?.map(orderItem => {
+                const toppingQuantity = orderItem.orderToppings?.length
+                const orderItemQuantity = orderItem.quantity
+                let orderItemPrice: number
+                let toppingTotalPrice: number
+
+                if (orderItem.size === 'M') {
+                    orderItemPrice = orderItem.item.priceM
+                    // TODO:toppingの価格がわかり次第修正
+                    toppingTotalPrice = toppingQuantity! * 200
+                } else if (orderItem.size === 'L') {
+                    orderItemPrice = orderItem.item.priceL
+                    toppingTotalPrice = toppingQuantity! * 300
+                }
+                orderItem.subTotalPrice = (orderItemPrice! + toppingTotalPrice!) * orderItemQuantity
+                subTotalPrice += orderItem.subTotalPrice
+            })
+
+            state.orderSubTotalPrice = subTotalPrice
         }),
         //追加機能
         setUserAddress: ((state: orderState, action) => {
@@ -164,7 +183,8 @@ export const orderSlice = createSlice({
     extraReducers: (builder => {
         // fetchOrderItems
         builder.addCase(fetchOrderItems.fulfilled, (state, action) => {
-            const _action = orderSlice.actions.setOrderItemsAndSubTotalPrice(action.payload.data.order.orderItems)
+            const camelPayload = camelcaseKeys(action.payload, {deep: true})
+            const _action = orderSlice.actions.setOrderItemsAndSubTotalPrice(camelPayload.order.orderItems)
             orderSlice.caseReducers.setOrderItemsAndSubTotalPrice(state, _action)
         })
         builder.addCase(fetchOrderItems.rejected, (state, action) => {
@@ -211,4 +231,4 @@ export const selectOrderUserInfo = (state: RootState) => state.order.order.user
 
 export const selectOrder = (state: RootState) => state.order.order
 export const selectOrderItems = (state: RootState) => state.order.order.orderItems
-
+export const selectOrderSubTotalPrice=(state: RootState) => state.order.orderSubTotalPrice
