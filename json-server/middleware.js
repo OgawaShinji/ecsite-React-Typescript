@@ -3,7 +3,7 @@ module.exports = function (req, res, next) {
         req.url += '_' + req.method // POSTもしくはPUTの時はreq.urlの語尾に'_POST'(もしくは'_PUT')をつける
         if (req.url === "/auth/login/_POST") {
             req.url = "/login"
-        } else if (req.url === "/auth/logout/_PUT") {
+        } else if (req.url === "/auth/logout/_POST") {
             req.url = "/logout"
         } else {//以下に表示したい物や加えたい処理を書いて下さい
             console.log(req.body)

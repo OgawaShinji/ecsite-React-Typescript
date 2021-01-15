@@ -20,8 +20,8 @@ export const logout = createAsyncThunk(
     'auth/logout',
     async () => {
         try {
-            const {data} = await axios.put(`${API_URL}/auth/logout/`, {}, {
-                method: "PUT",
+            const {data} = await axios.post(`${API_URL}/auth/logout/`, {}, {
+                method: "POST",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
                 }
