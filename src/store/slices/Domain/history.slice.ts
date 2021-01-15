@@ -18,7 +18,10 @@ const initialHistoryState: historyState = {
 
 //--------------------------------------------
 /**
- * 注文履歴を取得するメソッド
+ * 注文履歴を取得する.
+ *
+ * @param {DisplaySetting} displaySetting 表示件数とページ番号
+ * @return {Array<Order>} 注文履歴一覧
  */
 export const fetchOrderHistory = createAsyncThunk('history/getOrderHistory', async (displaySetting: DisplaySetting) => {
 
@@ -31,8 +34,7 @@ export const fetchOrderHistory = createAsyncThunk('history/getOrderHistory', asy
     };
 
     try {
-        // TODO: urlを修正する　→　${API_URL}/flask/order-history
-        const {data} = await axios.get(`${API_URL}/order-history`, {
+        const {data} = await axios.get(`${API_URL}/flask/order-history`, {
             method: 'GET',
             params: params,
             headers: {
@@ -46,12 +48,13 @@ export const fetchOrderHistory = createAsyncThunk('history/getOrderHistory', asy
 })
 
 /**
- * 注文履歴総数を取得するメソッド
+ * 注文履歴総数を取得する.
+ *
+ * @return {number} 注文履歴総数
  */
 export const fetchOrderHistoryTotalCount = createAsyncThunk('history/getTotalCount', async () => {
     try {
-        // TODO: urlを修正する　→　${API_URL}/flask/order-history/count
-        const {data} = await axios.get(`${API_URL}/order-history-count`, {
+        const {data} = await axios.get(`${API_URL}/flask/order-history/count`, {
             method: 'GET',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
