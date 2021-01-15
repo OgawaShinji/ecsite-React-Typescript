@@ -1,6 +1,6 @@
 export interface User {
-    userId: number
-    userName: string
+    id: number
+    name: string
     email: string
     zipcode: string
     address: string
@@ -28,6 +28,7 @@ export interface Topping {
 
 export interface Order {
     id?: number
+    user?: User
     status?: number
     // 日付のみ
     orderDate?: Date
