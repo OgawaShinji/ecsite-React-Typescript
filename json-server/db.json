@@ -12,31 +12,35 @@
     "address": "住所",
     "telephone": "電話番号"
   },
-  "items": [
-    {
-      "item_id": 1,
-      "name": "item_name1",
-      "image_path": "image1",
-      "price_m": 100,
-      "price_l": 200,
-      "description": "desc1"
-    },
-    {
-      "item_id": 2,
-      "name": "item_name2",
-      "image_path": "image2",
-      "price_m": 200,
-      "price_l": 300,
-      "description": "desc2"
-    }
-  ],
-  "itemNames": [
-    "item1",
-    "item2",
-    "item3",
-    "item4",
-    "item5"
-  ],
+  "items": {
+    "items": [
+      {
+        "id": 1,
+        "name": "item_name1",
+        "image_path": "image1",
+        "price_m": 100,
+        "price_l": 200,
+        "description": "desc1"
+      },
+      {
+        "id": 2,
+        "name": "item_name2",
+        "image_path": "image2",
+        "price_m": 200,
+        "price_l": 300,
+        "description": "desc2"
+      }
+    ]
+  },
+  "itemNames": {
+    "item_names": [
+      "item1",
+      "item2",
+      "item3",
+      "item4",
+      "item5"
+    ]
+  },
   "topping": [
     {
       "id": 1,
@@ -102,5 +106,68 @@
   },
   "cart_DELETE": {
     "message": "delete success"
+  },
+  "order-history": {
+    "orders": [
+      {
+        "delivery_time": "2021-01-15T04:43:58",
+        "destination_address": "fafafa",
+        "destination_email": "aaaa@mail.com",
+        "destination_name": "test user",
+        "destination_tel": "fafafafa",
+        "destination_zipcode": "1234444",
+        "id": 1,
+        "order_date": "2021-01-15",
+        "order_items": [
+          {
+            "id": 1,
+            "item": {
+              "deleted": 0,
+              "description": "ホクホクのポテトと旨味が凝縮されたベーコンを特製マヨソースで味わって頂く商品です。バター風味豊かなキューブチーズが食材の味を一層引き立てます。",
+              "id": 1,
+              "image_path": "1.jpg",
+              "name": "じゃがバターベーコン",
+              "price_l": 2570,
+              "price_m": 1490
+            },
+            "order_toppings": [
+              {
+                "id": 1,
+                "topping": {
+                  "id": 2,
+                  "name": "ツナマヨ",
+                  "price_l": 300,
+                  "price_m": 200
+                }
+              }
+            ],
+            "quantity": 1,
+            "size": "M"
+          },
+          {
+            "id": 2,
+            "item": {
+              "deleted": 0,
+              "description": "マッシュルームと熟成ベーコンにブラックペッパーをトッピングしたシンプルなピザ！",
+              "id": 3,
+              "image_path": "3.jpg",
+              "name": "熟成ベーコンとマッシュルーム",
+              "price_l": 2570,
+              "price_m": 1490
+            },
+            "order_toppings": [
+            ],
+            "quantity": 1,
+            "size": "L"
+          }
+        ],
+        "payment_method": 1,
+        "status": 0,
+        "total_price": 1000
+      }
+    ]
+  },
+  "order-history-count": {
+    "count": 13
   }
 }
