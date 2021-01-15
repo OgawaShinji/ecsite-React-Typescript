@@ -3,6 +3,7 @@ import {Order, OrderItem, User} from '../../../types/interfaces'
 import {RootState} from "../../index";
 import axios from "axios";
 import {API_URL} from "../../api";
+// TODO: camelCaseに変換処理
 
 
 type orderState = {
@@ -25,10 +26,12 @@ const initialState: orderState = {
 export const fetchOrderItems = createAsyncThunk(
     'order/fetchOrderItems',
     async () => {
+        // TODO: pass決まり次第変更
         const {data} = await axios.get(`${API_URL}/cart`, {
             method: 'GET',
             headers: {
-                token: localStorage.getItem("Authorization")
+                Authorization: localStorage.getItem("token")
+
             }
         }).catch(err => {
             throw new Error(err);
@@ -47,10 +50,11 @@ export const fetchOrderItems = createAsyncThunk(
 export const postOrderItem = createAsyncThunk(
     'order/postOrderItem',
     async (order: Order) => {
+        // TODO: pass決まり次第変更
         await axios.post(`${API_URL}/cart`, {order}, {
             method: 'POST',
             headers: {
-                token: localStorage.getItem("Authorization")
+                Authorization: localStorage.getItem("token")
             }
         }).catch(err => {
             throw new Error(err)
@@ -67,10 +71,11 @@ export const postOrderItem = createAsyncThunk(
 export const updateOrderItem = createAsyncThunk(
     'order/updateOrderItem',
     async (order: Order) => {
+        // TODO: pass決まり次第変更
         await axios.post(`${API_URL}/cart`, {order}, {
             method: 'PUT',
             headers: {
-                token: localStorage.getItem("Authorization")
+                Authorization: localStorage.getItem("token")
             }
         }).catch(err => {
             throw new Error(err)
@@ -87,10 +92,11 @@ export const updateOrderItem = createAsyncThunk(
 export const deleteOrderItem = createAsyncThunk(
     'order/deleteOrderItem',
     async (orderItemId: number) => {
+        // TODO: pass決まり次第変更
         await axios.delete(`${API_URL}/cart`, {
             method: 'DELETE',
             headers: {
-                token: localStorage.getItem("Authorization")
+                Authorization: localStorage.getItem("token")
             },
             params: {
                 orderItemId: orderItemId
@@ -116,10 +122,10 @@ export const postOrder = createAsyncThunk(
             {
                 method: 'POST',
                 headers: {
-                    token: localStorage.getItem('Authorization')
+                    Authorization: localStorage.getItem('Authorization')
                 }
             }).catch(error => {
-                throw new Error(error);
+            throw new Error(error);
         });
     }
 )
@@ -130,7 +136,6 @@ export const orderSlice = createSlice({
     name: 'order',
     initialState: initialState,
     reducers: {
-
         setOrderUserInfo: ((state:orderState, action) => {
             state.order.user = action.payload
         }),
@@ -145,10 +150,11 @@ export const orderSlice = createSlice({
         }),
         setOrderItemsAndSubTotalPrice: ((state: orderState, action) => {
             state.order.orderItems = action.payload
+            // TODO: orderItemごとのsubTotalPrice
             // TODO: setSubTotalPriceの処理追加
         }),
         //追加機能
-        setUserAddress:((state:orderState , action) => {
+        setUserAddress: ((state: orderState, action) => {
 
         }),
         setOrder: ((state, action) => {
@@ -156,6 +162,7 @@ export const orderSlice = createSlice({
         })
     },
     extraReducers: (builder => {
+        // fetchOrderItems
         builder.addCase(fetchOrderItems.fulfilled, (state, action) => {
             const _action = orderSlice.actions.setOrderItemsAndSubTotalPrice(action.payload.data.order.orderItems)
             orderSlice.caseReducers.setOrderItemsAndSubTotalPrice(state, _action)
@@ -163,16 +170,22 @@ export const orderSlice = createSlice({
         builder.addCase(fetchOrderItems.rejected, (state, action) => {
             console.log(action.error)
         })
+
+        // postOrderItem
         builder.addCase(postOrderItem.fulfilled, (state, action) => {
         })
         builder.addCase(postOrderItem.rejected, (state, action) => {
             console.log(action.error)
         })
+
+        // updateOrderItem
         builder.addCase(updateOrderItem.fulfilled, (state, action) => {
         })
         builder.addCase(updateOrderItem.rejected, (state, action) => {
             console.log(action.error)
         })
+
+        // deleteOrderItem
         builder.addCase(deleteOrderItem.fulfilled, (state, action) => {
         })
         builder.addCase(deleteOrderItem.rejected, (state, action) => {
@@ -189,7 +202,6 @@ export const orderSlice = createSlice({
 
     })
 })
-
 
 
 export const selectOrderDate = (state: RootState) => state.order.order.orderDate
