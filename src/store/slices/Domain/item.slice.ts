@@ -2,7 +2,7 @@ import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 
 import {Item, SearchForm} from "~/types/interfaces";
-import {RootState} from "~/store/index";
+import {RootState} from "~/store";
 import camelcaseKeys from "camelcase-keys";
 import {API_URL} from "~/store/api";
 
@@ -93,7 +93,7 @@ export const itemSlice = createSlice({
     extraReducers: ((builder) => {
         // fetchItems
         builder.addCase(fetchItems.fulfilled, (state, action) => {
-            const camelPayload = camelcaseKeys(action.payload)
+            const camelPayload = camelcaseKeys(action.payload, {deep: true})
             const _action = itemSlice.actions.setItems(camelPayload);
 
             itemSlice.caseReducers.setItems(state, _action);
