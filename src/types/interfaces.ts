@@ -54,10 +54,9 @@ export interface OrderItem {
 }
 
 export interface OrderTopping {
-    id?: number
+    id: number
     topping: Topping
-    quantity: number
-    size: string
+    orderItem: number
 }
 
 export interface SearchForm {
