@@ -15,7 +15,7 @@ export const fetchToppings = createAsyncThunk(
     'topping/fetchToppings',
     async () => {
         try {
-            const {data} = await axios.get(`${API_URL}/topping`, {
+            const {data} = await axios.get(`${API_URL}/flask/topping/`, {
                 method: "GET",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
