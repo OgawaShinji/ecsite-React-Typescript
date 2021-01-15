@@ -55,33 +55,34 @@
     "order": {
       "id": 1,
       "status": 0,
-      "orderDate": null,
-      "deliveryTime": null,
-      "destinationName": "Raku",
-      "destinationEmail": "raku@raku.co.jp",
-      "destinationZipcode": "123-4567",
-      "destinationAddress": "tokyo",
-      "destinationTel": "000-1111-2222",
-      "paymentMethod": "1",
-      "totalPrice": 1000,
-      "orderItems": [
+      "order_date": null,
+      "delivery_time": null,
+      "destination_name": "Raku",
+      "destination_email": "raku@raku.co.jp",
+      "destination_zipcode": "123-4567",
+      "destination_address": "tokyo",
+      "destination_tel": "000-1111-2222",
+      "payment_method": "1",
+      "total_price": 1000,
+      "order_items": [
         {
           "id": 1,
           "item": {
             "id": 1,
             "name": "apple",
             "description": "good",
-            "priceM": 300,
-            "priceL": 400,
-            "imagePath": "imagePass"
+            "price_m": 300,
+            "price_l": 400,
+            "image_path": "imagePass",
+            "deleted": 0
           },
-          "orderToppings": {
+          "order_toppings": {
             "id": 2,
             "topping": {
               "id": 1,
               "name": "orange",
-              "priceM": 200,
-              "priceL": 300
+              "price_m": 200,
+              "price_l": 300
             },
             "quantity": 1,
             "size": "M"
