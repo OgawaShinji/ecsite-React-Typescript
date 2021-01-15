@@ -60,6 +60,11 @@ export interface OrderTopping {
 }
 
 export interface SearchForm {
-    itemName: string
-    sortId: number
+    itemName: string;
+    sortId: number;
+}
+
+export interface DisplaySetting {
+    displayCount: number;
+    pageNum: number;
 }

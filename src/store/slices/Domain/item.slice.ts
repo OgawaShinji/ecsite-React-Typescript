@@ -81,14 +81,14 @@ export const itemSlice = createSlice({
     initialState: initialItemState,
     reducers: {
         setItems: ((state: itemState, action) => {
-            state.items = action.payload;
+            state.items = action.payload.items;
         }),
-        setItemNames: ((state, action) => {
-            state.itemNames = action.payload;
+        setItemNames: ((state: itemState, action) => {
+            state.itemNames = action.payload.itemNames;
         }),
         setItemDetail: ((state, action) => {
             state.itemDetail = action.payload
-        }),
+        })
     },
     extraReducers: ((builder) => {
         // fetchItems
@@ -104,7 +104,8 @@ export const itemSlice = createSlice({
 
         // fetchItemNames
         builder.addCase(fetchItemNames.fulfilled, (state, action) => {
-            const _action = itemSlice.actions.setItems(action.payload);
+            const camelPayload = camelcaseKeys(action.payload)
+            const _action = itemSlice.actions.setItems(camelPayload);
             itemSlice.caseReducers.setItemNames(state, _action);
         })
         builder.addCase(fetchItemNames.rejected, (state, action) => {
