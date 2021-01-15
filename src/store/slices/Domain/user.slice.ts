@@ -1,14 +1,12 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
-import {User} from "../../../types/interfaces";
-import capitalize from "@material-ui/core/utils/capitalize";
-import {userInfo} from "os";
+import {User} from "~/types/interfaces";
+import {API_URL} from "~/store/api";
 
 
 type userState = {
     user: User,
 }
-
 //-----stateの定義
 
 //必要ないかも
@@ -18,26 +16,18 @@ type userState = {
 export const postRegisterUser = createAsyncThunk(
     'user/postUserRegister',
     async (userInfo:userState) => {
-
-        //引数に渡されたユーザー情報を代入する
+        //dispatchでに渡されてきたユーザー情報をPOSTする
         await axios.post(
-            //"http://localhost:3000"
-            // `${API_URL}/auth/register/`,
-            "http://localhost:3000/auth/register",
+            `${API_URL}/auth/register/`,
+            {userInfo},
             {
-                name: userInfo.user.userName,
-                email: userInfo.user.email,
-                password: userInfo.user.password,
-                zipcode: userInfo.user.zipcode,
-                address: userInfo.user.address,
-                telephone: userInfo.user.telephone
-            },
-            {
-                method: "POST",
+                method: 'POST',
                 headers: {
-                    token: localStorage.getItem("token")
+                    Authorization: localStorage.getItem('Authorization')
                 }
-            })
+            }).catch(error => {
+            throw new Error(error);
+        });
     })
 
 //-----ここから下はSlice
