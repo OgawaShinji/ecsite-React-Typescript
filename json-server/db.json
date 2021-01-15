@@ -12,6 +12,15 @@
     "address": "住所",
     "telephone": "電話番号"
   },
+  "item": {
+    "deleted": 0,
+    "description": "this is item description",
+    "id": 1,
+    "image_path": "1.jpg",
+    "name": "item name",
+    "price_l": 1000,
+    "price_m": 500
+  },
   "items": [
     {
       "item_id": 1,

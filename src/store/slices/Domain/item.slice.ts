@@ -1,30 +1,40 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 
-import {Item, SearchForm} from "../../../types/interfaces";
-import {RootState} from "../../index";
+import {Item, SearchForm} from "~/types/interfaces";
+import {RootState} from "~/store/index";
 import camelcaseKeys from "camelcase-keys";
+import {API_URL} from "~/store/api";
 
 type itemState = {
     items: Array<Item>;
     itemNames: Array<string>;
+    itemDetail: Item;
 }
 
 const initialItemState: itemState = {
     items: [],
-    itemNames: []
+    itemNames: [],
+    itemDetail: {
+        id: 0,
+        name: "",
+        imagePath: "",
+        priceM: 0,
+        priceL: 0,
+        description: "",
+        deleted: 0
+    }
 }
 
 //--------------------------------------------
 
 export const fetchItems = createAsyncThunk('item/getItems', async (searchForm: SearchForm) => {
     try {
-        // TODO: pathが決定次第修正
-        const {data} = await axios.get(`http://localhost:3000/items`, {
+        const {data} = await axios.get(`${API_URL}/items`, {
             method: "GET",
             params: searchForm,
             headers: {
-                token: localStorage.getItem("token")
+                Authorization: localStorage.getItem("Authorization")
             }
         })
         return data;
@@ -35,11 +45,10 @@ export const fetchItems = createAsyncThunk('item/getItems', async (searchForm: S
 
 export const fetchItemNames = createAsyncThunk('item/getItemNames', async () => {
     try {
-        // TODO: pathが決定次第修正
-        const {data} = await axios.get('http://localhost:3000/itemNames', {
+        const {data} = await axios.get(`${API_URL}/itemNames`, {
             method: 'GET',
             headers: {
-                token: localStorage.getItem("token")
+                Authorization: localStorage.getItem("Authorization")
             }
         })
         return data;
@@ -48,6 +57,22 @@ export const fetchItemNames = createAsyncThunk('item/getItemNames', async () => 
     }
 })
 
+export const fetchItemDetail = createAsyncThunk(
+    'item/detail',
+    async (itemId: number) => {
+        try {
+            const {data} = await axios.get(`${API_URL}/item/${itemId}`, {
+                method: "GET",
+                headers: {
+                    Authorization: localStorage.getItem("Authorization")
+                }
+            })
+            return data;
+        } catch (e) {
+            throw e;
+        }
+    }
+)
 
 //--------------------------------------------
 
@@ -60,7 +85,10 @@ export const itemSlice = createSlice({
         }),
         setItemNames: ((state, action) => {
             state.itemNames = action.payload;
-        })
+        }),
+        setItemDetail: ((state, action) => {
+            state.itemDetail = action.payload
+        }),
     },
     extraReducers: ((builder) => {
         // fetchItems
@@ -82,8 +110,18 @@ export const itemSlice = createSlice({
         builder.addCase(fetchItemNames.rejected, (state, action) => {
             console.log(action.error.message);
         })
+
+        //fetchItemDetail
+        builder.addCase(fetchItemDetail.fulfilled, (state, action) => {
+            const camelPayload = camelcaseKeys(action.payload)
+            itemSlice.caseReducers.setItemDetail(state, itemSlice.actions.setItemDetail(camelPayload))
+        })
+        builder.addCase(fetchItemDetail.rejected, (state, action) => {
+            console.log(action.error.message)
+        })
     })
 })
 
 export const selectItems = (state: RootState) => state.item.items;
 export const selectItemNames = (state: RootState) => state.item.itemNames;
+export const selectItemDetail = (state: RootState) => state.item.itemDetail;
