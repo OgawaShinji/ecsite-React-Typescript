@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {Order} from '../../../types/interfaces'
+import {Order, OrderItem, User} from '../../../types/interfaces'
 import {RootState} from "../../index";
 import axios from "axios";
 import {API_URL} from "../../api";
@@ -31,6 +31,7 @@ export const fetchOrderItems = createAsyncThunk(
             method: 'GET',
             headers: {
                 Authorization: localStorage.getItem("token")
+
             }
         }).catch(err => {
             throw new Error(err);
@@ -114,9 +115,9 @@ export const deleteOrderItem = createAsyncThunk(
 
 export const postOrder = createAsyncThunk(
     'order/postOrder',
-    async (orderInfo: orderState) => {
+    async (orderInfo:Order) => {
         await axios.post(
-            `${API_URL}/django/order`,
+            `${API_URL}/django/order/`,
             {orderInfo},
             {
                 method: 'POST',
@@ -135,9 +136,7 @@ export const orderSlice = createSlice({
     name: 'order',
     initialState: initialState,
     reducers: {
-
-
-        setOrderUserInfo: ((state: orderState, action) => {
+        setOrderUserInfo: ((state:orderState, action) => {
             state.order.user = action.payload
         }),
         setOrderDate: ((state: orderState, action) => {
@@ -149,7 +148,6 @@ export const orderSlice = createSlice({
         setPaymentMethod: ((state: orderState, action) => {
             state.order.paymentMethod = action.payload
         }),
-
         setOrderItemsAndSubTotalPrice: ((state: orderState, action) => {
             state.order.orderItems = action.payload
             // TODO: orderItemごとのsubTotalPrice
@@ -159,11 +157,9 @@ export const orderSlice = createSlice({
         setUserAddress: ((state: orderState, action) => {
 
         }),
-
         setOrder: ((state, action) => {
             state.order = action.payload
         })
-
     },
     extraReducers: (builder => {
         // fetchOrderItems
