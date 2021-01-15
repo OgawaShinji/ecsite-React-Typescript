@@ -79,7 +79,7 @@ export const historySlice = createSlice({
     extraReducers: ((builder) => {
         // fetchOrderHistory
         builder.addCase(fetchOrderHistory.fulfilled, (state, action) => {
-            const camelPayload = camelcaseKeys(action.payload);
+            const camelPayload = camelcaseKeys(action.payload, {deep: true});
             const _action = historySlice.actions.setOrders(camelPayload);
 
             historySlice.caseReducers.setOrders(state, _action);
