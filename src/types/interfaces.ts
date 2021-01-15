@@ -54,13 +54,16 @@ export interface OrderItem {
 }
 
 export interface OrderTopping {
-    id?: number
-    topping: Topping
-    quantity: number
-    size: string
+    id?: number;
+    topping: Topping;
 }
 
 export interface SearchForm {
-    itemName: string
-    sortId: number
+    itemName: string;
+    sortId: number;
+}
+
+export interface DisplaySetting {
+    displayCount: number;
+    pageNum: number;
 }
