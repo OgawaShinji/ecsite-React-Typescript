@@ -11,6 +11,13 @@ type toppingState = {
 const initialToppingState: toppingState = {
     toppings: []
 }
+/**
+ * トッピング一覧を取得するようAPIを呼び出す
+ * 成功時toppingSliceにて、RootState.topping.toppings を更新する
+ * 失敗時toppingSliceにて、エラー画面遷移
+ *
+ * @return {toppingState.toppings}
+ */
 export const fetchToppings = createAsyncThunk(
     'topping/fetchToppings',
     async () => {
@@ -28,6 +35,7 @@ export const fetchToppings = createAsyncThunk(
         }
     }
 )
+
 export const toppingSlice = createSlice({
     name: 'topping',
     initialState: initialToppingState,
