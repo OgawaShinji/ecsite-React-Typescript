@@ -17,9 +17,9 @@
   },
   "item": {
     "deleted": 0,
-    "description": "this is item description",
+    "description": "1これは説明文です。2これは説明文です。3これは説明文です。4これは説明文です。5これは説明文です。6これは説明文です。7これは説明文です。8これは説明文です。9これは説明文です。10これは説明文です。11これは説明文です。12これは説明文です。",
     "id": 1,
-    "image_path": "1.jpg",
+    "image_path": "",
     "name": "item name",
     "price_l": 1000,
     "price_m": 500

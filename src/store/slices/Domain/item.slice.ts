@@ -9,21 +9,13 @@ import {API_URL} from "~/store/api";
 type itemState = {
     items: Array<Item>;
     itemNames: Array<string>;
-    itemDetail: Item;
+    itemDetail: Item | null;
 }
 
 const initialItemState: itemState = {
     items: [],
     itemNames: [],
-    itemDetail: {
-        id: 0,
-        name: "",
-        imagePath: "",
-        priceM: 0,
-        priceL: 0,
-        description: "",
-        deleted: 0
-    }
+    itemDetail: null
 }
 
 //--------------------------------------------
@@ -72,7 +64,7 @@ export const fetchItemDetail = createAsyncThunk(
     'item/detail',
     async (itemId: number) => {
         try {
-            const {data} = await axios.get(`${API_URL}/item/${itemId}`, {
+            const {data} = await axios.get(`${API_URL}/flask/item/${itemId}`, {
                 method: "GET",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
