@@ -56,10 +56,15 @@ export interface OrderItem {
 export interface OrderTopping {
     id: number
     topping: Topping
-    orderItem: number
+    orderItemId: number
 }
 
 export interface SearchForm {
-    itemName: string
-    sortId: number
+    itemName: string;
+    sortId: number;
+}
+
+export interface DisplaySetting {
+    displayCount: number;
+    pageNum: number;
 }

@@ -2,7 +2,7 @@ import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 
 import {Item, SearchForm} from "~/types/interfaces";
-import {RootState} from "~/store/index";
+import {RootState} from "~/store";
 import camelcaseKeys from "camelcase-keys";
 import {API_URL} from "~/store/api";
 
@@ -28,9 +28,15 @@ const initialItemState: itemState = {
 
 //--------------------------------------------
 
+/**
+ * 商品一覧を取得する.
+ *
+ * @param {SearchForm} searchForm 検索フォーム
+ * @return {Array<Item>} 全件または選択された商品一覧
+ */
 export const fetchItems = createAsyncThunk('item/getItems', async (searchForm: SearchForm) => {
     try {
-        const {data} = await axios.get(`${API_URL}/items`, {
+        const {data} = await axios.get(`${API_URL}/flask/item`, {
             method: "GET",
             params: searchForm,
             headers: {
@@ -43,9 +49,14 @@ export const fetchItems = createAsyncThunk('item/getItems', async (searchForm: S
     }
 });
 
+/**
+ * 全商品名を取得する.
+ *
+ * @return {Array<string>} 商品名一覧
+ */
 export const fetchItemNames = createAsyncThunk('item/getItemNames', async () => {
     try {
-        const {data} = await axios.get(`${API_URL}/itemNames`, {
+        const {data} = await axios.get(`${API_URL}/flask/item-name`, {
             method: 'GET',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -81,19 +92,19 @@ export const itemSlice = createSlice({
     initialState: initialItemState,
     reducers: {
         setItems: ((state: itemState, action) => {
-            state.items = action.payload;
+            state.items = action.payload.items;
         }),
-        setItemNames: ((state, action) => {
-            state.itemNames = action.payload;
+        setItemNames: ((state: itemState, action) => {
+            state.itemNames = action.payload.itemNames;
         }),
         setItemDetail: ((state, action) => {
             state.itemDetail = action.payload
-        }),
+        })
     },
     extraReducers: ((builder) => {
         // fetchItems
         builder.addCase(fetchItems.fulfilled, (state, action) => {
-            const camelPayload = camelcaseKeys(action.payload)
+            const camelPayload = camelcaseKeys(action.payload, {deep: true})
             const _action = itemSlice.actions.setItems(camelPayload);
 
             itemSlice.caseReducers.setItems(state, _action);
@@ -104,7 +115,8 @@ export const itemSlice = createSlice({
 
         // fetchItemNames
         builder.addCase(fetchItemNames.fulfilled, (state, action) => {
-            const _action = itemSlice.actions.setItems(action.payload);
+            const camelPayload = camelcaseKeys(action.payload)
+            const _action = itemSlice.actions.setItems(camelPayload);
             itemSlice.caseReducers.setItemNames(state, _action);
         })
         builder.addCase(fetchItemNames.rejected, (state, action) => {

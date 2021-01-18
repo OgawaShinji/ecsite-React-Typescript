@@ -1,8 +1,8 @@
 import React from "react";
-import {Switch, Route, Redirect} from 'react-router-dom';
+import {Redirect, Route, Switch} from 'react-router-dom';
 
 import itemList from '../components/itemList';
-import cart from '../components/cart';
+import cart from '../components/cart/index';
 import history from '../components/history';
 import itemDetail from '../components/itemDetail';
 import login from '../components/login';
