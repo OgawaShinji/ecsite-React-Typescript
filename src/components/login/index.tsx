@@ -9,7 +9,8 @@ const Login: React.FC = () => {
             position: 'absolute',
             left: '50%',
             top: '50%',
-            transform: 'translate(-50%, -50%)'
+            transform: 'translate(-50%, -50%)',
+            width:400
         },
         Link: {
             position: 'absolute',

@@ -16,6 +16,11 @@ export type loginForm = {
     password: string;
 }
 
+/**
+ * logout処理するようAPIを呼び出す
+ * 成功時authSliceにて、ローカルストレージからAuthorizationを削除し、RootState.auth.loginUserをnullに更新する
+ * 失敗時authSliceにて、エラー画面遷移
+ */
 export const logout = createAsyncThunk(
     'auth/logout',
     async () => {
@@ -31,6 +36,14 @@ export const logout = createAsyncThunk(
             throw e
         }
     })
+
+/**
+ * login処理するようAPIを呼び出す
+ * 成功時authSliceにて、ローカルストレージにAuthorizationをsetし、fetchLoginUserを呼び出す
+ * 失敗時authSliceにて、エラー画面遷移
+ *
+ * @return　token
+ */
 export const login = createAsyncThunk(
     'auth/login',
     async (loginInfo: loginForm) => {
@@ -44,6 +57,14 @@ export const login = createAsyncThunk(
         }
     }
 )
+
+/**
+ * loginUserの情報を取得するようAPIを呼び出す
+ * 成功時authSliceにて、RootState .auth.loginUserにsetする
+ * 失敗時authSliceにて、エラー画面遷移
+ *
+ * @return loginUser :User
+ */
 export const fetchLoginUser = createAsyncThunk(
     'auth/user',
     async () => {

@@ -16,6 +16,8 @@ module.exports = function (req, res, next) {
         req.url = "/cart"
     } else if (req.url === "/item/") {
         req.url = "/item"
+    } else if (req.url === "/flask/topping/") {
+        req.url = "/topping"
     } else if (req.url.match(/^\/flask\/item\?/)) {
         req.url = "/items"
     } else if (req.url === "/flask/item-name") {

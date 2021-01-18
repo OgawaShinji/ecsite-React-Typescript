@@ -2,28 +2,65 @@ import React, {useState} from "react";
 import {Button, Card, CardActions, CardContent, CardHeader, TextField} from "@material-ui/core";
 import {AppDispatch} from "~/store";
 import {useDispatch} from "react-redux";
-import {login, loginForm, logout} from "~/store/slices/App/auth.slice";
+import {login, loginForm} from "~/store/slices/App/auth.slice";
 import {useHistory} from "react-router-dom"
+import {Path} from "~/router/routes";
 
 type Props = {
     styleProps: React.CSSProperties
 }
 const LoginForm: React.FC<Props> = (props) => {
     const dispatch: AppDispatch = useDispatch();
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const routeHistory = useHistory()
+    const [email, setEmail] = useState<{ value: string, errorMessage: string }>({
+        value: '',
+        errorMessage: ''
+    })
+    const [password, setPassword] = useState<{ value: string, errorMessage: string }>({
+        value: '',
+        errorMessage: ''
+    })
+
+    const routeHistory = useHistory();
+
     const handleEmailChange: React.ChangeEventHandler<HTMLInputElement> = async (event) => {
-        setEmail(event.target.value);
+        setEmail({value: event.target.value, errorMessage: emailValidation(event.target.value)});
     }
     const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-        setPassword(event.target.value)
+        setPassword({value: event.target.value, errorMessage: passwordValidation(event.target.value)})
     }
+    /**
+     * login button クリック時の処理
+     * errorMessageが空文字ならLogin処理を呼び出し、商品一覧へ遷移
+     */
     const handleLoginClick = async () => {
-        console.log({email: email, pass: password})
-        const input: loginForm = {email: email, password: password}
-        await dispatch(login(input)).then(() => routeHistory.push('/'))
-        //await dispatch(logout()).then(() => console.log(localStorage.getItem("Authorization"))).then()
+        if (email.errorMessage.length === 0 && password.errorMessage.length === 0) {
+            const input: loginForm = {email: email.value, password: password.value}
+            await dispatch(login(input)).then(() => routeHistory.push(Path.itemList))
+        }
+    }
+
+    /**
+     * email入力値に対するエラーメッセージを返すメソッド
+     *
+     * @param value :string
+     * @return errorMessage :string(エラーが無いときは空文字を返す)
+     */
+    const emailValidation = (value: string): string => {
+        if (!value) return '※メールアドレスを入力してください';
+        const regex = /^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        if (!regex.test(value) || value.length > 100) return '※正しい形式でメールアドレスを入力してください';
+        return ''
+    }
+    /**
+     * password入力値に対するエラーメッセージを返すメソッド
+     *
+     * @param value :string
+     * @return errorMessage :string(エラーが無いときは空文字を返す)
+     */
+    const passwordValidation = (value: string): string => {
+        if (!value) return '*パスワードを入力してください'
+        if (value.length > 16 || value.length < 8) return '*6字以上16字以内で入力してください'
+        return ''
     }
 
     return (<>
@@ -31,28 +68,30 @@ const LoginForm: React.FC<Props> = (props) => {
             <CardHeader title="Login"/>
             <CardContent>
                 <div>
+                    <div style={{color: 'red'}}>{email.errorMessage}</div>
                     <TextField
-                        //error={state.isError}
+                        error={email.errorMessage.length > 0}
                         fullWidth
                         id="email"
                         type="email"
                         label="e-mail"
                         placeholder="***@***.***"
                         margin="normal"
-                        value={email}
+                        value={email.value}
                         onChange={handleEmailChange}
                         //onKeyPress={handleKeyPress}
                     />
+                    <div style={{color: 'red'}}>{password.errorMessage}</div>
                     <TextField
-                        //error={state.isError}
+                        error={password.errorMessage.length > 0}
                         fullWidth
                         id="password"
                         type="password"
-                        label="Password"
+                        label="password"
                         placeholder="Password"
                         margin="normal"
                         //helperText={state.helperText}
-                        value={password}
+                        value={password.value}
                         onChange={handlePasswordChange}
                         //onKeyPress={handleKeyPress}
                     />
@@ -66,7 +105,7 @@ const LoginForm: React.FC<Props> = (props) => {
                     style={{left: '35%'}}
                     //className={classes.loginBtn}
                     onClick={handleLoginClick}
-                    //disabled={state.isButtonDisabled}
+                    disabled={email.errorMessage.length > 0 || password.errorMessage.length > 0 || email.value === '' || password.value === ''}
                 >
                     Login
                 </Button>

@@ -18,7 +18,7 @@ export const Path = {
     login: '/login',
     orderComplete: '/orderComplete',
     orderConfirm: '/orderConfirm',
-    register: 'register',
+    register: '/register',
 };
 
 const routes = (
