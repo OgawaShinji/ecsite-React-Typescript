@@ -1,5 +1,5 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {Order} from '../../../types/interfaces'
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {Order, OrderItem} from '../../../types/interfaces'
 import {RootState} from "../../index";
 import axios from "axios";
 import {API_URL} from "../../api";
@@ -26,7 +26,6 @@ const initialState: orderState = {
 export const fetchOrderItems = createAsyncThunk(
     'order/fetchOrderItems',
     async () => {
-        // TODO: pass決まり次第変更
         const {data} = await axios.get(`${API_URL}/django/cart`, {
             method: 'GET',
             headers: {
@@ -49,7 +48,6 @@ export const fetchOrderItems = createAsyncThunk(
 export const postOrderItem = createAsyncThunk(
     'order/postOrderItem',
     async (order: Order) => {
-        // TODO: pass決まり次第変更
         await axios.post(`${API_URL}/django/cart`, {order}, {
             method: 'POST',
             headers: {
@@ -70,7 +68,6 @@ export const postOrderItem = createAsyncThunk(
 export const updateOrderItem = createAsyncThunk(
     'order/updateOrderItem',
     async (order: Order) => {
-        // TODO: pass決まり次第変更
         await axios.post(`${API_URL}/django/cart`, {order}, {
             method: 'PUT',
             headers: {
@@ -91,7 +88,6 @@ export const updateOrderItem = createAsyncThunk(
 export const deleteOrderItem = createAsyncThunk(
     'order/deleteOrderItem',
     async (orderItemId: number) => {
-        // TODO: pass決まり次第変更
         await axios.delete(`${API_URL}/django/cart`, {
             method: 'DELETE',
             headers: {
@@ -147,16 +143,18 @@ export const orderSlice = createSlice({
         setPaymentMethod: ((state: orderState, action) => {
             state.order.paymentMethod = action.payload
         }),
-        setOrderItemsAndSubTotalPrice: ((state: orderState, action) => {
+        setOrderItemsAndSubTotalPrice: ((state: orderState, action: PayloadAction<OrderItem[]>) => {
             state.order.orderItems = action.payload
-            let subTotalPrice = state.orderSubTotalPrice
+            let copyOrderItems = state.order.orderItems.slice()
+            let orderSubTotalPrice = state.orderSubTotalPrice
 
             // orderItemごとのsubTotalPriceをset, stateのorder全体のsubTotalPriceをset
-            state.order.orderItems?.map(orderItem => {
+            copyOrderItems?.map(orderItem => {
                 const toppingQuantity = orderItem.orderToppings?.length
                 const orderItemQuantity = orderItem.quantity
                 let orderItemPrice: number
                 let toppingTotalPrice: number
+                let subTotalPrice: number
 
                 if (orderItem.size === 'M') {
                     orderItemPrice = orderItem.item.priceM
@@ -166,12 +164,18 @@ export const orderSlice = createSlice({
                     orderItemPrice = orderItem.item.priceL
                     toppingTotalPrice = toppingQuantity! * 300
                 }
-                orderItem.subTotalPrice = (orderItemPrice! + toppingTotalPrice!) * orderItemQuantity
-                subTotalPrice += orderItem.subTotalPrice
+                subTotalPrice = (orderItemPrice! + toppingTotalPrice!) * orderItemQuantity
+                orderItem.subTotalPrice = subTotalPrice
+                orderSubTotalPrice += orderItem.subTotalPrice
             })
-
-            state.orderSubTotalPrice = subTotalPrice
+            state.order.orderItems = copyOrderItems
+            state.orderSubTotalPrice = orderSubTotalPrice
         }),
+        setUpdateOrderItem: (state: orderState, action) => {
+            // console.log(action.payload)
+            state.order.orderItems?.splice(action.payload.index, 1)
+            // console.log(state.order.orderItems)
+        },
         //追加機能
         setUserAddress: ((state: orderState, action) => {
 
@@ -231,4 +235,6 @@ export const selectOrderUserInfo = (state: RootState) => state.order.order.user
 
 export const selectOrder = (state: RootState) => state.order.order
 export const selectOrderItems = (state: RootState) => state.order.order.orderItems
-export const selectOrderSubTotalPrice=(state: RootState) => state.order.orderSubTotalPrice
+export const selectOrderSubTotalPrice = (state: RootState) => state.order.orderSubTotalPrice
+
+export const {setOrderItemsAndSubTotalPrice, setUpdateOrderItem} = orderSlice.actions
