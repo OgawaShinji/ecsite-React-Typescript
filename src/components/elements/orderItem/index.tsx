@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from "react";
+import React, { useEffect} from "react";
 import {
     Card,
     CardContent,
@@ -26,11 +26,12 @@ const useStyles = makeStyles((theme) =>({
         width:800
     },
     cover: {
-        width: 151,
+        width: 175,
+        height: 175
     },
 }));
 
-const OrderItem: FC = () => {
+const OrderItem: React.FC = () => {
     const classes = useStyles();
 
     const dispatch = useDispatch();
@@ -51,7 +52,6 @@ const OrderItem: FC = () => {
                             component="img"
                             className={classes.cover}
                             image="/logo512.png"
-                            title="Live from space album cover"
                         />
                         <div className={classes.details}>
                             <CardContent className={classes.content}>
@@ -75,8 +75,8 @@ const OrderItem: FC = () => {
                                             <TableCell align="left" >サイズ:　{orderItem.size}</TableCell>
                                             <TableCell align="left">
                                                 <ul>
-                                                    {orderItem.orderToppings && orderItem.orderToppings.map((topping) => (
-                                                        <li>{topping.topping.name}</li>
+                                                    {orderItem.orderToppings && orderItem.orderToppings.map((topping,index) => (
+                                                        <li key={index}>{topping.topping.name}</li>
                                                     ))}
                                                 </ul>
                                             </TableCell>
