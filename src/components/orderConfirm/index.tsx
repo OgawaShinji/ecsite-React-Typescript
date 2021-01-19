@@ -21,7 +21,7 @@ const OrderConfirm: React.FC = () => {
     return (
         <>
             <div>
-                <OrderItems orderItems={orderItems}/>
+                <OrderItems />
             </div>
             <div>
                 <br/>
