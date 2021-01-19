@@ -1,14 +1,21 @@
 import React, {useRef, useState} from "react";
 import {
-    Button, DialogContent,
+    Button,
+    Card,
+    DialogContent,
     FormControl,
-    FormControlLabel, FormLabel,
-    Grid, InputLabel, MenuItem, Modal, Radio,
-    RadioGroup, Select
+    FormControlLabel,
+    FormLabel,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Modal,
+    Radio,
+    RadioGroup,
+    Select
 } from "@material-ui/core";
-import {Topping} from "~/types/interfaces";
+import {OrderItem, Topping} from "~/types/interfaces";
 import {WrappedSelectTopping} from "~/components/elements/orderItemEntry/selectTopping";
-import {Card} from "@material-ui/core";
 
 export type itemEntryState = {
     size: string;
@@ -21,24 +28,31 @@ export type entryProps = {
     onSizeChange?: (size: string) => void;
     onQuantityChange?: (quantity: number) => void;
     onToppingChange?: (toppings: Topping[]) => void;
-}
+    onClickCloseOrderItemEntity?: () => void;
+};
 const OrderItemEntry: React.FC<entryProps> = (props) => {
 
+
     const [modalIsOpen, setIsOpen] = useState<boolean>(false)
-    const [selectedToppings, setSelectedToppings] = useState<Topping[]>([])
+    const [selectedToppings, setSelectedToppings] = useState<Topping[]>(props.selectedState.toppings)
 
     const quantityList = [{value: 1, text: '1'}, {value: 2, text: '2'}, {value: 3, text: '3'},
         {value: 4, text: '4'}, {value: 5, text: '5'}]
+
     const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (typeof props.onSizeChange !== "undefined") props.onSizeChange(event.target.value)
     }
+
     const handleQuantityChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         if (typeof props.onQuantityChange !== "undefined") props.onQuantityChange(event.target.value as number)
     }
+
     const handleToppingChange = (toppings: Topping[]) => {
         if (typeof props.onToppingChange !== "undefined") props.onToppingChange(toppings);
         setSelectedToppings(toppings)
     }
+
+
     //SelectToppingコンポーネントをModal表示する際にこのコンポーネントのref属性を渡す必要があるのでここで変数宣言
     const selectToppingRef = useRef<HTMLDivElement>(null);
 
@@ -86,6 +100,12 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                     </Button>
                 </Grid>
                 <Grid item xs={3}>{selectedToppings.map((t) => <Card key={t.name}> {t.name}</Card>)}</Grid>
+                {/*{props.parentComponent === "CartItem" && (*/}
+                {/*    <Grid item xs={6}>*/}
+                {/*        <Button onClick={() => props.onClickCloseOrderItemEntity!()}>キャンセル</Button>*/}
+                {/*        <Button onClick={() => setIsOpen(true)}>保存</Button>*/}
+                {/*    </Grid>*/}
+                {/*)}*/}
                 <Modal open={modalIsOpen} onClose={() => setIsOpen(false)}>
                     <DialogContent>
                         <WrappedSelectTopping selectedSize={props.selectedState.size}
