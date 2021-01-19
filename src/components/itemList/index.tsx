@@ -1,31 +1,104 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 
 import {useDispatch, useSelector} from "react-redux";
-import {fetchItems, fetchItemNames, selectItems, selectItemNames} from "~/store/slices/Domain/item.slice";
+import {fetchItems, selectItems} from "~/store/slices/Domain/item.slice";
+
+import {Grid, makeStyles} from "@material-ui/core";
+import {Pagination} from "@material-ui/lab";
+
+import SearchArea from "~/components/itemList/SearchArea";
+import OptionForm from "~/components/itemList/OptionForm";
+import ItemCard from "~/components/itemList/ItemCard";
+
+const useStyles = makeStyles((theme) => ({
+    itemCard: {
+        margin: theme.spacing(1)
+    },
+    pagination: {
+        margin: theme.spacing(3)
+    }
+}));
 
 const ItemList: React.FC = () => {
 
     const dispatch = useDispatch();
+    const classes = useStyles();
 
-    // stateからデータを取得
+    // 表示件数
+    const displayItems = [
+        {
+            value: 9,
+            label: '9件'
+        },
+        {
+            value: 18,
+            label: '18件'
+        }
+    ];
+
+    // storeからstateの取得
     const items = useSelector(selectItems);
-    const itemNames = useSelector(selectItemNames);
+
+    // コンポーネント上のstate
+    const [displayCount, setDisplayCount] = useState(displayItems[0].value);
+    const [pageCount, setPageCount] = useState(items.length / displayCount);
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         dispatch(fetchItems({itemName: '', sortId: 0}));
-        dispatch(fetchItemNames());
-    }, [dispatch])
+    }, [dispatch]);
+
+    useEffect(() => {
+        // 総ページ数の算出
+        let totalPageCount;
+        if (items.length % displayCount === 0) {
+            totalPageCount = items.length / displayCount;
+        } else {
+            totalPageCount = Math.floor((items.length / displayCount) + 1);
+        }
+        setPageCount(totalPageCount);
+        setPage(1);
+    }, [items, displayCount]);
 
     return (
-        <>
-            {items && items.map((item) => (
-                <div key={item.id}>Mサイズ価格：{item.priceM}</div>
-            ))}
+        <div>
+            <Grid container justify={"center"} alignItems={"center"}>
+                {/*検索フォーム*/}
+                <Grid item xs={8}>
+                    <SearchArea handleSearch={(searchForm) => {
+                        dispatch(fetchItems(searchForm))
+                    }}/>
+                </Grid>
 
-            {itemNames && itemNames.map((itemName, index) => (
-                <div key={index}>{itemName}</div>
-            ))}
-        </>
-    )
-}
+                {/*表示件数切り替え*/}
+                <Grid item xs={2}>
+                    <OptionForm label={'表示件数'} value={displayCount} optionItems={displayItems} handleChange={(val) => {
+                        setDisplayCount(val);
+                    }}/>
+                </Grid>
+            </Grid>
+
+            {/*商品一覧*/}
+            <Grid container justify={"center"} alignItems={"center"}>
+                <Grid item xs={10}>
+                    <Grid container justify={"center"} alignItems={"center"}>
+                        {items && items.slice(displayCount * (page - 1), displayCount * page).map((item) => (
+                            <Grid key={item.id} item xs={3} className={classes.itemCard}>
+                                <ItemCard item={item}/>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            {/*Pagination*/}
+            <Grid container justify={"center"} alignItems={"center"}>
+                <Pagination count={pageCount} page={page} onChange={(e, val) => {
+                    setPage(val)
+                }} className={classes.pagination} size={"large"}/>
+            </Grid>
+        </div>
+    );
+};
+
 export default ItemList;

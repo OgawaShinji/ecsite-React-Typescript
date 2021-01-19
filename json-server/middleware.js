@@ -14,7 +14,7 @@ module.exports = function (req, res, next) {
         req.url = "/user"
     } else if (req.url === "/django/cart") {
         req.url = "/cart"
-    } else if (req.url === "/item/") {
+    } else if (req.url === "/flask/item/1") {
         req.url = "/item"
     } else if (req.url === "/flask/topping/") {
         req.url = "/topping"
