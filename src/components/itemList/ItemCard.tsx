@@ -3,6 +3,9 @@ import React from "react";
 import {Paper, makeStyles, Grid, Avatar, CardActionArea, Typography} from '@material-ui/core';
 import {Item} from '~/types/interfaces';
 
+import {useDispatch} from "react-redux";
+import {setItemDetail} from '~/store/slices/Domain/item.slice';
+
 const useStyles = makeStyles((theme) => ({
     avatar: {
         width: '100%',
@@ -31,12 +34,21 @@ type Props = {
 
 const ItemCard: React.FC<Props> = props => {
 
+    const dispatch = useDispatch();
     const classes = useStyles();
+
+    const toItemDetail = async () => {
+        dispatch(setItemDetail(props.item));
+    }
 
     return (
         <div>
             <Paper elevation={0}>
-                <CardActionArea>
+                <CardActionArea onClick={() => {
+                    toItemDetail().then(() => {
+                        console.log('click')
+                    })
+                }}>
                     <Grid container justify={"center"} alignItems={"center"}>
                         <Grid item xs={12}>
                             <Avatar variant={"rounded"} alt={'pizza'}
