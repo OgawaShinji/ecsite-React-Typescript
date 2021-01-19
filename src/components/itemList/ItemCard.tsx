@@ -1,6 +1,7 @@
 import React from "react";
 
 import {Paper, makeStyles, Grid, Avatar, CardActionArea, Typography} from '@material-ui/core';
+import {Item} from '~/types/interfaces';
 
 const useStyles = makeStyles((theme) => ({
     avatar: {
@@ -9,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         margin: theme.spacing(1),
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold'
     },
     size: {
@@ -24,7 +25,11 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const ItemCard: React.FC = () => {
+type Props = {
+    item: Item;
+}
+
+const ItemCard: React.FC<Props> = props => {
 
     const classes = useStyles();
 
@@ -35,20 +40,20 @@ const ItemCard: React.FC = () => {
                     <Grid container justify={"center"} alignItems={"center"}>
                         <Grid item xs={12}>
                             <Avatar variant={"rounded"} alt={'pizza'}
-                                    src={"http://34.84.118.239/static/img/item/17.jpg"}
-                                    className={classes.avatar}>P</Avatar>
+                                    src={props.item.imagePath}
+                                    className={classes.avatar}/>
                         </Grid>
                     </Grid>
                     <Grid container justify={"center"} alignItems={"center"}>
                         <Typography className={classes.title}>
-                            じゃがバターベーコン
+                            {props.item.name}
                         </Typography>
                     </Grid>
                     <Grid container justify={"center"} alignContent={"center"}>
                         <Grid item className={classes.control}>
                             <Avatar className={classes.size}>M</Avatar>&nbsp;
                             <Typography>
-                                1,000円
+                                {props.item.priceM.toLocaleString()}円
                             </Typography>
                         </Grid>
                     </Grid>
@@ -56,7 +61,7 @@ const ItemCard: React.FC = () => {
                         <Grid item className={classes.control}>
                             <Avatar className={classes.size}>L</Avatar>&nbsp;
                             <Typography>
-                                1,500円
+                                {props.item.priceL.toLocaleString()}円
                             </Typography>
                         </Grid>
                     </Grid>
