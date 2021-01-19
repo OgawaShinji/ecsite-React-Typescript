@@ -23,7 +23,7 @@ const initialState: orderState = {
  * @return res: orderItem[]
  */
 
-export const fetchOrderItems = createAsyncThunk(
+export const asyncFetchOrderItems = createAsyncThunk(
     'order/fetchOrderItems',
     async () => {
         const {data} = await axios.get(`${API_URL}/django/cart`, {
@@ -45,7 +45,7 @@ export const fetchOrderItems = createAsyncThunk(
  *  @return void
  */
 
-export const postOrderItem = createAsyncThunk(
+export const asyncPostOrderItem = createAsyncThunk(
     'order/postOrderItem',
     async (order: Order) => {
         await axios.post(`${API_URL}/django/cart`, {order}, {
@@ -65,7 +65,7 @@ export const postOrderItem = createAsyncThunk(
  * @return void
  */
 
-export const updateOrderItem = createAsyncThunk(
+export const asyncUpdateOrderItem = createAsyncThunk(
     'order/updateOrderItem',
     async (order: Order) => {
         await axios.post(`${API_URL}/django/cart`, {order}, {
@@ -85,7 +85,7 @@ export const updateOrderItem = createAsyncThunk(
  * @return void
  */
 
-export const deleteOrderItem = createAsyncThunk(
+export const asyncDeleteOrderItem = createAsyncThunk(
     'order/deleteOrderItem',
     async (orderItemId: number) => {
         await axios.delete(`${API_URL}/django/cart`, {
@@ -171,11 +171,6 @@ export const orderSlice = createSlice({
             state.order.orderItems = copyOrderItems
             state.orderSubTotalPrice = orderSubTotalPrice
         }),
-        setUpdateOrderItem: (state: orderState, action) => {
-            // console.log(action.payload)
-            state.order.orderItems?.splice(action.payload.index, 1)
-            // console.log(state.order.orderItems)
-        },
         //追加機能
         setUserAddress: ((state: orderState, action) => {
 
@@ -186,33 +181,33 @@ export const orderSlice = createSlice({
     },
     extraReducers: (builder => {
         // fetchOrderItems
-        builder.addCase(fetchOrderItems.fulfilled, (state, action) => {
+        builder.addCase(asyncFetchOrderItems.fulfilled, (state, action) => {
             const camelPayload = camelcaseKeys(action.payload, {deep: true})
             const _action = orderSlice.actions.setOrderItemsAndSubTotalPrice(camelPayload.order.orderItems)
             orderSlice.caseReducers.setOrderItemsAndSubTotalPrice(state, _action)
         })
-        builder.addCase(fetchOrderItems.rejected, (state, action) => {
+        builder.addCase(asyncFetchOrderItems.rejected, (state, action) => {
             console.log(action.error)
         })
 
         // postOrderItem
-        builder.addCase(postOrderItem.fulfilled, (state, action) => {
+        builder.addCase(asyncPostOrderItem.fulfilled, (state, action) => {
         })
-        builder.addCase(postOrderItem.rejected, (state, action) => {
+        builder.addCase(asyncPostOrderItem.rejected, (state, action) => {
             console.log(action.error)
         })
 
         // updateOrderItem
-        builder.addCase(updateOrderItem.fulfilled, (state, action) => {
+        builder.addCase(asyncUpdateOrderItem.fulfilled, (state, action) => {
         })
-        builder.addCase(updateOrderItem.rejected, (state, action) => {
+        builder.addCase(asyncUpdateOrderItem.rejected, (state, action) => {
             console.log(action.error)
         })
 
         // deleteOrderItem
-        builder.addCase(deleteOrderItem.fulfilled, (state, action) => {
+        builder.addCase(asyncDeleteOrderItem.fulfilled, (state, action) => {
         })
-        builder.addCase(deleteOrderItem.rejected, (state, action) => {
+        builder.addCase(asyncDeleteOrderItem.rejected, (state, action) => {
             console.log(action.error)
         })
 
@@ -237,4 +232,3 @@ export const selectOrder = (state: RootState) => state.order.order
 export const selectOrderItems = (state: RootState) => state.order.order.orderItems
 export const selectOrderSubTotalPrice = (state: RootState) => state.order.orderSubTotalPrice
 
-export const {setOrderItemsAndSubTotalPrice, setUpdateOrderItem} = orderSlice.actions
