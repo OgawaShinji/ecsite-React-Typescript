@@ -97,6 +97,10 @@ const ItemList: React.FC = () => {
                     setPage(val)
                 }} className={classes.pagination} size={"large"}/>
             </Grid>
+
+            <Grid container justify={"center"} alignItems={"center"}>
+                ※価格は全て税込です。
+            </Grid>
         </div>
     );
 };
