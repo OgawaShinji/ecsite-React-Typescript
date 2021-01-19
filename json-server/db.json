@@ -103,19 +103,19 @@
               "id": 2,
               "topping": {
                 "id": 1,
-                "name": "orange",
-                "price_m": 200,
-                "price_l": 300
+                "name": "topping 1",
+                "price_m": 20,
+                "price_l": 50
               },
               "order_item": 1
             },
             {
               "id": 2,
               "topping": {
-                "id": 1,
-                "name": "tomato",
-                "price_m": 200,
-                "price_l": 300
+                "id": 2,
+                "name": "topping 2",
+                "price_m": 15,
+                "price_l": 30
               },
               "order_item": 1
             }
@@ -140,29 +140,29 @@
               "id": 1,
               "topping": {
                 "id": 1,
-                "name": "sudachi",
-                "price_m": 200,
-                "price_l": 300
+                "name": "topping 1",
+                "price_m": 20,
+                "price_l": 50
               },
               "order_item": 1
             },
             {
               "id": 3,
               "topping": {
-                "id": 1,
-                "name": "kitune",
-                "price_m": 200,
-                "price_l": 300
+                "id": 2,
+                "name": "topping 2",
+                "price_m": 15,
+                "price_l": 30
               },
               "order_item": 1
             },
             {
               "id": 5,
               "topping": {
-                "id": 1,
-                "name": "negi",
-                "price_m": 200,
-                "price_l": 300
+                "id": 3,
+                "name": "topping 3",
+                "price_m": 25,
+                "price_l": 35
               },
               "order_item": 1
             }
