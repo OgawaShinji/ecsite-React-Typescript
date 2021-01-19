@@ -4,12 +4,20 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchItems, selectItems} from "~/store/slices/Domain/item.slice";
 
 import SearchArea from "~/components/itemList/SearchArea";
-import {Grid} from "@material-ui/core";
+import {Grid, makeStyles} from "@material-ui/core";
 import OptionForm from "~/components/itemList/OptionForm";
+import ItemCard from "~/components/itemList/ItemCard";
+
+const useStyles = makeStyles((theme) => ({
+    itemCard: {
+        margin: theme.spacing(1)
+    }
+}))
 
 const ItemList: React.FC = () => {
 
     const dispatch = useDispatch();
+    const classes = useStyles();
 
     // 表示件数
     const displayItems = [
@@ -46,9 +54,18 @@ const ItemList: React.FC = () => {
                 </Grid>
             </Grid>
 
-            {items && items.map((item) => (
-                <div key={item.id}>Mサイズ価格：{item.priceM}</div>
-            ))}
+            <Grid container justify={"center"} alignItems={"center"}>
+                <Grid item xs={10}>
+                    <Grid container justify={"center"} alignItems={"center"}>
+                        {items && items.map((item) => (
+                            <Grid item xs={3} className={classes.itemCard}>
+                                <ItemCard item={item}/>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Grid>
+            </Grid>
+
         </div>
     )
 }
