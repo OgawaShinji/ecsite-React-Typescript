@@ -6,6 +6,8 @@ import {Item} from '~/types/interfaces';
 import {useDispatch} from "react-redux";
 import {setItemDetail} from '~/store/slices/Domain/item.slice';
 
+import {withRouter, RouteComponentProps} from 'react-router-dom';
+
 const useStyles = makeStyles((theme) => ({
     avatar: {
         width: '100%',
@@ -32,7 +34,7 @@ type Props = {
     item: Item;
 }
 
-const ItemCard: React.FC<Props> = props => {
+const ItemCard: React.FC<Props & RouteComponentProps> = props => {
 
     const dispatch = useDispatch();
     const classes = useStyles();
@@ -46,7 +48,7 @@ const ItemCard: React.FC<Props> = props => {
             <Paper elevation={0}>
                 <CardActionArea onClick={() => {
                     toItemDetail().then(() => {
-                        console.log('click')
+                        props.history.push({pathname: `/itemDetail/${props.item.id}`, state: {item: props.item}});
                     })
                 }}>
                     <Grid container justify={"center"} alignItems={"center"}>
@@ -83,6 +85,4 @@ const ItemCard: React.FC<Props> = props => {
     );
 };
 
-// TODO: setItemDetailが成功したらページ遷移（thenブロックで遷移処理書く）
-
-export default ItemCard;
+export default withRouter(ItemCard);
