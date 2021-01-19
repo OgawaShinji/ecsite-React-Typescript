@@ -126,6 +126,8 @@ export const itemSlice = createSlice({
     })
 })
 
+export const {setItemDetail} = itemSlice.actions;
+
 export const selectItems = (state: RootState) => state.item.items;
 export const selectItemNames = (state: RootState) => state.item.itemNames;
 export const selectItemDetail = (state: RootState) => state.item.itemDetail;
