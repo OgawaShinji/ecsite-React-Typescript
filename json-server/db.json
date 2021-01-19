@@ -65,6 +65,12 @@
       "name": "topping 2",
       "price_m": 15,
       "price_l": 30
+    },
+    {
+      "id": 3,
+      "name": "topping 3",
+      "price_m": 25,
+      "price_l": 35
     }
   ],
   "cart": {
