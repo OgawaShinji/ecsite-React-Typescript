@@ -10,10 +10,10 @@ function App() {
     const dispatch: AppDispatch = useDispatch()
     useEffect(() => {
         const a = async () => {
-            await dispatch(login({email: "email", password: "pass"})).then(() => dispatch(fetchLoginUser()))
+            //await dispatch(login({email: "email", password: "pass"})).then(() => dispatch(fetchLoginUser()))
             //下記のように検証したいメソッドを追加していって下さい
             //await dispatch()
-            await dispatch(logout())
+            //await dispatch(logout())
         }
         a()
     }, [dispatch])

@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {User} from "~/types/interfaces";
 import {RootState} from "~/store/index";
-import {API_URL} from "~/store/api";
+import {API_URL, REST_URL} from "~/store/api";
 import axios from "axios";
 import camelcaseKeys from "camelcase-keys";
 
@@ -25,7 +25,7 @@ export const logout = createAsyncThunk(
     'auth/logout',
     async () => {
         try {
-            const {data} = await axios.post(`${API_URL}/auth/logout/`, {}, {
+            const {data} = await axios.post(`${REST_URL}/auth/logout/`, {}, {
                 method: "POST",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
@@ -48,8 +48,11 @@ export const login = createAsyncThunk(
     'auth/login',
     async (loginInfo: loginForm) => {
         try {
-            const {data} = await axios.post(`${API_URL}/auth/login/`, loginInfo, {
+            const {data} = await axios.post(`${REST_URL}/auth/login/`, loginInfo, {
                 method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
             return data;
         } catch (e) {
@@ -69,7 +72,7 @@ export const fetchLoginUser = createAsyncThunk(
     'auth/user',
     async () => {
         try {
-            const {data} = await axios.get(`${API_URL}/auth/user/`, {
+            const {data} = await axios.get(`${REST_URL}/auth/user/`, {
                 method: "GET",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
