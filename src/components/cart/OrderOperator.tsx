@@ -1,9 +1,13 @@
-import {FC, useEffect} from "react";
+import {FC} from "react";
 import {Button, Card, CardActionArea, CardActions, CardContent, makeStyles} from "@material-ui/core";
+import {OrderItem} from "~/types/interfaces";
 
 interface Props {
     subTotalPrice: number
+    orderItems: Array<OrderItem> | undefined
+    deleteOrderItem: (orderItemId: number) => void
 }
+
 
 const useStyles = makeStyles({
     root: {
@@ -17,13 +21,21 @@ const useStyles = makeStyles({
     }
 });
 
+
 const OrderOperator: FC<Props> = (props) => {
 
     const classes = useStyles();
 
-    useEffect(() => {
-        // console.log(props.subTotalPrice)
-    })
+    /**
+     * OrderItemEntryのダイアログを非表示にする関数
+     * @Params orderItems: OrderItem[]
+     */
+    const allDeleteOrderItems = (orderItems: OrderItem[]) => {
+        orderItems.map((orderItem => {
+            props.deleteOrderItem(orderItem.id)
+        }))
+    }
+
 
     return (
         <Card className={classes.root}>
@@ -38,7 +50,13 @@ const OrderOperator: FC<Props> = (props) => {
                 </Button>
             </CardActions>
             <CardActions className={classes.btn}>
-                <Button size="small" color="primary" className={classes.btn}>
+                {/*TODO: カートが空なら押せないようにしておく*/}
+                <Button
+                    size="small"
+                    color="primary"
+                    className={classes.btn}
+                    onClick={() => allDeleteOrderItems(props.orderItems!)}
+                >
                     カートを空にする
                 </Button>
                 <Button size="small" color="primary" className={classes.btn}>
