@@ -27,30 +27,189 @@
   "items": {
     "items": [
       {
+        "deleted": 0,
+        "description": "ホクホクのポテトと旨味が凝縮されたベーコンを特製マヨソースで味わって頂く商品です。バター風味豊かなキューブチーズが食材の味を一層引き立てます。",
         "id": 1,
-        "name": "item_name1",
-        "image_path": "image1",
-        "price_m": 100,
-        "price_l": 200,
-        "description": "desc1"
+        "image_path": "http://34.84.118.239/static/img/item/1.jpg",
+        "name": "じゃがバターベーコン",
+        "price_l": 2570,
+        "price_m": 1490
       },
       {
+        "deleted": 0,
+        "description": "グリーンアスパラと相性の良いベーコンにいろどりのフレッシュトマトをトッピングし特製マヨソースでまとめた商品です",
         "id": 2,
-        "name": "item_name2",
-        "image_path": "image2",
-        "price_m": 200,
-        "price_l": 300,
-        "description": "desc2"
+        "image_path": "http://34.84.118.239/static/img/item/2.jpg",
+        "name": "アスパラ・ミート",
+        "price_l": 2570,
+        "price_m": 1490
+      },
+      {
+        "deleted": 0,
+        "description": "マッシュルームと熟成ベーコンにブラックペッパーをトッピングしたシンプルなピザ！",
+        "id": 3,
+        "image_path": "http://34.84.118.239/static/img/item/3.jpg",
+        "name": "熟成ベーコンとマッシュルーム",
+        "price_l": 2570,
+        "price_m": 1490
+      },
+      {
+        "deleted": 0,
+        "description": "マイルドな味付けのカレーに大きくカットしたポテトをのせた、バターとチーズの風味が食欲をそそるお子様でも楽しめる商品です",
+        "id": 4,
+        "image_path": "http://34.84.118.239/static/img/item/4.jpg",
+        "name": "カレーじゃがバター",
+        "price_l": 2980,
+        "price_m": 1900
+      },
+      {
+        "deleted": 0,
+        "description": "大きくカットしたポテトにコーンとベーコンをトッピングして、明太クリームソース、バター、チーズを合わせた、家族で楽しめるピザです",
+        "id": 5,
+        "image_path": "http://34.84.118.239/static/img/item/5.jpg",
+        "name": "明太バターチーズ",
+        "price_l": 2980,
+        "price_m": 1900
+      },
+      {
+        "deleted": 0,
+        "description": "「デラックス」、「ミート・シュプリーム」、「ツナマイルド」、「ガーリック・トマト」の組み合わせ。「チャリティー4」1枚のご注文につき、世界の飢餓救済に",
+        "id": 8,
+        "image_path": "http://34.84.118.239/static/img/item/8.jpg",
+        "name": "Charity4",
+        "price_l": 3380,
+        "price_m": 2160
+      },
+      {
+        "deleted": 0,
+        "description": "あらびきスライスソーセージとイタリアンソーセージの2種類のソーセージを、トマトソースと特製マヨソースの2種類のソースで召し上がって頂く商品です",
+        "id": 13,
+        "image_path": "http://34.84.118.239/static/img/item/13.jpg",
+        "name": "めちゃマヨミート",
+        "price_l": 3380,
+        "price_m": 2160
+      },
+      {
+        "deleted": 0,
+        "description": "「めちゃマヨ・ミート」「ガーリック・トマト」「えびマヨコーン」、「フレッシュモッツァレラのマルゲリータ」が一つになった4種のピザ",
+        "id": 12,
+        "image_path": "http://34.84.118.239/static/img/item/12.jpg",
+        "name": "バラエティー４",
+        "price_l": 3380,
+        "price_m": 2160
+      },
+      {
+        "deleted": 0,
+        "description": "ピザの王道！トマトとフレッシュモッツァレラが絶妙です",
+        "id": 10,
+        "image_path": "http://34.84.118.239/static/img/item/10.jpg",
+        "name": "フレッシュモッツァレラ",
+        "price_l": 3380,
+        "price_m": 2160
+      },
+      {
+        "deleted": 0,
+        "description": "ラクラクピザ自慢「特うまプルコギ」定番「デラックス」お子様に人気「ツナマイルド」女性に好評「チーズ＆チーズ」の４種のおいしさを贅沢に組み合わせました",
+        "id": 16,
+        "image_path": "http://34.84.118.239/static/img/item/16.jpg",
+        "name": "Family４",
+        "price_l": 3650,
+        "price_m": 2440
+      },
+      {
+        "deleted": 0,
+        "description": "みんな大好き！ポテトと特製マヨソースの組み合わせ！定番のおいしさを味わえます",
+        "id": 17,
+        "image_path": "http://34.84.118.239/static/img/item/17.jpg",
+        "name": "アイダホ風ほっくりポテマヨ",
+        "price_l": 3650,
+        "price_m": 2440
+      },
+      {
+        "deleted": 0,
+        "description": "ラクラクピザの人気ピザ\"ベスト4\"（「アイダホ風ほっくりポテマヨ」、「フレッシュモッツァレラのマルゲリータ」、「特うまプルコギ」",
+        "id": 7,
+        "image_path": "http://34.84.118.239/static/img/item/7.jpg",
+        "name": "ピザベスト4",
+        "price_l": 3780,
+        "price_m": 2570
+      },
+      {
+        "deleted": 0,
+        "description": "お肉好きの方必見！ラクラクピザ人気のミートシリーズが1枚のピザになって新登場！「厚切イベリコ」「ワイルド・ガーリック」「特うまプルコギ」",
+        "id": 11,
+        "image_path": "http://34.84.118.239/static/img/item/11.jpg",
+        "name": "Specialミート4",
+        "price_l": 4050,
+        "price_m": 2700
+      },
+      {
+        "deleted": 0,
+        "description": "シーフードナンバー１！魚介の旨みたっぷり！人気の海の幸と、野菜のリッチなおいしさ",
+        "id": 15,
+        "image_path": "http://34.84.118.239/static/img/item/15.jpg",
+        "name": "シーフードミックス",
+        "price_l": 4050,
+        "price_m": 2700
+      },
+      {
+        "deleted": 0,
+        "description": "「厚切イベリコ」、「贅沢フォルマッジ」「ラクラクピザ・シュプリーム」「アボカドシュリンプ」4種類の濃厚な味わいが一つで楽しめるピザです",
+        "id": 6,
+        "image_path": "http://34.84.118.239/static/img/item/6.jpg",
+        "name": "濃厚Gorgeous4",
+        "price_l": 4050,
+        "price_m": 2700
+      },
+      {
+        "deleted": 0,
+        "description": "ミートナンバー１！甘辛ダレの焼肉がクセになる！食べると思わず元気が出るラクラクピザの自信作",
+        "id": 9,
+        "image_path": "http://34.84.118.239/static/img/item/9.jpg",
+        "name": "特うまプルコギ",
+        "price_l": 4050,
+        "price_m": 2700
+      },
+      {
+        "deleted": 0,
+        "description": "濃厚なカマンベールソース＆カマンベールと香りとコクのパルメザンチーズをトッピング",
+        "id": 18,
+        "image_path": "http://34.84.118.239/static/img/item/18.jpg",
+        "name": "贅沢フォルマッジ",
+        "price_l": 4050,
+        "price_m": 2700
+      },
+      {
+        "deleted": 0,
+        "description": "デミグラスソースでじっくり煮込んだ旨味たっぷりのビーフシチューのピザ",
+        "id": 14,
+        "image_path": "http://34.84.118.239/static/img/item/14.jpg",
+        "name": "とろけるビーフシチュー",
+        "price_l": 4460,
+        "price_m": 2980
       }
     ]
   },
   "itemNames": {
     "item_names": [
-      "item1",
-      "item2",
-      "item3",
-      "item4",
-      "item5"
+      "じゃがバターベーコン",
+      "アスパラ・ミート",
+      "熟成ベーコンとマッシュルーム",
+      "カレーじゃがバター",
+      "明太バターチーズ",
+      "濃厚Gorgeous4",
+      "ピザベスト4",
+      "Charity4",
+      "特うまプルコギ",
+      "フレッシュモッツァレラ",
+      "Specialミート4",
+      "バラエティー４",
+      "めちゃマヨミート",
+      "とろけるビーフシチュー",
+      "シーフードミックス",
+      "Family４",
+      "アイダホ風ほっくりポテマヨ",
+      "贅沢フォルマッジ"
     ]
   },
   "topping": [

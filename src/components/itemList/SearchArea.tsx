@@ -45,7 +45,7 @@ const SearchArea: React.FC<Props> = props => {
     };
 
     return (
-        <div style={{backgroundColor: 'rgb(211, 211, 100)'}}>
+        <div>
             <Grid container justify={"center"} alignItems={"center"}>
                 <Grid item xs={1}>
                     <Search fontSize={"default"}/>
