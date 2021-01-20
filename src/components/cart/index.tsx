@@ -1,13 +1,11 @@
 import {FC} from "react";
 import CartList from "./CartList"
-import Header from "~/components/elements/Header"
 
 const Cart: FC = () => {
     return (
-        <>
-            <Header/>
+        <div>
             <CartList/>
-        </>
+        </div>
     )
 }
 export default Cart;
