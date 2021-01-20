@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {Button, Checkbox, createStyles, Grid, makeStyles, Paper, Theme, Typography} from "@material-ui/core";
-import TotalPrice from "~/components/elements/totalPrice";
+import TotalPrice from "~/components/elements/totalPrice/totalPrice";
 import {useDispatch, useSelector} from "react-redux";
 import {postOrder, selectOrderSubTotalPrice} from "~/store/slices/Domain/order.slice";
 import {User} from "~/types/interfaces";
