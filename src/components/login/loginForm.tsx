@@ -28,6 +28,16 @@ const LoginForm: React.FC<Props> = (props) => {
     const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         setPassword({value: event.target.value, errorMessage: passwordValidation(event.target.value)})
     }
+
+    /**
+     * keyが押される度に発火する
+     * 押されたKeyがEnterの時にみhandleLoginClickを呼び出す
+     * @param e:押されたKeyの値
+     */
+    const handleKeyPress = (e: string) => {
+        if (e === "Enter") handleLoginClick();
+    }
+
     /**
      * login button クリック時の処理
      * errorMessageが空文字ならLogin処理を呼び出し、商品一覧へ遷移
@@ -59,13 +69,13 @@ const LoginForm: React.FC<Props> = (props) => {
      */
     const passwordValidation = (value: string): string => {
         if (!value) return '*パスワードを入力してください'
-        if (value.length > 16 || value.length < 8) return '*6字以上16字以内で入力してください'
+        if (value.length > 16 || value.length < 6) return '*6字以上16字以内で入力してください'
         return ''
     }
 
     return (<>
         <Card style={props.styleProps}>
-            <CardHeader title="Login"/>
+            <CardHeader title="Login" style={{backgroundColor: "#ffa500"}}/>
             <CardContent>
                 <div>
                     <div style={{color: 'red'}}>{email.errorMessage}</div>
@@ -79,7 +89,7 @@ const LoginForm: React.FC<Props> = (props) => {
                         margin="normal"
                         value={email.value}
                         onChange={handleEmailChange}
-                        //onKeyPress={handleKeyPress}
+                        onKeyPress={(e) => handleKeyPress(e.key)}
                     />
                     <div style={{color: 'red'}}>{password.errorMessage}</div>
                     <TextField
@@ -90,10 +100,9 @@ const LoginForm: React.FC<Props> = (props) => {
                         label="password"
                         placeholder="Password"
                         margin="normal"
-                        //helperText={state.helperText}
                         value={password.value}
                         onChange={handlePasswordChange}
-                        //onKeyPress={handleKeyPress}
+                        onKeyPress={(e) => handleKeyPress(e.key)}
                     />
                 </div>
             </CardContent>
@@ -101,9 +110,8 @@ const LoginForm: React.FC<Props> = (props) => {
                 <Button
                     variant="contained"
                     size="large"
-                    color="secondary"
+                    color={"secondary"}
                     style={{left: '35%'}}
-                    //className={classes.loginBtn}
                     onClick={handleLoginClick}
                     disabled={email.errorMessage.length > 0 || password.errorMessage.length > 0 || email.value === '' || password.value === ''}
                 >

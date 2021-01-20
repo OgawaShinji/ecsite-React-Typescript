@@ -5,23 +5,21 @@ import {Path} from "~/router/routes";
 
 const Login: React.FC = () => {
     const style: { [key: string]: React.CSSProperties } = {
-        LoginForm: {
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            width:400
-        },
-        Link: {
-            position: 'absolute',
-            left: '50%',
-            top: '80%',
-            transform: 'translate(-50%, -50%)'
-        }
+        LoginForm: {},
+        Link: {}
     }
     return (<>
-        <LoginForm styleProps={style.LoginForm}/>
-        <Link to={Path.register} style={style.Link}>ユーザー登録はこちらから</Link>
+        <div style={{
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            width: "50%",
+            margin: "0 auto",
+            transform:"translateY(50%)"
+        }}>
+            <LoginForm styleProps={style.LoginForm}/>
+            <Link to={Path.register} style={style.Link}>ユーザー登録はこちらから</Link>
+        </div>
     </>)
-}
+};
 export default Login;
