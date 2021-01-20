@@ -2,8 +2,10 @@
   "logout": {
     "message": "success"
   },
-  "login": {
+  "login_success": {
     "token": "this is token"
+  },
+  "login_fail": {
   },
   "register": {
     "message": "register success"
@@ -492,7 +494,6 @@
             "deleted": 0
           },
           "order_toppings": [
-
           ],
           "quantity": 5,
           "size": "M",

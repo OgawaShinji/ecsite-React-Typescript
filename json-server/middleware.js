@@ -2,7 +2,9 @@ module.exports = function (req, res, next) {
     if (req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
         req.url += '_' + req.method // POSTもしくはPUTの時はreq.urlの語尾に'_POST'(もしくは'_PUT')をつける
         if (req.url === "/auth/login/_POST") {
-            req.url = "/login"
+            req.url = "/login_fail"
+            console.log(req.body)
+            if (req.body.email==="a@a.a"&&req.body.password==="123456")req.url="/login_success"
         } else if (req.url === "/auth/logout/_POST") {
             req.url = "/logout"
         } else {//以下に表示したい物や加えたい処理を書いて下さい
