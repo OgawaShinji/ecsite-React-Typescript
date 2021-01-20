@@ -454,7 +454,7 @@
               "deleted": 0,
               "description": "ホクホクのポテトと旨味が凝縮されたベーコンを特製マヨソースで味わって頂く商品です。バター風味豊かなキューブチーズが食材の味を一層引き立てます。",
               "id": 1,
-              "image_path": "1.jpg",
+              "image_path": "http://34.84.118.239/static/img/item/17.jpg",
               "name": "じゃがバターベーコン",
               "price_l": 2570,
               "price_m": 1490
@@ -479,7 +479,7 @@
               "deleted": 0,
               "description": "マッシュルームと熟成ベーコンにブラックペッパーをトッピングしたシンプルなピザ！",
               "id": 3,
-              "image_path": "3.jpg",
+              "image_path": "http://34.84.118.239/static/img/item/17.jpg",
               "name": "熟成ベーコンとマッシュルーム",
               "price_l": 2570,
               "price_m": 1490
@@ -510,7 +510,7 @@
               "deleted": 0,
               "description": "ホクホクのポテトと旨味が凝縮されたベーコンを特製マヨソースで味わって頂く商品です。バター風味豊かなキューブチーズが食材の味を一層引き立てます。",
               "id": 1,
-              "image_path": "1.jpg",
+              "image_path": "http://34.84.118.239/static/img/item/17.jpg",
               "name": "じゃがバターベーコン",
               "price_l": 2570,
               "price_m": 1490
@@ -535,7 +535,7 @@
               "deleted": 0,
               "description": "マッシュルームと熟成ベーコンにブラックペッパーをトッピングしたシンプルなピザ！",
               "id": 3,
-              "image_path": "3.jpg",
+              "image_path": "http://34.84.118.239/static/img/item/17.jpg",
               "name": "熟成ベーコンとマッシュルーム",
               "price_l": 2570,
               "price_m": 1490
@@ -551,7 +551,7 @@
               "deleted": 0,
               "description": "マッシュルームと熟成ベーコンにブラックペッパーをトッピングしたシンプルなピザ！",
               "id": 3,
-              "image_path": "3.jpg",
+              "image_path": "http://34.84.118.239/static/img/item/17.jpg",
               "name": "熟成ベーコンとマッシュルーム",
               "price_l": 2570,
               "price_m": 1490
@@ -582,7 +582,7 @@
               "deleted": 0,
               "description": "ホクホクのポテトと旨味が凝縮されたベーコンを特製マヨソースで味わって頂く商品です。バター風味豊かなキューブチーズが食材の味を一層引き立てます。",
               "id": 1,
-              "image_path": "1.jpg",
+              "image_path": "http://34.84.118.239/static/img/item/17.jpg",
               "name": "じゃがバターベーコン",
               "price_l": 2570,
               "price_m": 1490
@@ -609,7 +609,7 @@
     ]
   },
   "order-history-count": {
-    "count": 13
+    "count": 3
   },
   "order": {
     "message": "order success"
