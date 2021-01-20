@@ -108,7 +108,7 @@ const OrderInfo: React.FC<Props> = props => {
                             </Grid>
                             <Grid item>
                                 <Typography className={classes.text}>
-                                    〒 {zipcode && zipcode.slice(0, 3)}-{zipcode && zipcode.slice(4, 7)}
+                                    〒 {zipcode && zipcode.slice(0, 3)}-{zipcode && zipcode.slice(3, 7)}
                                 </Typography>
                             </Grid>
                             <Grid item>
