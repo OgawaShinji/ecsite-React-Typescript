@@ -9,6 +9,7 @@ import {Pagination} from "@material-ui/lab";
 import SearchArea from "~/components/itemList/SearchArea";
 import OptionForm from "~/components/itemList/OptionForm";
 import ItemCard from "~/components/itemList/ItemCard";
+import Header from "~/components/elements/Header"
 
 const useStyles = makeStyles((theme) => ({
     itemCard: {
@@ -62,6 +63,7 @@ const ItemList: React.FC = () => {
 
     return (
         <div>
+            <Header/>
             <Grid container justify={"center"} alignItems={"center"}>
                 {/*検索フォーム*/}
                 <Grid item xs={8}>

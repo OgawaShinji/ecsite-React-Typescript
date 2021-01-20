@@ -4,12 +4,14 @@ import {OrderItem, OrderTopping, Topping} from "~/types/interfaces"
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/orderItemEntry";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
 import {
+    Box,
     Button,
     ButtonBase,
     Card,
     CardActions,
     createStyles,
     DialogContent,
+    Divider,
     Grid,
     ListItem,
     makeStyles,
@@ -22,7 +24,7 @@ import {
 interface Props {
     orderItem: OrderItem
     index: number
-    updateOrderItems: ({orderItem, index}: { orderItem: OrderItem, index?: number }) => void
+    updateOrderItems: ({orderItem, index}: { orderItem: OrderItem, index: number }) => void
     deleteOrderItem: (orderItemId: number) => void
 }
 
@@ -31,15 +33,14 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             flexGrow: 1,
-        },
-        paper: {
             padding: theme.spacing(2),
             margin: 'auto',
             width: 700,
+            maxHeight: 200
         },
         image: {
-            width: 128,
-            height: 128,
+            width: 150,
+            height: 150,
         },
         img: {
             margin: 'auto',
@@ -53,7 +54,6 @@ const useStyles = makeStyles((theme: Theme) =>
         }
     }),
 );
-
 
 
 const CartItem: FC<Props> = (props) => {
@@ -122,62 +122,80 @@ const CartItem: FC<Props> = (props) => {
     }
 
 
-
     return (
         <ListItem>
-            <Card className={classes.paper}>
+            <Card className={classes.root}>
                 <Grid container spacing={2}>
-                    <Grid item xs={3}>
+                    {/*image*/}
+                    <Grid item xs={3} container justify={"center"} alignItems={"center"}>
                         <ButtonBase className={classes.image}>
-                            <img className={classes.img} alt="complex" src="/static/images/grid/complex.jpg"/>
+                            <img className={classes.img} alt="complex" src={orderItem.item.imagePath}/>
                         </ButtonBase>
                     </Grid>
                     <Grid item xs={6} sm container>
                         <Grid item xs container direction="column" spacing={2}>
-                            <Grid item xs>
-                                <Typography gutterBottom variant="h6">
-                                    {orderItem.item.name}
-                                </Typography>
-                                <Grid item container alignItems="center" justify="center">
-                                    <Grid item xs={6}>
-                                        <Typography
-                                            gutterBottom>価格：{orderItem.size === 'M' ? orderItem.item.priceM : orderItem.item.priceL}</Typography>
-                                        <Typography gutterBottom>サイズ：{orderItem.size}</Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <ul>
-                                            {orderItem.orderToppings?.map((orderTopping, index) => (
-                                                <li key={index}>{orderTopping.topping.name}</li>
-                                            ))}
-                                        </ul>
-                                    </Grid>
+                            <Grid item container>
+                                <Grid item xs={1}/>
+                                <Grid item xs={11}>
+                                    <Typography gutterBottom variant="h6">
+                                        <Box fontWeight="fontWeightBold">
+                                            {orderItem.item.name}
+                                        </Box>
+                                    </Typography>
+                                    <Divider/>
                                 </Grid>
                             </Grid>
-                            <Grid item>
-                                <CardActions>
-                                    <Button
-                                        variant="outlined"
-                                        color="secondary"
-                                        className={classes.btn}
-                                        onClick={() => deleteOrderItem(orderItem.id!)}
-                                    >削除</Button>
-                                    <Button
-                                        variant="outlined"
-                                        color="primary"
-                                        className={classes.btn}
-                                        onClick={() => setIsOpen(true)}
-                                    >編集</Button>
-                                </CardActions>
+                            <Grid item container >
+                                <Grid item xs={1}/>
+                                <Grid item xs={5}>
+                                        <Typography
+                                            gutterBottom
+                                        >
+                                            価格　：{orderItem.size === 'M' ? orderItem.item.priceM : orderItem.item.priceL}円</Typography>
+                                        <Typography gutterBottom>サイズ： {orderItem.size}</Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <ul>
+                                        {orderItem.orderToppings?.map((orderTopping, index) => (
+                                            <li key={index}>{orderTopping.topping.name}</li>
+                                        ))}
+                                    </ul>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs container>
+                                <Grid item xs={1}/>
+                                <Grid item xs={11}>
+                                    <CardActions>
+                                        <Button
+                                            variant="outlined"
+                                            color="secondary"
+                                            className={classes.btn}
+                                            onClick={() => deleteOrderItem(orderItem.id)}
+                                        >削除</Button>
+                                        <Button
+                                            variant="outlined"
+                                            color="primary"
+                                            className={classes.btn}
+                                            onClick={() => setIsOpen(true)}
+                                        >注文内容を変更</Button>
+                                    </CardActions>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
                     <Grid item xs={3} container alignItems="center">
-                        <Typography variant="subtitle1">
-                            {orderItem.quantity + '個'}
-                        </Typography>
-                        <Typography variant='h6'>
-                            {orderItem.subTotalPrice + '円'}
-                        </Typography>
+                        <Grid item xs={5}>
+                            <Typography variant="subtitle1">
+                                {orderItem.quantity + '個'}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={7}>
+                            <Typography variant='h5'>
+                                <Box fontWeight="fontWeightBold">
+                                    {orderItem.subTotalPrice + '円'}
+                                </Box>
+                            </Typography>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Card>

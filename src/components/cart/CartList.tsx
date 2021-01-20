@@ -16,9 +16,14 @@ import {
 import {Grid, List, makeStyles, Typography} from "@material-ui/core";
 
 const useStyles = makeStyles({
+    root: {
+        backgroundColor: '#f5f5f5',
+        "padding-top": 50,
+        "padding-bottom": 50,
+    },
     orderOperator: {
         position: 'sticky',
-        top: "30%"
+        top: "30%",
     }
 });
 
@@ -51,9 +56,12 @@ const CartList: FC = () => {
     // order更新時
     useEffect(() => {
         if (actionKey === 'UPDATE') {
-            dispatch(asyncUpdateOrderItem(order!))
-            dispatch(asyncFetchOrderItems())
-            setActionKey('')
+            const f = async () => {
+                await dispatch(asyncUpdateOrderItem(order!))
+                await dispatch(asyncFetchOrderItems())
+                await setActionKey('')
+            }
+            f()
         }
     }, [order, dispatch])
 
@@ -62,7 +70,7 @@ const CartList: FC = () => {
      * @Params orderItem: OrderItem, index?: number
      * @return
      */
-    const updateOrderItems = async ({orderItem, index}: { orderItem: OrderItem, index?: number }) => {
+    const updateOrderItems = async ({orderItem, index}: { orderItem: OrderItem, index: number }) => {
 
         let newOrderItems: OrderItem[] = []
 
@@ -84,16 +92,17 @@ const CartList: FC = () => {
      */
     const deleteOrderItem = async (orderItemId: number) => {
         await dispatch(asyncDeleteOrderItem(orderItemId))
+        await dispatch(asyncFetchOrderItems())
     }
 
 
     return (
-        <div>
-            <Typography variant="h3" gutterBottom>
-                カート内容
-            </Typography>
+        <div className={classes.root}>
             <Grid container>
                 <Grid item xs={8}>
+                    <Typography variant="h3" gutterBottom>
+                        注文商品
+                    </Typography>
                     <List>
                         {orderItems &&
                         orderItems!.map((orderItem, index) => (
