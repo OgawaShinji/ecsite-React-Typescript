@@ -1,18 +1,31 @@
-import {FC, useEffect} from "react";
-import {useDispatch} from "react-redux";
-import {OrderItem} from "~/types/interfaces"
+import React, {FC, useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {OrderItem, OrderTopping, Topping} from "~/types/interfaces"
+import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/orderItemEntry";
+import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
 import {
     Button,
     ButtonBase,
     Card,
     CardActions,
     createStyles,
+    DialogContent,
     Grid,
     ListItem,
     makeStyles,
+    Modal,
     Theme,
     Typography
 } from "@material-ui/core";
+
+
+interface Props {
+    orderItem: OrderItem
+    index: number
+    updateOrderItems: ({orderItem, index}: { orderItem: OrderItem, index?: number }) => void
+    deleteOrderItem: (orderItemId: number) => void
+}
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -41,28 +54,73 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface Props {
-    orderItem: OrderItem
-    index: number
-    setOrderItems: ({orderItem, index}: { orderItem?: OrderItem, index: number }) => void
-}
+
 
 const CartItem: FC<Props> = (props) => {
+
     const dispatch = useDispatch()
     const classes = useStyles();
-    const {orderItem, index, setOrderItems} = props
+    const {orderItem, index, updateOrderItems, deleteOrderItem} = props
 
-    useEffect(() => {
-        // orderItem.name='fff'
-        // dispatch(setOrderItemsAndSubTotalPrice())
-        // if (orderItem) {
-        //     setOrderItems({orderItem, index})
-        // }
+    const toppings: Topping[] = useSelector(selectToppings)
+    const [modalIsOpen, setIsOpen] = useState<boolean>(false)
+
+    const selectedTopping: Topping[] = []
+    orderItem.orderToppings?.map(orderTopping => {
+        selectedTopping.push(orderTopping.topping)
     })
 
-    useEffect(() => {
+    const selectedState: itemEntryState = {
+        size: orderItem.size,
+        quantity: orderItem.quantity,
+        toppings: selectedTopping
+    }
 
+    // 初期表示
+    useEffect(() => {
+        if (toppings.length === 0) dispatch(fetchToppings())
     })
+
+    /**
+     * OrderItemEntryのダイアログを非表示にする関数
+     */
+    const onClickCloseOrderItemEntry = () => {
+        setIsOpen(false)
+    }
+
+    /**
+     * 商品のサイズを変更する関数
+     * @Params inputSize: string
+     */
+    const handleSizeChange = (inputSize: string) => {
+        const changedOrderItem = {...orderItem, size: inputSize}
+        updateOrderItems({orderItem: changedOrderItem, index: index})
+    }
+
+    /**
+     * 商品の数量を変更する関数
+     * @Params inputQuantity: string
+     */
+    const handleQuantityChange = (inputQuantity: number) => {
+        const changedOrderItem = {...orderItem, quantity: inputQuantity}
+        updateOrderItems({orderItem: changedOrderItem, index: index})
+    }
+
+    /**
+     * 商品のトッピングを変更する関数
+     * @Params inputSize: string
+     */
+    const handleToppingChange = (toppings: Topping[]) => {
+        // setSelectToppings(toppings)
+        const newOrderToppings: OrderTopping[] = []
+        toppings.map(topping => {
+            const changedOrderTopping: OrderTopping = {topping: topping}
+            newOrderToppings.push(changedOrderTopping)
+        })
+        const changedOrderItem = {...orderItem, orderToppings: newOrderToppings}
+        updateOrderItems({orderItem: changedOrderItem, index: index})
+    }
+
 
 
     return (
@@ -88,8 +146,8 @@ const CartItem: FC<Props> = (props) => {
                                     </Grid>
                                     <Grid item xs={6}>
                                         <ul>
-                                            {orderItem.orderToppings?.map(orderTopping => (
-                                                <li>{orderTopping.topping.name}</li>
+                                            {orderItem.orderToppings?.map((orderTopping, index) => (
+                                                <li key={index}>{orderTopping.topping.name}</li>
                                             ))}
                                         </ul>
                                     </Grid>
@@ -101,9 +159,14 @@ const CartItem: FC<Props> = (props) => {
                                         variant="outlined"
                                         color="secondary"
                                         className={classes.btn}
-                                        onClick={() => setOrderItems({orderItem, index})}
+                                        onClick={() => deleteOrderItem(orderItem.id)}
                                     >削除</Button>
-                                    <Button variant="outlined" color="primary" className={classes.btn}>編集</Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="primary"
+                                        className={classes.btn}
+                                        onClick={() => setIsOpen(true)}
+                                    >編集</Button>
                                 </CardActions>
                             </Grid>
                         </Grid>
@@ -118,6 +181,18 @@ const CartItem: FC<Props> = (props) => {
                     </Grid>
                 </Grid>
             </Card>
+            <Modal open={modalIsOpen} onClose={() => setIsOpen(false)}>
+                <DialogContent>
+                    <OrderItemEntry
+                        selectedState={selectedState}
+                        parentComponent={"CartItem"}
+                        onSizeChange={handleSizeChange}
+                        onQuantityChange={handleQuantityChange}
+                        onToppingChange={(t) => handleToppingChange(t)}
+                        onClickCloseOrderItemEntity={onClickCloseOrderItemEntry}
+                    />
+                </DialogContent>
+            </Modal>
         </ListItem>
     )
 }

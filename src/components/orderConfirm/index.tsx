@@ -1,21 +1,31 @@
-import React from "react";
-import OrderItem from "~/components/elements/orderItem";
-import TotalPrice from "~/components/elements/totalPrice";
-import { selectOrderSubTotalPrice} from "~/store/slices/Domain/order.slice";
-import { useSelector} from "react-redux";
+import React, {useEffect} from "react";
+import {asyncFetchOrderItems, selectOrderItems} from "~/store/slices/Domain/order.slice";
+import {useDispatch, useSelector} from "react-redux";
+import OrderForm from "~/components/orderConfirm/orderForm";
+import OrderItems from "~/components/elements/orderItem";
+import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 
 
 const OrderConfirm: React.FC = () => {
-    //注文内容の小計を取得
-    const orderSubTotalPrice = useSelector(selectOrderSubTotalPrice);
+
+    const dispatch = useDispatch();
+
+    let orderItems = useSelector(selectOrderItems);
+    let loginUser = useSelector(selectLoginUser);
+
+    useEffect(() => {
+        dispatch(fetchLoginUser());
+        dispatch(asyncFetchOrderItems());
+    }, [dispatch])
 
     return (
         <>
             <div>
-                <OrderItem/>
+                <OrderItems />
             </div>
             <div>
-                <TotalPrice subTotalPrice={orderSubTotalPrice}/>
+                <br/>
+                <OrderForm user={loginUser}/>
             </div>
         </>
     )

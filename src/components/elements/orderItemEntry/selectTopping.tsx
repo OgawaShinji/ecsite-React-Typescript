@@ -1,8 +1,5 @@
 import React, {useState} from "react";
-import {
-    Button, ButtonBase, Card,
-    Grid, Typography
-} from "@material-ui/core";
+import {Button, ButtonBase, Card, Grid, Typography} from "@material-ui/core";
 import {useSelector} from "react-redux";
 import {selectToppings} from "~/store/slices/Domain/topping.slice";
 import {Topping} from "~/types/interfaces";
@@ -18,10 +15,12 @@ type selectToppingProps = {
 //第二引数にrefが指定されていると参照を受け取ってしまうためモーダル表示しようとすると警告文が出る
 //だから、あくまでrefをpropsの一つとして渡し、後からrefに指定してexportする（それが WrappedSelectTopping）
 export const SelectTopping: React.FC<selectToppingProps> = (props) => {
+
     const toppings = useSelector(selectToppings)
     const [selectedToppings, setSelectedToppings] = useState<Topping[]>(props.propTopping)
+
     const handleToppingChange = (topping: Topping) => {
-        const index = selectedToppings.findIndex(t => t === topping)
+        const index = selectedToppings.findIndex(t => JSON.stringify(t) === JSON.stringify(topping))
         const newSelected: Topping[] = [...selectedToppings]
         if (index === -1 && selectedToppings.length < 3) newSelected.push(topping);
         if (index !== -1) newSelected.splice(index, 1);
@@ -40,6 +39,8 @@ export const SelectTopping: React.FC<selectToppingProps> = (props) => {
                                 width: "100%", height: "100%",
                                 backgroundColor: `${selectedToppings.findIndex(topping => topping === t) === -1 ? "white" : "#ff9800"}`
                             }}>
+                              //<Card style={{width: "100%",
+                            //backgroundColor: `${selectedToppings.findIndex(topping => JSON.stringify(t) === JSON.stringify(topping)) === -1 ? "white" : "gray"}`}}>
                                 <Typography variant={"body1"} color={"primary"}
                                             component={"p"}>
                                     {t.name}<br/>{props.selectedSize === 'M' ? ` M : ${t.priceM}￥` : ` L : ${t.priceL}￥`}
