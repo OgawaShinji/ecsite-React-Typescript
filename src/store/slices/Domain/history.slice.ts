@@ -8,12 +8,12 @@ import camelcaseKeys from "camelcase-keys";
 
 type historyState = {
     orderHistory: Array<Order>;
-    orderHistoryTotalCount: number;
+    orderHistoryTotalCount: number | null;
 }
 
 const initialHistoryState: historyState = {
     orderHistory: [],
-    orderHistoryTotalCount: 0
+    orderHistoryTotalCount: null
 }
 
 //--------------------------------------------
