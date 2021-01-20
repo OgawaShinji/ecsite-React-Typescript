@@ -15,7 +15,7 @@ type userState = {
 
 export const postRegisterUser = createAsyncThunk(
     'user/postUserRegister',
-    async (userInfo:userState) => {
+    async (userInfo:User) => {
         //dispatchでに渡されてきたユーザー情報をPOSTする
         await axios.post(
             `${API_URL}/auth/register/`,
