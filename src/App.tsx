@@ -5,6 +5,8 @@ import {BrowserRouter} from "react-router-dom";
 import routes from '~/router/routes';
 import {AppDispatch} from "~/store";
 import {fetchLoginUser, login, logout} from "~/store/slices/App/auth.slice";
+import Header from "~/components/elements/Header"
+import Footer from "~/components/elements/Footer"
 
 function App() {
     const dispatch: AppDispatch = useDispatch()
@@ -20,7 +22,9 @@ function App() {
     return (
         <div className="App">
             <BrowserRouter>
+                <Header/>
                 {routes}
+                <Footer/>
             </BrowserRouter>
         </div>
     );
