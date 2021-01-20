@@ -42,9 +42,9 @@ export const asyncFetchOrderItems = createAsyncThunk(
 export type OrderItemToPost = {
     newItem: {
         item: number,
-        orderToppings: number[],
+        orderToppings: { topping: number }[],
         quantity: number,
-        size: 'M'|'L'
+        size: 'M' | 'L'
     },
     status: 0,
     newTotalPrice: number
@@ -59,7 +59,12 @@ export const asyncPostOrderItem = createAsyncThunk(
     'order/postOrderItem',
     async (order: OrderItemToPost) => {
         await Axios.post(`${API_URL}/django/cart/`, {
-            order_item: {item: order.newItem.item},
+            order_item: {
+                item: order.newItem.item,
+                orderToppings: order.newItem.orderToppings,
+                quantity: order.newItem.quantity,
+                size: order.newItem.size
+            },
             status: 0,
             total_price: order.newTotalPrice
         }, {
