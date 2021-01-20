@@ -1,18 +1,46 @@
-import React from "react";
-import {Button, createStyles, Grid, makeStyles, Paper, Theme, Typography} from "@material-ui/core";
-import TotalPrice from "~/components/elements/totalPrice";
-import {useSelector} from "react-redux";
-import {selectOrderSubTotalPrice} from "~/store/slices/Domain/order.slice";
+import React, {useEffect} from "react";
+import {Button, Checkbox, createStyles, Grid, makeStyles, Paper, Theme, Typography} from "@material-ui/core";
+import TotalPrice from "~/components/elements/totalPrice/totalPrice";
+import {useDispatch, useSelector} from "react-redux";
+import {postOrder, selectOrderSubTotalPrice} from "~/store/slices/Domain/order.slice";
 import {User} from "~/types/interfaces";
 import ShippingDialog from "~/components/orderConfirm/shippingDialog";
 import {KeyboardDatePicker, KeyboardTimePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
+import {Path} from "~/router/routes";
+import {useHistory} from "react-router-dom";
 
 type Props = {
     user: null | User
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            flexGrow: 1,
+        },
+        orderFormPaper: {
+            padding: theme.spacing(2),
+            color: theme.palette.text.secondary,
+            height:200
+        },
+        totalPricePaper: {
+            padding: theme.spacing(2),
+            color: theme.palette.text.secondary,
+            height:145
+        }
+    }),
+);
+
 const OrderForm: React.FC<Props> = (props) => {
+
+    const dispatch = useDispatch();
+    const routeHistory = useHistory();
+
+    useEffect( () => {
+        setUserInfo(props.user)
+    }, [dispatch,props.user])
+
     //注文内容の小計を取得
     const orderSubTotalPrice = useSelector(selectOrderSubTotalPrice);
     //お届け先住所の変更フォームを非表示にセット
@@ -20,9 +48,10 @@ const OrderForm: React.FC<Props> = (props) => {
     //デフォルトのユーザー情報をセット
     const [userInfo, setUserInfo] = React.useState<User | null>(props.user)
     //デフォルトの配達日時をセット
-    const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-        new Date('2021-01-01T00:00:00'),
-    );
+    const [selectedDate, setSelectedDate] = React.useState<Date | null>( new Date('2021-01-01T00:00:00') );
+    //デフォルトのお支払方法をセット
+    const [checkedCash, setCheckedCash] = React.useState(true);
+    const [checkedCredit, setCheckedCredit] = React.useState(false);
 
     /**
      * [変更]ボタン押下時の処理 お届け先情報変更用フォームダイアログを表示
@@ -46,56 +75,64 @@ const OrderForm: React.FC<Props> = (props) => {
     }
 
     /**
+     * [クレジットカード決済]チェック時の処理 お支払方法をクレジットカード決済に変更
+     */
+    const handleChangePaymentCash = () => {
+        setCheckedCash(!checkedCash);
+        if(checkedCredit === true){
+            setCheckedCredit(false)
+        }
+    };
+
+    /**
+     * [代金引換]チェック時の処理 お支払方法を代金引換に変更
+     */
+    const handleChangePaymentCredit = () => {
+        setCheckedCredit(!checkedCredit);
+        if(checkedCash === true){
+            setCheckedCash(false)
+        }
+    };
+
+    /**
      * 配達日時選択中の処理 動的に日付の内容を更新
      */
     const handleDateChange = (date: Date | null) => {
         setSelectedDate(date);
     };
 
-
     /**
-     * [この内容で注文する]ボタン押下時の処理  保留中
+     * [この内容で注文する]ボタン押下時の処理　
      */
-    // const dispatch = useDispatch();
-    const handleOrder = () => {
-        // const date = new Date();
+    const handleOrder = async () => {
+        const date = new Date();
         setSelectedDate(selectedDate);
-        // const consumptionTax = orderSubTotalPrice * 0.1
-        // const totalPrice = orderSubTotalPrice + consumptionTax
-        // const order = {
-        //     status:1,
-        //     totalPrice: totalPrice,
-        //     order_data: date,
-        //     destination_name: props.user?.name,
-        //     destination_email: props.user?.email,
-        //     destination_zipcode: props.user?.zipcode,
-        //     destination_address: props.user?.address,
-        //     destination_tel: props.user?.telephone,
-        //     delivery_time: selectedDate,
-        //     payment_method: 2
-        // }
-        // dispatch(postOrder(order))
+        const consumptionTax = orderSubTotalPrice * 0.1
+        const totalPrice = orderSubTotalPrice + consumptionTax
+        let paymentMethod;
+        if( checkedCash ){
+            paymentMethod = 1;
+        } else if( checkedCredit ) {
+            paymentMethod = 2;
+        } else {
+            paymentMethod = 0;
+        }
+        const order = {
+            status:1,
+            totalPrice: totalPrice,
+            order_data: date,
+            destination_name: userInfo?.name,
+            destination_email: userInfo?.email,
+            destination_zipcode: userInfo?.zipcode,
+            destination_address: userInfo?.address,
+            destination_tel: userInfo?.telephone,
+            delivery_time: selectedDate,
+            payment_method: paymentMethod
+        }
+        dispatch(postOrder(order));
+        await routeHistory.push(Path.orderComplete);
     }
 
-    const useStyles = makeStyles((theme: Theme) =>
-        createStyles({
-            root: {
-                flexGrow: 1,
-            },
-            paper: {
-                padding: theme.spacing(2),
-                textAlign: 'center',
-                color: theme.palette.text.secondary,
-                height:215
-            },
-            paper2: {
-                padding: theme.spacing(2),
-                textAlign: 'center',
-                color: theme.palette.text.secondary,
-                height:145
-            }
-        }),
-    );
     const classes = useStyles();
 
     return (
@@ -103,29 +140,47 @@ const OrderForm: React.FC<Props> = (props) => {
             <div className={classes.root}>
                 <Grid container spacing={3} justify="center" alignItems="center"   >
                     <Grid item xs={6} sm={6}>
-                        <Paper className={classes.paper}>
+                        <Paper className={classes.orderFormPaper}>
                             <Grid item xs={6} sm={11}>
                                 <Grid container spacing={1} justify="center" alignItems="center">
                                     <Grid item xs={6} sm={4}>
                                         <Typography component="h6" variant="h6" align="left" >お届け先住所</Typography>
                                     </Grid>
-                                    <Grid item xs={6} sm={8}>
+                                    <Grid item xs={6} sm={1}>
                                        <Button variant="contained"
                                                color="primary"
-                                               fullWidth
                                                onClick={handleDialogOpen}
                                        >変更</Button>
                                         {/*お届け先情報変更用フォームのダイアログ*/}
                                         <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} />
                                     </Grid>
+                                    <Grid item xs={6} sm={7}>
+                                       <Typography component="h6" variant="h6">お支払情報</Typography>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                             <Grid container spacing={1} justify="center" alignItems="center">
-                                <Grid item xs={6} sm={11}>
+                                <Grid item xs={6} sm={7}>
                                     <Typography align="left">お名前: {userInfo?.name}　</Typography>
                                     <Typography align="left">郵便番号:　{userInfo?.zipcode}　</Typography>
                                     <Typography align="left">住所: {userInfo?.address}　</Typography>
                                     <Typography align="left">電話番号:　{userInfo?.telephone}　</Typography>
+                                </Grid>
+                                <Grid item xs={6} sm={5}>
+                                    <Grid item xs={6} sm={12} >
+                                        代金引換
+                                        <Checkbox
+                                            checked={checkedCash}
+                                            onChange={handleChangePaymentCash}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={12}>
+                                        クレジットカード決済
+                                        <Checkbox
+                                            checked={checkedCredit}
+                                            onChange={handleChangePaymentCredit}
+                                        />
+                                    </Grid>
                                 </Grid>
                             </Grid>
                             <br/>
@@ -137,27 +192,19 @@ const OrderForm: React.FC<Props> = (props) => {
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <Grid  item xs={3}>
                                             <KeyboardDatePicker
-                                                margin="normal"
                                                 id="date-picker-dialog"
                                                 label="Date picker dialog"
                                                 format="yyyy/MM/dd"
                                                 value={selectedDate}
                                                 onChange={handleDateChange}
-                                                KeyboardButtonProps={{
-                                                    'aria-label': 'change date',
-                                                }}
                                             />
                                         </Grid>
                                         <Grid item xs={3}>
                                             <KeyboardTimePicker
-                                                margin="normal"
                                                 id="time-picker"
                                                 label="Time picker"
                                                 value={selectedDate}
                                                 onChange={handleDateChange}
-                                                KeyboardButtonProps={{
-                                                    'aria-label': 'change time',
-                                                }}
                                             />
                                         </Grid>
                                     </MuiPickersUtilsProvider>
@@ -166,7 +213,7 @@ const OrderForm: React.FC<Props> = (props) => {
                         </Paper>
                     </Grid>
                     <Grid item xs={6} sm={2}>
-                        <Paper className={classes.paper2}>
+                        <Paper className={classes.totalPricePaper}>
                             {/*合計金額表示用コンポーネント*/}
                             <TotalPrice subTotalPrice={orderSubTotalPrice}/>
                         </Paper>
@@ -182,6 +229,5 @@ const OrderForm: React.FC<Props> = (props) => {
         </>
     )
 }
-
 export default OrderForm
 

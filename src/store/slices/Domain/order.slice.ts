@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Order, OrderItem} from '../../../types/interfaces'
+import {Order, OrderItem, Topping} from '../../../types/interfaces'
 import {RootState} from "../../index";
 import axios from "axios";
 import {API_URL} from "../../api";
@@ -39,6 +39,16 @@ export const asyncFetchOrderItems = createAsyncThunk(
     }
 )
 
+export type OrderItemToPost = {
+    newItem: {
+        item: number,
+        orderToppings: number[],
+        quantity: number,
+        size: 'M'|'L'
+    },
+    status: 0,
+    newTotalPrice: number
+}
 /**
  * 商品をカートに入れる関数
  *  @param order: Order
@@ -47,8 +57,12 @@ export const asyncFetchOrderItems = createAsyncThunk(
 
 export const asyncPostOrderItem = createAsyncThunk(
     'order/postOrderItem',
-    async (order: Order) => {
-        await axios.post(`${API_URL}/django/cart`, {order}, {
+    async (order: OrderItemToPost) => {
+        await axios.post(`${API_URL}/django/cart/`, {
+            order_item: {item: order.newItem.item},
+            status: 0,
+            total_price: order.newTotalPrice
+        }, {
             method: 'POST',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -56,6 +70,7 @@ export const asyncPostOrderItem = createAsyncThunk(
         }).catch(err => {
             throw new Error(err)
         })
+        return "200"
     }
 )
 

@@ -1,4 +1,4 @@
-import React, { useEffect} from "react";
+import React from "react";
 import {
     Card,
     CardContent,
@@ -8,8 +8,7 @@ import {
     TableHead, TableRow,
     Typography,
 } from "@material-ui/core";
-import {useDispatch, useSelector} from "react-redux";
-import {asyncFetchOrderItems, selectOrderItems} from "~/store/slices/Domain/order.slice";
+import {OrderItem} from "~/types/interfaces";
 
 const useStyles = makeStyles((theme) =>({
     root: {
@@ -31,20 +30,17 @@ const useStyles = makeStyles((theme) =>({
     },
 }));
 
-const OrderItem: React.FC = () => {
+type Props = {
+    orderItems:OrderItem[] | undefined
+}
+
+const OrderItems: React.FC<Props> = (props) => {
     const classes = useStyles();
-
-    const dispatch = useDispatch();
-    const orderItems = useSelector(selectOrderItems);
-
-    useEffect(() => {
-        dispatch(asyncFetchOrderItems());
-    }, [dispatch])
 
     return (
         <>
             <Grid container alignItems="center" justify="center" >
-            {orderItems && orderItems.map((orderItem) => (
+            {props.orderItems && props.orderItems.map((orderItem) => (
                 <div key={orderItem.id}>
                     <Card className={classes.root}>
                         {/*画像表示*/}
@@ -92,4 +88,4 @@ const OrderItem: React.FC = () => {
         </>
     )
 }
-export default OrderItem;
+export default OrderItems;

@@ -10,9 +10,7 @@ import {User} from "~/types/interfaces";
 
 const useStyles = makeStyles({
     form: {
-        display: 'flex',
         flexDirection: 'column',
-        margin: 'auto',
         width: 'fit-content',
     },
     root: {
@@ -31,35 +29,31 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
 
     const classes = useStyles();
     const { open } = props;
-    //保留中
+    //デフォルト情報をセット
     const [name, setName] = React.useState<string>('');
     const [email, setEmail] = React.useState<string>('');
     const [zipcode, setZipcode] = React.useState<string>('');
     const [address, setAddress] = React.useState<string>('');
     const [telephone, setTelephone] = React.useState<string>('');
 
-    //保留中
+    //入力された情報を動的に更新
     const changeName = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value)
     }
-
     const changeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value)
     }
-
     const changeZipcode = (event: React.ChangeEvent<HTMLInputElement>) => {
         setZipcode(event.target.value)
     }
-
     const changeAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
         setAddress(event.target.value)
     }
-
     const changeTelephone = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTelephone(event.target.value)
     }
 
-    const updateUserInfo = () => {
+    const updateUserInfo = async () => {
         const userInfo = {
             id:0,
             name: name,
@@ -70,7 +64,7 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
             status:0,
         }
         props.changeUserInfo(userInfo);
-        props.close();
+        await props.close();
     }
 
     return(

@@ -63,7 +63,7 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
     const classes = orderItemEntryStyle();
 
     return (<Grid justify={"center"} container>
-            <CardHeader title={"注文はこちらから！"} style={{width: "92%", backgroundColor: "#ffcdd2"}}/>
+            <CardHeader title={"注文はこちらから！"} style={{width: "92%", backgroundColor: "#ffa500"}}/>
             <Card className={classes.entry_form}>
                 {/*注文入力フォーム左側(サイズと数量)*/}
                 <Grid container justify={"space-around"} style={{display: "flex"}} className={classes.entry_left}>
@@ -132,7 +132,6 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                                 </Grid>)}
                         </Paper>
                     </Grid>
-                    <Grid item xs={3}>{selectedToppings.map((t) => <Card key={t.name}> {t.name}</Card>)}</Grid>
                     {/*{props.parentComponent === "CartItem" && (*/}
                     {/*    <Grid item xs={6}>*/}
                     {/*        <Button onClick={() => props.onClickCloseOrderItemEntity!()}>キャンセル</Button>*/}
@@ -212,6 +211,8 @@ const orderItemEntryStyle = makeStyles((theme: Theme) => createStyles({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#ffe0b2",//#ffb74d
+
     },
 
 }));
