@@ -1,9 +1,10 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {User} from "~/types/interfaces";
 import {RootState} from "~/store/index";
-import {API_URL} from "~/store/api";
+import Axios, {API_URL} from "~/store/api";
 import axios from "axios";
 import camelcaseKeys from "camelcase-keys";
+import snakecaseKeys from "snakecase-keys";
 
 type authState = {
     loginUser: null | User
@@ -48,7 +49,13 @@ export const login = createAsyncThunk(
     'auth/login',
     async (loginInfo: loginForm) => {
         try {
-            const {data} = await axios.post(`${API_URL}/auth/login/`, loginInfo, {
+            const sample={
+                eMail:loginInfo.email,
+                orderItem:{
+                    itemId:"itemId"
+                }
+            }
+            const {data} = await Axios.post(`${API_URL}/auth/login/`, sample, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -72,7 +79,7 @@ export const fetchLoginUser = createAsyncThunk(
     'auth/user',
     async () => {
         try {
-            const {data} = await axios.get(`${API_URL}/auth/user/`, {
+            const {data} = await Axios.get(`${API_URL}/auth/user/`, {
                 method: "GET",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")

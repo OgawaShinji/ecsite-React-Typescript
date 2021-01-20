@@ -2,7 +2,7 @@ import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Order, OrderItem, Topping} from '../../../types/interfaces'
 import {RootState} from "../../index";
 import axios from "axios";
-import {API_URL} from "../../api";
+import Axios, {API_URL} from "../../api";
 import camelcaseKeys from "camelcase-keys";
 
 
@@ -58,7 +58,7 @@ export type OrderItemToPost = {
 export const asyncPostOrderItem = createAsyncThunk(
     'order/postOrderItem',
     async (order: OrderItemToPost) => {
-        await axios.post(`${API_URL}/django/cart/`, {
+        await Axios.post(`${API_URL}/django/cart/`, {
             order_item: {item: order.newItem.item},
             status: 0,
             total_price: order.newTotalPrice
