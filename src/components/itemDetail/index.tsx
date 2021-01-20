@@ -46,39 +46,55 @@ const ItemDetail: React.FC = () => {
         toppings: selectedToppings
     }
 
+    /**
+     * サイズが変更された際にサイズと合計金額のStateを変更
+     * @param inputSize:変更後のサイズ
+     */
     const handleSizeChange = (inputSize: string) => {
         setSize(inputSize);
-
+        //Stateのsizeが変更される前に以下処理が走るためStateのサイズではなく、inputSizeを用いて合計金額を変更するので以下をメソッドとして吐き出していない
         let newTotalPrice = 0;
         if (selectedToppings.length !== 0) selectedToppings.map((t) => newTotalPrice += inputSize === 'M' ? t.priceM! : t.priceL!)
         if (item !== null) newTotalPrice += (inputSize === 'M' ? item.priceM : item.priceL)
         setTotalPrice(newTotalPrice * quantity);
     }
+
+    /**
+     * 数量が変更された際に数量と合計金額のStateを変更
+     * @param inputQuantity:変更後の数量
+     */
     const handleQuantityChange = (inputQuantity: number) => {
         setQuantity(inputQuantity);
-
+        //同上
         let newTotalPrice = 0;
         if (selectedToppings.length !== 0) selectedToppings.map((t) => newTotalPrice += size === 'M' ? t.priceM! : t.priceL!)
         if (item !== null) newTotalPrice += (size === 'M' ? item.priceM : item.priceL)
         setTotalPrice(newTotalPrice * inputQuantity);
     }
+    /**
+     * トッピングが変更された際にトッピングと合計金額のStateを変更
+     * @param newToppings:変更後の選択済みのトッピング配列
+     */
     const handleToppingChange = (newToppings: Topping[]) => {
         setSelectToppings(newToppings);
-
+        //同上
         let newTotalPrice = 0;
         if (toppings.length !== 0) newToppings.map((t) => newTotalPrice += size === 'M' ? t.priceM! : t.priceL!)
         if (item !== null) newTotalPrice += (size === 'M' ? item.priceM : item.priceL)
         setTotalPrice(newTotalPrice * quantity);
     }
+    /**
+     * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
+     */
     const handleOrderClick = async () => {
         if (item === null) throw new Error()
-        let newOrderToppings: number[] = []
-        if (toppings.length !== 0) toppings.map((t) => newOrderToppings.push(t.id))
+        let newOrderToppings: { topping: number }[] = []
+        if (selectedToppings.length !== 0) selectedToppings.map((t) => newOrderToppings.push({topping: t.id}))
 
         const newOrder: OrderItemToPost = {
             newItem: {
                 item: item.id,
-                orderToppings: [],
+                orderToppings: newOrderToppings,
                 quantity: quantity,
                 size: size === 'M' ? 'M' : 'L'
             },
@@ -119,10 +135,12 @@ const ItemDetail: React.FC = () => {
     }));
 
     const classes = entryIndexStyle();
+
     return (<div className={classes.align_child}>
             <Card className={classes.outline_card}>
                 <Grid container justify={"center"} spacing={1} alignItems={"center"}>
 
+                    {/*商品画像*/}
                     <Grid item xs={12}>
                         <CardContent className={classes.align_child}>{item?.imagePath
                             ? (<Avatar src={`${item?.imagePath}`} style={{width: "50%", height: "auto"}}
@@ -132,7 +150,7 @@ const ItemDetail: React.FC = () => {
                         <Typography variant={"h4"} component={"u"}>{item?.name}</Typography>
                     </Grid>
 
-
+                    {/*説明文*/}
                     <Grid item xs={12} className={classes.description_content}>
                         <CardContent style={{width: "70%"}}>
                             <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
@@ -142,6 +160,7 @@ const ItemDetail: React.FC = () => {
                         </CardContent>
                     </Grid>
 
+                    {/*注文入力部分*/}
                     <Grid item xs={12}>
                         <CardContent style={{height: "auto", width: "90%"}}>
                             <OrderItemEntry
@@ -154,6 +173,7 @@ const ItemDetail: React.FC = () => {
                                         className={classes.total_price}>合計金額：{totalPrice}￥（税込）</Typography>
                         </CardContent>
 
+                        {/*注文確定ボタン*/}
                         <CardActions>
                             <Grid item xs={6}><Button variant={"contained"}
                                                       className={classes.order_button}
