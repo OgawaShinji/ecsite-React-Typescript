@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {asyncFetchOrderItems, selectOrderItems} from "~/store/slices/Domain/order.slice";
 import {useDispatch, useSelector} from "react-redux";
 import OrderForm from "~/components/orderConfirm/orderForm";
-import OrderItems from "~/components/elements/orderItem";
+import OrderItems from "~/components/elements/orderItemCards/orderItemCards";
 import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 
 
