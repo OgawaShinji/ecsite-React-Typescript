@@ -1,7 +1,7 @@
 import React, {FC} from "react";
 import {Button, Card, CardActionArea, CardActions, CardContent, makeStyles} from "@material-ui/core";
 import {OrderItem} from "~/types/interfaces";
-import TotalPrice from "~/components/elements/totalPrice"
+import TotalPrice from "~/components/elements/totalPrice/totalPrice"
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 
 interface Props {

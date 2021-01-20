@@ -170,7 +170,7 @@ const CartItem: FC<Props> = (props) => {
                                             variant="outlined"
                                             color="secondary"
                                             className={classes.btn}
-                                            onClick={() => deleteOrderItem(orderItem.id)}
+                                            onClick={() => deleteOrderItem(orderItem.id!)}
                                         >削除</Button>
                                         <Button
                                             variant="outlined"
