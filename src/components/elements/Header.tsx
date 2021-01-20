@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import {Button} from "@material-ui/core";
+import {Button, Grid} from "@material-ui/core";
 
 import {Link} from 'react-router-dom'
 import {Path} from "~/router/routes";
@@ -20,11 +20,21 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             flexGrow: 1,
         },
+        header: {
+            backgroundColor: "#ffa500",
+            height: 80
+        },
+        headerItem: {
+            textDecoration: 'none',
+            color: 'white'
+        },
         title: {
             flexGrow: 1,
+            color: 'white'
         },
         link: {
-            textDecoration: 'none'
+            textDecoration: 'none',
+            color: 'black'
         }
     }),
 );
@@ -77,51 +87,64 @@ const Header: FC = () => {
     return (
         <div className={classes.root}>
             <AppBar position="static">
-                <Toolbar>
-                    <Link to={Path.itemList} className={classes.link}>
-                        <Typography variant="h5" className={classes.title}>
-                            らくらくラーメン
-                        </Typography>
-                    </Link>
-                    <Link to={Path.itemList} className={classes.link}>商品一覧</Link>
-                    <Link to={Path.cart} className={classes.link}>カート一覧</Link>
-                    {auth ? (
-                        <div>
-                            <IconButton
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                aria-haspopup="true"
-                                onClick={handleMenu}
-                                color="inherit"
-                            >
-                                <AccountCircle/>
-                            </IconButton>
-                            <Menu
-                                id="menu-appbar"
-                                anchorEl={anchorEl}
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                open={open}
-                                onClose={handleClose}
-                            >
-                                <MenuItem onClick={handleClose}>
-                                    <Link to={Path.history} className={classes.link}>注文履歴</Link>
-                                </MenuItem>
-                                <MenuItem onClick={logoutInHeader}>ログアウト</MenuItem>
-                            </Menu>
-                        </div>
-                    ) : (
-                        <Link to={Path.login} className={classes.link}>
-                            <Button color="inherit">Login</Button>
-                        </Link>
-                    )}
+                <Toolbar className={classes.header}>
+                    <Grid container>
+                        <Grid item xs={6} container justify={"center"} alignItems={"center"}>
+                            <Link to={Path.itemList} className={classes.link}>
+                                <Typography variant="h4" className={classes.title}>
+                                    らくらくピザ
+                                </Typography>
+                            </Link>
+                        </Grid>
+                        <Grid item xs={2}/>
+                        <Grid item xs={3} container justify={"center"} alignItems={"center"}>
+                            <Grid item xs={2}/>
+                            <Grid item xs={4}>
+                                <Link to={Path.itemList} className={classes.headerItem}>商品一覧</Link>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Link to={Path.cart} className={classes.headerItem}>カート一覧</Link>
+                            </Grid>
+                            <Grid item xs={2}/>
+                        </Grid>
+                        <Grid item xs={1}>
+                            {auth ? (
+                                <IconButton
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleMenu}
+                                    color="inherit"
+                                >
+                                    <AccountCircle/>
+                                </IconButton>
+                            ) : (
+                                <Link to={Path.login} className={classes.link}>
+                                    <Button color="inherit">Login</Button>
+                                </Link>
+                            )}
+                        </Grid>
+                    </Grid>
+                    <Menu
+                        id="menu-appbar"
+                        anchorEl={anchorEl}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        open={open}
+                        onClose={handleClose}
+                    >
+                        <MenuItem onClick={handleClose}>
+                            <Link to={Path.history} className={classes.link}>注文履歴</Link>
+                        </MenuItem>
+                        <MenuItem onClick={logoutInHeader}>ログアウト</MenuItem>
+                    </Menu>
                 </Toolbar>
             </AppBar>
         </div>
