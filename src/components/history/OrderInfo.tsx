@@ -1,6 +1,12 @@
 import React from "react";
 import {makeStyles, Grid, Typography, Chip, Avatar} from "@material-ui/core";
 
+import {Order} from '~/types/interfaces';
+
+type Props = {
+    order: Order;
+}
+
 const useStyles = makeStyles(({
     title: {
         fontWeight: 'bold',
@@ -15,9 +21,35 @@ const useStyles = makeStyles(({
     }
 }));
 
-const OrderInfo: React.FC = () => {
+const OrderInfo: React.FC<Props> = props => {
 
     const classes = useStyles();
+    const zipcode = props.order.destinationZipcode;
+    const orderDate: string = String(props.order.orderDate);
+
+    /**
+     * [Chip]
+     * 1: 未入金
+     * 2: 入金済
+     * 3: 発送済
+     * 4: 配送完了
+     */
+    const status = props.order.status;
+    let chip;
+
+    // <Chip/>の作成
+    if (status === 1) {
+        chip = <Chip style={{color: '#FF6633', fontWeight: 'bold'}} color={'default'} label={'未入金'}/>;
+    } else if (status === 2) {
+        chip = <Chip style={{color: '#66CCCC', fontWeight: 'bold'}} color={'default'} label={'入金済'}/>;
+    } else if (status === 3) {
+        chip = <Chip color={'secondary'} label={'発送済'}/>;
+    } else {
+        chip = <Chip color={"primary"} label={'配送完了'}/>;
+    }
+
+    // 注文商品数
+    const orderItemCount = props.order.orderItems?.length;
 
     return (
         <Grid container justify={"center"} alignItems={"center"} direction={"row"}>
@@ -29,7 +61,7 @@ const OrderInfo: React.FC = () => {
             <Grid item xs={1}>
                 <Grid container justify={"flex-start"} alignItems={"flex-start"}>
                     <Typography>
-                        他2件
+                        {orderItemCount && orderItemCount > 1 && '他' + (orderItemCount - 1) + '件'}
                     </Typography>
                 </Grid>
             </Grid>
@@ -45,7 +77,7 @@ const OrderInfo: React.FC = () => {
                             </Grid>
                             <Grid item>
                                 <Typography>
-                                    2020年1月20日
+                                    {new Date(orderDate).toLocaleDateString()}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -59,7 +91,7 @@ const OrderInfo: React.FC = () => {
                             </Grid>
                             <Grid item>
                                 <Typography>
-                                    3,500円
+                                    {props.order.totalPrice && props.order.totalPrice.toLocaleString()}円
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -73,17 +105,17 @@ const OrderInfo: React.FC = () => {
                             </Grid>
                             <Grid item>
                                 <Typography className={classes.text}>
-                                    〒111-1111
+                                    〒 {zipcode && zipcode.slice(0, 3)}-{zipcode && zipcode.slice(4, 7)}
                                 </Typography>
                             </Grid>
                             <Grid item>
                                 <Typography className={classes.text}>
-                                    東京都世田谷区pizzaマンション 900
+                                    {props.order.destinationAddress}
                                 </Typography>
                             </Grid>
                             <Grid item>
                                 <Typography>
-                                    山田太郎 様
+                                    {props.order.destinationName} 様
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -93,7 +125,7 @@ const OrderInfo: React.FC = () => {
 
             <Grid item xs={1}>
                 <Grid container justify={"center"} alignItems={"center"}>
-                    <Chip color={"primary"} label={'配送中'}/>
+                    {chip}
                 </Grid>
             </Grid>
         </Grid>
