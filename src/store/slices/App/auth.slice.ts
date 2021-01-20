@@ -4,7 +4,6 @@ import {RootState} from "~/store/index";
 import Axios, {API_URL} from "~/store/api";
 import axios from "axios";
 import camelcaseKeys from "camelcase-keys";
-import snakecaseKeys from "snakecase-keys";
 
 type authState = {
     loginUser: null | User

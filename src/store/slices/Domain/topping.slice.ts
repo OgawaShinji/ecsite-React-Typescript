@@ -1,9 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Topping} from "~/types/interfaces"
-import axios from "axios";
 import Axios, {API_URL} from "~/store/api";
 import {RootState} from "~/store/index";
-import camelcaseKeys from "camelcase-keys";
 
 type toppingState = {
     toppings: Topping[]
