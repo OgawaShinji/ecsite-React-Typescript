@@ -28,7 +28,7 @@ const OrderInfo: React.FC<Props> = props => {
     const orderDate: string = String(props.order.orderDate);
 
     /**
-     * [Chip]
+     * [status]
      * 1: 未入金
      * 2: 入金済
      * 3: 発送済
@@ -51,15 +51,18 @@ const OrderInfo: React.FC<Props> = props => {
     // 注文商品数
     const orderItemCount = props.order.orderItems?.length;
 
+    // 注文商品一枚目の画像URL
+    const imagePath1 = props.order.orderItems && props.order.orderItems[0].item.imagePath;
+
     return (
         <Grid container justify={"center"} alignItems={"center"} direction={"row"}>
             <Grid item xs={2}>
                 <Avatar variant={"rounded"} alt={'pizza'}
-                        src={'/1.jpg'}
+                        src={imagePath1}
                         className={classes.avatar}/>
             </Grid>
             <Grid item xs={1}>
-                <Grid container justify={"flex-start"} alignItems={"flex-start"}>
+                <Grid container justify={"center"} alignItems={"center"}>
                     <Typography>
                         {orderItemCount && orderItemCount > 1 && '他' + (orderItemCount - 1) + '件'}
                     </Typography>
