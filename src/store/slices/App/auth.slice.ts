@@ -4,7 +4,6 @@ import {RootState} from "~/store/index";
 import Axios, {API_URL} from "~/store/api";
 import axios from "axios";
 import camelcaseKeys from "camelcase-keys";
-import snakecaseKeys from "snakecase-keys";
 
 type authState = {
     loginUser: null | User
@@ -49,13 +48,7 @@ export const login = createAsyncThunk(
     'auth/login',
     async (loginInfo: loginForm) => {
         try {
-            const sample={
-                eMail:loginInfo.email,
-                orderItem:{
-                    itemId:"itemId"
-                }
-            }
-            const {data} = await Axios.post(`${API_URL}/auth/login/`, sample, {
+            const {data} = await Axios.post(`${API_URL}/auth/login/`, loginInfo, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -112,8 +105,7 @@ export const authSlice = createSlice({
 
         //login
         builder.addCase(login.fulfilled, (state, action) => {
-            const camelPayload = camelcaseKeys(action.payload['token'])
-            localStorage.setItem("Authorization", camelPayload)
+            if (action.payload?.token)localStorage.setItem("Authorization", action.payload.token)
         })
         builder.addCase(login.rejected, (state) => {
         })
