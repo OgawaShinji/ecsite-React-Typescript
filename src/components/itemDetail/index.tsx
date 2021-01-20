@@ -5,7 +5,6 @@ import {
     Card,
     CardActions,
     CardContent,
-    CardMedia,
     Grid,
     Typography
 } from "@material-ui/core";
@@ -14,7 +13,7 @@ import {fetchItemDetail, selectItemDetail} from "~/store/slices/Domain/item.slic
 import {AppDispatch} from "~/store";
 import {useHistory, useParams} from "react-router-dom"
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/orderItemEntry";
-import {Order, OrderItem, OrderTopping, Topping} from "~/types/interfaces";
+import {Topping} from "~/types/interfaces";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
 import img from "~/assets/img/img.png"
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
