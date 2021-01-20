@@ -9,19 +9,26 @@ import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 const OrderConfirm: React.FC = () => {
 
     const dispatch = useDispatch();
-
+    //storeのstateにあるorderItemの取得
     let orderItems = useSelector(selectOrderItems);
+    //storeのstateにあるloginUserの取得
     let loginUser = useSelector(selectLoginUser);
 
-    useEffect(() => {
-        dispatch(fetchLoginUser());
-        dispatch(asyncFetchOrderItems());
+
+    useEffect( () => {
+        dispatch(fetchOrderItems());
     }, [dispatch])
+
+    useEffect( () => {
+        if(loginUser === null){
+            dispatch(fetchLoginUser());
+        }
+    }, [dispatch,loginUser])
 
     return (
         <>
             <div>
-                <OrderItems />
+                <OrderItems orderItems={orderItems}/>
             </div>
             <div>
                 <br/>
