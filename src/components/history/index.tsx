@@ -11,6 +11,7 @@ import {
 import OrderInfo from "~/components/history/OrderInfo";
 import {makeStyles, Grid, List, ListItem, Divider, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
+import OrderHistoryDialog from "~/components/history/OrderHistoryDialog";
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -34,6 +35,7 @@ const OrderConfirm: React.FC = () => {
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(0);
     const [isDisplay, setDisplay] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         dispatch(fetchOrderHistory({displayCount: 5, pageNum: 1}));
@@ -69,7 +71,7 @@ const OrderConfirm: React.FC = () => {
     const orderInfoList = orders.map((order, index) => {
         const listItem = (
             <ListItem button onClick={() => {
-                console.log('click!')
+                setIsOpen(true);
             }}>
                 <OrderInfo order={order}/>
             </ListItem>
@@ -117,6 +119,7 @@ const OrderConfirm: React.FC = () => {
                     }} className={classes.pagination} size={"large"}/>
                 </Grid>
             )}
+            <OrderHistoryDialog handleClose={() => {setIsOpen(false)}} isOpen={isOpen}/>
         </>
     )
 }
