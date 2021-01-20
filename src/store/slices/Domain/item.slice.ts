@@ -28,7 +28,7 @@ const initialItemState: itemState = {
  */
 export const fetchItems = createAsyncThunk('item/getItems', async (searchForm: SearchForm) => {
     try {
-        const {data} = await axios.get(`${API_URL}/flask/item`, {
+        const {data} = await axios.get(`${API_URL}/flask/item/`, {
             method: "GET",
             params: searchForm,
             headers: {
