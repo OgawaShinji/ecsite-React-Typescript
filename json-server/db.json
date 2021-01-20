@@ -404,17 +404,17 @@
             "description": "good",
             "price_m": 300,
             "price_l": 400,
-            "image_path": "imagePass",
+            "image_path": "http://34.84.118.239/static/img/item/3.jpg",
             "deleted": 0
           },
           "order_toppings": [
             {
               "id": 2,
               "topping": {
-                "id": 1,
-                "name": "topping 1",
-                "price_m": 20,
-                "price_l": 50
+                "id": 13,
+                "name": "topping 13",
+                "price_m": 25,
+                "price_l": 35
               },
               "order_item": 1
             },
@@ -441,17 +441,17 @@
             "description": "good",
             "price_m": 500,
             "price_l": 600,
-            "image_path": "imagePass",
+            "image_path": "http://34.84.118.239/static/img/item/3.jpg",
             "deleted": 0
           },
           "order_toppings": [
             {
               "id": 1,
               "topping": {
-                "id": 1,
-                "name": "topping 1",
-                "price_m": 20,
-                "price_l": 50
+                "id": 13,
+                "name": "topping 13",
+                "price_m": 25,
+                "price_l": 35
               },
               "order_item": 1
             },
@@ -488,40 +488,11 @@
             "description": "good",
             "price_m": 500,
             "price_l": 600,
-            "image_path": "imagePass",
+            "image_path": "http://34.84.118.239/static/img/item/3.jpg",
             "deleted": 0
           },
           "order_toppings": [
-            {
-              "id": 1,
-              "topping": {
-                "id": 1,
-                "name": "sudachi",
-                "price_m": 200,
-                "price_l": 300
-              },
-              "order_item": 1
-            },
-            {
-              "id": 3,
-              "topping": {
-                "id": 1,
-                "name": "kitune",
-                "price_m": 200,
-                "price_l": 300
-              },
-              "order_item": 1
-            },
-            {
-              "id": 5,
-              "topping": {
-                "id": 1,
-                "name": "negi",
-                "price_m": 200,
-                "price_l": 300
-              },
-              "order_item": 1
-            }
+
           ],
           "quantity": 5,
           "size": "M",
@@ -535,37 +506,17 @@
             "description": "good",
             "price_m": 500,
             "price_l": 600,
-            "image_path": "imagePass",
+            "image_path": "http://34.84.118.239/static/img/item/3.jpg",
             "deleted": 0
           },
           "order_toppings": [
             {
               "id": 1,
               "topping": {
-                "id": 1,
-                "name": "sudachi",
-                "price_m": 200,
-                "price_l": 300
-              },
-              "order_item": 1
-            },
-            {
-              "id": 3,
-              "topping": {
-                "id": 1,
-                "name": "kitune",
-                "price_m": 200,
-                "price_l": 300
-              },
-              "order_item": 1
-            },
-            {
-              "id": 5,
-              "topping": {
-                "id": 1,
-                "name": "negi",
-                "price_m": 200,
-                "price_l": 300
+                "id": 8,
+                "name": "topping 8",
+                "price_m": 25,
+                "price_l": 35
               },
               "order_item": 1
             }
