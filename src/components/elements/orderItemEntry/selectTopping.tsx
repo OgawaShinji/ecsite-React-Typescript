@@ -37,10 +37,8 @@ export const SelectTopping: React.FC<selectToppingProps> = (props) => {
                                     style={{width: "70%", height: "95%", color: "red"}}>
                             <Card style={{
                                 width: "100%", height: "100%",
-                                backgroundColor: `${selectedToppings.findIndex(topping => topping === t) === -1 ? "white" : "#ff9800"}`
+                                backgroundColor: `${selectedToppings.findIndex(topping => JSON.stringify(t) === JSON.stringify(topping)) === -1 ? "white" : "#ff9800"}`
                             }}>
-                              //<Card style={{width: "100%",
-                            //backgroundColor: `${selectedToppings.findIndex(topping => JSON.stringify(t) === JSON.stringify(topping)) === -1 ? "white" : "gray"}`}}>
                                 <Typography variant={"body1"} color={"primary"}
                                             component={"p"}>
                                     {t.name}<br/>{props.selectedSize === 'M' ? ` M : ${t.priceM}￥` : ` L : ${t.priceL}￥`}
