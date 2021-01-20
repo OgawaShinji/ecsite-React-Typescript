@@ -16,7 +16,7 @@ const OrderConfirm: React.FC = () => {
 
 
     useEffect( () => {
-        dispatch(fetchOrderItems());
+        dispatch(asyncFetchOrderItems());
     }, [dispatch])
 
     useEffect( () => {
