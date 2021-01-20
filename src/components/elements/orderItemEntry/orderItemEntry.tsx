@@ -17,9 +17,8 @@ import {
     Select,
     Typography
 } from "@material-ui/core";
-import {OrderItem, Topping} from "~/types/interfaces";
+import {Topping} from "~/types/interfaces";
 import {WrappedSelectTopping} from "~/components/elements/orderItemEntry/selectTopping";
-import {Card} from "@material-ui/core";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 
 export type itemEntryState = {
@@ -133,13 +132,13 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                                 </Grid>)}
                         </Paper>
                     </Grid>
-<Grid item xs={3}>{selectedToppings.map((t) => <Card key={t.name}> {t.name}</Card>)}</Grid>
-                  {/*{props.parentComponent === "CartItem" && (*/}
-                {/*    <Grid item xs={6}>*/}
-                {/*        <Button onClick={() => props.onClickCloseOrderItemEntity!()}>キャンセル</Button>*/}
-                {/*        <Button onClick={() => setIsOpen(true)}>保存</Button>*/}
-                {/*    </Grid>*/}
-                {/*)}*/}
+                    <Grid item xs={3}>{selectedToppings.map((t) => <Card key={t.name}> {t.name}</Card>)}</Grid>
+                    {/*{props.parentComponent === "CartItem" && (*/}
+                    {/*    <Grid item xs={6}>*/}
+                    {/*        <Button onClick={() => props.onClickCloseOrderItemEntity!()}>キャンセル</Button>*/}
+                    {/*        <Button onClick={() => setIsOpen(true)}>保存</Button>*/}
+                    {/*    </Grid>*/}
+                    {/*)}*/}
                     <Modal open={modalIsOpen} onClose={() => setIsOpen(false)}>
                         <DialogContent>
                             <WrappedSelectTopping selectedSize={props.selectedState.size}
