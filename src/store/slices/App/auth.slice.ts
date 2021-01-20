@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {User} from "~/types/interfaces";
 import {RootState} from "~/store/index";
-import {API_URL, REST_URL} from "~/store/api";
+import {API_URL} from "~/store/api";
 import axios from "axios";
 import camelcaseKeys from "camelcase-keys";
 
@@ -120,4 +120,4 @@ export const authSlice = createSlice({
         })
     })
 })
-export const selectLoginUser = (state: RootState) => state.auth.loginUser
+export const selectLoginUser = (state: RootState) => state.auth.loginUser;
