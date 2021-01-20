@@ -32,7 +32,7 @@ const OrderOperator: FC<Props> = (props) => {
      */
     const allDeleteOrderItems = (orderItems: OrderItem[]) => {
         orderItems.map((orderItem => {
-            props.deleteOrderItem(orderItem.id)
+            props.deleteOrderItem(orderItem.id!)
         }))
     }
 

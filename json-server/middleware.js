@@ -6,6 +6,7 @@ module.exports = function (req, res, next) {
         } else if (req.url === "/auth/logout/_POST") {
             req.url = "/logout"
         } else {//以下に表示したい物や加えたい処理を書いて下さい
+            if (req.url==="/django/cart/_POST") req.url="/cart_POST"
             console.log(req.body)
             console.log(req.headers['Authorization'])
         }

@@ -45,7 +45,7 @@ export interface Order {
 }
 
 export interface OrderItem {
-    id: number
+    id?: number
     item: Item
     orderToppings?: Array<OrderTopping>
     quantity: number
