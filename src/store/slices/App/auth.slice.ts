@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {User} from "~/types/interfaces";
 import {RootState} from "~/store/index";
-import {API_URL} from "~/store/api";
+import {API_URL, REST_URL} from "~/store/api";
 import axios from "axios";
 import camelcaseKeys from "camelcase-keys";
 
@@ -50,6 +50,9 @@ export const login = createAsyncThunk(
         try {
             const {data} = await axios.post(`${API_URL}/auth/login/`, loginInfo, {
                 method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
             return data;
         } catch (e) {

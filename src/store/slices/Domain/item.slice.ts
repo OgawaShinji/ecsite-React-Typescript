@@ -60,6 +60,12 @@ export const fetchItemNames = createAsyncThunk('item/getItemNames', async () => 
     }
 })
 
+/**
+ * 商品詳細情報を取得する.
+ *
+ * @param {number} itemId 商品ID
+ * @return {Item} 商品詳細情報
+ */
 export const fetchItemDetail = createAsyncThunk(
     'item/detail',
     async (itemId: number) => {
@@ -125,6 +131,8 @@ export const itemSlice = createSlice({
         })
     })
 })
+
+export const {setItemDetail} = itemSlice.actions;
 
 export const selectItems = (state: RootState) => state.item.items;
 export const selectItemNames = (state: RootState) => state.item.itemNames;

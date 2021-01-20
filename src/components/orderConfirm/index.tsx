@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {fetchOrderItems, selectOrderItems} from "~/store/slices/Domain/order.slice";
+import {asyncFetchOrderItems, selectOrderItems} from "~/store/slices/Domain/order.slice";
 import {useDispatch, useSelector} from "react-redux";
 import OrderForm from "~/components/orderConfirm/orderForm";
 import OrderItems from "~/components/elements/orderItem";
@@ -13,6 +13,7 @@ const OrderConfirm: React.FC = () => {
     let orderItems = useSelector(selectOrderItems);
     //storeのstateにあるloginUserの取得
     let loginUser = useSelector(selectLoginUser);
+
 
     useEffect( () => {
         dispatch(fetchOrderItems());

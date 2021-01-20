@@ -21,7 +21,7 @@ export interface Item {
 
 export interface Topping {
     id: number;
-    name: string;
+    name?: string;
     priceM?: number;
     priceL?: number;
 }
@@ -54,9 +54,9 @@ export interface OrderItem {
 }
 
 export interface OrderTopping {
-    id: number
+    id?: number
     topping: Topping
-    orderItemId: number
+    orderItemId?: number
 }
 
 export interface SearchForm {

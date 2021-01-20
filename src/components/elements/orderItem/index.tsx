@@ -9,7 +9,7 @@ import {
     Typography,
 } from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchOrderItems, selectOrderItems} from "~/store/slices/Domain/order.slice";
+import {asyncFetchOrderItems, selectOrderItems} from "~/store/slices/Domain/order.slice";
 
 const useStyles = makeStyles((theme) =>({
     root: {
@@ -38,7 +38,7 @@ const OrderItem: React.FC = () => {
     const orderItems = useSelector(selectOrderItems);
 
     useEffect(() => {
-        dispatch(fetchOrderItems());
+        dispatch(asyncFetchOrderItems());
     }, [dispatch])
 
     return (
