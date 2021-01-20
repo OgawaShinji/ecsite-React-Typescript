@@ -9,7 +9,6 @@ Axios.interceptors.request.use((request) => {
 });
 Axios.interceptors.response.use((response) => {
     if (response.data) response.data = camelcaseKeys(response.data, {deep: true});
-    console.log(response)
     return response
 });
 
