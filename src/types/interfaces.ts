@@ -1,11 +1,11 @@
 export interface User {
-    id: number
+    id?: number
     name: string
     email: string
     zipcode: string
     address: string
     telephone: string
-    status: number
+    status?: number
     password?: string
 }
 
