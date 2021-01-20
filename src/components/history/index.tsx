@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 
 import {useDispatch, useSelector} from "react-redux";
 import {
@@ -7,14 +7,19 @@ import {
     selectOrderHistory,
     selectOrderHistoryTotalCount
 } from "~/store/slices/Domain/history.slice";
+
 import OrderInfo from "~/components/history/OrderInfo";
 import {makeStyles, Grid, List, ListItem, Divider, Typography} from "@material-ui/core";
+import {Pagination} from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
     title: {
         margin: theme.spacing(2),
         fontWeight: 'bold',
-        borderBottom: 'dashed 2px #6594e0'
+        borderBottom: 'dashed 2px #FFA500'
+    },
+    pagination: {
+        margin: theme.spacing(3)
     }
 }))
 
@@ -26,10 +31,39 @@ const OrderConfirm: React.FC = () => {
     const orders = useSelector(selectOrderHistory);
     const ordersTotalCount = useSelector(selectOrderHistoryTotalCount);
 
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(0);
+    const [isDisplay, setDisplay] = useState(false);
+
     useEffect(() => {
         dispatch(fetchOrderHistory({displayCount: 5, pageNum: 1}));
         dispatch(fetchOrderHistoryTotalCount());
-    }, [dispatch])
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (ordersTotalCount === 0) {
+            // 注文履歴が存在しない場合
+            setDisplay(true);
+        } else {
+            // 注文履歴が存在する場合
+
+            if (ordersTotalCount) {
+                let totalPageCount;
+
+                // 総ページ数をセット
+                if (ordersTotalCount % 5 === 0) {
+                    totalPageCount = ordersTotalCount / 5;
+                } else {
+                    totalPageCount = Math.floor(ordersTotalCount / 5) + 1;
+                }
+                setCount(totalPageCount);
+            }
+        }
+    }, [ordersTotalCount]);
+
+    useEffect(() => {
+        dispatch(fetchOrderHistory({displayCount: 5, pageNum: page}));
+    }, [page, dispatch])
 
     // orderInfoコンポーネント一覧のJSXを作成
     const orderInfoList = orders.map((order, index) => {
@@ -60,10 +94,13 @@ const OrderConfirm: React.FC = () => {
 
     return (
         <>
+            {/*Title*/}
             <Typography variant={"h4"} className={classes.title}>
                 注文履歴
             </Typography>
-            {orders.length === 0 && '注文履歴がありません。'}
+            {isDisplay && '注文履歴がありません。'}
+
+            {/*注文履歴一覧*/}
             <Grid container justify={"center"} alignItems={"center"}>
                 <Grid item xs={10}>
                     <List>
@@ -71,7 +108,15 @@ const OrderConfirm: React.FC = () => {
                     </List>
                 </Grid>
             </Grid>
-            {ordersTotalCount}
+
+            {/*Pagination*/}
+            {ordersTotalCount && (
+                <Grid container justify={"center"} alignItems={"center"}>
+                    <Pagination count={count} page={page} onChange={(e, val) => {
+                        setPage(val)
+                    }} className={classes.pagination} size={"large"}/>
+                </Grid>
+            )}
         </>
     )
 }
