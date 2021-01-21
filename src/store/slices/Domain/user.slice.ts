@@ -4,18 +4,10 @@ import {User} from "~/types/interfaces";
 import {API_URL} from "~/store/api";
 
 
-type userState = {
-    user: User,
-}
-//-----stateの定義
-
-//必要ないかも
-
 //-----非同期処理（createAsyncThunk)の記述
-
 export const postRegisterUser = createAsyncThunk(
     'user/postUserRegister',
-    async (userInfo:userState) => {
+    async (userInfo:User) => {
         //dispatchでに渡されてきたユーザー情報をPOSTする
         await axios.post(
             `${API_URL}/auth/register/`,

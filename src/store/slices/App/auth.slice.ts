@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {User} from "~/types/interfaces";
 import {RootState} from "~/store/index";
-import {API_URL} from "~/store/api";
+import Axios, {API_URL} from "~/store/api";
 import axios from "axios";
 import camelcaseKeys from "camelcase-keys";
 
@@ -48,7 +48,7 @@ export const login = createAsyncThunk(
     'auth/login',
     async (loginInfo: loginForm) => {
         try {
-            const {data} = await axios.post(`${API_URL}/auth/login/`, loginInfo, {
+            const {data} = await Axios.post(`${API_URL}/auth/login/`, loginInfo, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -72,7 +72,7 @@ export const fetchLoginUser = createAsyncThunk(
     'auth/user',
     async () => {
         try {
-            const {data} = await axios.get(`${API_URL}/auth/user/`, {
+            const {data} = await Axios.get(`${API_URL}/auth/user/`, {
                 method: "GET",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
@@ -105,8 +105,7 @@ export const authSlice = createSlice({
 
         //login
         builder.addCase(login.fulfilled, (state, action) => {
-            const camelPayload = camelcaseKeys(action.payload['token'])
-            localStorage.setItem("Authorization", camelPayload)
+            if (action.payload?.token)localStorage.setItem("Authorization", action.payload.token)
         })
         builder.addCase(login.rejected, (state) => {
         })

@@ -1,9 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Topping} from "~/types/interfaces"
-import axios from "axios";
-import {API_URL} from "~/store/api";
+import Axios, {API_URL} from "~/store/api";
 import {RootState} from "~/store/index";
-import camelcaseKeys from "camelcase-keys";
 
 type toppingState = {
     toppings: Topping[]
@@ -22,7 +20,7 @@ export const fetchToppings = createAsyncThunk(
     'topping/fetchToppings',
     async () => {
         try {
-            const {data} = await axios.get(`${API_URL}/flask/topping/`, {
+            const {data} = await Axios.get(`${API_URL}/flask/topping/`, {
                 method: "GET",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
@@ -46,8 +44,7 @@ export const toppingSlice = createSlice({
     },
     extraReducers: ((builder) => {
         builder.addCase(fetchToppings.fulfilled, (((state, action) => {
-            const camelPayload = camelcaseKeys(action.payload)
-            toppingSlice.caseReducers.setToppings(state, toppingSlice.actions.setToppings(camelPayload))
+            toppingSlice.caseReducers.setToppings(state, toppingSlice.actions.setToppings(action.payload))
         })));
         builder.addCase(fetchToppings.rejected, ((state, action) => {
             console.log(action.error)

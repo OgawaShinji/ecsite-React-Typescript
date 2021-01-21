@@ -99,7 +99,7 @@ const ItemList: React.FC = () => {
             </Grid>
 
             <Grid container justify={"center"} alignItems={"center"}>
-                ※価格は全て税込です。
+                ※価格は全て税抜です。
             </Grid>
         </div>
     );

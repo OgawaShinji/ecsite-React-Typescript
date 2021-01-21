@@ -1,8 +1,8 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Order, OrderItem, Topping} from '../../../types/interfaces'
+import {Order, OrderItem} from '../../../types/interfaces'
 import {RootState} from "../../index";
 import axios from "axios";
-import {API_URL} from "../../api";
+import Axios, {API_URL} from "../../api";
 import camelcaseKeys from "camelcase-keys";
 
 
@@ -42,9 +42,9 @@ export const asyncFetchOrderItems = createAsyncThunk(
 export type OrderItemToPost = {
     newItem: {
         item: number,
-        orderToppings: number[],
+        orderToppings: { topping: number }[],
         quantity: number,
-        size: 'M'|'L'
+        size: 'M' | 'L'
     },
     status: 0,
     newTotalPrice: number
@@ -58,8 +58,13 @@ export type OrderItemToPost = {
 export const asyncPostOrderItem = createAsyncThunk(
     'order/postOrderItem',
     async (order: OrderItemToPost) => {
-        await axios.post(`${API_URL}/django/cart/`, {
-            order_item: {item: order.newItem.item},
+        await Axios.post(`${API_URL}/django/cart/`, {
+            order_item: {
+                item: order.newItem.item,
+                orderToppings: order.newItem.orderToppings,
+                quantity: order.newItem.quantity,
+                size: order.newItem.size
+            },
             status: 0,
             total_price: order.newTotalPrice
         }, {
@@ -161,6 +166,8 @@ export const orderSlice = createSlice({
         setOrderItemsAndSubTotalPrice: ((state: orderState, action: PayloadAction<OrderItem[]>) => {
             state.order.orderItems = action.payload
             let copyOrderItems = state.order.orderItems.slice()
+            //注文内容の小計を初期化
+            state.orderSubTotalPrice = 0
             let orderSubTotalPrice = state.orderSubTotalPrice
 
             // orderItemごとのsubTotalPriceをset, stateのorder全体のsubTotalPriceをset
@@ -185,6 +192,7 @@ export const orderSlice = createSlice({
             })
             state.order.orderItems = copyOrderItems
             state.orderSubTotalPrice = orderSubTotalPrice
+
         }),
         //追加機能
         setUserAddress: ((state: orderState, action) => {
