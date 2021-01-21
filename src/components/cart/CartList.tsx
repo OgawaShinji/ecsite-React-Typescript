@@ -71,7 +71,7 @@ const CartList: FC = () => {
             }
             f()
         }
-    }, [order, dispatch])
+    }, [order, dispatch, actionKey])
 
     /**
      * 注文商品の内容を更新する関数
@@ -82,7 +82,7 @@ const CartList: FC = () => {
 
         let newOrderItems: OrderItem[] = []
 
-        orderItems?.map((o, i) => {
+        orderItems?.forEach((o, i) => {
             if (i === index) {
                 newOrderItems.push(orderItem)
             } else {
