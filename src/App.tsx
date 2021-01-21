@@ -35,7 +35,7 @@ function App() {
     const errorInStore = useSelector(selectError);
     useEffect(() => {
     }, [errorInStore])
-  
+
     useEffect(() => {
         if (!loginUser && token) {
             dispatch(fetchLoginUser())
@@ -58,4 +58,5 @@ function App() {
         </div>
     );
 }
+
 export default App;
