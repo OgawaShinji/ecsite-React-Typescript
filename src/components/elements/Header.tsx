@@ -85,6 +85,15 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
         props.history.push({pathname: '/login'})
     }
 
+    /**
+     * 注文履歴画面へ遷移する関数
+     * @return void
+     */
+    const transitionOrderHistory = () => {
+        handleClose();
+        props.history.push({pathname: '/history'})
+    }
+
     return (
         <div className={classes.root}>
             <AppBar position="static">
@@ -141,8 +150,8 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
                         open={open}
                         onClose={handleClose}
                     >
-                        <MenuItem onClick={handleClose}>
-                            <Link to={Path.history} className={classes.link}>注文履歴</Link>
+                        <MenuItem onClick={transitionOrderHistory}>
+                            注文履歴
                         </MenuItem>
                         <MenuItem onClick={logoutInHeader}>ログアウト</MenuItem>
                     </Menu>
