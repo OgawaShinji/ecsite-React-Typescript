@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {User} from "~/types/interfaces";
 import {RootState} from "~/store/index";
-import Axios, {API_URL} from "~/store/api";
+import Axios from "~/store/api";
 import axios from "axios";
 
 type authState = {
@@ -24,7 +24,7 @@ export const logout = createAsyncThunk(
     'auth/logout',
     async () => {
         try {
-            const {data} = await axios.post(`${API_URL}/auth/logout/`, {}, {
+            const {data} = await axios.post(`/auth/logout/`, {}, {
                 method: "POST",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
@@ -47,7 +47,7 @@ export const login = createAsyncThunk(
     'auth/login',
     async (loginInfo: loginForm) => {
         try {
-            const {data} = await Axios.post(`${API_URL}/auth/login/`, loginInfo, {
+            const {data} = await Axios.post(`/auth/login/`, loginInfo, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ export const fetchLoginUser = createAsyncThunk(
     'auth/user',
     async () => {
         try {
-            const {data} = await Axios.get(`${API_URL}/auth/user/`, {
+            const {data} = await Axios.get(`/auth/user/`, {
                 method: "GET",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
