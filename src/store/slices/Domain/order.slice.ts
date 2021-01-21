@@ -26,7 +26,7 @@ const initialState: orderState = {
 export const asyncFetchOrderItems = createAsyncThunk(
     'order/fetchOrderItems',
     async () => {
-        const {data} = await axios.get(`${API_URL}/django/cart`, {
+        const {data} = await Axios.get(`${API_URL}/django/cart`, {
             method: 'GET',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -88,7 +88,7 @@ export const asyncPostOrderItem = createAsyncThunk(
 export const asyncUpdateOrderItem = createAsyncThunk(
     'order/updateOrderItem',
     async (order: Order) => {
-        await axios.post(`${API_URL}/django/cart`, {order}, {
+        await Axios.put(`${API_URL}/django/cart`, {order}, {
             method: 'PUT',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -108,7 +108,7 @@ export const asyncUpdateOrderItem = createAsyncThunk(
 export const asyncDeleteOrderItem = createAsyncThunk(
     'order/deleteOrderItem',
     async (orderItemId: number) => {
-        await axios.delete(`${API_URL}/django/cart`, {
+        await Axios.delete(`${API_URL}/django/cart`, {
             method: 'DELETE',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -205,8 +205,7 @@ export const orderSlice = createSlice({
     extraReducers: (builder => {
         // fetchOrderItems
         builder.addCase(asyncFetchOrderItems.fulfilled, (state, action) => {
-            const camelPayload = camelcaseKeys(action.payload, {deep: true})
-            const _action = orderSlice.actions.setOrderItemsAndSubTotalPrice(camelPayload.order.orderItems)
+            const _action = orderSlice.actions.setOrderItemsAndSubTotalPrice(action.payload.order.orderItems)
             orderSlice.caseReducers.setOrderItemsAndSubTotalPrice(state, _action)
         })
         builder.addCase(asyncFetchOrderItems.rejected, (state, action) => {
