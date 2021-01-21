@@ -19,6 +19,7 @@ import img from "~/assets/img/img.png"
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.slice";
 import {Path} from "~/router/routes";
+import {setError} from "~/store/slices/App/error.slice"
 
 const ItemDetail: React.FC = () => {
     const item = useSelector(selectItemDetail)
@@ -31,6 +32,9 @@ const ItemDetail: React.FC = () => {
     useEffect(() => {
         if (typeof itemId !== "number") console.log('itemId is only number')//throw new Error()
         if (item === null) dispatch(fetchItemDetail(itemId))
+            .then((i) => {
+                console.log(i)
+            }).catch((e) => dispatch(setError({isError: true, code: e.message})))
         if (toppings.length === 0) dispatch(fetchToppings())
         if (item !== null) setTotalPrice(item?.priceM)
     }, [dispatch, itemId, item, toppings])
@@ -101,10 +105,11 @@ const ItemDetail: React.FC = () => {
             status: 0,
             newTotalPrice: totalPrice
         }
-        const dispatchStatus = await dispatch(asyncPostOrderItem(newOrder)).then(() => {
-            return 200
+        await dispatch(asyncPostOrderItem(newOrder)).then((i) => {
+            if (i.payload === '200') history.push(Path.cart)
+        }).catch((e) => {
+            dispatch(setError({isError: true, code: e.message}))
         })
-        return dispatchStatus === 200 ? 200 : 400
     }
 
     const entryIndexStyle = makeStyles((theme: Theme) => createStyles({
@@ -178,11 +183,11 @@ const ItemDetail: React.FC = () => {
                             <Grid item xs={6}><Button variant={"contained"}
                                                       className={classes.order_button}
                                                       onClick={() => {
-                                                          handleOrderClick().then((i) => i === 200 ? history.push(`${Path.cart}`) : {})
+                                                          handleOrderClick()
                                                       }}>商品をカートに入れる</Button></Grid>
                             <Grid item xs={6}><Button variant={"contained"} className={classes.order_button}
                                                       onClick={() => {
-                                                          handleOrderClick().then((i) => i === 200 ? history.push(`${Path.orderConfirm}`) : {})
+                                                          handleOrderClick()
                                                       }}>すぐに注文確認画面へ進む</Button></Grid>
                         </CardActions>
                     </Grid>

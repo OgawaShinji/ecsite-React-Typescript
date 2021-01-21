@@ -58,7 +58,7 @@ export type OrderItemToPost = {
 export const asyncPostOrderItem = createAsyncThunk(
     'order/postOrderItem',
     async (order: OrderItemToPost) => {
-        await Axios.post(`${API_URL}/django/cart/`, {
+        const {data} = await Axios.post(`${API_URL}/django/cart/`, {
             order_item: {
                 item: order.newItem.item,
                 orderToppings: order.newItem.orderToppings,
@@ -73,9 +73,9 @@ export const asyncPostOrderItem = createAsyncThunk(
                 Authorization: localStorage.getItem("Authorization")
             }
         }).catch(err => {
-            throw new Error(err)
+            throw new Error(err.response.status)
         })
-        return "200"
+        return data;
     }
 )
 
@@ -214,9 +214,14 @@ export const orderSlice = createSlice({
 
         // postOrderItem
         builder.addCase(asyncPostOrderItem.fulfilled, (state, action) => {
+            //post後受け取りたいデータが特に無いので返却値を自分で指定している
+            // ->component/itemDetail/index/handleOrderClick にて、ここの指定値が返ってきた時のみ処理している
+            action.payload="200"
         })
         builder.addCase(asyncPostOrderItem.rejected, (state, action) => {
-            console.log(action.error)
+            //createAsyncThunkのcatch内にてエラーコードのみをmessageに入れているので.
+            //action.error.messageには上記エラーコードのみ入る
+            throw new Error(action.error.message)
         })
 
         // updateOrderItem

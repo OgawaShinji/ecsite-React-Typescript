@@ -28,8 +28,7 @@ export const fetchToppings = createAsyncThunk(
             })
             return data
         } catch (e) {
-            console.log(e)
-            throw e
+            throw new Error(e.response.status)
         }
     }
 )
@@ -47,8 +46,7 @@ export const toppingSlice = createSlice({
             toppingSlice.caseReducers.setToppings(state, toppingSlice.actions.setToppings(action.payload))
         })));
         builder.addCase(fetchToppings.rejected, ((state, action) => {
-            console.log(action.error)
-            //商品一覧画面遷移もしくはエラー画面？
+            throw new Error(action.error.message)
         }))
     })
 })
