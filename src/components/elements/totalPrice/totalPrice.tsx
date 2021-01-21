@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Divider} from "@material-ui/core";
+import {Divider, Typography} from "@material-ui/core";
 
 interface Props {
     subTotalPrice: number
@@ -20,15 +20,16 @@ const TotalPrice: React.FC<Props> = props => {
         setBilledAmount(billedAmount => totalPrice);
     }, [props.subTotalPrice,tax,totalPrice])
 
-
     return (
         <>
-            <p>注文商品の小計: {subTotalPrice.toLocaleString()} 円</p>
-            <p>消費税: {consumptionTax.toLocaleString()} 円</p>
+            <Typography variant={"subtitle2"} align={"center"} >小計: {subTotalPrice.toLocaleString()} 円</Typography>
+            <br/>
+            <Typography variant={"subtitle2"} align={"center"}>消費税: {consumptionTax.toLocaleString()} 円</Typography>
+            <br/>
             <Divider/>
-            <p>合計金額: {billedAmount.toLocaleString()} 円</p>
+            <br/>
+            <Typography variant={"subtitle1"} align={"center"}>合計金額: {billedAmount.toLocaleString()} 円</Typography>
         </>
     )
 }
-
 export default TotalPrice
