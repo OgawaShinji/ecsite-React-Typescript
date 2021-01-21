@@ -9,11 +9,16 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import {Button, Grid} from "@material-ui/core";
 
-import {Link} from 'react-router-dom'
+import {Link, RouteComponentProps, withRouter} from 'react-router-dom'
 import {Path} from "~/router/routes";
 import {logout} from "~/store/slices/App/auth.slice";
 import {AppDispatch} from "~/store";
 import {useDispatch} from "react-redux";
+
+interface Props {
+    isLogin: boolean
+}
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -39,23 +44,19 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const Header: FC = () => {
+const Header: FC<Props & RouteComponentProps> = (props) => {
 
     const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
 
-    const [auth, setAuth] = useState(false);
+    const isLogin = props.isLogin
+    const [auth, setAuth] = useState(isLogin);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    const userToken = localStorage.getItem("Authorization")
 
     useEffect(() => {
-        if (userToken) {
-            setAuth(true)
-        } else {
-            setAuth(false)
-        }
-    }, [userToken])
+        setAuth(isLogin)
+    }, [isLogin])
 
     /**
      * ログイン時、プロフィールを押下した時にモーダルを表示する関数
@@ -81,7 +82,7 @@ const Header: FC = () => {
     const logoutInHeader = () => {
         handleClose()
         dispatch(logout());
-        setAuth(false)
+        props.history.push({pathname: '/login'})
     }
 
     return (
@@ -151,4 +152,4 @@ const Header: FC = () => {
     );
 }
 
-export default Header
+export default withRouter(Header)
