@@ -11,16 +11,19 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             '& .MuiTextField-root': {
                 margin: theme.spacing(1),
-                width: 300,
+                width: 400,
             },
         },
         pad:{
-            padding: theme.spacing(8),
+            padding: theme.spacing(3),
         },
         root2: {
-            width: 500,
-            height: 700,
+            width: 550,
         },
+        color: {
+            backgroundColor: "#ffa500",
+            color: "white"
+        }
     }),
 );
 
@@ -159,9 +162,9 @@ const Register: FC = () => {
             const userInfo = {
                 name: name.value,
                 email: email.value,
-                zipcode: zipcode.value,//文字列？
+                zipcode: zipcode.value,
                 address: address.value,
-                telephone: telephone.value,//文字列?
+                telephone: telephone.value,
                 password: password.value
             }
             dispatch(postRegisterUser(userInfo));
@@ -175,10 +178,9 @@ const Register: FC = () => {
         <>
             <Grid container alignContent="center" justify="center" className={classes.pad}>
                 <Paper className={classes.root2}>
-                    <form className={classes.root} noValidate autoComplete="off">
-                        <div className={classes.pad}>
-                            <Typography component="h5" variant="h5">新規ユーザー登録</Typography>
-                            <br/>
+                    <Grid container alignContent="center" justify="center">
+                        <div className={classes.root}>
+                            <Typography className={classes.pad} component="h5" variant="h5" align={"center"}>新規ユーザー登録</Typography>
                             <div >
                                 <div style={{color: 'red'}}>{name.errorMessage}</div>
                                 <TextField
@@ -221,6 +223,7 @@ const Register: FC = () => {
                                     value={address.value}
                                     error={address.errorMessage.length > 0}
                                     onChange={handleChangeAddress}
+                                    fullWidth
                                 />
                             </div>
                             <div>
@@ -256,14 +259,17 @@ const Register: FC = () => {
                                     onChange={handleChangeConfirmationPassword}
                                 />
                             </div>
-                            <br/>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleClickRegister}
-                            >登録</Button>
+                            <Grid className={classes.pad} container alignContent="center" justify="center">
+                                <Button
+                                    variant="contained"
+                                    className={classes.color}
+                                    onClick={handleClickRegister}
+                                >登録</Button>
+                            </Grid>
+
                         </div>
-                    </form>
+                    </Grid>
+
                 </Paper>
             </Grid>
         </>
