@@ -54,7 +54,7 @@ const OrderForm: React.FC<Props> = (props) => {
     const [userInfo, setUserInfo] = React.useState<User | null>(props.user)
     //デフォルトの配達日時をセット
     const [selectedDate, setSelectedDate] = React.useState<{ date: Date | null, errorMessage: string}>({
-        date: new Date(),
+        date: null,
         errorMessage: ''
     });
     //デフォルトのお支払方法をセット
@@ -89,10 +89,10 @@ const OrderForm: React.FC<Props> = (props) => {
         }
     };
     //配送日時のバリデーションチェック
-    const deliveryDateValidation = (): string => {
-        if(selectedDate.date){
+    const deliveryDateValidation = (date: Date | null): string => {
+        if(date){
             const orderDate = new Date();
-            if (orderDate > selectedDate.date) {
+            if (orderDate > date) {
                 return '現在時刻よりも後を選んでください'
             } else{
                 return ''
@@ -102,10 +102,10 @@ const OrderForm: React.FC<Props> = (props) => {
         }
     }
     //配達日時選択中の処理 動的に日付の内容を更新
-    const handleDateChange = (date: Date | null    ) => {
+    const handleDateChange = (date: Date | null ) => {
         setSelectedDate({
             date: date,
-            errorMessage: deliveryDateValidation()
+            errorMessage: deliveryDateValidation(date)
         })
     };
     //[この内容で注文する]ボタン押下時の処理　
@@ -240,6 +240,7 @@ const OrderForm: React.FC<Props> = (props) => {
                                 fullWidth
                                 onClick={handleOrder}
                                 className={classes.color}
+                                disabled={selectedDate.errorMessage.length > 0}
                         >この内容で注文する</Button>
                     </Grid>
                 </Grid>
