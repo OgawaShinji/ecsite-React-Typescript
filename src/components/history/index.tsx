@@ -7,11 +7,12 @@ import {
     selectOrderHistory,
     selectOrderHistoryTotalCount
 } from "~/store/slices/Domain/history.slice";
+import {OrderItem} from "~/types/interfaces";
 
 import OrderInfo from "~/components/history/OrderInfo";
+import OrderHistoryDialog from "~/components/history/OrderHistoryDialog";
 import {makeStyles, Grid, List, ListItem, Divider, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
-import OrderHistoryDialog from "~/components/history/OrderHistoryDialog";
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -22,13 +23,14 @@ const useStyles = makeStyles((theme) => ({
     pagination: {
         margin: theme.spacing(3)
     }
-}))
+}));
 
 const OrderConfirm: React.FC = () => {
 
     const dispatch = useDispatch();
     const classes = useStyles();
 
+    // storeからstateを取得
     const orders = useSelector(selectOrderHistory);
     const ordersTotalCount = useSelector(selectOrderHistoryTotalCount);
 
@@ -36,11 +38,12 @@ const OrderConfirm: React.FC = () => {
     const [count, setCount] = useState(0);
     const [isDisplay, setDisplay] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [orderItems, setOrderItems] = useState<Array<OrderItem>>([]);
 
     useEffect(() => {
-        dispatch(fetchOrderHistory({displayCount: 5, pageNum: 1}));
+        dispatch(fetchOrderHistory({displayCount: 5, pageNum: page}));
         dispatch(fetchOrderHistoryTotalCount());
-    }, [dispatch]);
+    }, [page, dispatch]);
 
     useEffect(() => {
         if (ordersTotalCount === 0) {
@@ -48,7 +51,6 @@ const OrderConfirm: React.FC = () => {
             setDisplay(true);
         } else {
             // 注文履歴が存在する場合
-
             if (ordersTotalCount) {
                 let totalPageCount;
 
@@ -63,15 +65,14 @@ const OrderConfirm: React.FC = () => {
         }
     }, [ordersTotalCount]);
 
-    useEffect(() => {
-        dispatch(fetchOrderHistory({displayCount: 5, pageNum: page}));
-    }, [page, dispatch])
-
     // orderInfoコンポーネント一覧のJSXを作成
     const orderInfoList = orders.map((order, index) => {
         const listItem = (
             <ListItem button onClick={() => {
                 setIsOpen(true);
+                if (order.orderItems) {
+                    setOrderItems(order.orderItems);
+                }
             }}>
                 <OrderInfo order={order}/>
             </ListItem>
@@ -119,7 +120,9 @@ const OrderConfirm: React.FC = () => {
                     }} className={classes.pagination} size={"large"}/>
                 </Grid>
             )}
-            <OrderHistoryDialog handleClose={() => {setIsOpen(false)}} isOpen={isOpen}/>
+            <OrderHistoryDialog handleClose={() => {
+                setIsOpen(false)
+            }} isOpen={isOpen} orderItems={orderItems}/>
         </>
     )
 }
