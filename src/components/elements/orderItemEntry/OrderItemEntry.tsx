@@ -119,7 +119,7 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                 {/*トッピング入力フォーム*/}
                 <Grid container justify={"center"}>
                     <Grid item xs={12} style={{}}>
-                        <Paper style={{margin: "3%"}}>
+                        <Paper style={{margin: "3%"}} className={classes.entry_right}>
 
                             {/*SelectToppingモーダル表示ボタン*/}
                             <Button onClick={() => setIsOpen(true)}
@@ -158,8 +158,7 @@ export default OrderItemEntry;
 
 const orderItemEntryStyleInCart = makeStyles((theme: Theme) => createStyles({
 
-    modal: {
-    },
+    modal: {},
     entry_title: {
         width: "100%",
         backgroundColor: "#ffa500"
@@ -223,13 +222,14 @@ const orderItemEntryStyleInCart = makeStyles((theme: Theme) => createStyles({
         backgroundColor: "#ffe0b2",//#ffb74d
     },
 
-    dialog:{
-        width:'95%',
+    dialog: {
+        width: '95%',
         position: 'absolute',
-        top:'50%',
-        left:'50%',
+        top: '50%',
+        left: '50%',
         transform: "translate(-50%, -50%)"
-    }
+    },
+    entry_right: {}
 }));
 
 const orderItemEntryStyle = makeStyles((theme: Theme) => createStyles({
@@ -270,9 +270,11 @@ const orderItemEntryStyle = makeStyles((theme: Theme) => createStyles({
     },
     //左部分各入力フォームの背景色指定用
     entry_parts_paper: {
-        width: "65%",
+        width: "90%",
         height: "80%",
-        backgroundColor: "#ffcdd2"
+        backgroundColor: "#ffcdd2",
+        display: "flex",
+        justifyContent: "center",
     },
     //モーダル表示ボタン
     modal_open_button: {
@@ -299,11 +301,16 @@ const orderItemEntryStyle = makeStyles((theme: Theme) => createStyles({
 
     },
 
-    dialog:{
-        width:'95%',
+    dialog: {
+        width: '95%',
         position: 'absolute',
-        top:'50%',
-        left:'50%',
+        top: '50%',
+        left: '50%',
         transform: "translate(-50%, -50%)"
+    },
+    entry_right: {
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center"
     }
 }));
