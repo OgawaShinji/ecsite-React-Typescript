@@ -18,6 +18,7 @@ import {
     Theme,
     Typography
 } from "@material-ui/core";
+import {setError} from "~/store/slices/App/error.slice";
 
 
 interface Props {
@@ -87,7 +88,9 @@ const CartItem: FC<Props> = (props) => {
 
     // 初期表示
     useEffect(() => {
-        if (toppings.length === 0) dispatch(fetchToppings())
+        if (toppings.length === 0) dispatch(fetchToppings()).catch((e) => {
+            dispatch(setError({isError: true, code: e.message}))
+        })
     })
 
     /**
