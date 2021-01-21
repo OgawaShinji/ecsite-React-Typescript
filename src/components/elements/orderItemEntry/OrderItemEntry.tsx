@@ -18,7 +18,7 @@ import {
     Typography
 } from "@material-ui/core";
 import {Topping} from "~/types/interfaces";
-import {WrappedSelectTopping} from "~/components/elements/orderItemEntry/selectTopping";
+import {WrappedSelectTopping} from "~/components/elements/orderItemEntry/SelectTopping";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 
 export type itemEntryState = {

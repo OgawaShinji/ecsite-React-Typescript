@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {OrderItem, OrderTopping, Topping} from "~/types/interfaces"
-import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/orderItemEntry";
+import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
 import {
     Box,
