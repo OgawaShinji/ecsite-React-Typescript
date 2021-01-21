@@ -2,34 +2,50 @@ import React, {useEffect} from "react";
 import {asyncFetchOrderItems, selectOrderItems} from "~/store/slices/Domain/order.slice";
 import {useDispatch, useSelector} from "react-redux";
 import OrderForm from "~/components/orderConfirm/orderForm";
-import OrderItems from "~/components/elements/orderItemCards/orderItemCards";
+import OrderItemCard from "~/components/elements/orderItemCard/OrderItemCard";
 import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 
+import {Grid, makeStyles} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+    control: {
+        margin: theme.spacing(2)
+    }
+}))
 
 const OrderConfirm: React.FC = () => {
 
+    const classes = useStyles();
     const dispatch = useDispatch();
+
     //storeのstateにあるorderItemの取得
     let orderItems = useSelector(selectOrderItems);
     //storeのstateにあるloginUserの取得
     let loginUser = useSelector(selectLoginUser);
 
 
-    useEffect( () => {
+    useEffect(() => {
         dispatch(asyncFetchOrderItems());
     }, [dispatch])
 
-    useEffect( () => {
-        if(loginUser === null){
+    useEffect(() => {
+        if (loginUser === null) {
             dispatch(fetchLoginUser());
         }
-    }, [dispatch,loginUser])
+    }, [dispatch, loginUser])
 
     return (
         <>
-            <div>
-                <OrderItems orderItems={orderItems}/>
-            </div>
+            <Grid container justify={"center"} alignItems={"center"}>
+                <Grid item xs={9}>
+                    {orderItems && orderItems.map((orderItem) => (
+                        <div key={orderItem.id} className={classes.control}>
+                            <OrderItemCard orderItem={orderItem}/>
+                        </div>
+                    ))}
+                </Grid>
+            </Grid>
+
             <div>
                 <br/>
                 <OrderForm user={loginUser}/>
