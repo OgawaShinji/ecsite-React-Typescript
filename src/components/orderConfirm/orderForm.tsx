@@ -22,16 +22,17 @@ const useStyles = makeStyles((theme: Theme) =>
         orderFormPaper: {
             padding: theme.spacing(2),
             color: theme.palette.text.secondary,
-            height:200
         },
         totalPricePaper: {
             padding: theme.spacing(2),
             color: theme.palette.text.secondary,
-            height:145
         },
         color: {
             backgroundColor: "#ffa500",
             color: "white"
+        },
+        pad: {
+            padding: theme.spacing(2)
         }
     }),
 );
@@ -52,7 +53,10 @@ const OrderForm: React.FC<Props> = (props) => {
     //デフォルトのユーザー情報をセット
     const [userInfo, setUserInfo] = React.useState<User | null>(props.user)
     //デフォルトの配達日時をセット
-    const [selectedDate, setSelectedDate] = React.useState<Date | null>( new Date('2021-01-01T00:00:00') );
+    const [selectedDate, setSelectedDate] = React.useState<{ date: Date | null, errorMessage: string}>({
+        date: new Date(),
+        errorMessage: ''
+    });
     //デフォルトのお支払方法をセット
     const [checkedCash, setCheckedCash] = React.useState(true);
     const [checkedCredit, setCheckedCredit] = React.useState(false);
@@ -84,38 +88,58 @@ const OrderForm: React.FC<Props> = (props) => {
             setCheckedCash(false)
         }
     };
+    //配送日時のバリデーションチェック
+    const deliveryDateValidation = (): string => {
+        if(selectedDate.date){
+            const orderDate = new Date();
+            if (orderDate > selectedDate.date) {
+                return '現在時刻よりも後を選んでください'
+            } else{
+                return ''
+            }
+        } else {
+            return ''
+        }
+    }
     //配達日時選択中の処理 動的に日付の内容を更新
-    const handleDateChange = (date: Date | null) => {
-        setSelectedDate(date);
+    const handleDateChange = (date: Date | null    ) => {
+        setSelectedDate({
+            date: date,
+            errorMessage: deliveryDateValidation()
+        })
     };
     //[この内容で注文する]ボタン押下時の処理　
     const handleOrder = async () => {
-        const date = new Date();
-        selectedDate?.setHours(selectedDate?.getHours() + 9)
-        const consumptionTax = orderSubTotalPrice * 0.1
-        const totalPrice = orderSubTotalPrice + consumptionTax
-        let paymentMethod;
-        if( checkedCash ){
-            paymentMethod = 1;
-        } else if( checkedCredit ) {
-            paymentMethod = 2;
-        } else {
-            paymentMethod = 0;
+        if(selectedDate.errorMessage.length === 0){
+            const date = new Date();
+            if(selectedDate.date){
+                selectedDate?.date.setHours(selectedDate?.date.getHours() + 9)
+            }
+            const consumptionTax = orderSubTotalPrice * 0.1
+            const totalPrice = orderSubTotalPrice + consumptionTax
+            let paymentMethod;
+            if( checkedCash ){
+                paymentMethod = 1;
+            } else if( checkedCredit ) {
+                paymentMethod = 2;
+            } else {
+                paymentMethod = 0;
+            }
+            const order = {
+                status:1,
+                totalPrice: totalPrice,
+                order_data: date,
+                destination_name: userInfo?.name,
+                destination_email: userInfo?.email,
+                destination_zipcode: userInfo?.zipcode,
+                destination_address: userInfo?.address,
+                destination_tel: userInfo?.telephone,
+                delivery_time: selectedDate,
+                payment_method: paymentMethod
+            }
+            dispatch(postOrder(order));
+            await routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
         }
-        const order = {
-            status:1,
-            totalPrice: totalPrice,
-            order_data: date,
-            destination_name: userInfo?.name,
-            destination_email: userInfo?.email,
-            destination_zipcode: userInfo?.zipcode,
-            destination_address: userInfo?.address,
-            destination_tel: userInfo?.telephone,
-            delivery_time: selectedDate,
-            payment_method: paymentMethod
-        }
-        dispatch(postOrder(order));
-        await routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
     }
 
     const classes = useStyles();
@@ -124,7 +148,7 @@ const OrderForm: React.FC<Props> = (props) => {
         <>
             <div className={classes.root}>
                 <Grid container spacing={3} justify="center" alignItems="center"   >
-                    <Grid item xs={6} sm={6}>
+                    <Grid item xs={6} sm={7}>
                         <Paper className={classes.orderFormPaper}>
                             <Grid item xs={6} sm={11}>
                                 <Grid container spacing={1}  alignItems="center">
@@ -148,10 +172,10 @@ const OrderForm: React.FC<Props> = (props) => {
                             <Grid container spacing={1} justify="center" alignItems="center">
                                 <Grid item xs={6} sm={7}>
                                     <br/>
-                                    <Typography align="left">お名前: {userInfo?.name}　</Typography>
-                                    <Typography align="left">郵便番号:　{userInfo?.zipcode}　</Typography>
-                                    <Typography align="left">住所: {userInfo?.address}　</Typography>
-                                    <Typography align="left">電話番号:　{userInfo?.telephone}　</Typography>
+                                    <Typography align="left" variant={"subtitle2"}>お名前: {userInfo?.name}　</Typography>
+                                    <Typography align="left" variant={"subtitle2"}>郵便番号:　{userInfo?.zipcode}　</Typography>
+                                    <Typography align="left" variant={"subtitle2"}>住所: {userInfo?.address}　</Typography>
+                                    <Typography align="left" variant={"subtitle2"}>電話番号:　{userInfo?.telephone}　</Typography>
                                 </Grid>
                                 <Grid item xs={6} sm={5}>
                                     <Grid item xs={6} sm={12} >
@@ -176,25 +200,30 @@ const OrderForm: React.FC<Props> = (props) => {
                             <Grid item xs={6} sm={11}>
                                 <Grid container spacing={3}  alignItems="center">
                                     <Grid item xs={2}>
-                                        <Typography component="h6" variant="h6" align="left" >配送日時</Typography>
+                                        <Typography component="h6" variant="h6" align="left">配送日時</Typography>
                                     </Grid>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <Grid  item xs={3}>
                                             <KeyboardDatePicker
                                                 id="date-picker-dialog"
-                                                label="Date picker dialog"
+                                                label="配送日"
                                                 format="yyyy/MM/dd"
-                                                value={selectedDate}
+                                                value={selectedDate.date}
                                                 onChange={handleDateChange}
+                                                error={selectedDate.errorMessage.length > 0}
                                             />
                                         </Grid>
                                         <Grid item xs={3}>
                                             <KeyboardTimePicker
                                                 id="time-picker"
-                                                label="Time picker"
-                                                value={selectedDate}
+                                                label="配送時間"
+                                                value={selectedDate.date}
                                                 onChange={handleDateChange}
+                                                error={selectedDate.errorMessage.length > 0}
                                             />
+                                        </Grid>
+                                        <Grid>
+                                            <Typography variant={"subtitle2"} style={{color: 'red'}}>{selectedDate.errorMessage}</Typography>
                                         </Grid>
                                     </MuiPickersUtilsProvider>
                                 </Grid>
