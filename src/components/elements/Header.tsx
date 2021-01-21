@@ -9,11 +9,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import {Button, Grid} from "@material-ui/core";
 
-import {Link} from 'react-router-dom'
+import {Link, useHistory} from 'react-router-dom'
 import {Path} from "~/router/routes";
 import {logout} from "~/store/slices/App/auth.slice";
 import {AppDispatch} from "~/store";
 import {useDispatch} from "react-redux";
+import {setError} from "~/store/slices/App/error.slice"
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -49,6 +50,10 @@ const Header: FC = () => {
     const open = Boolean(anchorEl);
     const userToken = localStorage.getItem("Authorization")
 
+    const history = useHistory();
+    history.listen(() => {
+        dispatch(setError({isError: false, code: null}))
+    })
     useEffect(() => {
         if (userToken) {
             setAuth(true)
