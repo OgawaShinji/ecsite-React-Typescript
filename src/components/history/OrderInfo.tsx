@@ -63,7 +63,7 @@ const OrderInfo: React.FC<Props> = props => {
             </Grid>
             <Grid item xs={1}>
                 <Grid container justify={"center"} alignItems={"center"}>
-                    <Typography>
+                    <Typography style={{color: 'grey'}}>
                         {orderItemCount && orderItemCount > 1 && '他' + (orderItemCount - 1) + '件'}
                     </Typography>
                 </Grid>
