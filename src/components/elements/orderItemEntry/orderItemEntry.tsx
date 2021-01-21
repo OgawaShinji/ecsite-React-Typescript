@@ -60,10 +60,17 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
     //SelectToppingコンポーネントをModal表示する際にこのコンポーネントのref属性を渡す必要があるのでここで変数宣言
     const selectToppingRef = useRef<HTMLDivElement>(null);
 
-    const classes = orderItemEntryStyle();
+    let classes: any
+    if (props.parentComponent === 'CartItem') {
+        classes = orderItemEntryStyleInCart();
+    } else if (props.parentComponent === 'itemDetail') {
+        classes = orderItemEntryStyle();
+    }
 
-    return (<Grid justify={"center"} container>
-            <CardHeader title={"注文はこちらから！"} style={{width: "92%", backgroundColor: "#ffa500"}}/>
+
+    return (
+        <Grid justify={"center"} container className={classes.modal}>
+            <CardHeader title={"注文はこちらから！"} className={classes.entry_title}/>
             <Card className={classes.entry_form}>
                 {/*注文入力フォーム左側(サイズと数量)*/}
                 <Grid container justify={"space-around"} style={{display: "flex"}} className={classes.entry_left}>
@@ -132,28 +139,105 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                                 </Grid>)}
                         </Paper>
                     </Grid>
-                    {/*{props.parentComponent === "CartItem" && (*/}
-                    {/*    <Grid item xs={6}>*/}
-                    {/*        <Button onClick={() => props.onClickCloseOrderItemEntity!()}>キャンセル</Button>*/}
-                    {/*        <Button onClick={() => setIsOpen(true)}>保存</Button>*/}
-                    {/*    </Grid>*/}
-                    {/*)}*/}
-                    <Modal open={modalIsOpen} onClose={() => setIsOpen(false)}>
-                        <DialogContent>
+                    <Modal
+                        open={modalIsOpen}
+                        onClose={() => setIsOpen(false)}>
+                        <DialogContent className={classes.dialog}>
                             <WrappedSelectTopping selectedSize={props.selectedState.size}
                                                   onClickClose={() => setIsOpen(false)}
                                                   customRef={selectToppingRef} propTopping={selectedToppings}
                                                   onToppingChange={(t) => handleToppingChange(t)}/>
                         </DialogContent>
                     </Modal>
-
                 </Grid>
             </Card>
         </Grid>
     )
 };
 export default OrderItemEntry;
+
+const orderItemEntryStyleInCart = makeStyles((theme: Theme) => createStyles({
+
+    modal: {
+    },
+    entry_title: {
+        width: "100%",
+        backgroundColor: "#ffa500"
+    },
+    //大外の枠
+    entry_form: {
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    //左部分の枠
+    entry_left: {
+        width: "80%",
+        height: "90%",
+        margin: "1%",
+        border: "1%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: ""
+    },
+    //左部分各入力フォームの枠
+    entry_parts_grid: {
+        margin: "3%",
+        height: "100px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingTop: "1%",
+        alignContent: "flex-start",
+    },
+    //左部分各入力フォームの背景色指定用
+    entry_parts_paper: {
+        width: "65%",
+        height: "80%",
+        // backgroundColor: "#ffcdd2"
+    },
+    //モーダル表示ボタン
+    modal_open_button: {
+        fontWeight: "bold",
+        backgroundColor: "#ffcdd2",
+        margin: "5%",
+        padding: "3%"
+    },
+    //選択済みトッピングカードの外枠
+    selected_topping_grid: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    //選択済みトッピング表示カード
+    selected_topping_card: {
+        width: "60%",
+        margin: "3%",
+        height: "50px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#ffe0b2",//#ffb74d
+    },
+
+    dialog:{
+        width:'95%',
+        position: 'absolute',
+        top:'50%',
+        left:'50%',
+        transform: "translate(-50%, -50%)"
+    }
+}));
+
 const orderItemEntryStyle = makeStyles((theme: Theme) => createStyles({
+    modal: {},
+    entry_title: {
+        width: "92%",
+        backgroundColor: "#ffa500"
+    },
     //大外の枠
     entry_form: {
         width: "95%",
@@ -215,4 +299,11 @@ const orderItemEntryStyle = makeStyles((theme: Theme) => createStyles({
 
     },
 
+    dialog:{
+        width:'95%',
+        position: 'absolute',
+        top:'50%',
+        left:'50%',
+        transform: "translate(-50%, -50%)"
+    }
 }));
