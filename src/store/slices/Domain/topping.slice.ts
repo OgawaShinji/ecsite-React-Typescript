@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Topping} from "~/types/interfaces"
-import Axios, {API_URL} from "~/store/api";
+import Axios from "~/store/api";
 import {RootState} from "~/store/index";
 
 type toppingState = {
@@ -20,7 +20,7 @@ export const fetchToppings = createAsyncThunk(
     'topping/fetchToppings',
     async () => {
         try {
-            const {data} = await Axios.get(`${API_URL}/flask/topping/`, {
+            const {data} = await Axios.get(`/flask/topping/`, {
                 method: "GET",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
