@@ -45,7 +45,7 @@ function App() {
         } else {
             setIsLogin(false)
         }
-    }, [loginUser])
+    }, [dispatch, loginUser, token])
 
     return (
         <div className={classes.App}>
@@ -57,5 +57,5 @@ function App() {
             </BrowserRouter>
         </div>
     );
-};
+}
 export default App;
