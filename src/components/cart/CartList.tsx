@@ -21,6 +21,14 @@ const useStyles = makeStyles({
         "padding-top": 50,
         "padding-bottom": 50,
     },
+    title: {
+        textAlign: 'center',
+        backgroundColor: '#a9a9a9',
+        color: '#ffffff'
+    },
+    cartList:{
+        backgroundColor:'#dcdcdc'
+    },
     orderOperator: {
         position: 'sticky',
         top: "30%",
@@ -47,10 +55,10 @@ const CartList: FC = () => {
 
     // iniOrder
     useEffect(() => {
-        if (Object.keys(iniOrder).length) {
-            setOrder(iniOrder)
-            setOrderItems(iniOrder.orderItems)
-        }
+        // if (Object.keys(iniOrder).length) {
+        setOrder(iniOrder)
+        setOrderItems(iniOrder.orderItems)
+        // }
     }, [iniOrder])
 
     // order更新時
@@ -99,8 +107,8 @@ const CartList: FC = () => {
     return (
         <div className={classes.root}>
             <Grid container>
-                <Grid item xs={8}>
-                    <Typography variant="h3" gutterBottom>
+                <Grid item xs={8} className={classes.cartList}>
+                    <Typography variant="h3" gutterBottom className={classes.title}>
                         注文商品
                     </Typography>
                     <List>

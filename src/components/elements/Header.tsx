@@ -9,12 +9,17 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import {Button, Grid} from "@material-ui/core";
 
-import {Link, useHistory} from 'react-router-dom'
+import {Link, RouteComponentProps, withRouter, useHistory} from 'react-router-dom'
 import {Path} from "~/router/routes";
 import {logout} from "~/store/slices/App/auth.slice";
 import {AppDispatch} from "~/store";
 import {useDispatch} from "react-redux";
 import {setError} from "~/store/slices/App/error.slice"
+
+interface Props {
+    isLogin: boolean
+}
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -40,27 +45,23 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const Header: FC = () => {
+const Header: FC<Props & RouteComponentProps> = (props) => {
 
     const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
 
-    const [auth, setAuth] = useState(false);
+    const isLogin = props.isLogin
+    const [auth, setAuth] = useState(isLogin);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    const userToken = localStorage.getItem("Authorization")
 
     const history = useHistory();
     history.listen(() => {
         dispatch(setError({isError: false, code: null}))
     })
     useEffect(() => {
-        if (userToken) {
-            setAuth(true)
-        } else {
-            setAuth(false)
-        }
-    }, [userToken])
+        setAuth(isLogin)
+    }, [isLogin])
 
     /**
      * ログイン時、プロフィールを押下した時にモーダルを表示する関数
@@ -86,7 +87,16 @@ const Header: FC = () => {
     const logoutInHeader = () => {
         handleClose()
         dispatch(logout());
-        setAuth(false)
+        props.history.push({pathname: '/login'})
+    }
+
+    /**
+     * 注文履歴画面へ遷移する関数
+     * @return void
+     */
+    const transitionOrderHistory = () => {
+        handleClose();
+        props.history.push({pathname: '/history'})
     }
 
     return (
@@ -145,8 +155,8 @@ const Header: FC = () => {
                         open={open}
                         onClose={handleClose}
                     >
-                        <MenuItem onClick={handleClose}>
-                            <Link to={Path.history} className={classes.link}>注文履歴</Link>
+                        <MenuItem onClick={transitionOrderHistory}>
+                            注文履歴
                         </MenuItem>
                         <MenuItem onClick={logoutInHeader}>ログアウト</MenuItem>
                     </Menu>
@@ -156,4 +166,4 @@ const Header: FC = () => {
     );
 }
 
-export default Header
+export default withRouter(Header)

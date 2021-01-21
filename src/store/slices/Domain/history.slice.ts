@@ -73,7 +73,44 @@ export const historySlice = createSlice({
     initialState: initialHistoryState,
     reducers: {
         setOrders: ((state: historyState, action) => {
-            state.orderHistory = action.payload.orders;
+            /////// 各注文商品の小計を算出し、subTotalPriceにセットする
+
+            // 取得データのコピーを作成
+            let copyOrderHistory = action.payload.orders.slice();
+
+            copyOrderHistory.forEach((order: Order) => {
+                if (order.orderItems) {
+                    order.orderItems.forEach((orderItem) => {
+                        let subTotalPrice: number = 0;
+                        const size = orderItem.size;
+
+                        // Topping
+                        if (orderItem.orderToppings) {
+                            orderItem.orderToppings.forEach((orderTopping) => {
+                                if (orderTopping.topping.priceM && orderTopping.topping.priceL) {
+                                    if (size === 'M') {
+                                        subTotalPrice += orderTopping.topping.priceM;
+                                    } else if (size === 'L') {
+                                        subTotalPrice += orderTopping.topping.priceL;
+                                    }
+                                }
+                            })
+                        }
+
+                        // Item
+                        if (size === 'M') {
+                            subTotalPrice += orderItem.item.priceM;
+                        } else if (size === 'L') {
+                            subTotalPrice += orderItem.item.priceL;
+                        }
+
+                        // subTotalPriceにセット
+                        orderItem.subTotalPrice = subTotalPrice * orderItem.quantity;
+                    })
+                }
+            });
+
+            state.orderHistory = copyOrderHistory;
         }),
         setOrdersTotalCount: ((state: historyState, action) => {
             state.orderHistoryTotalCount = action.payload.count;

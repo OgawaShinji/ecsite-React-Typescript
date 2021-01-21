@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Button, Card, CardActions, CardContent, CardHeader, TextField, Typography} from "@material-ui/core";
 import {AppDispatch} from "~/store";
 import {useDispatch} from "react-redux";
-import {login, loginForm} from "~/store/slices/App/auth.slice";
+import {fetchLoginUser, login, loginForm} from "~/store/slices/App/auth.slice";
 import {useHistory} from "react-router-dom"
 import {Path} from "~/router/routes";
 
@@ -47,9 +47,10 @@ const LoginForm: React.FC<Props> = (props) => {
     const handleLoginClick = async () => {
         if (email.errorMessage.length === 0 && password.errorMessage.length === 0) {
             const input: loginForm = {email: email.value, password: password.value}
-            await dispatch(login(input)).then((body) => {
+            await dispatch(login(input)).then(async(body) => {
                 if (body?.payload?.token) {
-                    routeHistory.push(Path.itemList)
+                    await dispatch(fetchLoginUser())
+                    await routeHistory.push(Path.itemList)
                 } else {
                     setIsIncorrectEntry(true);
                     setPassword({value: "", errorMessage: ""})

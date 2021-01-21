@@ -10,12 +10,11 @@ import {
     Card,
     CardActions,
     createStyles,
-    DialogContent,
     Divider,
     Grid,
     ListItem,
     makeStyles,
-    Modal,
+    Modal, Paper,
     Theme,
     Typography
 } from "@material-ui/core";
@@ -51,6 +50,16 @@ const useStyles = makeStyles((theme: Theme) =>
         btn: {
             "margin-right": 40,
             "margin-left": 40
+        },
+        modal:{
+
+        },
+        dialog:{
+            width:'70%',
+            position: 'absolute',
+            top:'50%',
+            left:'50%',
+            transform: "translate(-50%, -50%)"
         }
     }),
 );
@@ -145,14 +154,15 @@ const CartItem: FC<Props> = (props) => {
                                     <Divider/>
                                 </Grid>
                             </Grid>
-                            <Grid item container >
+                            <Grid item container>
                                 <Grid item xs={1}/>
                                 <Grid item xs={5}>
-                                        <Typography
-                                            gutterBottom
-                                        >
-                                            価格　：{orderItem.size === 'M' ? orderItem.item.priceM : orderItem.item.priceL}円</Typography>
-                                        <Typography gutterBottom>サイズ： {orderItem.size}</Typography>
+                                    <Typography
+                                        gutterBottom
+                                    >
+                                        価格
+                                        ：{orderItem.size === 'M' ? orderItem.item.priceM.toLocaleString() : orderItem.item.priceL.toLocaleString()}円</Typography>
+                                    <Typography gutterBottom>サイズ： {orderItem.size}</Typography>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <ul>
@@ -192,15 +202,19 @@ const CartItem: FC<Props> = (props) => {
                         <Grid item xs={7}>
                             <Typography variant='h5'>
                                 <Box fontWeight="fontWeightBold">
-                                    {orderItem.subTotalPrice + '円'}
+                                    {orderItem.subTotalPrice!.toLocaleString() + '円'}
                                 </Box>
                             </Typography>
                         </Grid>
                     </Grid>
                 </Grid>
             </Card>
-            <Modal open={modalIsOpen} onClose={() => setIsOpen(false)}>
-                <DialogContent>
+            <Modal
+                className={classes.modal}
+                open={modalIsOpen}
+                onClose={() => setIsOpen(false)}
+            >
+                <Paper className={classes.dialog}>
                     <OrderItemEntry
                         selectedState={selectedState}
                         parentComponent={"CartItem"}
@@ -209,9 +223,9 @@ const CartItem: FC<Props> = (props) => {
                         onToppingChange={(t) => handleToppingChange(t)}
                         onClickCloseOrderItemEntity={onClickCloseOrderItemEntry}
                     />
-                </DialogContent>
+                </Paper>
             </Modal>
         </ListItem>
-    )
+    );
 }
 export default CartItem;

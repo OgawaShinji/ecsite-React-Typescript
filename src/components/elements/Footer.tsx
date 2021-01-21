@@ -3,7 +3,10 @@ import {Grid, makeStyles, Typography} from "@material-ui/core";
 
 const useStyles = makeStyles(() => ({
     root: {
-        backgroundColor: '#ffa500',
+        position: "absolute",/* ←絶対位置 */
+        bottom: 0,
+        width: "100%",
+        backgroundColor: '#696969',
         paddingTop:50,
         paddingBottom:30,
         color:'white'

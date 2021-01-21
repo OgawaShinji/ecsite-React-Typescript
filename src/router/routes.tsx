@@ -1,5 +1,6 @@
 import React from "react";
 import {Redirect, Route, Switch} from 'react-router-dom';
+import GuardedRoute from "~/router/guardedRoute";
 
 import itemList from '../components/itemList';
 import cart from '../components/cart/index';
@@ -23,14 +24,14 @@ export const Path = {
 
 const routes = (
     <Switch>
-        <Route exact path={Path.itemList} component={itemList}/>
-        <Route exact path={Path.cart} component={cart}/>
-        <Route exact path={Path.history} component={history}/>
-        <Route exact path={Path.itemDetail} component={itemDetail}/>
-        <Route exact path={Path.login} component={login}/>
-        <Route exact path={Path.orderComplete} component={orderComplete}/>
-        <Route exact path={Path.orderConfirm} component={orderConfirm}/>
-        <Route exact path={Path.register} component={register}/>
+        <GuardedRoute exact path={Path.itemList} component={itemList}/>
+        <GuardedRoute exact path={Path.cart} component={cart}/>
+        <GuardedRoute exact path={Path.history} component={history}/>
+        <GuardedRoute exact path={Path.itemDetail} component={itemDetail}/>
+        <GuardedRoute exact path={Path.login} component={login}/>
+        <GuardedRoute exact path={Path.orderComplete} component={orderComplete}/>
+        <GuardedRoute exact path={Path.orderConfirm} component={orderConfirm}/>
+        <GuardedRoute exact path={Path.register} component={register}/>
         <Redirect to={Path.itemList}/>
     </Switch>
 );

@@ -26,6 +26,9 @@ const useStyles = makeStyles({
         margin: 'auto',
         color: 'white',
         backgroundColor: '#3cb371',
+        '&:hover': {
+            backgroundColor: '#2e8b57',
+        },
         width: 200
     }
 });
