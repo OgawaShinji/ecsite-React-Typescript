@@ -3,6 +3,9 @@ import {Grid, makeStyles, Typography} from "@material-ui/core";
 
 const useStyles = makeStyles(() => ({
     root: {
+        position: "absolute",/* ←絶対位置 */
+        bottom: 0,
+        width: "100%",
         backgroundColor: '#ffa500',
         paddingTop:50,
         paddingBottom:30,
