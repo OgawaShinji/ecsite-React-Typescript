@@ -10,6 +10,9 @@ import {Grid, makeStyles} from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
     control: {
         margin: theme.spacing(2)
+    },
+    pad: {
+        padding: theme.spacing(2)
     }
 }))
 
@@ -46,8 +49,7 @@ const OrderConfirm: React.FC = () => {
                 </Grid>
             </Grid>
 
-            <div>
-                <br/>
+            <div className={classes.pad}>
                 <OrderForm user={loginUser}/>
             </div>
         </>
