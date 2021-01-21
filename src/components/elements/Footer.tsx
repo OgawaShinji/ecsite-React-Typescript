@@ -6,7 +6,7 @@ const useStyles = makeStyles(() => ({
         position: "absolute",/* ←絶対位置 */
         bottom: 0,
         width: "100%",
-        backgroundColor: '#ffa500',
+        backgroundColor: '#696969',
         paddingTop:50,
         paddingBottom:30,
         color:'white'
