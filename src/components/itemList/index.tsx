@@ -72,9 +72,12 @@ const ItemList: React.FC = () => {
 
                 {/*表示件数切り替え*/}
                 <Grid item xs={2}>
-                    <OptionForm label={'表示件数'} value={displayCount} optionItems={displayItems} handleChange={(val) => {
-                        setDisplayCount(val);
-                    }}/>
+                    <Grid container justify={"center"} alignItems={"center"}>
+                        <OptionForm label={'表示件数'} value={displayCount} optionItems={displayItems}
+                                    handleChange={(val) => {
+                                        setDisplayCount(val);
+                                    }}/>
+                    </Grid>
                 </Grid>
             </Grid>
 
