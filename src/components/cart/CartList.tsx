@@ -26,8 +26,8 @@ const useStyles = makeStyles({
         backgroundColor: '#a9a9a9',
         color: '#ffffff'
     },
-    cartList:{
-        backgroundColor:'#dcdcdc'
+    cartList: {
+        backgroundColor: '#dcdcdc'
     },
     orderOperator: {
         position: 'sticky',
