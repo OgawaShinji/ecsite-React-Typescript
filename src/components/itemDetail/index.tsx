@@ -12,7 +12,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchItemDetail, selectItemDetail} from "~/store/slices/Domain/item.slice";
 import {AppDispatch} from "~/store";
 import {useHistory, useParams} from "react-router-dom"
-import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/orderItemEntry";
+import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import {Topping} from "~/types/interfaces";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
 import img from "~/assets/img/img.png"
@@ -33,7 +33,7 @@ const ItemDetail: React.FC = () => {
         if (typeof itemId !== "number") console.log('itemId is only number')//throw new Error()
         if (item === null) dispatch(fetchItemDetail(itemId))
             .then((i) => {
-                console.log(i)
+                setTotalPrice(i.payload?.priceM)
             }).catch((e) => dispatch(setError({isError: true, code: e.message})))
         if (toppings.length === 0) dispatch(fetchToppings())
         if (item !== null) setTotalPrice(item?.priceM)
@@ -152,7 +152,9 @@ const ItemDetail: React.FC = () => {
                                        variant={"rounded"}/>)
                             : (<Avatar src={img} style={{width: "50%", height: "auto"}} variant={"rounded"}/>)}
                         </CardContent>
-                        <Typography variant={"h4"} component={"u"}>{item?.name}</Typography>
+                        <CardContent className={classes.align_child}>
+                            <Typography variant={"h4"} component={"u"}>{item?.name}</Typography>
+                        </CardContent>
                     </Grid>
 
                     {/*説明文*/}
@@ -174,21 +176,28 @@ const ItemDetail: React.FC = () => {
                                 onSizeChange={(s) => handleSizeChange(s)}
                                 onQuantityChange={(q) => handleQuantityChange(q)}
                                 onToppingChange={(t) => handleToppingChange(t)}/>
-                            <Typography variant={"h3"}
-                                        className={classes.total_price}>合計金額：{totalPrice}￥（税込）</Typography>
+                            <CardContent className={classes.align_child}>
+                                <Typography variant={"h3"}
+                                            className={classes.total_price}>合計金額：{totalPrice.toLocaleString()}￥（税込）</Typography>
+                            </CardContent>
                         </CardContent>
 
                         {/*注文確定ボタン*/}
                         <CardActions>
-                            <Grid item xs={6}><Button variant={"contained"}
-                                                      className={classes.order_button}
-                                                      onClick={() => {
-                                                          handleOrderClick()
-                                                      }}>商品をカートに入れる</Button></Grid>
-                            <Grid item xs={6}><Button variant={"contained"} className={classes.order_button}
-                                                      onClick={() => {
-                                                          handleOrderClick()
-                                                      }}>すぐに注文確認画面へ進む</Button></Grid>
+                            <Grid item xs={6} className={classes.align_child}>
+                                <Button variant={"contained"} className={classes.order_button} onClick={() => {
+                                    handleOrderClick()
+                                }}>
+                                    商品をカートに入れる
+                                </Button>
+                            </Grid>
+                            <Grid item xs={6} className={classes.align_child}>
+                                <Button variant={"contained"} className={classes.order_button} onClick={() => {
+                                    handleOrderClick()
+                                }}>
+                                    すぐに注文確認画面へ進む
+                                </Button>
+                            </Grid>
                         </CardActions>
                     </Grid>
 

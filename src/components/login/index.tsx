@@ -1,5 +1,5 @@
 import React from "react"
-import LoginForm from "~/components/login/loginForm";
+import LoginForm from "~/components/login/LoginForm";
 import {Link} from 'react-router-dom'
 import {Path} from "~/router/routes";
 
