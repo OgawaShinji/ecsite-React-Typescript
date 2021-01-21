@@ -1,5 +1,5 @@
 import React from "react";
-import {Redirect, Route, Switch} from 'react-router-dom';
+import {Redirect, Switch} from 'react-router-dom';
 import GuardedRoute from "~/router/guardedRoute";
 
 import itemList from '../components/itemList';
