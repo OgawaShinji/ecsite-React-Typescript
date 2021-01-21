@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Order, OrderItem, Topping} from '../../../types/interfaces'
+import {Order, OrderItem} from '../../../types/interfaces'
 import {RootState} from "../../index";
 import axios from "axios";
 import Axios, {API_URL} from "../../api";
@@ -166,6 +166,8 @@ export const orderSlice = createSlice({
         setOrderItemsAndSubTotalPrice: ((state: orderState, action: PayloadAction<OrderItem[]>) => {
             state.order.orderItems = action.payload
             let copyOrderItems = state.order.orderItems.slice()
+            //注文内容の小計を初期化
+            state.orderSubTotalPrice = 0
             let orderSubTotalPrice = state.orderSubTotalPrice
 
             // orderItemごとのsubTotalPriceをset, stateのorder全体のsubTotalPriceをset
@@ -190,6 +192,7 @@ export const orderSlice = createSlice({
             })
             state.order.orderItems = copyOrderItems
             state.orderSubTotalPrice = orderSubTotalPrice
+
         }),
         //追加機能
         setUserAddress: ((state: orderState, action) => {
