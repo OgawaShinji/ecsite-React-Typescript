@@ -165,7 +165,7 @@ const Register: FC = () => {
                 zipcode: zipcode.value,
                 address: address.value,
                 telephone: telephone.value,
-                password: password.value
+                password: password.value,
             }
             dispatch(postRegisterUser(userInfo));
             await routeHistory.push(Path.login);
@@ -266,10 +266,8 @@ const Register: FC = () => {
                                     onClick={handleClickRegister}
                                 >登録</Button>
                             </Grid>
-
                         </div>
                     </Grid>
-
                 </Paper>
             </Grid>
         </>
