@@ -73,14 +73,14 @@ const OrderForm: React.FC<Props> = (props) => {
     //[クレジットカード決済]チェック時の処理 お支払方法をクレジットカード決済に変更
     const handleChangePaymentCash = () => {
         setCheckedCash(!checkedCash);
-        if(checkedCredit === true){
+        if(checkedCredit){
             setCheckedCredit(false)
         }
     };
     //[代金引換]チェック時の処理 お支払方法を代金引換に変更
     const handleChangePaymentCredit = () => {
         setCheckedCredit(!checkedCredit);
-        if(checkedCash === true){
+        if(checkedCash){
             setCheckedCash(false)
         }
     };
@@ -115,7 +115,7 @@ const OrderForm: React.FC<Props> = (props) => {
             payment_method: paymentMethod
         }
         dispatch(postOrder(order));
-        await routeHistory.push(Path.orderComplete);
+        await routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
     }
 
     const classes = useStyles();
