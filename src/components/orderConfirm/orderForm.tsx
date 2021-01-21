@@ -28,6 +28,10 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: theme.spacing(2),
             color: theme.palette.text.secondary,
             height:145
+        },
+        color: {
+            backgroundColor: "#ffa500",
+            color: "white"
         }
     }),
 );
@@ -53,60 +57,41 @@ const OrderForm: React.FC<Props> = (props) => {
     const [checkedCash, setCheckedCash] = React.useState(true);
     const [checkedCredit, setCheckedCredit] = React.useState(false);
 
-    /**
-     * [変更]ボタン押下時の処理 お届け先情報変更用フォームダイアログを表示
-     */
+
+    //[変更]ボタン押下時の処理 お届け先情報変更用フォームダイアログを表示
     const handleDialogOpen = () => {
         setOpen(true);
     };
-
-    /**
-     * [閉じる]ボタン押下時の処理 お届け先情報変更用フォームダイアログを非表示
-     */
+    //[閉じる]ボタン押下時の処理 お届け先情報変更用フォームダイアログを非表示
     const handleClose = () => {
         setOpen(false);
     };
-
-    /**
-     * [変更する]ボタン押下時の処理 お届け先情報を変更用フォームに入力された内容に変更
-     */
+    //[変更する]ボタン押下時の処理 お届け先情報を変更用フォームに入力された内容に変更
     const changeUserInfo = (changeUserInfo: User) => {
         setUserInfo(changeUserInfo)
     }
-
-    /**
-     * [クレジットカード決済]チェック時の処理 お支払方法をクレジットカード決済に変更
-     */
+    //[クレジットカード決済]チェック時の処理 お支払方法をクレジットカード決済に変更
     const handleChangePaymentCash = () => {
         setCheckedCash(!checkedCash);
         if(checkedCredit === true){
             setCheckedCredit(false)
         }
     };
-
-    /**
-     * [代金引換]チェック時の処理 お支払方法を代金引換に変更
-     */
+    //[代金引換]チェック時の処理 お支払方法を代金引換に変更
     const handleChangePaymentCredit = () => {
         setCheckedCredit(!checkedCredit);
         if(checkedCash === true){
             setCheckedCash(false)
         }
     };
-
-    /**
-     * 配達日時選択中の処理 動的に日付の内容を更新
-     */
+    //配達日時選択中の処理 動的に日付の内容を更新
     const handleDateChange = (date: Date | null) => {
         setSelectedDate(date);
     };
-
-    /**
-     * [この内容で注文する]ボタン押下時の処理　
-     */
+    //[この内容で注文する]ボタン押下時の処理　
     const handleOrder = async () => {
         const date = new Date();
-        setSelectedDate(selectedDate);
+        selectedDate?.setHours(selectedDate?.getHours() + 9)
         const consumptionTax = orderSubTotalPrice * 0.1
         const totalPrice = orderSubTotalPrice + consumptionTax
         let paymentMethod;
@@ -142,25 +127,27 @@ const OrderForm: React.FC<Props> = (props) => {
                     <Grid item xs={6} sm={6}>
                         <Paper className={classes.orderFormPaper}>
                             <Grid item xs={6} sm={11}>
-                                <Grid container spacing={1} justify="center" alignItems="center">
-                                    <Grid item xs={6} sm={4}>
+                                <Grid container spacing={1}  alignItems="center">
+                                    <Grid item xs={6} sm={3}>
                                         <Typography component="h6" variant="h6" align="left" >お届け先住所</Typography>
                                     </Grid>
-                                    <Grid item xs={6} sm={1}>
+                                    <Grid item xs={6} sm={2}>
                                        <Button variant="contained"
-                                               color="primary"
+                                               className={classes.color}
                                                onClick={handleDialogOpen}
+                                               size={"small"}
                                        >変更</Button>
                                         {/*お届け先情報変更用フォームのダイアログ*/}
                                         <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} />
                                     </Grid>
                                     <Grid item xs={6} sm={7}>
-                                       <Typography component="h6" variant="h6">お支払情報</Typography>
+                                       <Typography component="h6" variant="h6" align={"center"}>お支払情報</Typography>
                                     </Grid>
                                 </Grid>
                             </Grid>
                             <Grid container spacing={1} justify="center" alignItems="center">
                                 <Grid item xs={6} sm={7}>
+                                    <br/>
                                     <Typography align="left">お名前: {userInfo?.name}　</Typography>
                                     <Typography align="left">郵便番号:　{userInfo?.zipcode}　</Typography>
                                     <Typography align="left">住所: {userInfo?.address}　</Typography>
@@ -170,6 +157,7 @@ const OrderForm: React.FC<Props> = (props) => {
                                     <Grid item xs={6} sm={12} >
                                         代金引換
                                         <Checkbox
+                                            color="default"
                                             checked={checkedCash}
                                             onChange={handleChangePaymentCash}
                                         />
@@ -177,6 +165,7 @@ const OrderForm: React.FC<Props> = (props) => {
                                     <Grid item xs={6} sm={12}>
                                         クレジットカード決済
                                         <Checkbox
+                                            color="default"
                                             checked={checkedCredit}
                                             onChange={handleChangePaymentCredit}
                                         />
@@ -185,8 +174,8 @@ const OrderForm: React.FC<Props> = (props) => {
                             </Grid>
                             <br/>
                             <Grid item xs={6} sm={11}>
-                                <Grid container spacing={3} justify="center" alignItems="center">
-                                    <Grid item xs={6}>
+                                <Grid container spacing={3}  alignItems="center">
+                                    <Grid item xs={2}>
                                         <Typography component="h6" variant="h6" align="left" >配送日時</Typography>
                                     </Grid>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -219,9 +208,9 @@ const OrderForm: React.FC<Props> = (props) => {
                         </Paper>
                         <br/>
                         <Button variant="contained"
-                                color="primary"
                                 fullWidth
                                 onClick={handleOrder}
+                                className={classes.color}
                         >この内容で注文する</Button>
                     </Grid>
                 </Grid>
