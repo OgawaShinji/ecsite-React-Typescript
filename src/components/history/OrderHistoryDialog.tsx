@@ -1,27 +1,62 @@
 import React from "react";
 
-import {Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button} from '@material-ui/core';
+import OrderItemCard from '~/components/elements/orderItemCard/OrderItemCard';
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    IconButton,
+    Grid, makeStyles
+} from '@material-ui/core';
+import {Cancel} from "@material-ui/icons";
+import {OrderItem} from "~/types/interfaces";
 
 type Props = {
     handleClose: () => void;
     isOpen: boolean;
+    orderItems: Array<OrderItem>;
 }
 
+const useStyles = makeStyles((theme) => ({
+    control: {
+        padding: theme.spacing(1)
+    }
+}));
+
 const OrderHistoryDialog: React.FC<Props> = props => {
+
+    const classes = useStyles();
+
     return (
         <div>
-            <Dialog open={props.isOpen} onClose={props.handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+            <Dialog open={props.isOpen} onClose={props.handleClose} fullWidth={true} maxWidth={"md"}>
+                <Grid container justify={"center"} alignItems={"center"} direction={"column"}>
+                    <Grid item>
+                        <DialogTitle>&lt; 注文内容 &gt;</DialogTitle>
+                    </Grid>
+                </Grid>
                 <DialogContent>
-                    <DialogContentText>
-                        To subscribe to this website, please enter your email address here. We will send updates
-                        occasionally.
-                    </DialogContentText>
+                    <Grid container justify={"center"} alignItems={"center"}>
+
+                        <Grid item xs={10}>
+                            {props.orderItems.map((orderItem) => (
+                                <div key={orderItem.id} className={classes.control}>
+                                    <OrderItemCard orderItem={orderItem}/>
+                                </div>
+                            ))}
+                        </Grid>
+                    </Grid>
+
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={props.handleClose} color="primary">
-                        Subscribe
-                    </Button>
+                    <Grid container justify={"center"} alignItems={"center"}>
+                        <Grid item>
+                            <IconButton onClick={props.handleClose}>
+                                <Cancel fontSize={"large"} color={"error"}/>
+                            </IconButton>
+                        </Grid>
+                    </Grid>
                 </DialogActions>
             </Dialog>
         </div>
