@@ -78,7 +78,7 @@ export const fetchItemDetail = createAsyncThunk(
             })
             return data;
         } catch (e) {
-            throw e;
+            throw new Error(e.response.status);
         }
     }
 )
@@ -123,11 +123,10 @@ export const itemSlice = createSlice({
 
         //fetchItemDetail
         builder.addCase(fetchItemDetail.fulfilled, (state, action) => {
-            const camelPayload = camelcaseKeys(action.payload)
-            itemSlice.caseReducers.setItemDetail(state, itemSlice.actions.setItemDetail(camelPayload))
+            itemSlice.caseReducers.setItemDetail(state, itemSlice.actions.setItemDetail(action.payload))
         })
         builder.addCase(fetchItemDetail.rejected, (state, action) => {
-            console.log(action.error.message)
+            throw new Error(action.error.message)
         })
     })
 })

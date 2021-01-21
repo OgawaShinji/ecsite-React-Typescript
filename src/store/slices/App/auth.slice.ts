@@ -3,7 +3,6 @@ import {User} from "~/types/interfaces";
 import {RootState} from "~/store/index";
 import Axios, {API_URL} from "~/store/api";
 import axios from "axios";
-import camelcaseKeys from "camelcase-keys";
 
 type authState = {
     loginUser: null | User
@@ -31,9 +30,9 @@ export const logout = createAsyncThunk(
                     Authorization: localStorage.getItem("Authorization")
                 }
             })
-            return {data}
+            return data
         } catch (e) {
-            throw e
+            throw new Error(e.response.status)
         }
     })
 
@@ -56,7 +55,7 @@ export const login = createAsyncThunk(
             })
             return data;
         } catch (e) {
-            throw e
+            throw new Error(e.response.status)
         }
     }
 )
@@ -80,7 +79,7 @@ export const fetchLoginUser = createAsyncThunk(
             })
             return data;
         } catch (e) {
-            throw e
+            throw new Error(e.response.status)
         }
     }
 )
@@ -98,24 +97,29 @@ export const authSlice = createSlice({
         builder.addCase(logout.fulfilled, ((state, action) => {
             state.loginUser = null;
             localStorage.removeItem("Authorization")
+            action.payload = "200"
         }));
-        builder.addCase(logout.rejected, (((state) => {
-            //商品一覧画面遷移もしくはエラー画面？
+        builder.addCase(logout.rejected, (((state, action) => {
+            throw new Error(action.error.message)
         })));
 
         //login
         builder.addCase(login.fulfilled, (state, action) => {
-            if (action.payload?.token)localStorage.setItem("Authorization", action.payload.token)
+            if (action.payload?.token) {
+                localStorage.setItem("Authorization", action.payload.token)
+                action.payload = "200"
+            }
         })
-        builder.addCase(login.rejected, (state) => {
+        builder.addCase(login.rejected, (state, action) => {
+            throw new Error(action.error.message)
         })
 
         //fetchLoginUser
         builder.addCase(fetchLoginUser.fulfilled, ((state, action) => {
-            const camelPayload = camelcaseKeys(action.payload)
-            authSlice.caseReducers.setLoginUser(state, authSlice.actions.setLoginUser(camelPayload))
+            authSlice.caseReducers.setLoginUser(state, authSlice.actions.setLoginUser(action.payload))
         }));
-        builder.addCase(fetchLoginUser.rejected, (state) => {
+        builder.addCase(fetchLoginUser.rejected, (state, action) => {
+            throw new Error(action.error.message)
         })
     })
 })

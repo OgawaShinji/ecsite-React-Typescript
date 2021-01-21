@@ -5,6 +5,7 @@ import {orderSlice} from "./slices/Domain/order.slice";
 import {toppingSlice} from "./slices/Domain/topping.slice";
 import {userSlice} from "./slices/Domain/user.slice";
 import {authSlice} from "./slices/App/auth.slice";
+import {errorSlice} from "~/store/slices/App/error.slice";
 
 const store = configureStore({
     reducer: {
@@ -13,7 +14,8 @@ const store = configureStore({
         order: orderSlice.reducer,
         topping: toppingSlice.reducer,
         user: userSlice.reducer,
-        auth: authSlice.reducer
+        auth: authSlice.reducer,
+        error: errorSlice.reducer,
     }
 });
 export default store;
