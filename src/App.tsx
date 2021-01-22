@@ -33,8 +33,6 @@ function App() {
     const token = localStorage.getItem('Authorization')
 
     const errorInStore = useSelector(selectError);
-    useEffect(() => {
-    }, [errorInStore])
 
     useEffect(() => {
         if (!loginUser && token) {
@@ -51,8 +49,9 @@ function App() {
         <div className={classes.App}>
             <BrowserRouter>
                 <Header isLogin={isLogin}/>
+                {errorInStore?.code}
                 {errorInStore.isError ?
-                    <ErrorPage errorCode={errorInStore.code ? errorInStore.code : 500}/> : routes}
+                    <ErrorPage/> : routes}
                 <Footer/>
             </BrowserRouter>
         </div>

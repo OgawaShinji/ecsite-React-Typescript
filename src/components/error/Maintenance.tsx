@@ -12,7 +12,6 @@ const Maintenance: React.FC = () => {
             transform: "translateY(50%)"
         }}>
             <Card style={{backgroundColor: "#ffa500"}}>
-                <Typography variant={"h2"} color={"initial"}>現在メンテナンス中です。</Typography>
             </Card>
         </div>
     </>)

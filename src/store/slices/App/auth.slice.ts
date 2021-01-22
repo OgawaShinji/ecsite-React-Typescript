@@ -2,7 +2,6 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {User} from "~/types/interfaces";
 import {RootState} from "~/store/index";
 import Axios from "~/store/api";
-import axios from "axios";
 
 type authState = {
     loginUser: null | User
@@ -24,7 +23,7 @@ export const logout = createAsyncThunk(
     'auth/logout',
     async () => {
         try {
-            const {data} = await axios.post(`/auth/logout/`, {}, {
+            const {data} = await Axios.post(`/auth/logout/`, {}, {
                 method: "POST",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
@@ -49,9 +48,6 @@ export const login = createAsyncThunk(
         try {
             const {data} = await Axios.post(`/auth/login/`, loginInfo, {
                 method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                }
             })
             return data;
         } catch (e) {
@@ -97,7 +93,6 @@ export const authSlice = createSlice({
         builder.addCase(logout.fulfilled, ((state, action) => {
             state.loginUser = null;
             localStorage.removeItem("Authorization")
-            action.payload = "200"
         }));
         builder.addCase(logout.rejected, (((state, action) => {
             throw new Error(action.error.message)

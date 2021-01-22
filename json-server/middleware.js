@@ -4,7 +4,7 @@ module.exports = function (req, res, next) {
         if (req.url === "/auth/login/_POST") {
             req.url = "/login_fail"
             console.log(req.body)
-            if (req.body.email==="a@a.a"&&req.body.password==="123456")req.url="/login_success"
+            if (req.body.email==="a@a.a"&&req.body.password==="123456")req.url="/login_success";
         } else if (req.url === "/auth/logout/_POST") {
             req.url = "/logout"
         } else {//以下に表示したい物や加えたい処理を書いて下さい
