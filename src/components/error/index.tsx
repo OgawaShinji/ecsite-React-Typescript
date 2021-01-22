@@ -1,16 +1,11 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {useSelector} from "react-redux";
 import {selectError} from "~/store/slices/App/error.slice";
-import {Card, Typography} from "@material-ui/core";
+import {Card} from "@material-ui/core";
 
 const ErrorPage: React.FC = () => {
     const error = useSelector(selectError);
     let errorMessage = "現在メンテナンス中です。"
-    useEffect(() => {
-        console.log(error.code)
-        if (error.code === 404) errorMessage = "お探しのページが見つかりませんでした。"
-        if (error.code === 500) errorMessage = "現在メンテナンス中です。"
-    }, [])
     return (<div style={{
         justifyContent: "center",
         alignItems: "center",

@@ -2,7 +2,6 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {User} from "~/types/interfaces";
 import {RootState} from "~/store/index";
 import Axios from "~/store/api";
-import axios from "axios";
 
 type authState = {
     loginUser: null | User
