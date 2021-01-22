@@ -8,7 +8,6 @@ export const postRegisterUser = createAsyncThunk(
     'user/postUserRegister',
     async (userInfo: User) => {
         //dispatchでに渡されてきたユーザー情報をPOSTする
-        console.log(userInfo)
         await Axios.post(
             `/auth/register/`,
             {
@@ -24,7 +23,6 @@ export const postRegisterUser = createAsyncThunk(
                 method: 'POST',
                 headers: {
                     Authorization: localStorage.getItem("Authorization"),
-                    'Content-Type': 'application/json'
                 }
             }).catch(error => {
             throw new Error(error.response.status);
