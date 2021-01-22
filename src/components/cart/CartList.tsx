@@ -4,7 +4,7 @@ import {AppDispatch} from "~/store";
 
 import CartItem from "./CartItem"
 import OrderOperator from "./OrderOperator"
-import { OrderItem} from "~/types/interfaces";
+import {OrderItem} from "~/types/interfaces";
 
 import {
     asyncDeleteOrderItem,
@@ -56,7 +56,9 @@ const CartList: React.FC = () => {
 
     // 初期表示
     useEffect(() => {
-        dispatch(asyncFetchOrderItems())
+        dispatch(asyncFetchOrderItems()).catch((e) => {
+            dispatch(setError({isError: true, code: e.message}))
+        })
     }, [dispatch])
 
     // iniOrder
@@ -72,10 +74,10 @@ const CartList: React.FC = () => {
      */
     const updateOrderItems = async ({orderItem}: { orderItem: OrderItem }) => {
 
-        let updatedOrderToppings:{ topping:number }[]=[]
+        let updatedOrderToppings: { topping: number }[] = []
         if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t.topping.id}))
 
-        const updatedOrderItem: orderItem={
+        const updatedOrderItem: orderItem = {
             id: orderItem.id,
             item: orderItem.item.id,
             orderToppings: updatedOrderToppings,
@@ -84,13 +86,18 @@ const CartList: React.FC = () => {
         }
         let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
 
+        // サーバーに送るデータ
         const orderItemsToPost: OrderItemsToPost = {
             orderItems: updatedOrderItems,
             status: 0,
             newTotalPrice: orderSubTotalPrice
         }
-        await dispatch(asyncUpdateOrderItem(orderItemsToPost))
-        await dispatch(asyncFetchOrderItems())
+        await dispatch(asyncUpdateOrderItem(orderItemsToPost)).catch((e) => {
+            dispatch(setError({isError: true, code: e.message}))
+        })
+        await dispatch(asyncFetchOrderItems()).catch((e) => {
+            dispatch(setError({isError: true, code: e.message}))
+        })
     }
 
     /**
