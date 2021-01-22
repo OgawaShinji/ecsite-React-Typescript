@@ -14,11 +14,16 @@ Axios.interceptors.request.use((request) => {
             'Content-Type': 'application/json'
         }
     }
+    if (request.method === "GET") {
+        if (request.headers.param) {
+            request.headers.param = snakecaseKeys(request.headers.param, {deep: true})
+        }
+    }
     return request;
 });
 Axios.interceptors.response.use((response) => {
     if (response.data) response.data = camelcaseKeys(response.data, {deep: true});
     return response
 });
-Axios.defaults.baseURL = API_URL;
+Axios.defaults.baseURL = REST_URL;
 export default Axios;
