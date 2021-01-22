@@ -1,9 +1,11 @@
 import React, {FC, useState} from "react";
 import {useDispatch} from "react-redux";
 import {postRegisterUser} from "~/store/slices/Domain/user.slice";
-import {Button, createStyles, Grid, makeStyles, Paper, TextField, Theme, Typography} from "@material-ui/core";
+import {Button, Card, createStyles, Grid, makeStyles, Paper, TextField, Theme, Typography} from "@material-ui/core";
 import {useHistory} from "react-router-dom"
 import {Path} from "~/router/routes";
+import {User} from "~/types/interfaces";
+import {AppDispatch} from "~/store";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -15,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
             },
         },
         pad: {
-            padding: theme.spacing(3),
+            padding: theme.spacing(2),
         },
         root2: {
             width: 550,
@@ -29,11 +31,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Register: FC = () => {
 
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const routeHistory = useHistory();
 
     //------------------------- localのstateとして登録情報を管理 -----------------------
-
     const [name, setName] = useState<{ value: string, errorMessage: string }>({
         value: '',
         errorMessage: ''
@@ -62,6 +63,8 @@ const Register: FC = () => {
         value: '',
         errorMessage: ''
     })
+    //登録処理でエラーをキャッチしたかどうか
+    const [emailDuplicated, setEmailDuplicated] = useState(false);
 
     //-----------------------　バリデーション : ○○Validation　-------------------------------------------
     const nameValidation = (value: string): string => {
@@ -109,6 +112,9 @@ const Register: FC = () => {
         })
     }
     const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (emailDuplicated) {
+            setEmailDuplicated(false);
+        }
         setEmail({
             value: event.target.value,
             errorMessage: emailValidation(event.target.value)
@@ -149,7 +155,7 @@ const Register: FC = () => {
      * [登録]ボタン押下時の処理　
      */
     const handleClickRegister = async () => {
-        const userInfo = {
+        const userInfo: User = {
             name: name.value,
             email: email.value,
             zipcode: zipcode.value,
@@ -157,9 +163,13 @@ const Register: FC = () => {
             telephone: telephone.value,
             password: password.value,
         }
-        dispatch(postRegisterUser(userInfo));
-        await routeHistory.push(Path.login);
-
+        await dispatch(postRegisterUser(userInfo)).then((i) => {
+            if (i.payload === '200') routeHistory.push(Path.login);
+        }).catch((e) => {
+            if (e.message === '400') {
+                setEmailDuplicated(true);
+            }
+        });
     }
 
     const classes = useStyles();
@@ -221,7 +231,7 @@ const Register: FC = () => {
                                 <div style={{color: 'red'}}>{telephone.errorMessage}</div>
                                 <TextField
                                     id="telephone"
-                                    label="電話番号"
+                                    label="電話番号(ハイフン必須)"
                                     variant="outlined"
                                     value={telephone.value}
                                     error={telephone.errorMessage.length > 0}
@@ -250,6 +260,9 @@ const Register: FC = () => {
                                     onChange={handleChangeConfirmationPassword}
                                 />
                             </div>
+                            {emailDuplicated &&
+                            <Typography className={classes.pad} variant={"subtitle1"} align={"center"}
+                                        color={"secondary"}>メールアドレスが重複しています</Typography>}
                             <Grid className={classes.pad} container alignContent="center" justify="center">
                                 <Button
                                     variant="contained"
@@ -266,6 +279,7 @@ const Register: FC = () => {
                                     }
                                 >登録</Button>
                             </Grid>
+
                         </div>
                     </Grid>
                 </Paper>
