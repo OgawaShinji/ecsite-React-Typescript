@@ -4,6 +4,7 @@ import {Item, SearchForm} from "~/types/interfaces";
 import {RootState} from "~/store";
 
 import Axios from "~/store/api";
+import snakecaseKeys from "snakecase-keys";
 
 type itemState = {
     items: Array<Item>;
@@ -29,7 +30,7 @@ export const fetchItems = createAsyncThunk('item/getItems', async (searchForm: S
     try {
         const {data} = await Axios.get(`/flask/item/`, {
             method: "GET",
-            params: searchForm,
+            params: snakecaseKeys(searchForm),
             headers: {
                 Authorization: localStorage.getItem("Authorization")
             }

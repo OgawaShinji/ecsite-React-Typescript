@@ -23,7 +23,7 @@ module.exports = function (req, res, next) {
         req.url = "/topping"
     } else if (req.url.match(/^\/flask\/item\/\?/)) {
         req.url = "/items"
-    } else if (req.url === "/flask/item-name") {
+    } else if (req.url === "/flask/item-name/") {
         req.url = "/itemNames"
     } else if (req.url === "/flask/order-history/count") {
         req.url = "/order-history-count"
