@@ -1,15 +1,17 @@
-import React,{ useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "~/store";
 
 import CartItem from "./CartItem"
 import OrderOperator from "./OrderOperator"
-import {Order, OrderItem} from "~/types/interfaces";
+import { OrderItem} from "~/types/interfaces";
 
 import {
     asyncDeleteOrderItem,
     asyncFetchOrderItems,
     asyncUpdateOrderItem,
+    orderItem,
+    OrderItemsToPost,
     selectOrder,
     selectOrderSubTotalPrice
 } from "~/store/slices/Domain/order.slice"
@@ -19,7 +21,7 @@ import {setError} from "~/store/slices/App/error.slice";
 const useStyles = makeStyles({
     root: {
         backgroundColor: '#f5f5f5',
-        minHeight:500,
+        minHeight: 500,
         "padding-top": 50,
         "padding-bottom": 50,
     },
@@ -31,7 +33,7 @@ const useStyles = makeStyles({
     cartList: {
         backgroundColor: '#dcdcdc'
     },
-    emptyOrderItems:{
+    emptyOrderItems: {
         textAlign: 'center',
         margin: 'auto'
     },
@@ -51,56 +53,44 @@ const CartList: React.FC = () => {
     let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
 
     const [orderItems, setOrderItems] = useState<OrderItem[] | undefined>()
-    const [order, setOrder] = useState<Order | undefined>({})
-    const [actionKey, setActionKey] = useState<string>()
 
     // 初期表示
     useEffect(() => {
-        dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
+        dispatch(asyncFetchOrderItems())
     }, [dispatch])
 
     // iniOrder
     useEffect(() => {
-        setOrder(iniOrder)
         setOrderItems(iniOrder.orderItems)
     }, [iniOrder])
 
-    // order更新時
-    useEffect(() => {
-        if (actionKey === 'UPDATE') {
-            const f = async () => {
-                await dispatch(asyncUpdateOrderItem(order!)).catch((e) => {
-                    dispatch(setError({isError: true, code: e.message}))
-                })
-                dispatch(asyncFetchOrderItems()).catch((e) => {
-                    dispatch(setError({isError: true, code: e.message}))
-                })
-                await setActionKey('')
-            }
-            f().then(() =>{})
-        }
-    }, [order, dispatch, actionKey])
 
     /**
      * 注文商品の内容を更新する関数
      * @Params orderItem: OrderItem, index?: number
      * @return
      */
-    const updateOrderItems = async ({orderItem, index}: { orderItem: OrderItem, index: number }) => {
+    const updateOrderItems = async ({orderItem}: { orderItem: OrderItem }) => {
 
-        let newOrderItems: OrderItem[] = []
+        let updatedOrderToppings:{ topping:number }[]=[]
+        if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t.topping.id}))
 
-        orderItems?.forEach((o, i) => {
-            if (i === index) {
-                newOrderItems.push(orderItem)
-            } else {
-                newOrderItems.push(o)
-            }
-        })
-        await setActionKey("UPDATE")
-        await setOrder({...order, orderItems: newOrderItems})
+        const updatedOrderItem: orderItem={
+            id: orderItem.id,
+            item: orderItem.item.id,
+            orderToppings: updatedOrderToppings,
+            quantity: orderItem.quantity,
+            size: orderItem.size === 'M' ? 'M' : 'L'
+        }
+        let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
+
+        const orderItemsToPost: OrderItemsToPost = {
+            orderItems: updatedOrderItems,
+            status: 0,
+            newTotalPrice: orderSubTotalPrice
+        }
+        await dispatch(asyncUpdateOrderItem(orderItemsToPost))
+        await dispatch(asyncFetchOrderItems())
     }
 
     /**
@@ -125,18 +115,17 @@ const CartList: React.FC = () => {
                     <Typography variant="h4" gutterBottom className={classes.title}>
                         注文商品
                     </Typography>
-                    {orderItems&&orderItems?.length>0?(<List>
+                    {orderItems && orderItems?.length > 0 ? (<List>
                         {orderItems &&
-                        orderItems!.map((orderItem, index) => (
+                        orderItems!.map((orderItem) => (
                             <CartItem
                                 orderItem={orderItem}
-                                index={index}
                                 key={orderItem.id}
-                                updateOrderItems={({orderItem, index}) => updateOrderItems({orderItem, index})}
+                                updateOrderItems={({orderItem}) => updateOrderItems({orderItem})}
                                 deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
                             />
                         ))}
-                    </List>):(
+                    </List>) : (
                         <div className={classes.emptyOrderItems}>注文がありません</div>
                     )}
                 </Grid>

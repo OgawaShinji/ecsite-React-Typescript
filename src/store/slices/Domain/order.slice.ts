@@ -22,7 +22,7 @@ const initialState: orderState = {
 export const asyncFetchOrderItems = createAsyncThunk(
     'order/fetchOrderItems',
     async () => {
-        const {data} = await Axios.get(`/django/cart`, {
+        const {data} = await Axios.get(`/django/cart/`, {
             method: 'GET',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -35,13 +35,22 @@ export const asyncFetchOrderItems = createAsyncThunk(
     }
 )
 
+export type orderItem = {
+    id?: number,
+    item: number,
+    orderToppings: { topping: number }[],
+    quantity: number,
+    size: 'M' | 'L'
+}
+
+export type OrderItemsToPost = {
+    orderItems: Array<orderItem>,
+    status: 0,
+    newTotalPrice: number
+}
+
 export type OrderItemToPost = {
-    newItem: {
-        item: number,
-        orderToppings: { topping: number }[],
-        quantity: number,
-        size: 'M' | 'L'
-    },
+    newItem: orderItem,
     status: 0,
     newTotalPrice: number
 }
@@ -82,8 +91,12 @@ export const asyncPostOrderItem = createAsyncThunk(
  */
 export const asyncUpdateOrderItem = createAsyncThunk(
     'order/updateOrderItem',
-    async (order: Order) => {
-        await Axios.put(`/django/cart`, {order}, {
+    async (order: OrderItemsToPost) => {
+        await Axios.put(`/django/cart/`, {
+            order_items: order.orderItems,
+            status: 0,
+            total_price: order.newTotalPrice
+        }, {
             method: 'PUT',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -102,13 +115,10 @@ export const asyncUpdateOrderItem = createAsyncThunk(
 export const asyncDeleteOrderItem = createAsyncThunk(
     'order/deleteOrderItem',
     async (orderItemId: number) => {
-        await Axios.delete(`/django/cart`, {
+        await Axios.delete(`/django/delete_cart/${orderItemId}`, {
             method: 'DELETE',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
-            },
-            params: {
-                orderItemId: orderItemId
             }
         }).catch(err => {
             throw new Error(err.response.status)
@@ -158,33 +168,36 @@ export const orderSlice = createSlice({
         }),
         setOrderItemsAndSubTotalPrice: ((state: orderState, action: PayloadAction<OrderItem[]>) => {
             state.order.orderItems = action.payload
-            let copyOrderItems = state.order.orderItems.slice()
-            //注文内容の小計を初期化
-            state.orderSubTotalPrice = 0
-            let orderSubTotalPrice = state.orderSubTotalPrice
+            if (action.payload) {
+                // TODO: 書き換えとく
+                let copyOrderItems = state.order.orderItems.slice()
+                //注文内容の小計を初期化
+                state.orderSubTotalPrice = 0
+                let orderSubTotalPrice = state.orderSubTotalPrice
 
-            // orderItemごとのsubTotalPriceをset, stateのorder全体のsubTotalPriceをset
-            copyOrderItems?.forEach(orderItem => {
-                const toppingQuantity = orderItem.orderToppings?.length
-                const orderItemQuantity = orderItem.quantity
-                let orderItemPrice: number
-                let toppingTotalPrice: number
-                let subTotalPrice: number
+                // orderItemごとのsubTotalPriceをset, stateのorder全体のsubTotalPriceをset
+                copyOrderItems?.forEach(orderItem => {
+                    const toppingQuantity = orderItem.orderToppings?.length
+                    const orderItemQuantity = orderItem.quantity
+                    let orderItemPrice: number
+                    let toppingTotalPrice: number
+                    let subTotalPrice: number
 
-                if (orderItem.size === 'M') {
-                    orderItemPrice = orderItem.item.priceM
-                    // TODO:toppingの価格がわかり次第修正
-                    toppingTotalPrice = toppingQuantity! * 200
-                } else if (orderItem.size === 'L') {
-                    orderItemPrice = orderItem.item.priceL
-                    toppingTotalPrice = toppingQuantity! * 300
-                }
-                subTotalPrice = (orderItemPrice! + toppingTotalPrice!) * orderItemQuantity
-                orderItem.subTotalPrice = subTotalPrice
-                orderSubTotalPrice += orderItem.subTotalPrice
-            })
-            state.order.orderItems = copyOrderItems
-            state.orderSubTotalPrice = orderSubTotalPrice
+                    if (orderItem.size === 'M') {
+                        orderItemPrice = orderItem.item.priceM
+                        // TODO:toppingの価格がわかり次第修正
+                        toppingTotalPrice = toppingQuantity! * 200
+                    } else if (orderItem.size === 'L') {
+                        orderItemPrice = orderItem.item.priceL
+                        toppingTotalPrice = toppingQuantity! * 300
+                    }
+                    subTotalPrice = (orderItemPrice! + toppingTotalPrice!) * orderItemQuantity
+                    orderItem.subTotalPrice = subTotalPrice
+                    orderSubTotalPrice += orderItem.subTotalPrice
+                })
+                state.order.orderItems = copyOrderItems
+                state.orderSubTotalPrice = orderSubTotalPrice
+            }
 
         }),
         //追加機能
@@ -198,7 +211,13 @@ export const orderSlice = createSlice({
     extraReducers: (builder => {
         // fetchOrderItems
         builder.addCase(asyncFetchOrderItems.fulfilled, (state, action) => {
-            const _action = orderSlice.actions.setOrderItemsAndSubTotalPrice(action.payload.order.orderItems)
+            let _action: any
+            // TODO: 一回注文したけど、カートを空にした場合の挙動確認
+            if (action.payload.orderItems === undefined) {
+                _action = []
+            } else {
+                _action = orderSlice.actions.setOrderItemsAndSubTotalPrice(action.payload.orderItems)
+            }
             orderSlice.caseReducers.setOrderItemsAndSubTotalPrice(state, _action)
         })
         builder.addCase(asyncFetchOrderItems.rejected, (state, action) => {

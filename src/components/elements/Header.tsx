@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react';
-import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
+import {createStyles, makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -21,7 +21,7 @@ interface Props {
 }
 
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
     createStyles({
         root: {
             flexGrow: 1,
@@ -137,7 +137,7 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
                                 >
                                     <AccountCircle/>
                                 </IconButton>
-                            ) : (
+                            ) : (  // TODO: ログイン画面の時表示しない
                                 <Link to={Path.login} className={classes.link}>
                                     <Button color="inherit">Login</Button>
                                 </Link>
