@@ -9,6 +9,8 @@ import {KeyboardDatePicker, KeyboardTimePicker, MuiPickersUtilsProvider} from "@
 import DateFnsUtils from '@date-io/date-fns';
 import {Path} from "~/router/routes";
 import {useHistory} from "react-router-dom";
+import {AppDispatch} from "~/store";
+import {setError} from "~/store/slices/App/error.slice";
 
 type Props = {
     user: null | User
@@ -39,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const OrderForm: React.FC<Props> = (props) => {
 
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const routeHistory = useHistory();
 
     useEffect(() => {
@@ -137,8 +139,12 @@ const OrderForm: React.FC<Props> = (props) => {
                 delivery_time: selectedDate,
                 payment_method: paymentMethod
             }
-            dispatch(postOrder(order));
-            await routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
+            await dispatch(postOrder(order)).then( (i) => {
+                if(i.payload) routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
+            }).catch( (e) => {
+                dispatch(setError({isError: true, code: e.message}));
+            });
+
         }
     }
 
