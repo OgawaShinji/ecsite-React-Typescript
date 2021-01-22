@@ -55,10 +55,12 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
+    //エラー画面表示後、別ページへ遷移が行われる時にエラーを非表示にする処理
     const history = useHistory();
     history.listen(() => {
         dispatch(setError({isError: false, code: null}))
     })
+
     useEffect(() => {
         setAuth(isLogin)
     }, [isLogin])

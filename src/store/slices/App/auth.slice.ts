@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {User} from "~/types/interfaces";
-import {RootState} from "~/store/index";
+import {RootState} from "~/store";
 import Axios from "~/store/api";
 
 type authState = {
@@ -111,7 +111,7 @@ export const authSlice = createSlice({
 
         //fetchLoginUser
         builder.addCase(fetchLoginUser.fulfilled, ((state, action) => {
-            authSlice.caseReducers.setLoginUser(state, authSlice.actions.setLoginUser(action.payload))
+            authSlice.caseReducers.setLoginUser(state, authSlice.actions.setLoginUser(action.payload?.user))
         }));
         builder.addCase(fetchLoginUser.rejected, (state, action) => {
             throw new Error(action.error.message)

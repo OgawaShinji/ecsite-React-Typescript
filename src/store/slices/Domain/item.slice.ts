@@ -69,9 +69,8 @@ export const fetchItemDetail = createAsyncThunk(
     'item/detail',
     async (itemId: number) => {
         try {
-            const {data} = await Axios.get(`/flask/item/`, {
+            const {data} = await Axios.get(`/flask/item/${itemId}/`, {
                 method: "GET",
-                params: itemId,
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
                 }
