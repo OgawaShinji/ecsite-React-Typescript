@@ -55,7 +55,7 @@ export type OrderItemToPost = {
 export const asyncPostOrderItem = createAsyncThunk(
     'order/postOrderItem',
     async (order: OrderItemToPost) => {
-        const {data} = await Axios.post(`/django/cartaaaaaaaaaaa/`, {
+        const {data} = await Axios.post(`/django/cart/`, {
             order_item: {
                 item: order.newItem.item,
                 orderToppings: order.newItem.orderToppings,
