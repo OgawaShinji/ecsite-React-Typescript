@@ -1,5 +1,3 @@
-import NotFound from "~/components/error/NotFound";
-import Maintenance from "~/components/error/Maintenance";
 import React, {useEffect} from "react";
 import {useSelector} from "react-redux";
 import {selectError} from "~/store/slices/App/error.slice";
