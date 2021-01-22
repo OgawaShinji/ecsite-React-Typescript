@@ -20,5 +20,5 @@ Axios.interceptors.response.use((response) => {
     if (response.data) response.data = camelcaseKeys(response.data, {deep: true});
     return response
 });
-Axios.defaults.baseURL = API_URL;
+Axios.defaults.baseURL = REST_URL;
 export default Axios;
