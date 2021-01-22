@@ -13,10 +13,10 @@ import {fetchItemDetail, selectItemDetail} from "~/store/slices/Domain/item.slic
 import {AppDispatch} from "~/store";
 import {useHistory, useParams} from "react-router-dom"
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
-import {Topping} from "~/types/interfaces";
+import {Item, Topping} from "~/types/interfaces";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
 import img from "~/assets/img/img.png"
-import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.slice";
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
@@ -26,18 +26,21 @@ const ItemDetail: React.FC = () => {
     const toppings: Topping[] = useSelector(selectToppings)
     const dispatch: AppDispatch = useDispatch()
     const history = useHistory();
+    const [detail, setDetail] = useState<Item | null>(item);
 
     let {itemId}: any = useParams()
     itemId = Number(itemId)
     useEffect(() => {
-        if (typeof itemId !== "number") console.log('itemId is only number')//throw new Error()
+        if (typeof itemId !== "number") console.log('this is error: itemId is only number')//throw new Error()
         if (item === null) dispatch(fetchItemDetail(itemId))
             .then((i) => {
-                setTotalPrice(i.payload?.priceM)
-            }).catch((e) => dispatch(setError({isError: true, code: e.message})))
-        if (toppings.length === 0) dispatch(fetchToppings())
-        if (item !== null) setTotalPrice(item?.priceM)
-    }, [dispatch, itemId, item, toppings])
+                if (i.payload.item) setDetail(i.payload.item)
+            })
+            .catch((e) => dispatch(setError({isError: true, code: e.message})))
+        if (toppings.length === 0) dispatch(fetchToppings()).then()
+            .catch((e) => dispatch(setError({isError: true, code: e.message})))
+        if (detail !== null) setTotalPrice(detail?.priceM)
+    }, [dispatch, itemId, item, toppings, detail])
 
     const [size, setSize] = useState<string>('M');
     const [quantity, setQuantity] = useState<number>(1);
@@ -59,7 +62,7 @@ const ItemDetail: React.FC = () => {
         //Stateのsizeが変更される前に以下処理が走るためStateのサイズではなく、inputSizeを用いて合計金額を変更するので以下をメソッドとして吐き出していない
         let newTotalPrice = 0;
         if (selectedToppings.length !== 0) selectedToppings.map((t) => newTotalPrice += inputSize === 'M' ? t.priceM! : t.priceL!)
-        if (item !== null) newTotalPrice += (inputSize === 'M' ? item.priceM : item.priceL)
+        newTotalPrice += (inputSize === 'M' ? detail!.priceM : detail!.priceL)
         setTotalPrice(newTotalPrice * quantity);
     }
 
@@ -72,7 +75,7 @@ const ItemDetail: React.FC = () => {
         //同上
         let newTotalPrice = 0;
         if (selectedToppings.length !== 0) selectedToppings.map((t) => newTotalPrice += size === 'M' ? t.priceM! : t.priceL!)
-        if (item !== null) newTotalPrice += (size === 'M' ? item.priceM : item.priceL)
+        newTotalPrice += (size === 'M' ? detail!.priceM : detail!.priceL)
         setTotalPrice(newTotalPrice * inputQuantity);
     }
     /**
@@ -84,20 +87,20 @@ const ItemDetail: React.FC = () => {
         //同上
         let newTotalPrice = 0;
         if (toppings.length !== 0) newToppings.map((t) => newTotalPrice += size === 'M' ? t.priceM! : t.priceL!)
-        if (item !== null) newTotalPrice += (size === 'M' ? item.priceM : item.priceL)
+        newTotalPrice += (size === 'M' ? detail!.priceM : detail!.priceL)
         setTotalPrice(newTotalPrice * quantity);
     }
     /**
      * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
      */
     const handleOrderClick = async () => {
-        if (item === null) throw new Error()
+        if (detail === null) throw new Error()
         let newOrderToppings: { topping: number }[] = []
         if (selectedToppings.length !== 0) selectedToppings.map((t) => newOrderToppings.push({topping: t.id}))
 
         const newOrder: OrderItemToPost = {
             newItem: {
-                item: item.id,
+                item: detail.id,
                 orderToppings: newOrderToppings,
                 quantity: quantity,
                 size: size === 'M' ? 'M' : 'L'
@@ -112,7 +115,7 @@ const ItemDetail: React.FC = () => {
         })
     }
 
-    const entryIndexStyle = makeStyles((theme: Theme) => createStyles({
+    const entryIndexStyle = makeStyles(() => createStyles({
         outline_card: {
             margin: "3%",
             height: "auto",
@@ -147,13 +150,13 @@ const ItemDetail: React.FC = () => {
 
                     {/*商品画像*/}
                     <Grid item xs={12}>
-                        <CardContent className={classes.align_child}>{item?.imagePath
-                            ? (<Avatar src={`${item?.imagePath}`} style={{width: "50%", height: "auto"}}
+                        <CardContent className={classes.align_child}>{detail?.imagePath
+                            ? (<Avatar src={`${detail?.imagePath}`} style={{width: "50%", height: "auto"}}
                                        variant={"rounded"}/>)
                             : (<Avatar src={img} style={{width: "50%", height: "auto"}} variant={"rounded"}/>)}
                         </CardContent>
                         <CardContent className={classes.align_child}>
-                            <Typography variant={"h4"} component={"u"}>{item?.name}</Typography>
+                            <Typography variant={"h4"} component={"u"}>{detail?.name}</Typography>
                         </CardContent>
                     </Grid>
 
@@ -161,7 +164,7 @@ const ItemDetail: React.FC = () => {
                     <Grid item xs={12} className={classes.description_content}>
                         <CardContent style={{width: "70%", textAlign: "center"}}>
                             <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
-                                {item?.description}
+                                {detail?.description}
                                 <br/>＊写真はイメージです＊
                             </Typography>
                         </CardContent>
@@ -178,7 +181,7 @@ const ItemDetail: React.FC = () => {
                                 onToppingChange={(t) => handleToppingChange(t)}/>
                             <CardContent className={classes.align_child}>
                                 <Typography variant={"h3"}
-                                            className={classes.total_price}>合計金額: {totalPrice.toLocaleString()}￥(税込)</Typography>
+                                            className={classes.total_price}>合計金額: {totalPrice ? totalPrice.toLocaleString() : totalPrice}￥(税込)</Typography>
                             </CardContent>
                         </CardContent>
 
