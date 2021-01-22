@@ -25,18 +25,21 @@ const TotalPrice: React.FC<Props> = props => {
     const tax = props.subTotalPrice * 0.1;
     const totalPrice = props.subTotalPrice + tax;
 
-    useEffect(  () => {
+    useEffect(() => {
         setSubTotalPrice(props.subTotalPrice);
         setConsumptionTax(consumptionTax => tax);
         setBilledAmount(billedAmount => totalPrice);
-    }, [props.subTotalPrice,tax,totalPrice])
+    }, [props.subTotalPrice, tax, totalPrice])
 
     return (
         <>
-            <Typography variant={"subtitle2"} align={"center"} className={classes.control}>小計: {subTotalPrice.toLocaleString()} 円</Typography>
-            <Typography variant={"subtitle2"} align={"center"} className={classes.control}>消費税: {consumptionTax.toLocaleString()} 円</Typography>
+            <Typography variant={"subtitle2"} align={"center"}
+                        className={classes.control}>小計: {subTotalPrice.toLocaleString()} 円</Typography>
+            <Typography variant={"subtitle2"} align={"center"}
+                        className={classes.control}>消費税: {consumptionTax.toLocaleString()} 円</Typography>
             <Divider variant={"middle"}/>
-            <Typography variant={"subtitle1"} align={"center"} className={classes.control}>合計金額: {billedAmount.toLocaleString()} 円</Typography>
+            <Typography variant={"subtitle1"} align={"center"}
+                        className={classes.control}>合計金額: {billedAmount.toLocaleString()} 円</Typography>
         </>
     )
 }

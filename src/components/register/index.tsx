@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 width: 400,
             },
         },
-        pad:{
+        pad: {
             padding: theme.spacing(3),
         },
         root2: {
@@ -75,73 +75,73 @@ const Register: FC = () => {
         return ''
     }
     const zipcodeValidation = (value: string): string => {
-        if (!value || value === '' ) return '*郵便番号を入力してください'
-        if ( 7 < value.length ) return '*7字以内で入力してください'
+        if (!value || value === '') return '*郵便番号を入力してください'
+        if (7 < value.length) return '*7字以内で入力してください'
         return ''
     }
     const addressValidation = (value: string): string => {
         if (!value || value === '') return '*住所を入力してください'
-        if ( 200 < value.length ) return '*200字以内で入力してください'
+        if (200 < value.length) return '*200字以内で入力してください'
         return ''
     }
     const telephoneValidation = (value: string): string => {
         if (!value || value === '') return '*電話番号を入力してください'
-        if ( 15 < value.length ) return '*15字以内で入力してください'
+        if (15 < value.length) return '*15字以内で入力してください'
         return ''
     }
     const passwordValidation = (value: string): string => {
         if (!value) return '*パスワードを入力してください'
-        if ( value.length < 6 ) return '*6字以上で入力してください'
+        if (value.length < 6) return '*6字以上で入力してください'
         return ''
     }
     const confirmationPasswordValidation = (value: string): string => {
         if (!value) return '*確認用パスワードを入力してください'
-        if ( value !== password.value ) return '*パスワードと一致していません'
-        if ( value.length < 6 ) return '*6字以上で入力してください'
+        if (value !== password.value) return '*パスワードと一致していません'
+        if (value.length < 6) return '*6字以上で入力してください'
         return ''
     }
 
     //-----------------　動的変更処理 : handleChange○○（入力監視）-----------------------------
     const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName({
-            value:event.target.value,
-            errorMessage:nameValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: nameValidation(event.target.value)
         })
     }
     const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail({
-            value:event.target.value,
-            errorMessage:emailValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: emailValidation(event.target.value)
         })
     }
     const handleChangeZipcode = (event: React.ChangeEvent<HTMLInputElement>) => {
         setZipcode({
-            value:event.target.value,
-            errorMessage:zipcodeValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: zipcodeValidation(event.target.value)
         })
     }
     const handleChangeAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
         setAddress({
-            value:event.target.value,
-            errorMessage:addressValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: addressValidation(event.target.value)
         })
     }
     const handleChangeTel = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTelephone({
-            value:event.target.value,
-            errorMessage:telephoneValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: telephoneValidation(event.target.value)
         })
     }
     const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPassword({
-            value:event.target.value,
-            errorMessage:passwordValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: passwordValidation(event.target.value)
         })
     }
     const handleChangeConfirmationPassword = (event: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmationPassword({
-            value:event.target.value,
-            errorMessage:confirmationPasswordValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: confirmationPasswordValidation(event.target.value)
         })
     }
 
@@ -150,7 +150,7 @@ const Register: FC = () => {
      */
     const handleClickRegister = async () => {
         //可読性が低いので余裕がある時に工夫してみます
-        if(
+        if (
             name.errorMessage.length === 0 &&
             email.errorMessage.length === 0 &&
             zipcode.errorMessage.length === 0 &&
@@ -158,7 +158,7 @@ const Register: FC = () => {
             telephone.errorMessage.length === 0 &&
             password.errorMessage.length === 0 &&
             confirmationPassword.errorMessage.length === 0
-        ){
+        ) {
             const userInfo = {
                 name: name.value,
                 email: email.value,
@@ -180,11 +180,12 @@ const Register: FC = () => {
                 <Paper className={classes.root2}>
                     <Grid container alignContent="center" justify="center">
                         <div className={classes.root}>
-                            <Typography className={classes.pad} component="h5" variant="h5" align={"center"}>新規ユーザー登録</Typography>
-                            <div >
+                            <Typography className={classes.pad} component="h5" variant="h5"
+                                        align={"center"}>新規ユーザー登録</Typography>
+                            <div>
                                 <div style={{color: 'red'}}>{name.errorMessage}</div>
                                 <TextField
-                                    id="standard-error"
+                                    id="name"
                                     label="名前"
                                     variant="outlined"
                                     value={name.value}
@@ -195,7 +196,7 @@ const Register: FC = () => {
                             <div>
                                 <div style={{color: 'red'}}>{email.errorMessage}</div>
                                 <TextField
-                                    id="filled-error"
+                                    id="email"
                                     label="メールアドレス"
                                     variant="outlined"
                                     value={email.value}
@@ -206,7 +207,7 @@ const Register: FC = () => {
                             <div>
                                 <div style={{color: 'red'}}>{zipcode.errorMessage}</div>
                                 <TextField
-                                    id="outlined-error"
+                                    id="zipcode"
                                     label="郵便番号（ハイフンなし）"
                                     variant="outlined"
                                     value={zipcode.value}
@@ -217,7 +218,7 @@ const Register: FC = () => {
                             <div>
                                 <div style={{color: 'red'}}>{address.errorMessage}</div>
                                 <TextField
-                                    id="filled-error"
+                                    id="address"
                                     label="住所"
                                     variant="outlined"
                                     value={address.value}
@@ -229,7 +230,7 @@ const Register: FC = () => {
                             <div>
                                 <div style={{color: 'red'}}>{telephone.errorMessage}</div>
                                 <TextField
-                                    id="outlined-error"
+                                    id="telephone"
                                     label="電話番号"
                                     variant="outlined"
                                     value={telephone.value}
@@ -240,7 +241,7 @@ const Register: FC = () => {
                             <div>
                                 <div style={{color: 'red'}}>{password.errorMessage}</div>
                                 <TextField
-                                    id="filled-error"
+                                    id="password"
                                     label="パスワード"
                                     variant="outlined"
                                     value={password.value}
@@ -251,7 +252,7 @@ const Register: FC = () => {
                             <div>
                                 <div style={{color: 'red'}}>{confirmationPassword.errorMessage}</div>
                                 <TextField
-                                    id="outlined-error"
+                                    id="confirmationPassword"
                                     label="確認用パスワード"
                                     variant="outlined"
                                     value={confirmationPassword.value}

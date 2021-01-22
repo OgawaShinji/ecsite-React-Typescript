@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 width: 400,
             },
         },
-        pad:{
+        pad: {
             padding: theme.spacing(3),
         },
         root2: {
@@ -32,14 +32,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface SimpleDialogProps {
     open: boolean;
-    close:() => void;
+    close: () => void;
     changeUserInfo: (userInfo: User) => void;
 }
 
 const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
 
     const classes = useStyles();
-    const { open } = props;
+    const {open} = props;
     //デフォルト情報をセット
     const [name, setName] = useState<{ value: string, errorMessage: string }>({
         value: '',
@@ -73,50 +73,50 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
         return ''
     }
     const zipcodeValidation = (value: string): string => {
-        if (!value || value === '' ) return '*郵便番号を入力してください'
-        if ( 7 < value.length ) return '*7字以内で入力してください'
+        if (!value || value === '') return '*郵便番号を入力してください'
+        if (7 < value.length) return '*7字以内で入力してください'
         return ''
     }
     const addressValidation = (value: string): string => {
         if (!value || value === '') return '*住所を入力してください'
-        if ( 200 < value.length ) return '*200字以内で入力してください'
+        if (200 < value.length) return '*200字以内で入力してください'
         return ''
     }
     const telephoneValidation = (value: string): string => {
         if (!value || value === '') return '*電話番号を入力してください'
-        if ( 15 < value.length ) return '*15字以内で入力してください'
+        if (15 < value.length) return '*15字以内で入力してください'
         return ''
     }
 
     //入力された情報を動的に更新
     const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName({
-            value:event.target.value,
-            errorMessage:nameValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: nameValidation(event.target.value)
         })
     }
     const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail({
-            value:event.target.value,
-            errorMessage:emailValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: emailValidation(event.target.value)
         })
     }
     const handleChangeZipcode = (event: React.ChangeEvent<HTMLInputElement>) => {
         setZipcode({
-            value:event.target.value,
-            errorMessage:zipcodeValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: zipcodeValidation(event.target.value)
         })
     }
     const handleChangeAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
         setAddress({
-            value:event.target.value,
-            errorMessage:addressValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: addressValidation(event.target.value)
         })
     }
     const handleChangeTel = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTelephone({
-            value:event.target.value,
-            errorMessage:telephoneValidation(event.target.value)
+            value: event.target.value,
+            errorMessage: telephoneValidation(event.target.value)
         })
     }
 
@@ -132,19 +132,19 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
         props.changeUserInfo(userInfo);
         await props.close();
     }
-    return(
+    return (
         <>
-            <Dialog open={open}  >
+            <Dialog open={open}>
                 {/*ユーザー登録と同じ様な変更用フォームを表示*/}
                 <DialogTitle id="simple-dialog-title">お届け先情報</DialogTitle>
-                <DialogContent >
+                <DialogContent>
                     <Grid container alignContent="center" justify="center" className={classes.pad}>
                         <Paper elevation={0} className={classes.root2}>
                             <Grid container alignContent="center" justify="center" className={classes.pad}>
                                 <div className={classes.root}>
                                     <div style={{color: 'red'}}>{name.errorMessage}</div>
                                     <TextField
-                                        id="standard-error"
+                                        id="name"
                                         label="名前"
                                         variant="outlined"
                                         value={name.value}
@@ -153,7 +153,7 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                                     />
                                     <div style={{color: 'red'}}>{email.errorMessage}</div>
                                     <TextField
-                                        id="filled-error"
+                                        id="email"
                                         label="メールアドレス"
                                         variant="outlined"
                                         value={email.value}
@@ -162,7 +162,7 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                                     />
                                     <div style={{color: 'red'}}>{zipcode.errorMessage}</div>
                                     <TextField
-                                        id="outlined-error"
+                                        id="zipcode"
                                         label="郵便番号（ハイフンなし）"
                                         variant="outlined"
                                         value={zipcode.value}
@@ -171,7 +171,7 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                                     />
                                     <div style={{color: 'red'}}>{address.errorMessage}</div>
                                     <TextField
-                                        id="filled-error"
+                                        id="address"
                                         label="住所"
                                         variant="outlined"
                                         value={address.value}
@@ -180,7 +180,7 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                                     />
                                     <div style={{color: 'red'}}>{telephone.errorMessage}</div>
                                     <TextField
-                                        id="outlined-error"
+                                        id="telephone"
                                         label="電話番号"
                                         variant="outlined"
                                         value={telephone.value}
