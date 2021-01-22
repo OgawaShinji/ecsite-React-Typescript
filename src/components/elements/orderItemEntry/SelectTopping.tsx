@@ -20,7 +20,7 @@ export const SelectTopping: React.FC<selectToppingProps> = (props) => {
     const [selectedToppings, setSelectedToppings] = useState<Topping[]>(props.propTopping)
 
     const handleToppingChange = (topping: Topping) => {
-        const index = selectedToppings.findIndex(t => JSON.stringify(t) === JSON.stringify(topping))
+        const index = selectedToppings.findIndex(t => t.id === topping.id)
         const newSelected: Topping[] = [...selectedToppings]
         if (index === -1 && selectedToppings.length < 3) newSelected.push(topping);
         if (index !== -1) newSelected.splice(index, 1);
@@ -37,7 +37,7 @@ export const SelectTopping: React.FC<selectToppingProps> = (props) => {
                                     style={{width: "70%", height: "95%", color: "red"}}>
                             <Card style={{
                                 width: "100%", height: "100%",
-                                backgroundColor: `${selectedToppings.findIndex(topping => JSON.stringify(t) === JSON.stringify(topping)) === -1 ? "white" : "#ff9800"}`
+                                backgroundColor: `${selectedToppings.findIndex(topping => t.id === topping.id) === -1 ? "white" : "#ff9800"}`
                             }}>
                                 <Typography variant={"body1"} color={"primary"}
                                             component={"p"}>
