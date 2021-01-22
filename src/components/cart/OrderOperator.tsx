@@ -61,6 +61,7 @@ const OrderOperator: FC<Props & RouteComponentProps> = (props) => {
                     variant="outlined"
                     className={classes.orderBtn}
                     onClick={() => props.history.push({pathname: `/orderConfirm`})}
+                    disabled={props.orderItems?.length===0}
                 >
                     注文する
                 </Button>
@@ -72,6 +73,7 @@ const OrderOperator: FC<Props & RouteComponentProps> = (props) => {
                     color="secondary"
                     className={classes.btn}
                     onClick={() => allDeleteOrderItems(props.orderItems!)}
+                    disabled={props.orderItems?.length===0}
                 >
                     カートを空にする
                 </Button>

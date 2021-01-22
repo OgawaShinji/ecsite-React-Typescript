@@ -14,20 +14,26 @@ import {
     selectOrderSubTotalPrice
 } from "~/store/slices/Domain/order.slice"
 import {Grid, List, makeStyles, Typography} from "@material-ui/core";
+import {setError} from "~/store/slices/App/error.slice";
 
 const useStyles = makeStyles({
     root: {
         backgroundColor: '#f5f5f5',
+        minHeight:500,
         "padding-top": 50,
         "padding-bottom": 50,
     },
     title: {
         textAlign: 'center',
         backgroundColor: '#a9a9a9',
-        color: '#ffffff'
+        color: '#ffffff',
     },
-    cartList:{
-        backgroundColor:'#dcdcdc'
+    cartList: {
+        backgroundColor: '#dcdcdc'
+    },
+    emptyOrderItems:{
+        textAlign: 'center',
+        margin: 'auto'
     },
     orderOperator: {
         position: 'sticky',
@@ -50,23 +56,27 @@ const CartList: FC = () => {
 
     // 初期表示
     useEffect(() => {
-        dispatch(asyncFetchOrderItems())
+        dispatch(asyncFetchOrderItems()).catch((e) => {
+            dispatch(setError({isError: true, code: e.message}))
+        })
     }, [dispatch])
 
     // iniOrder
     useEffect(() => {
-        // if (Object.keys(iniOrder).length) {
         setOrder(iniOrder)
         setOrderItems(iniOrder.orderItems)
-        // }
     }, [iniOrder])
 
     // order更新時
     useEffect(() => {
         if (actionKey === 'UPDATE') {
             const f = async () => {
-                await dispatch(asyncUpdateOrderItem(order!))
-                await dispatch(asyncFetchOrderItems())
+                await dispatch(asyncUpdateOrderItem(order!)).catch((e) => {
+                    dispatch(setError({isError: true, code: e.message}))
+                })
+                dispatch(asyncFetchOrderItems()).catch((e) => {
+                    dispatch(setError({isError: true, code: e.message}))
+                })
                 await setActionKey('')
             }
             f()
@@ -99,8 +109,12 @@ const CartList: FC = () => {
      * @return
      */
     const deleteOrderItem = async (orderItemId: number) => {
-        await dispatch(asyncDeleteOrderItem(orderItemId))
-        await dispatch(asyncFetchOrderItems())
+        await dispatch(asyncDeleteOrderItem(orderItemId)).catch((e) => {
+            dispatch(setError({isError: true, code: e.message}))
+        })
+        dispatch(asyncFetchOrderItems()).catch((e) => {
+            dispatch(setError({isError: true, code: e.message}))
+        })
     }
 
 
@@ -108,10 +122,10 @@ const CartList: FC = () => {
         <div className={classes.root}>
             <Grid container>
                 <Grid item xs={8} className={classes.cartList}>
-                    <Typography variant="h3" gutterBottom className={classes.title}>
+                    <Typography variant="h4" gutterBottom className={classes.title}>
                         注文商品
                     </Typography>
-                    <List>
+                    {orderItems&&orderItems?.length>0?(<List>
                         {orderItems &&
                         orderItems!.map((orderItem, index) => (
                             <CartItem
@@ -122,7 +136,9 @@ const CartList: FC = () => {
                                 deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
                             />
                         ))}
-                    </List>
+                    </List>):(
+                        <div className={classes.emptyOrderItems}>注文がありません</div>
+                    )}
                 </Grid>
                 <Grid item xs={4}>
                     <div className={classes.orderOperator}>
