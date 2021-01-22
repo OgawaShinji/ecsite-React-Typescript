@@ -14,9 +14,11 @@ Axios.interceptors.request.use((request) => {
             'Content-Type': 'application/json'
         }
     }
+
+    // 動作せず
     if (request.method === "GET") {
-        if (request.headers.param) {
-            request.headers.param = snakecaseKeys(request.headers.param, {deep: true})
+        if (request.params) {
+            request.params = snakecaseKeys(request.params, {deep: true})
         }
     }
     return request;
