@@ -1,7 +1,7 @@
 import React, {FC, useState} from "react";
 import {useDispatch} from "react-redux";
 import {postRegisterUser} from "~/store/slices/Domain/user.slice";
-import {Button, Card, createStyles, Grid, makeStyles, Paper, TextField, Theme, Typography} from "@material-ui/core";
+import {Button, createStyles, Grid, makeStyles, Paper, TextField, Theme, Typography} from "@material-ui/core";
 import {useHistory} from "react-router-dom"
 import {Path} from "~/router/routes";
 import {User} from "~/types/interfaces";
