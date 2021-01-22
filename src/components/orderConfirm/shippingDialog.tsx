@@ -194,7 +194,18 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                 </DialogContent>
                 <DialogActions>
                     <Button className={classes.color} variant={"contained"} onClick={props.close}>閉じる</Button>
-                    <Button className={classes.color} variant={"contained"} onClick={updateUserInfo}>変更する</Button>
+                    <Button
+                        className={classes.color}
+                        variant={"contained"}
+                        onClick={updateUserInfo}
+                        disabled={
+                            name.value === '' ||
+                            email.value === '' ||
+                            zipcode.value === '' ||
+                            address.value === '' ||
+                            telephone.value === ''
+                        }
+                    >変更する</Button>
                 </DialogActions>
             </Dialog>
         </>
