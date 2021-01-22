@@ -1,8 +1,7 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Order, OrderItem} from '~/types/interfaces'
 import {RootState} from "~/store";
-import axios from "axios";
-import Axios, {API_URL} from "../../api";
+import Axios from "../../api";
 
 type orderState = {
     order: Order,
@@ -23,7 +22,7 @@ const initialState: orderState = {
 export const asyncFetchOrderItems = createAsyncThunk(
     'order/fetchOrderItems',
     async () => {
-        const {data} = await Axios.get(`${API_URL}/django/cart`, {
+        const {data} = await Axios.get(`/django/cart`, {
             method: 'GET',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -84,7 +83,7 @@ export const asyncPostOrderItem = createAsyncThunk(
 export const asyncUpdateOrderItem = createAsyncThunk(
     'order/updateOrderItem',
     async (order: Order) => {
-        await Axios.put(`${API_URL}/django/cart`, {order}, {
+        await Axios.put(`/django/cart`, {order}, {
             method: 'PUT',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -103,7 +102,7 @@ export const asyncUpdateOrderItem = createAsyncThunk(
 export const asyncDeleteOrderItem = createAsyncThunk(
     'order/deleteOrderItem',
     async (orderItemId: number) => {
-        await Axios.delete(`${API_URL}/django/cart`, {
+        await Axios.delete(`/django/cart`, {
             method: 'DELETE',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -125,8 +124,8 @@ export const asyncDeleteOrderItem = createAsyncThunk(
 export const postOrder = createAsyncThunk(
     'order/postOrder',
     async (orderInfo: Order) => {
-        await axios.post(
-            `${API_URL}/django/order/`,
+        await Axios.post(
+            `/django/order/`,
             {orderInfo},
             {
                 method: 'POST',
@@ -189,9 +188,9 @@ export const orderSlice = createSlice({
 
         }),
         //追加機能
-        setUserAddress: ((state: orderState, action) => {
-
-        }),
+        // setUserAddress: ((state: orderState, action) => {
+        //
+        // }),
         setOrder: ((state, action) => {
             state.order = action.payload
         })
@@ -219,26 +218,26 @@ export const orderSlice = createSlice({
         })
 
         // updateOrderItem
-        builder.addCase(asyncUpdateOrderItem.fulfilled, (state, action) => {
-        })
+        // builder.addCase(asyncUpdateOrderItem.fulfilled, (state, action) => {
+        // })
         builder.addCase(asyncUpdateOrderItem.rejected, (state, action) => {
             throw new Error(action.error.message)
         })
 
         // deleteOrderItem
-        builder.addCase(asyncDeleteOrderItem.fulfilled, (state, action) => {
-        })
+        // builder.addCase(asyncDeleteOrderItem.fulfilled, (state, action) => {
+        // })
         builder.addCase(asyncDeleteOrderItem.rejected, (state, action) => {
             throw new Error(action.error.message)
         })
 
         //注文確定処理:postOrder
-        builder.addCase(postOrder.fulfilled, (state, action) => {
-            //保留中、書くことないかも
-        })
-        builder.addCase(postOrder.rejected, (state, action) => {
-            //保留中、エラー表示を想定
-        })
+        // builder.addCase(postOrder.fulfilled, (state, action) => {
+        //     //保留中、書くことないかも
+        // })
+        // builder.addCase(postOrder.rejected, (state, action) => {
+        //     //保留中、エラー表示を想定
+        // })
     })
 })
 
