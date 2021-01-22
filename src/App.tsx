@@ -49,7 +49,6 @@ function App() {
         <div className={classes.App}>
             <BrowserRouter>
                 <Header isLogin={isLogin}/>
-                {errorInStore?.code}
                 {errorInStore.isError ?
                     <ErrorPage/> : routes}
                 <Footer/>
