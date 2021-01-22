@@ -32,7 +32,7 @@ export const fetchOrderHistory = createAsyncThunk('history/getOrderHistory', asy
     };
 
     try {
-        const {data} = await Axios.get(`/flask/order-history`, {
+        const {data} = await Axios.get(`/flask/order-history/`, {
             method: 'GET',
             params: params,
             headers: {
