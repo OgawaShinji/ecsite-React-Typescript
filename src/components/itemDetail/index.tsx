@@ -159,7 +159,7 @@ const ItemDetail: React.FC = () => {
 
                     {/*説明文*/}
                     <Grid item xs={12} className={classes.description_content}>
-                        <CardContent style={{width: "70%"}}>
+                        <CardContent style={{width: "70%", textAlign: "center"}}>
                             <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
                                 {item?.description}
                                 <br/>＊写真はイメージです＊
@@ -178,7 +178,7 @@ const ItemDetail: React.FC = () => {
                                 onToppingChange={(t) => handleToppingChange(t)}/>
                             <CardContent className={classes.align_child}>
                                 <Typography variant={"h3"}
-                                            className={classes.total_price}>合計金額：{totalPrice.toLocaleString()}￥（税込）</Typography>
+                                            className={classes.total_price}>合計金額: {totalPrice.toLocaleString()}￥(税込)</Typography>
                             </CardContent>
                         </CardContent>
 

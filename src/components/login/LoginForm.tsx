@@ -47,8 +47,8 @@ const LoginForm: React.FC<Props> = (props) => {
     const handleLoginClick = async () => {
         if (email.errorMessage.length === 0 && password.errorMessage.length === 0) {
             const input: loginForm = {email: email.value, password: password.value}
-            await dispatch(login(input)).then(async(body) => {
-                if (body?.payload?.token) {
+            await dispatch(login(input)).then(async (body) => {
+                if (body?.payload) {
                     await dispatch(fetchLoginUser())
                     await routeHistory.push(Path.itemList)
                 } else {
