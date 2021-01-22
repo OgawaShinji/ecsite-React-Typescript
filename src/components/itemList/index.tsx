@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 
 import {useDispatch, useSelector} from "react-redux";
 import {fetchItems, selectItems} from "~/store/slices/Domain/item.slice";
+import {setError} from "~/store/slices/App/error.slice";
+import {AppDispatch} from "~/store";
 
 import {Grid, makeStyles} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
@@ -9,6 +11,7 @@ import {Pagination} from "@material-ui/lab";
 import SearchArea from "~/components/itemList/SearchArea";
 import OptionForm from "~/components/itemList/OptionForm";
 import ItemCard from "~/components/itemList/ItemCard";
+
 
 const useStyles = makeStyles((theme) => ({
     itemCard: {
@@ -21,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ItemList: React.FC = () => {
 
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
 
     // 表示件数
@@ -45,7 +48,10 @@ const ItemList: React.FC = () => {
     const [page, setPage] = useState(1);
 
     useEffect(() => {
-        dispatch(fetchItems({itemName: '', sortId: 0}));
+        dispatch(fetchItems({itemName: '', sortId: 0}))
+            .catch((e) => {
+                dispatch(setError({isError: true, code: e.message}));
+            });
     }, [dispatch]);
 
     useEffect(() => {
@@ -67,6 +73,9 @@ const ItemList: React.FC = () => {
                 <Grid item xs={8}>
                     <SearchArea handleSearch={(searchForm) => {
                         dispatch(fetchItems(searchForm))
+                            .catch((e) => {
+                                dispatch(setError({isError: true, code: e.message}));
+                            });
                     }}/>
                 </Grid>
 
