@@ -88,9 +88,9 @@ const CartItem: FC<Props> = (props) => {
 
     // 初期表示
     useEffect(() => {
-        if (toppings.length === 0) dispatch(fetchToppings()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
+        if (toppings.length === 0) {
+            dispatch(fetchToppings())
+        }
     })
 
     /**
