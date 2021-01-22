@@ -8,7 +8,7 @@ export const postRegisterUser = createAsyncThunk(
     'user/postUserRegister',
     async (userInfo: User) => {
         //dispatchでに渡されてきたユーザー情報をPOSTする
-        await Axios.post(
+        const {data} = await Axios.post(
             `/auth/register/`,
             {
                 name: userInfo.name,
@@ -27,6 +27,7 @@ export const postRegisterUser = createAsyncThunk(
             }).catch(error => {
             throw new Error(error.response.status);
         });
+        return data
     })
 
 //-----ここから下はSlice
@@ -37,11 +38,11 @@ export const userSlice = createSlice({
     reducers: {},
     extraReducers: ((builder) => {
         builder.addCase(postRegisterUser.fulfilled, ((state, action) => {
-            //なくていいかも
+            action.payload = "200"
         }));
-        builder.addCase(postRegisterUser.pending, (state, action) => {
-            //なくていいかも
-        });
+        // builder.addCase(postRegisterUser.pending, (state, action) => {
+        //     //なくていいかも
+        // });
         builder.addCase(postRegisterUser.rejected, (state, action) => {
             throw new Error(action.error.message)
         });
