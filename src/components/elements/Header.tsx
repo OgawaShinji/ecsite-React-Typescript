@@ -86,7 +86,9 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
      */
     const logoutInHeader = () => {
         handleClose()
-        dispatch(logout());
+        dispatch(logout()).catch((e)=>{
+            dispatch(setError({isError: true, code: e.message}))
+        })
         props.history.push({pathname: '/login'})
     }
 
