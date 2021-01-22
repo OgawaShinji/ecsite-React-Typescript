@@ -149,27 +149,17 @@ const Register: FC = () => {
      * [登録]ボタン押下時の処理　
      */
     const handleClickRegister = async () => {
-        //可読性が低いので余裕がある時に工夫してみます
-        if (
-            name.errorMessage.length === 0 &&
-            email.errorMessage.length === 0 &&
-            zipcode.errorMessage.length === 0 &&
-            address.errorMessage.length === 0 &&
-            telephone.errorMessage.length === 0 &&
-            password.errorMessage.length === 0 &&
-            confirmationPassword.errorMessage.length === 0
-        ) {
-            const userInfo = {
-                name: name.value,
-                email: email.value,
-                zipcode: zipcode.value,
-                address: address.value,
-                telephone: telephone.value,
-                password: password.value,
-            }
-            dispatch(postRegisterUser(userInfo));
-            await routeHistory.push(Path.login);
+        const userInfo = {
+            name: name.value,
+            email: email.value,
+            zipcode: zipcode.value,
+            address: address.value,
+            telephone: telephone.value,
+            password: password.value,
         }
+        dispatch(postRegisterUser(userInfo));
+        await routeHistory.push(Path.login);
+
     }
 
     const classes = useStyles();
@@ -265,6 +255,15 @@ const Register: FC = () => {
                                     variant="contained"
                                     className={classes.color}
                                     onClick={handleClickRegister}
+                                    disabled={
+                                        name.errorMessage.length > 0 || name.value === '' ||
+                                        email.errorMessage.length > 0 || email.value === '' ||
+                                        zipcode.errorMessage.length > 0 || zipcode.value === '' ||
+                                        address.errorMessage.length > 0 || address.value === '' ||
+                                        telephone.errorMessage.length > 0 || telephone.value === '' ||
+                                        password.errorMessage.length > 0 || password.value === '' ||
+                                        confirmationPassword.errorMessage.length > 0 || confirmationPassword.value === ''
+                                    }
                                 >登録</Button>
                             </Grid>
                         </div>
