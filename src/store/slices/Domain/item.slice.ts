@@ -1,10 +1,10 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
-import axios from "axios";
 
 import {Item, SearchForm} from "~/types/interfaces";
 import {RootState} from "~/store";
-import camelcaseKeys from "camelcase-keys";
-import Axios, {API_URL} from "~/store/api";
+
+import Axios from "~/store/api";
+import snakecaseKeys from "snakecase-keys";
 
 type itemState = {
     items: Array<Item>;
@@ -28,16 +28,16 @@ const initialItemState: itemState = {
  */
 export const fetchItems = createAsyncThunk('item/getItems', async (searchForm: SearchForm) => {
     try {
-        const {data} = await axios.get(`${API_URL}/flask/item/`, {
+        const {data} = await Axios.get(`/flask/item/`, {
             method: "GET",
-            params: searchForm,
+            params: snakecaseKeys(searchForm),
             headers: {
                 Authorization: localStorage.getItem("Authorization")
             }
         })
         return data;
     } catch (e) {
-        throw new Error(e);
+        throw new Error(e.response.status);
     }
 });
 
@@ -48,7 +48,7 @@ export const fetchItems = createAsyncThunk('item/getItems', async (searchForm: S
  */
 export const fetchItemNames = createAsyncThunk('item/getItemNames', async () => {
     try {
-        const {data} = await axios.get(`${API_URL}/flask/item-name`, {
+        const {data} = await Axios.get(`/flask/item-name/`, {
             method: 'GET',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -56,7 +56,7 @@ export const fetchItemNames = createAsyncThunk('item/getItemNames', async () => 
         })
         return data;
     } catch (e) {
-        throw new Error(e);
+        throw new Error(e.response.status);
     }
 })
 
@@ -70,7 +70,7 @@ export const fetchItemDetail = createAsyncThunk(
     'item/detail',
     async (itemId: number) => {
         try {
-            const {data} = await Axios.get(`/flask/item/${itemId}`, {
+            const {data} = await Axios.get(`/flask/item/${itemId}/`, {
                 method: "GET",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
@@ -102,23 +102,18 @@ export const itemSlice = createSlice({
     extraReducers: ((builder) => {
         // fetchItems
         builder.addCase(fetchItems.fulfilled, (state, action) => {
-            const camelPayload = camelcaseKeys(action.payload, {deep: true})
-            const _action = itemSlice.actions.setItems(camelPayload);
-
-            itemSlice.caseReducers.setItems(state, _action);
+            itemSlice.caseReducers.setItems(state, itemSlice.actions.setItems(action.payload));
         });
         builder.addCase(fetchItems.rejected, (state, action) => {
-            console.log(action.error.message);
+            throw new Error(action.error.message);
         });
 
         // fetchItemNames
         builder.addCase(fetchItemNames.fulfilled, (state, action) => {
-            const camelPayload = camelcaseKeys(action.payload)
-            const _action = itemSlice.actions.setItems(camelPayload);
-            itemSlice.caseReducers.setItemNames(state, _action);
+            itemSlice.caseReducers.setItemNames(state, itemSlice.actions.setItems(action.payload));
         })
         builder.addCase(fetchItemNames.rejected, (state, action) => {
-            console.log(action.error.message);
+            throw new Error(action.error.message);
         })
 
         //fetchItemDetail
@@ -126,7 +121,7 @@ export const itemSlice = createSlice({
             itemSlice.caseReducers.setItemDetail(state, itemSlice.actions.setItemDetail(action.payload))
         })
         builder.addCase(fetchItemDetail.rejected, (state, action) => {
-            throw new Error(action.error.message)
+            throw new Error(action.error.message);
         })
     })
 })

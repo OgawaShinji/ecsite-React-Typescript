@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Topping} from "~/types/interfaces"
 import Axios from "~/store/api";
-import {RootState} from "~/store/index";
+import {RootState} from "~/store";
 
 type toppingState = {
     toppings: Topping[]
@@ -43,7 +43,7 @@ export const toppingSlice = createSlice({
     },
     extraReducers: ((builder) => {
         builder.addCase(fetchToppings.fulfilled, (((state, action) => {
-            toppingSlice.caseReducers.setToppings(state, toppingSlice.actions.setToppings(action.payload))
+            toppingSlice.caseReducers.setToppings(state, toppingSlice.actions.setToppings(action.payload?.topping))
         })));
         builder.addCase(fetchToppings.rejected, ((state, action) => {
             throw new Error(action.error.message)

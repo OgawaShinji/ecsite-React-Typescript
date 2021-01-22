@@ -7,6 +7,9 @@ import {
     selectOrderHistory,
     selectOrderHistoryTotalCount
 } from "~/store/slices/Domain/history.slice";
+import {setError} from '~/store/slices/App/error.slice';
+import {AppDispatch} from "~/store";
+
 import {OrderItem} from "~/types/interfaces";
 
 import OrderInfo from "~/components/history/OrderInfo";
@@ -27,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 const OrderConfirm: React.FC = () => {
 
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
 
     // storeからstateを取得
@@ -41,8 +44,15 @@ const OrderConfirm: React.FC = () => {
     const [orderItems, setOrderItems] = useState<Array<OrderItem>>([]);
 
     useEffect(() => {
-        dispatch(fetchOrderHistory({displayCount: 5, pageNum: page}));
-        dispatch(fetchOrderHistoryTotalCount());
+        dispatch(fetchOrderHistory({displayCount: 5, pageNum: page}))
+            .catch((e) => {
+                dispatch(setError({isError: true, code: e.message}));
+            });
+
+        dispatch(fetchOrderHistoryTotalCount())
+            .catch((e) => {
+                dispatch(setError({isError: true, code: e.message}));
+            });
     }, [page, dispatch]);
 
     useEffect(() => {

@@ -5,6 +5,7 @@ import {Item} from '~/types/interfaces';
 
 import {useDispatch} from "react-redux";
 import {setItemDetail} from '~/store/slices/Domain/item.slice';
+import {AppDispatch} from "~/store";
 
 import {withRouter, RouteComponentProps} from 'react-router-dom';
 
@@ -36,7 +37,7 @@ type Props = {
 
 const ItemCard: React.FC<Props & RouteComponentProps> = props => {
 
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
 
     const toItemDetail = async () => {
