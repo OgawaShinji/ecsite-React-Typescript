@@ -3,6 +3,8 @@ import OptionForm from "~/components/itemList/OptionForm";
 
 import {useDispatch, useSelector} from "react-redux";
 import {fetchItemNames, selectItemNames} from "~/store/slices/Domain/item.slice";
+import {setError} from "~/store/slices/App/error.slice";
+import {AppDispatch} from "~/store";
 
 import {SearchForm} from '~/types/interfaces';
 
@@ -16,7 +18,7 @@ type Props = {
 
 const SearchArea: React.FC<Props> = props => {
 
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const optionItems = [
         {
             value: 0,
@@ -32,7 +34,10 @@ const SearchArea: React.FC<Props> = props => {
     const itemNames = useSelector(selectItemNames);
 
     useEffect(() => {
-        dispatch(fetchItemNames());
+        dispatch(fetchItemNames())
+            .catch((e) => {
+                dispatch(setError({isError: true, code: e.message}));
+            });
     }, [dispatch]);
 
     // searchForm stateとして管理
