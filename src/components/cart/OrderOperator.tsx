@@ -1,4 +1,4 @@
-import React, {FC} from "react";
+import React from "react";
 import {Button, Card, CardActionArea, CardActions, CardContent, makeStyles} from "@material-ui/core";
 import {OrderItem} from "~/types/interfaces";
 import TotalPrice from "~/components/elements/totalPrice/totalPrice"
@@ -34,7 +34,7 @@ const useStyles = makeStyles({
 });
 
 
-const OrderOperator: FC<Props & RouteComponentProps> = (props) => {
+const OrderOperator: React.FC<Props & RouteComponentProps> = (props) => {
 
     const classes = useStyles();
 
@@ -67,7 +67,6 @@ const OrderOperator: FC<Props & RouteComponentProps> = (props) => {
                 </Button>
             </CardActions>
             <CardActions className={classes.btn}>
-                {/*TODO: カートが空なら押せないようにしておく*/}
                 <Button
                     variant="outlined"
                     color="secondary"
