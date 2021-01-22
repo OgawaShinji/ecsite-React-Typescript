@@ -124,7 +124,7 @@ export const asyncDeleteOrderItem = createAsyncThunk(
 export const postOrder = createAsyncThunk(
     'order/postOrder',
     async (orderInfo: Order) => {
-        await Axios.post(
+        const {data} = await Axios.post(
             `/django/order/`,
             {orderInfo},
             {
@@ -135,6 +135,7 @@ export const postOrder = createAsyncThunk(
             }).catch(error => {
             throw new Error(error);
         });
+        return data
     }
 )
 
@@ -232,12 +233,12 @@ export const orderSlice = createSlice({
         })
 
         //注文確定処理:postOrder
-        // builder.addCase(postOrder.fulfilled, (state, action) => {
-        //     //保留中、書くことないかも
-        // })
-        // builder.addCase(postOrder.rejected, (state, action) => {
-        //     //保留中、エラー表示を想定
-        // })
+        builder.addCase(postOrder.fulfilled, (state, action) => {
+            action.payload = "200"
+        })
+        builder.addCase(postOrder.rejected, (state, action) => {
+            throw new Error(action.error.message)
+        })
     })
 })
 
