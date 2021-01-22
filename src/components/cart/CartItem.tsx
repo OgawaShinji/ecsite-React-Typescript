@@ -18,7 +18,6 @@ import {
     Theme,
     Typography
 } from "@material-ui/core";
-import {setError} from "~/store/slices/App/error.slice";
 
 interface Props {
     orderItem: OrderItem

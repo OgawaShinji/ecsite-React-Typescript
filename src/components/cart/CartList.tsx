@@ -1,4 +1,4 @@
-import {FC, useEffect, useState} from "react";
+import React,{ useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "~/store";
 
@@ -42,7 +42,7 @@ const useStyles = makeStyles({
 });
 
 
-const CartList: FC = () => {
+const CartList: React.FC = () => {
 
     const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
@@ -79,7 +79,7 @@ const CartList: FC = () => {
                 })
                 await setActionKey('')
             }
-            f()
+            f().then(() =>{})
         }
     }, [order, dispatch, actionKey])
 
