@@ -31,7 +31,7 @@ export interface Order {
     user?: User
     status?: number
     // 日付のみ
-    orderDate?: Date
+    orderDate?: string
     // 時間まで
     deliveryTime?: Date
     destinationName?: string
