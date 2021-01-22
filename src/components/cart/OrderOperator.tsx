@@ -43,7 +43,7 @@ const OrderOperator: FC<Props & RouteComponentProps> = (props) => {
      * @Params orderItems: OrderItem[]
      */
     const allDeleteOrderItems = (orderItems: OrderItem[]) => {
-        orderItems.map((orderItem => {
+        orderItems.forEach((orderItem => {
             props.deleteOrderItem(orderItem.id!)
         }))
     }

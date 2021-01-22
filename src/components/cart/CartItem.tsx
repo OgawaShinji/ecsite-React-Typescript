@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {OrderItem, OrderTopping, Topping} from "~/types/interfaces"
-import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/orderItemEntry";
+import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
 import {
     Box,
@@ -20,14 +20,12 @@ import {
 } from "@material-ui/core";
 import {setError} from "~/store/slices/App/error.slice";
 
-
 interface Props {
     orderItem: OrderItem
     index: number
     updateOrderItems: ({orderItem, index}: { orderItem: OrderItem, index: number }) => void
     deleteOrderItem: (orderItemId: number) => void
 }
-
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -65,7 +63,6 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-
 const CartItem: FC<Props> = (props) => {
 
     const dispatch = useDispatch()
@@ -76,7 +73,7 @@ const CartItem: FC<Props> = (props) => {
     const [modalIsOpen, setIsOpen] = useState<boolean>(false)
 
     const selectedTopping: Topping[] = []
-    orderItem.orderToppings?.map(orderTopping => {
+    orderItem.orderToppings?.forEach(orderTopping => {
         selectedTopping.push(orderTopping.topping)
     })
 
@@ -125,7 +122,7 @@ const CartItem: FC<Props> = (props) => {
     const handleToppingChange = (toppings: Topping[]) => {
         // setSelectToppings(toppings)
         const newOrderToppings: OrderTopping[] = []
-        toppings.map(topping => {
+        toppings.forEach(topping => {
             const changedOrderTopping: OrderTopping = {topping: topping}
             newOrderToppings.push(changedOrderTopping)
         })

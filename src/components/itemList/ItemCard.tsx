@@ -48,7 +48,7 @@ const ItemCard: React.FC<Props & RouteComponentProps> = props => {
             <Paper elevation={0}>
                 <CardActionArea onClick={() => {
                     toItemDetail().then(() => {
-                        props.history.push({pathname: `/itemDetail/${props.item.id}`, state: {item: props.item}});
+                        props.history.push({pathname: `/itemDetail/${props.item.id}`});
                     })
                 }}>
                     <Grid container justify={"center"} alignItems={"center"}>

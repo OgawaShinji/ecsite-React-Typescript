@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import axios from "axios";
 import {User} from "~/types/interfaces";
-import {API_URL} from "~/store/api";
+import {REST_URL} from "~/store/api";
 
 
 //-----非同期処理（createAsyncThunk)の記述
@@ -9,8 +9,9 @@ export const postRegisterUser = createAsyncThunk(
     'user/postUserRegister',
     async (userInfo:User) => {
         //dispatchでに渡されてきたユーザー情報をPOSTする
+        console.log(userInfo)
         await axios.post(
-            `${API_URL}/auth/register/`,
+            `${REST_URL}/auth/register/`,
             {userInfo},
             {
                 method: 'POST',
@@ -18,7 +19,7 @@ export const postRegisterUser = createAsyncThunk(
                     Authorization: localStorage.getItem('Authorization')
                 }
             }).catch(error => {
-            throw new Error(error);
+            throw new Error(error.response.status);
         });
     })
 
@@ -36,8 +37,7 @@ export const userSlice = createSlice({
             //なくていいかも
         });
         builder.addCase(postRegisterUser.rejected, (state, action) => {
-            //保留中
-            //エラー表示を想定
+            throw new Error(action.error.message)
         });
     })
 })

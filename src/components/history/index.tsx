@@ -98,10 +98,13 @@ const OrderConfirm: React.FC = () => {
     return (
         <>
             {/*Title*/}
-            <Typography variant={"h4"} className={classes.title}>
-                注文履歴
-            </Typography>
-            {isDisplay && '注文履歴がありません。'}
+            <Grid container justify={"center"} alignItems={"center"}>
+                <Grid item>
+                    <Typography variant={"h4"} className={classes.title}>
+                        &nbsp;&nbsp;注文履歴&nbsp;&nbsp;
+                    </Typography>
+                </Grid>
+            </Grid>
 
             {/*注文履歴一覧*/}
             <Grid container justify={"center"} alignItems={"center"}>
@@ -109,6 +112,7 @@ const OrderConfirm: React.FC = () => {
                     <List>
                         {orderInfoList}
                     </List>
+                    {isDisplay && '注文履歴がありません。'}
                 </Grid>
             </Grid>
 

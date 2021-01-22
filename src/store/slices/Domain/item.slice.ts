@@ -4,7 +4,7 @@ import axios from "axios";
 import {Item, SearchForm} from "~/types/interfaces";
 import {RootState} from "~/store";
 import camelcaseKeys from "camelcase-keys";
-import {API_URL} from "~/store/api";
+import Axios, {API_URL} from "~/store/api";
 
 type itemState = {
     items: Array<Item>;
@@ -70,7 +70,7 @@ export const fetchItemDetail = createAsyncThunk(
     'item/detail',
     async (itemId: number) => {
         try {
-            const {data} = await axios.get(`${API_URL}/flask/item/${itemId}`, {
+            const {data} = await Axios.get(`/flask/item/${itemId}`, {
                 method: "GET",
                 headers: {
                     Authorization: localStorage.getItem("Authorization")

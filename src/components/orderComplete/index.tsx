@@ -1,27 +1,36 @@
-import {FC} from "react";
+import React, {useEffect} from "react";
 import {Button, createStyles, Grid, makeStyles, Theme, Typography} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
 import {Path} from "~/router/routes";
 
+import {withRouter, RouteComponentProps, useLocation} from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         form: {
             padding: theme.spacing(20),
-            height:200
+            height: 200
         },
         space: {
             padding: theme.spacing(5),
-            height:30
+            height: 30
         }
     }),
 );
 
-const OrderComplete: FC = () => {
+const OrderComplete: React.FC<RouteComponentProps> = props => {
+
+    const location = useLocation<{ judge: boolean }>();
 
     const routeHistory = useHistory();
 
     const classes = useStyles();
+
+    useEffect(() => {
+        if (!location.state) {
+            props.history.push('/');
+        }
+    }, [location.state, props.history])
 
     /**
      * [トップ画面に戻る]ボタン押下時の処理　トップ（商品一覧）画面に遷移　
@@ -33,7 +42,7 @@ const OrderComplete: FC = () => {
     return (
         <>
             <Grid container spacing={0} justify="center" alignItems="center" className={classes.form}>
-                <Grid item justify="center" xs={12}>
+                <Grid item xs={12}>
                     <Typography component="h4" variant="h4" className={classes.space}>
                         決済が完了しました！
                     </Typography>
@@ -47,7 +56,7 @@ const OrderComplete: FC = () => {
                         メールが届かない場合は「注文履歴」からご確認ください。
                     </Typography>
                 </Grid>
-                <Grid item justify="center" xs={12} className={classes.space}>
+                <Grid item xs={12} className={classes.space}>
                     <Button
                         variant="contained"
                         color="primary"
@@ -60,4 +69,4 @@ const OrderComplete: FC = () => {
         </>
     )
 }
-export default OrderComplete;
+export default withRouter(OrderComplete);

@@ -1,10 +1,8 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Order, OrderItem} from '../../../types/interfaces'
-import {RootState} from "../../index";
+import {Order, OrderItem} from '~/types/interfaces'
+import {RootState} from "~/store";
 import axios from "axios";
 import Axios, {API_URL} from "../../api";
-import camelcaseKeys from "camelcase-keys";
-
 
 type orderState = {
     order: Order,
@@ -22,7 +20,6 @@ const initialState: orderState = {
  * カート一覧を取得するメソッド
  * @return res: orderItem[]
  */
-
 export const asyncFetchOrderItems = createAsyncThunk(
     'order/fetchOrderItems',
     async () => {
@@ -49,16 +46,16 @@ export type OrderItemToPost = {
     status: 0,
     newTotalPrice: number
 }
+
 /**
  * 商品をカートに入れる関数
  *  @param order: Order
  *  @return void
  */
-
 export const asyncPostOrderItem = createAsyncThunk(
     'order/postOrderItem',
     async (order: OrderItemToPost) => {
-        const {data} = await Axios.post(`${API_URL}/django/cart/`, {
+        const {data} = await Axios.post(`/django/cart/`, {
             order_item: {
                 item: order.newItem.item,
                 orderToppings: order.newItem.orderToppings,
@@ -84,7 +81,6 @@ export const asyncPostOrderItem = createAsyncThunk(
  * @param order: Order
  * @return void
  */
-
 export const asyncUpdateOrderItem = createAsyncThunk(
     'order/updateOrderItem',
     async (order: Order) => {
@@ -104,7 +100,6 @@ export const asyncUpdateOrderItem = createAsyncThunk(
  * @param orderItemId: number
  * @return void
  */
-
 export const asyncDeleteOrderItem = createAsyncThunk(
     'order/deleteOrderItem',
     async (orderItemId: number) => {
@@ -127,7 +122,6 @@ export const asyncDeleteOrderItem = createAsyncThunk(
  * @param order: Order
  * @return void
  */
-
 export const postOrder = createAsyncThunk(
     'order/postOrder',
     async (orderInfo: Order) => {
@@ -171,7 +165,7 @@ export const orderSlice = createSlice({
             let orderSubTotalPrice = state.orderSubTotalPrice
 
             // orderItemごとのsubTotalPriceをset, stateのorder全体のsubTotalPriceをset
-            copyOrderItems?.map(orderItem => {
+            copyOrderItems?.forEach(orderItem => {
                 const toppingQuantity = orderItem.orderToppings?.length
                 const orderItemQuantity = orderItem.quantity
                 let orderItemPrice: number
@@ -216,7 +210,7 @@ export const orderSlice = createSlice({
         builder.addCase(asyncPostOrderItem.fulfilled, (state, action) => {
             //post後受け取りたいデータが特に無いので返却値を自分で指定している
             // ->component/itemDetail/index/handleOrderClick にて、ここの指定値が返ってきた時のみ処理している
-            action.payload="200"
+            action.payload = "200"
         })
         builder.addCase(asyncPostOrderItem.rejected, (state, action) => {
             //createAsyncThunkのcatch内にてエラーコードのみをmessageに入れているので.
@@ -245,10 +239,8 @@ export const orderSlice = createSlice({
         builder.addCase(postOrder.rejected, (state, action) => {
             //保留中、エラー表示を想定
         })
-
     })
 })
-
 
 export const selectOrderDate = (state: RootState) => state.order.order.orderDate
 export const selectDeliveryTime = (state: RootState) => state.order.order.deliveryTime
