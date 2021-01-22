@@ -199,11 +199,11 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                         variant={"contained"}
                         onClick={updateUserInfo}
                         disabled={
-                            name.value === '' ||
-                            email.value === '' ||
-                            zipcode.value === '' ||
-                            address.value === '' ||
-                            telephone.value === ''
+                            name.value === '' || name.errorMessage.length > 0 ||
+                            email.value === '' || email.errorMessage.length > 0 ||
+                            zipcode.value === '' || zipcode.errorMessage.length > 0 ||
+                            address.value === '' || address.errorMessage.length > 0 ||
+                            telephone.value === '' || telephone.errorMessage.length > 0
                         }
                     >変更する</Button>
                 </DialogActions>
