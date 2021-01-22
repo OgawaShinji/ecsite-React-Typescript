@@ -47,7 +47,7 @@ export const fetchItems = createAsyncThunk('item/getItems', async (searchForm: S
  */
 export const fetchItemNames = createAsyncThunk('item/getItemNames', async () => {
     try {
-        const {data} = await Axios.get(`/flask/item-name`, {
+        const {data} = await Axios.get(`/flask/item-name/`, {
             method: 'GET',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -69,8 +69,9 @@ export const fetchItemDetail = createAsyncThunk(
     'item/detail',
     async (itemId: number) => {
         try {
-            const {data} = await Axios.get(`/flask/item/${itemId}`, {
+            const {data} = await Axios.get(`/flask/item/`, {
                 method: "GET",
+                params: itemId,
                 headers: {
                     Authorization: localStorage.getItem("Authorization")
                 }
