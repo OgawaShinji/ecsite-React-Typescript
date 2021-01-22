@@ -55,6 +55,9 @@ const LoginForm: React.FC<Props> = (props) => {
                     setIsIncorrectEntry(true);
                     setPassword({value: "", errorMessage: ""})
                 }
+            }).catch(() => {
+                setIsIncorrectEntry(true);
+                setPassword({value: "", errorMessage: ""})
             })
         }
     }
