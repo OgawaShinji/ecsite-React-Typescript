@@ -29,7 +29,7 @@ export const asyncFetchOrderItems = createAsyncThunk(
                 Authorization: localStorage.getItem("Authorization")
             }
         }).catch(err => {
-            throw new Error(err);
+            throw new Error(err.response.status);
         });
 
         return data
@@ -90,7 +90,7 @@ export const asyncUpdateOrderItem = createAsyncThunk(
                 Authorization: localStorage.getItem("Authorization")
             }
         }).catch(err => {
-            throw new Error(err)
+            throw new Error(err.response.status)
         })
     }
 )
@@ -112,7 +112,7 @@ export const asyncDeleteOrderItem = createAsyncThunk(
                 orderItemId: orderItemId
             }
         }).catch(err => {
-            throw new Error(err)
+            throw new Error(err.response.status)
         })
     }
 )
@@ -203,7 +203,7 @@ export const orderSlice = createSlice({
             orderSlice.caseReducers.setOrderItemsAndSubTotalPrice(state, _action)
         })
         builder.addCase(asyncFetchOrderItems.rejected, (state, action) => {
-            console.log(action.error)
+            throw new Error(action.error.message)
         })
 
         // postOrderItem
@@ -222,14 +222,14 @@ export const orderSlice = createSlice({
         builder.addCase(asyncUpdateOrderItem.fulfilled, (state, action) => {
         })
         builder.addCase(asyncUpdateOrderItem.rejected, (state, action) => {
-            console.log(action.error)
+            throw new Error(action.error.message)
         })
 
         // deleteOrderItem
         builder.addCase(asyncDeleteOrderItem.fulfilled, (state, action) => {
         })
         builder.addCase(asyncDeleteOrderItem.rejected, (state, action) => {
-            console.log(action.error)
+            throw new Error(action.error.message)
         })
 
         //注文確定処理:postOrder
