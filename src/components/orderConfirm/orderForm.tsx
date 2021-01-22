@@ -42,9 +42,9 @@ const OrderForm: React.FC<Props> = (props) => {
     const dispatch = useDispatch();
     const routeHistory = useHistory();
 
-    useEffect( () => {
+    useEffect(() => {
         setUserInfo(props.user)
-    }, [dispatch,props.user])
+    }, [dispatch, props.user])
 
     //注文内容の小計を取得
     const orderSubTotalPrice = useSelector(selectOrderSubTotalPrice);
@@ -53,7 +53,7 @@ const OrderForm: React.FC<Props> = (props) => {
     //デフォルトのユーザー情報をセット
     const [userInfo, setUserInfo] = React.useState<User | null>(props.user)
     //デフォルトの配達日時をセット
-    const [selectedDate, setSelectedDate] = React.useState<{ date: Date | null, errorMessage: string}>({
+    const [selectedDate, setSelectedDate] = React.useState<{ date: Date | null, errorMessage: string }>({
         date: null,
         errorMessage: ''
     });
@@ -77,24 +77,24 @@ const OrderForm: React.FC<Props> = (props) => {
     //[クレジットカード決済]チェック時の処理 お支払方法をクレジットカード決済に変更
     const handleChangePaymentCash = () => {
         setCheckedCash(!checkedCash);
-        if(checkedCredit){
+        if (checkedCredit) {
             setCheckedCredit(false)
         }
     };
     //[代金引換]チェック時の処理 お支払方法を代金引換に変更
     const handleChangePaymentCredit = () => {
         setCheckedCredit(!checkedCredit);
-        if(checkedCash){
+        if (checkedCash) {
             setCheckedCash(false)
         }
     };
     //配送日時のバリデーションチェック
     const deliveryDateValidation = (date: Date | null): string => {
-        if(date){
+        if (date) {
             const orderDate = new Date();
             if (orderDate > date) {
                 return '現在時刻よりも後を選んでください'
-            } else{
+            } else {
                 return ''
             }
         } else {
@@ -102,7 +102,7 @@ const OrderForm: React.FC<Props> = (props) => {
         }
     }
     //配達日時選択中の処理 動的に日付の内容を更新
-    const handleDateChange = (date: Date | null ) => {
+    const handleDateChange = (date: Date | null) => {
         setSelectedDate({
             date: date,
             errorMessage: deliveryDateValidation(date)
@@ -110,23 +110,23 @@ const OrderForm: React.FC<Props> = (props) => {
     };
     //[この内容で注文する]ボタン押下時の処理　
     const handleOrder = async () => {
-        if(selectedDate.errorMessage.length === 0){
+        if (selectedDate.errorMessage.length === 0) {
             const date = new Date();
-            if(selectedDate.date){
+            if (selectedDate.date) {
                 selectedDate?.date.setHours(selectedDate?.date.getHours() + 9)
             }
             const consumptionTax = orderSubTotalPrice * 0.1
             const totalPrice = orderSubTotalPrice + consumptionTax
             let paymentMethod;
-            if( checkedCash ){
+            if (checkedCash) {
                 paymentMethod = 1;
-            } else if( checkedCredit ) {
+            } else if (checkedCredit) {
                 paymentMethod = 2;
             } else {
                 paymentMethod = 0;
             }
             const order = {
-                status:1,
+                status: 1,
                 totalPrice: totalPrice,
                 order_data: date,
                 destination_name: userInfo?.name,
@@ -147,38 +147,41 @@ const OrderForm: React.FC<Props> = (props) => {
     return (
         <>
             <div className={classes.root}>
-                <Grid container spacing={3} justify="center" alignItems="center"   >
+                <Grid container spacing={3} justify="center" alignItems="center">
                     <Grid item xs={6} sm={7}>
                         <Paper className={classes.orderFormPaper}>
                             <Grid item xs={6} sm={11}>
-                                <Grid container spacing={1}  alignItems="center">
+                                <Grid container spacing={1} alignItems="center">
                                     <Grid item xs={6} sm={3}>
-                                        <Typography component="h6" variant="h6" align="left" >お届け先住所</Typography>
+                                        <Typography component="h6" variant="h6" align="left">お届け先住所</Typography>
                                     </Grid>
                                     <Grid item xs={6} sm={2}>
-                                       <Button variant="contained"
-                                               className={classes.color}
-                                               onClick={handleDialogOpen}
-                                               size={"small"}
-                                       >変更</Button>
+                                        <Button variant="contained"
+                                                className={classes.color}
+                                                onClick={handleDialogOpen}
+                                                size={"small"}
+                                        >変更</Button>
                                         {/*お届け先情報変更用フォームのダイアログ*/}
-                                        <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} />
+                                        <ShippingDialog open={open} close={handleClose}
+                                                        changeUserInfo={changeUserInfo}/>
                                     </Grid>
                                     <Grid item xs={6} sm={7}>
-                                       <Typography component="h6" variant="h6" align={"center"}>お支払情報</Typography>
+                                        <Typography component="h6" variant="h6" align={"center"}>お支払情報</Typography>
                                     </Grid>
                                 </Grid>
                             </Grid>
                             <Grid container spacing={1} justify="center" alignItems="center">
                                 <Grid item xs={6} sm={7}>
                                     <br/>
-                                    <Typography align="left" variant={"subtitle2"}>お名前: {userInfo?.name}　</Typography>
-                                    <Typography align="left" variant={"subtitle2"}>郵便番号:　{userInfo?.zipcode}　</Typography>
-                                    <Typography align="left" variant={"subtitle2"}>住所: {userInfo?.address}　</Typography>
-                                    <Typography align="left" variant={"subtitle2"}>電話番号:　{userInfo?.telephone}　</Typography>
+                                    <Typography align="left" variant={"subtitle2"}>お名前: {userInfo?.name} </Typography>
+                                    <Typography align="left"
+                                                variant={"subtitle2"}>郵便番号: {userInfo?.zipcode} </Typography>
+                                    <Typography align="left" variant={"subtitle2"}>住所: {userInfo?.address} </Typography>
+                                    <Typography align="left"
+                                                variant={"subtitle2"}>電話番号: {userInfo?.telephone} </Typography>
                                 </Grid>
                                 <Grid item xs={6} sm={5}>
-                                    <Grid item xs={6} sm={12} >
+                                    <Grid item xs={6} sm={12}>
                                         代金引換
                                         <Checkbox
                                             color="default"
@@ -198,12 +201,12 @@ const OrderForm: React.FC<Props> = (props) => {
                             </Grid>
                             <br/>
                             <Grid item xs={6} sm={11}>
-                                <Grid container spacing={3}  alignItems="center">
+                                <Grid container spacing={3} alignItems="center">
                                     <Grid item xs={2}>
                                         <Typography component="h6" variant="h6" align="left">配送日時</Typography>
                                     </Grid>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                        <Grid  item xs={3}>
+                                        <Grid item xs={3}>
                                             <KeyboardDatePicker
                                                 id="date-picker-dialog"
                                                 label="配送日"
@@ -223,7 +226,8 @@ const OrderForm: React.FC<Props> = (props) => {
                                             />
                                         </Grid>
                                         <Grid>
-                                            <Typography variant={"subtitle2"} style={{color: 'red'}}>{selectedDate.errorMessage}</Typography>
+                                            <Typography variant={"subtitle2"}
+                                                        style={{color: 'red'}}>{selectedDate.errorMessage}</Typography>
                                         </Grid>
                                     </MuiPickersUtilsProvider>
                                 </Grid>
@@ -240,7 +244,7 @@ const OrderForm: React.FC<Props> = (props) => {
                                 fullWidth
                                 onClick={handleOrder}
                                 className={classes.color}
-                                disabled={selectedDate.errorMessage.length > 0}
+                                disabled={selectedDate.errorMessage.length > 0 || selectedDate.date === null}
                         >この内容で注文する</Button>
                     </Grid>
                 </Grid>
