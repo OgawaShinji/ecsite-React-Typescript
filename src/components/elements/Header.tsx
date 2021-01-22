@@ -9,7 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import {Button, Grid} from "@material-ui/core";
 
-import {Link, RouteComponentProps, withRouter, useHistory} from 'react-router-dom'
+import {Link, RouteComponentProps, useHistory, withRouter} from 'react-router-dom'
 import {Path} from "~/router/routes";
 import {logout} from "~/store/slices/App/auth.slice";
 import {AppDispatch} from "~/store";
@@ -137,11 +137,14 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
                                 >
                                     <AccountCircle/>
                                 </IconButton>
-                            ) : (  // TODO: ログイン画面の時表示しない
+                            ) : history.location.pathname !== '/login' ? (
                                 <Link to={Path.login} className={classes.link}>
                                     <Button color="inherit">Login</Button>
                                 </Link>
-                            )}
+                            ) : (
+                                <div/>
+                            )
+                            }
                         </Grid>
                     </Grid>
                     <Menu

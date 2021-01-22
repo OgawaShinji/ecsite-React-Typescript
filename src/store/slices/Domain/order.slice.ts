@@ -181,14 +181,12 @@ export const orderSlice = createSlice({
         setOrderItemsAndSubTotalPrice: ((state: orderState, action: PayloadAction<OrderItem[]>) => {
             state.order.orderItems = action.payload
             if (action.payload) {
-                // TODO: 書き換えとく
-                let copyOrderItems = state.order.orderItems.slice()
                 //注文内容の小計を初期化
                 state.orderSubTotalPrice = 0
                 let orderSubTotalPrice = state.orderSubTotalPrice
 
                 // orderItemごとのsubTotalPriceをset, stateのorder全体のsubTotalPriceをset
-                copyOrderItems?.forEach(orderItem => {
+                state.order.orderItems.forEach(orderItem => {
                     const toppingQuantity = orderItem.orderToppings?.length
                     const orderItemQuantity = orderItem.quantity
                     let orderItemPrice: number
@@ -197,7 +195,6 @@ export const orderSlice = createSlice({
 
                     if (orderItem.size === 'M') {
                         orderItemPrice = orderItem.item.priceM
-                        // TODO:toppingの価格がわかり次第修正
                         toppingTotalPrice = toppingQuantity! * 200
                     } else if (orderItem.size === 'L') {
                         orderItemPrice = orderItem.item.priceL
@@ -207,10 +204,10 @@ export const orderSlice = createSlice({
                     orderItem.subTotalPrice = subTotalPrice
                     orderSubTotalPrice += orderItem.subTotalPrice
                 })
-                state.order.orderItems = copyOrderItems
                 state.orderSubTotalPrice = orderSubTotalPrice
+            }else{
+                state.orderSubTotalPrice = 0
             }
-
         }),
         //追加機能
         // setUserAddress: ((state: orderState, action) => {
@@ -224,7 +221,6 @@ export const orderSlice = createSlice({
         // fetchOrderItems
         builder.addCase(asyncFetchOrderItems.fulfilled, (state, action) => {
             let _action: any
-            // TODO: 一回注文したけど、カートを空にした場合の挙動確認
             if (action.payload.orderItems === undefined) {
                 _action = []
             } else {
