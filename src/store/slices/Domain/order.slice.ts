@@ -136,7 +136,18 @@ export const postOrder = createAsyncThunk(
     async (orderInfo: Order) => {
         const {data} = await Axios.post(
             `/django/order/`,
-            {orderInfo},
+            {
+                status:orderInfo.status,
+                total_price : orderInfo.totalPrice,
+                order_date: orderInfo.orderDate,
+                destination_name:orderInfo.destinationName,
+                destination_email:orderInfo.destinationEmail,
+                destination_zipcode:orderInfo.destinationZipcode,
+                destination_address:orderInfo.destinationAddress,
+                destination_tel:orderInfo.destinationTel,
+                delivery_time:orderInfo.deliveryTime,
+                payment_method:orderInfo.paymentMethod
+            },
             {
                 method: 'POST',
                 headers: {
