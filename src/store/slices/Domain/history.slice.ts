@@ -1,10 +1,8 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
-import axios from "axios";
 
 import {Order, DisplaySetting} from '~/types/interfaces';
 import {RootState} from "~/store";
-import {API_URL} from '~/store/api';
-import camelcaseKeys from "camelcase-keys";
+import Axios from '~/store/api';
 
 type historyState = {
     orderHistory: Array<Order>;
@@ -34,7 +32,7 @@ export const fetchOrderHistory = createAsyncThunk('history/getOrderHistory', asy
     };
 
     try {
-        const {data} = await axios.get(`${API_URL}/flask/order-history`, {
+        const {data} = await Axios.get(`/flask/order-history`, {
             method: 'GET',
             params: params,
             headers: {
@@ -43,7 +41,7 @@ export const fetchOrderHistory = createAsyncThunk('history/getOrderHistory', asy
         })
         return data;
     } catch (e) {
-        throw new Error(e);
+        throw new Error(e.response.status);
     }
 })
 
@@ -54,7 +52,7 @@ export const fetchOrderHistory = createAsyncThunk('history/getOrderHistory', asy
  */
 export const fetchOrderHistoryTotalCount = createAsyncThunk('history/getTotalCount', async () => {
     try {
-        const {data} = await axios.get(`${API_URL}/flask/order-history/count`, {
+        const {data} = await Axios.get(`/flask/order-history/count`, {
             method: 'GET',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
@@ -62,7 +60,7 @@ export const fetchOrderHistoryTotalCount = createAsyncThunk('history/getTotalCou
         })
         return data;
     } catch (e) {
-        throw new Error(e);
+        throw new Error(e.response.status);
     }
 })
 
@@ -119,22 +117,18 @@ export const historySlice = createSlice({
     extraReducers: ((builder) => {
         // fetchOrderHistory
         builder.addCase(fetchOrderHistory.fulfilled, (state, action) => {
-            const camelPayload = camelcaseKeys(action.payload, {deep: true});
-            const _action = historySlice.actions.setOrders(camelPayload);
-
-            historySlice.caseReducers.setOrders(state, _action);
+            historySlice.caseReducers.setOrders(state, historySlice.actions.setOrders(action.payload));
         });
         builder.addCase(fetchOrderHistory.rejected, (state, action) => {
-            console.log(action.error.message);
+            throw new Error(action.error.message);
         });
 
         // fetchOrderHistoryTotalCount
         builder.addCase(fetchOrderHistoryTotalCount.fulfilled, (state, action) => {
-            const _action = historySlice.actions.setOrdersTotalCount(action.payload);
-            historySlice.caseReducers.setOrdersTotalCount(state, _action);
+            historySlice.caseReducers.setOrdersTotalCount(state, historySlice.actions.setOrdersTotalCount(action.payload));
         });
         builder.addCase(fetchOrderHistoryTotalCount.rejected, (state, action) => {
-            console.log(action.error.message);
+            throw new Error(action.error.message);
         });
     })
 })
