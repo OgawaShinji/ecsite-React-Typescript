@@ -1,22 +1,30 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import axios from "axios";
 import {User} from "~/types/interfaces";
-import {REST_URL} from "~/store/api";
+import Axios from "~/store/api";
 
 
 //-----非同期処理（createAsyncThunk)の記述
 export const postRegisterUser = createAsyncThunk(
     'user/postUserRegister',
-    async (userInfo:User) => {
+    async (userInfo: User) => {
         //dispatchでに渡されてきたユーザー情報をPOSTする
         console.log(userInfo)
-        await axios.post(
-            `${REST_URL}/auth/register/`,
-            {userInfo},
+        await Axios.post(
+            `/auth/register/`,
+            {
+                name: userInfo.name,
+                email: userInfo.email,
+                password: userInfo.password,
+                zipcode: userInfo.zipcode,
+                address: userInfo.address,
+                telephone: userInfo.telephone,
+                status: '0'
+            },
             {
                 method: 'POST',
                 headers: {
-                    Authorization: localStorage.getItem('Authorization')
+                    Authorization: localStorage.getItem("Authorization"),
+                    'Content-Type': 'application/json'
                 }
             }).catch(error => {
             throw new Error(error.response.status);
@@ -27,7 +35,7 @@ export const postRegisterUser = createAsyncThunk(
 
 export const userSlice = createSlice({
     name: 'user',
-    initialState:{},
+    initialState: {},
     reducers: {},
     extraReducers: ((builder) => {
         builder.addCase(postRegisterUser.fulfilled, ((state, action) => {
