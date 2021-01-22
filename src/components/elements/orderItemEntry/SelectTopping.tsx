@@ -3,7 +3,7 @@ import {Button, ButtonBase, Card, Grid, Typography} from "@material-ui/core";
 import {useSelector} from "react-redux";
 import {selectToppings} from "~/store/slices/Domain/topping.slice";
 import {Topping} from "~/types/interfaces";
-import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import {createStyles, makeStyles} from "@material-ui/core/styles";
 
 type selectToppingProps = {
     selectedSize: string;
@@ -31,7 +31,7 @@ export const SelectTopping: React.FC<selectToppingProps> = (props) => {
     return (
         <Card className={classes.topping_modal}>
             <Grid container justify={"center"}>
-                {toppings.map((t, i) => {
+                {toppings.map((t) => {
                     return (<Grid item xs={4} className={classes.topping_card} key={`${t.name}${t.id}`}>
                         <ButtonBase onClick={() => handleToppingChange(t)}
                                     style={{width: "70%", height: "95%", color: "red"}}>
@@ -63,7 +63,7 @@ export const WrappedSelectTopping = React.forwardRef<HTMLDivElement, selectToppi
     <SelectTopping selectedSize={props.selectedSize} onClickClose={props.onClickClose} customRef={ref}
                    propTopping={props.propTopping} onToppingChange={props.onToppingChange}/>)
 
-const toppingStyles = makeStyles((theme: Theme) => createStyles({
+const toppingStyles = makeStyles(() => createStyles({
     topping_modal: {
         backgroundColor: "#bbdefb"
     },

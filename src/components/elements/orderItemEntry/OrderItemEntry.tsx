@@ -19,7 +19,7 @@ import {
 } from "@material-ui/core";
 import {Topping} from "~/types/interfaces";
 import {WrappedSelectTopping} from "~/components/elements/orderItemEntry/SelectTopping";
-import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import {createStyles, makeStyles} from "@material-ui/core/styles";
 
 export type itemEntryState = {
     size: string;
@@ -156,7 +156,7 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
 };
 export default OrderItemEntry;
 
-const orderItemEntryStyleInCart = makeStyles((theme: Theme) => createStyles({
+const orderItemEntryStyleInCart = makeStyles(() => createStyles({
 
     modal: {},
     entry_title: {
@@ -232,7 +232,7 @@ const orderItemEntryStyleInCart = makeStyles((theme: Theme) => createStyles({
     entry_right: {}
 }));
 
-const orderItemEntryStyle = makeStyles((theme: Theme) => createStyles({
+const orderItemEntryStyle = makeStyles(() => createStyles({
     modal: {},
     entry_title: {
         width: "92%",

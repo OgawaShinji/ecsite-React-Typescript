@@ -21,8 +21,7 @@ import {
 
 interface Props {
     orderItem: OrderItem
-    index: number
-    updateOrderItems: ({orderItem, index}: { orderItem: OrderItem, index: number }) => void
+    updateOrderItems: ({orderItem}: { orderItem: OrderItem }) => void
     deleteOrderItem: (orderItemId: number) => void
 }
 
@@ -66,7 +65,7 @@ const CartItem: FC<Props> = (props) => {
 
     const dispatch = useDispatch()
     const classes = useStyles();
-    const {orderItem, index, updateOrderItems, deleteOrderItem} = props
+    const {orderItem, updateOrderItems, deleteOrderItem} = props
 
     const toppings: Topping[] = useSelector(selectToppings)
     const [modalIsOpen, setIsOpen] = useState<boolean>(false)
@@ -102,7 +101,7 @@ const CartItem: FC<Props> = (props) => {
      */
     const handleSizeChange = (inputSize: string) => {
         const changedOrderItem = {...orderItem, size: inputSize}
-        updateOrderItems({orderItem: changedOrderItem, index: index})
+        updateOrderItems({orderItem: changedOrderItem})
     }
 
     /**
@@ -111,7 +110,7 @@ const CartItem: FC<Props> = (props) => {
      */
     const handleQuantityChange = (inputQuantity: number) => {
         const changedOrderItem = {...orderItem, quantity: inputQuantity}
-        updateOrderItems({orderItem: changedOrderItem, index: index})
+        updateOrderItems({orderItem: changedOrderItem})
     }
 
     /**
@@ -126,7 +125,7 @@ const CartItem: FC<Props> = (props) => {
             newOrderToppings.push(changedOrderTopping)
         })
         const changedOrderItem = {...orderItem, orderToppings: newOrderToppings}
-        updateOrderItems({orderItem: changedOrderItem, index: index})
+        updateOrderItems({orderItem: changedOrderItem})
     }
 
 
