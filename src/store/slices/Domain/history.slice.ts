@@ -52,7 +52,7 @@ export const fetchOrderHistory = createAsyncThunk('history/getOrderHistory', asy
  */
 export const fetchOrderHistoryTotalCount = createAsyncThunk('history/getTotalCount', async () => {
     try {
-        const {data} = await Axios.get(`/flask/order-history/count`, {
+        const {data} = await Axios.get(`/flask/order-history/count/`, {
             method: 'GET',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
