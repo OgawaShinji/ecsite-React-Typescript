@@ -110,41 +110,49 @@ const OrderForm: React.FC<Props> = (props) => {
             errorMessage: deliveryDateValidation(date)
         })
     };
+    // 日付をYYYY-MM-DDの書式で返す
+    function formatDate(date : Date | null) {
+        if(date){
+            let year = date.getFullYear();
+            let month = ('00' + (date.getMonth()+1)).slice(-2);
+            let day = ('00' + date.getDate()).slice(-2);
+            return (year + '-' + month + '-' + day);
+        }
+    }
     //[この内容で注文する]ボタン押下時の処理　
     const handleOrder = async () => {
         if (selectedDate.errorMessage.length === 0) {
             const date = new Date();
             if (selectedDate.date) {
-                selectedDate?.date.setHours(selectedDate?.date.getHours() + 9)
+                const orderDate = formatDate(date);
+                const consumptionTax = orderSubTotalPrice * 0.1
+                const totalPrice = orderSubTotalPrice + consumptionTax
+                let paymentMethod;
+                if (checkedCash) {
+                    paymentMethod = "1";
+                } else if (checkedCredit) {
+                    paymentMethod = "2";
+                } else {
+                    paymentMethod = "1";
+                }
+                const order = {
+                    status: 1,
+                    totalPrice: totalPrice,
+                    orderDate: orderDate,
+                    destinationName: userInfo?.name,
+                    destinationEmail: userInfo?.email,
+                    destinationZipcode: userInfo?.zipcode,
+                    destinationAddress: userInfo?.address,
+                    destinationTel: userInfo?.telephone,
+                    deliveryTime: selectedDate.date,
+                    paymentMethod: paymentMethod
+                }
+                await dispatch(postOrder(order)).then( (i) => {
+                    if(i.payload) routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
+                }).catch( (e) => {
+                    dispatch(setError({isError: true, code: e.message}));
+                });
             }
-            const consumptionTax = orderSubTotalPrice * 0.1
-            const totalPrice = orderSubTotalPrice + consumptionTax
-            let paymentMethod;
-            if (checkedCash) {
-                paymentMethod = 1;
-            } else if (checkedCredit) {
-                paymentMethod = 2;
-            } else {
-                paymentMethod = 0;
-            }
-            const order = {
-                status: 1,
-                totalPrice: totalPrice,
-                order_data: date,
-                destination_name: userInfo?.name,
-                destination_email: userInfo?.email,
-                destination_zipcode: userInfo?.zipcode,
-                destination_address: userInfo?.address,
-                destination_tel: userInfo?.telephone,
-                delivery_time: selectedDate,
-                payment_method: paymentMethod
-            }
-            await dispatch(postOrder(order)).then( (i) => {
-                if(i.payload) routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
-            }).catch( (e) => {
-                dispatch(setError({isError: true, code: e.message}));
-            });
-
         }
     }
 
