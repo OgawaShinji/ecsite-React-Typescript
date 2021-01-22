@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Topping} from "~/types/interfaces"
 import Axios from "~/store/api";
-import {RootState} from "~/store/index";
+import {RootState} from "~/store";
 
 type toppingState = {
     toppings: Topping[]
