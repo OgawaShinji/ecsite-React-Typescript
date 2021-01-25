@@ -20,6 +20,7 @@ import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.slice";
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
+import {THEME_COLOR_2} from "~/assets/color";
 
 const ItemDetail: React.FC = () => {
     const item = useSelector(selectItemDetail)
@@ -132,7 +133,7 @@ const ItemDetail: React.FC = () => {
         },
         order_button: {
             fontWeight: "bold",
-            backgroundColor: "#f8bbd0",
+            backgroundColor: THEME_COLOR_2,
             margin: "5%",
             padding: "3%",
         },
