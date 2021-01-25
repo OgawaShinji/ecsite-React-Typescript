@@ -3,7 +3,8 @@ import {Button, createStyles, Grid, makeStyles, Theme, Typography} from "@materi
 import {useHistory} from "react-router-dom";
 import {Path} from "~/router/routes";
 
-import {withRouter, RouteComponentProps, useLocation} from 'react-router-dom';
+import { withRouter, RouteComponentProps, useLocation} from 'react-router-dom';
+import {THEME_COLOR_2} from "~/assets/color";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -14,10 +15,19 @@ const useStyles = makeStyles((theme: Theme) =>
         space: {
             padding: theme.spacing(5),
             height: 30
+        },
+        pad: {
+          padding: theme.spacing(2)
+        },
+        button: {
+            backgroundColor: THEME_COLOR_2,
+            '&:hover': {
+                backgroundColor: THEME_COLOR_2,
+            },
+            color: 'white'
         }
     }),
 );
-
 const OrderComplete: React.FC<RouteComponentProps> = props => {
 
     const location = useLocation<{ judge: boolean }>();
@@ -41,32 +51,30 @@ const OrderComplete: React.FC<RouteComponentProps> = props => {
 
     return (
         <>
-            <Grid container spacing={0} justify="center" alignItems="center" className={classes.form}>
-                <Grid item xs={12}>
-                    <Typography component="h4" variant="h4" className={classes.space}>
+            <Grid container justify="center" alignItems="center" className={classes.form} >
+                <Grid item xs={12} className={classes.pad}>
+                    <Typography component="h4" variant="h4" className={classes.space} align={"center"}>
                         決済が完了しました！
                     </Typography>
-                    <Typography component="h6" variant="h6">
+                    <Typography component="h6" variant="h6" align={"center"}>
                         この度はご注文ありがとうございます。
                     </Typography>
-                    <Typography component="h6" variant="h6">
+                    <Typography component="h6" variant="h6" align={"center"}>
                         お支払先は、お送りしたメールに記載してありますのでご確認ください。
                     </Typography>
-                    <Typography component="h6" variant="h6">
+                    <Typography component="h6" variant="h6" align={"center"}>
                         メールが届かない場合は「注文履歴」からご確認ください。
                     </Typography>
                 </Grid>
-                <Grid item xs={12} className={classes.space}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleClickBackToTop}
-                    >トップ画面に戻る</Button>
-                </Grid>
+                <Button
+                    className={classes.button}
+                    variant="contained"
+                    onClick={handleClickBackToTop}
+                >トップ画面に戻る</Button>
 
             </Grid>
-
         </>
     )
+
 }
 export default withRouter(OrderComplete);
