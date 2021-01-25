@@ -50,7 +50,7 @@ const LoginForm: React.FC<Props> = (props) => {
             const input: loginForm = {email: email.value, password: password.value}
             await dispatch(login(input)).then(async (body) => {
                 if (body?.payload) {
-                    await dispatch(fetchLoginUser()).then((i)=>console.log(i)).catch((e) => {
+                    await dispatch(fetchLoginUser()).then().catch((e) => {
                         dispatch(setError({isError: true, code: e.message}))
                     })
                     await routeHistory.push(Path.itemList)
@@ -143,5 +143,5 @@ const LoginForm: React.FC<Props> = (props) => {
             </CardActions>
         </Card>
     </>)
-}
+};
 export default LoginForm;
