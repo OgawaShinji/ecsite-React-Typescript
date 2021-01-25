@@ -9,6 +9,7 @@ import ErrorPage from "~/components/error";
 import {makeStyles} from "@material-ui/core";
 import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {useDispatch, useSelector} from "react-redux";
+import ScrollToTop from "~/components/elements/ScrollToTop";
 
 const useStyles = makeStyles({
     App: {
@@ -48,6 +49,7 @@ function App() {
     return (
         <div className={classes.App}>
             <BrowserRouter>
+                <ScrollToTop/>
                 <Header isLogin={isLogin}/>
                 {errorInStore.isError ?
                     <ErrorPage/> : routes}
