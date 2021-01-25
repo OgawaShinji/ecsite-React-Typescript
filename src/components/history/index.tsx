@@ -25,6 +25,9 @@ const useStyles = makeStyles((theme) => ({
     },
     pagination: {
         margin: theme.spacing(3)
+    },
+    text: {
+        fontSize: 20
     }
 }));
 
@@ -38,7 +41,7 @@ const OrderConfirm: React.FC = () => {
     const ordersTotalCount = useSelector(selectOrderHistoryTotalCount);
 
     const [page, setPage] = useState(1);
-    const [count, setCount] = useState(0);
+    const [count, setCount] = useState(1);
     const [isDisplay, setDisplay] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [orderItems, setOrderItems] = useState<Array<OrderItem>>([]);
@@ -122,22 +125,35 @@ const OrderConfirm: React.FC = () => {
                     <List>
                         {orderInfoList}
                     </List>
-                    {isDisplay && '注文履歴がありません。'}
                 </Grid>
+
             </Grid>
+            {/*注文履歴が存在しない場合*/}
+            {isDisplay && (
+                <Grid container justify={"center"} alignItems={"center"}>
+                    <Grid item>
+                        <Typography className={classes.text}>
+                            注文履歴がありません。
+                        </Typography>
+                    </Grid>
+                </Grid>
+            )}
 
             {/*Pagination*/}
-            {ordersTotalCount && (
+            {ordersTotalCount !== null && ordersTotalCount !== 0 && (
                 <Grid container justify={"center"} alignItems={"center"}>
                     <Pagination count={count} page={page} onChange={(e, val) => {
                         setPage(val)
                     }} className={classes.pagination} size={"large"}/>
                 </Grid>
             )}
+
+            {/*Dialog*/}
             <OrderHistoryDialog handleClose={() => {
                 setIsOpen(false)
             }} isOpen={isOpen} orderItems={orderItems}/>
         </>
     )
 }
+
 export default OrderConfirm;
