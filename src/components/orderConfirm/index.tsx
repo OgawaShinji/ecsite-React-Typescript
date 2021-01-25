@@ -3,7 +3,7 @@ import {asyncFetchOrderItems, selectOrderItems} from "~/store/slices/Domain/orde
 import {useDispatch, useSelector} from "react-redux";
 import OrderForm from "~/components/orderConfirm/orderForm";
 import OrderItemCard from "~/components/elements/orderItemCard/OrderItemCard";
-import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
+import {selectLoginUser} from "~/store/slices/App/auth.slice";
 
 import {Grid, makeStyles} from "@material-ui/core";
 
@@ -26,16 +26,9 @@ const OrderConfirm: React.FC = () => {
     //storeのstateにあるloginUserの取得
     let loginUser = useSelector(selectLoginUser);
 
-
     useEffect(() => {
         dispatch(asyncFetchOrderItems());
     }, [dispatch])
-
-    useEffect(() => {
-        if (loginUser === null) {
-            dispatch(fetchLoginUser());
-        }
-    }, [dispatch, loginUser])
 
     return (
         <>
