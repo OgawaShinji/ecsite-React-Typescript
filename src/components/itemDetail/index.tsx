@@ -94,7 +94,7 @@ const ItemDetail: React.FC = () => {
     /**
      * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
      */
-    const handleOrderClick = async () => {
+    const handleOrderClick = async (moveTo: string) => {
         if (detail === null) throw new Error()
         let newOrderToppings: { topping: number }[] = []
         if (selectedToppings.length !== 0) selectedToppings.map((t) => newOrderToppings.push({topping: t.id}))
@@ -110,7 +110,8 @@ const ItemDetail: React.FC = () => {
             newTotalPrice: totalPrice
         }
         await dispatch(asyncPostOrderItem(newOrder)).then((i) => {
-            if (i.payload === '200') history.push(Path.cart)
+            if (i.payload === '200' && moveTo === 'cart') history.push(Path.cart)
+            if (i.payload === '200' && moveTo === 'confirm') history.push(Path.orderConfirm)
         }).catch((e) => {
             dispatch(setError({isError: true, code: e.message}))
         })
@@ -135,7 +136,10 @@ const ItemDetail: React.FC = () => {
             fontWeight: "bold",
             backgroundColor: THEME_COLOR_2,
             margin: "5%",
-            padding: "3%",
+            padding: "7%",
+            '&:hover': {
+                background: "#FFBEDA"
+            }
         },
         total_price: {
             fontWeight: "bold",
@@ -146,8 +150,8 @@ const ItemDetail: React.FC = () => {
     const classes = entryIndexStyle();
 
     return (<div className={classes.align_child}>
-            <Card className={classes.outline_card}>
-                <Grid container justify={"center"} spacing={1} alignItems={"center"}>
+            <Card style={{display: "flex"}}>
+                <Grid container justify={"center"} alignContent={"center"}>
 
                     {/*商品画像*/}
                     <Grid item xs={12}>
@@ -170,8 +174,11 @@ const ItemDetail: React.FC = () => {
                             </Typography>
                         </CardContent>
                     </Grid>
+                </Grid>
 
-                    {/*注文入力部分*/}
+                {/*注文入力部分*/}
+                <Grid container justify={"center"} alignItems={"center"}>
+
                     <Grid item xs={12}>
                         <CardContent style={{height: "auto", width: "90%"}}>
                             <OrderItemEntry
@@ -182,30 +189,33 @@ const ItemDetail: React.FC = () => {
                                 onToppingChange={(t) => handleToppingChange(t)}/>
                             <CardContent className={classes.align_child}>
                                 <Typography variant={"h3"}
-                                            className={classes.total_price}>合計金額: {totalPrice ? totalPrice.toLocaleString() : totalPrice}￥(税込)</Typography>
+                                            className={classes.total_price}>合計金額
+                                    ￥{totalPrice ? totalPrice.toLocaleString() : totalPrice}(税抜)</Typography>
                             </CardContent>
                         </CardContent>
+                    </Grid>
 
-                        {/*注文確定ボタン*/}
+                    {/*注文確定ボタン*/}
+                    <Grid item xs={12}>
                         <CardActions>
                             <Grid item xs={6} className={classes.align_child}>
                                 <Button variant={"contained"} className={classes.order_button} onClick={() => {
-                                    handleOrderClick()
+                                    handleOrderClick('cart').then()
                                 }}>
                                     商品をカートに入れる
                                 </Button>
                             </Grid>
                             <Grid item xs={6} className={classes.align_child}>
                                 <Button variant={"contained"} className={classes.order_button} onClick={() => {
-                                    handleOrderClick()
+                                    handleOrderClick('confirm').then()
                                 }}>
                                     すぐに注文確認画面へ進む
                                 </Button>
                             </Grid>
                         </CardActions>
                     </Grid>
-
                 </Grid>
+
             </Card>
         </div>
     )

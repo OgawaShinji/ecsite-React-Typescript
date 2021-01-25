@@ -232,7 +232,7 @@ const orderItemEntryStyle = makeStyles(() => createStyles({
     //Card内左部分全体のGrid
     left_grid: {height: "auto", paddingTop: "10%", paddingBottom: "10%"},
     //サイズと数量の入力部分のGrid
-    form_grid: {display: "flex"},
+    form_grid: {display: "flex",marginTop:"5%"},
     //サイズ入力
     size_form: {marginTop: "auto"},
     //数量入力
@@ -263,5 +263,13 @@ const orderItemEntryStyle = makeStyles(() => createStyles({
         alignItems: "center",
         backgroundColor: THEME_COLOR_1,
 
+    },
+    dialog: {
+        height:"100%",
+        width: '100%',
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: "translate(-50%, -50%)"
     },
 }));
