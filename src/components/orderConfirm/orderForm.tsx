@@ -177,6 +177,7 @@ const OrderForm: React.FC<Props> = (props) => {
     //[この内容で注文する]ボタン押下時の処理　
     const handleOrder = async () => {
         deliveryDateValidation(selectedDate.date);
+        setSelectedDate({date: selectedDate.date, errorMessage: selectedDate.errorMessage});
         if (selectedDate.errorMessage.length === 0) {
             const date = new Date();
             if (selectedDate.date) {
@@ -215,7 +216,6 @@ const OrderForm: React.FC<Props> = (props) => {
                 });
             }
         }
-        setSelectedDate({date: selectedDate.date, errorMessage: selectedDate.errorMessage});
     }
 
     //配送日時のバリデーションチェック
