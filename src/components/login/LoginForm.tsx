@@ -17,6 +17,7 @@ import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice";
 import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
 import {makeStyles} from "@material-ui/core/styles";
+import {setIsLoading} from "~/store/slices/App/displayUI.slice"
 
 const LoginForm: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -61,6 +62,7 @@ const LoginForm: React.FC = () => {
                     await dispatch(fetchLoginUser()).then().catch((e) => {
                         dispatch(setError({isError: true, code: e.message}))
                     })
+                    await dispatch(setIsLoading(true))
                     await routeHistory.push(Path.itemList)
                 } else {
                     setIsIncorrectEntry(true);
@@ -159,7 +161,6 @@ const LoginForm: React.FC = () => {
 export default LoginForm;
 const login_form_style = makeStyles(() => createStyles({
     button: {
-        '&$disabled': {color: "gray"},
         marginBottom: "5%",
         backgroundColor: THEME_COLOR_2,
         color: "white",
