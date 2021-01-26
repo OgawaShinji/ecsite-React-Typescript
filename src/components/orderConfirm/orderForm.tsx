@@ -21,6 +21,7 @@ import {Path} from "~/router/routes";
 import {useHistory} from "react-router-dom";
 import {AppDispatch} from "~/store";
 import {setError} from "~/store/slices/App/error.slice";
+import {THEME_COLOR_2} from "~/assets/color";
 
 type Props = {
     user: null | User
@@ -47,9 +48,9 @@ const useStyles = makeStyles((theme: Theme) =>
             color: "white"
         },
         changeButton: {
-            backgroundColor: "#ffa500",
+            backgroundColor: THEME_COLOR_2,
             '&:hover': {
-                backgroundColor: '#ffa500',
+                backgroundColor: THEME_COLOR_2,
             },
             color: "white"
         },
@@ -91,17 +92,18 @@ const OrderForm: React.FC<Props> = (props) => {
     const [checkedCash, setCheckedCash] = React.useState(true);
     const [checkedCredit, setCheckedCredit] = React.useState(false);
     //デフォルトの配送時間をセット
-    const [deliveryHour, setDeliveryHour] = React.useState<string>(String(new Date().getHours() + 3));
-    const [deliveryMinutes, setDeliveryMinutes] = React.useState<string>('00');
+    const [deliveryHour, setDeliveryHour] = React.useState<string>(String(new Date().getHours() + 2));
+    const [deliveryMinutes, setDeliveryMinutes] = React.useState<string>("00");
 
     useEffect(() => {
         setUserInfo(props.user)
         if (selectedDate.date) {
-            selectedDate.date?.setHours(selectedDate.date?.getHours() + 3)
+            selectedDate.date?.setDate(selectedDate.date.getDate());
+            selectedDate.date?.setHours(Number(deliveryHour))
             selectedDate.date?.setMinutes(Number(deliveryMinutes))
             selectedDate.errorMessage = deliveryDateValidation(selectedDate.date);
         }
-    }, [dispatch, props.user, selectedDate, deliveryMinutes])
+    }, [dispatch, props.user, selectedDate, deliveryHour, deliveryMinutes])
 
 
     //[変更]ボタン押下時の処理 お届け先情報変更用フォームダイアログを表示
@@ -133,6 +135,10 @@ const OrderForm: React.FC<Props> = (props) => {
 
     //配達日時選択中の処理 動的に日付の内容を更新
     const handleDateChange = (date: Date | null) => {
+        if (date) {
+            date.setHours(Number(deliveryHour));
+            date.setMinutes(Number(deliveryMinutes));
+        }
         setSelectedDate({
             date: date,
             errorMessage: deliveryDateValidation(date)
@@ -170,6 +176,7 @@ const OrderForm: React.FC<Props> = (props) => {
 
     //[この内容で注文する]ボタン押下時の処理　
     const handleOrder = async () => {
+        deliveryDateValidation(selectedDate.date);
         if (selectedDate.errorMessage.length === 0) {
             const date = new Date();
             if (selectedDate.date) {
@@ -208,16 +215,14 @@ const OrderForm: React.FC<Props> = (props) => {
                 });
             }
         }
+        setSelectedDate({date: selectedDate.date, errorMessage: selectedDate.errorMessage});
     }
 
     //配送日時のバリデーションチェック
     const deliveryDateValidation = (date: Date | null): string => {
         if (date) {
-            // console.log(date)
             const orderDate = new Date();
             if (orderDate > date) {
-                return '現在時刻よりも後を選んでください'
-            } else if (orderDate.getHours() + 3 > date.getHours()) {
                 return '現在時刻よりも後を選んでください'
             } else {
                 return ''
@@ -262,7 +267,10 @@ const OrderForm: React.FC<Props> = (props) => {
                                     <br/>
                                     <Typography align="left" variant={"subtitle2"}>お名前: {userInfo?.name} </Typography>
                                     <Typography align="left"
-                                                variant={"subtitle2"}>郵便番号: {userInfo?.zipcode} </Typography>
+                                                variant={"subtitle2"}
+                                    >
+                                        郵便番号: {userInfo?.zipcode.substr(0, 3)} - {userInfo?.zipcode.substr(3, 4)}
+                                    </Typography>
                                     <Typography align="left" variant={"subtitle2"}>住所: {userInfo?.address} </Typography>
                                     <Typography align="left"
                                                 variant={"subtitle2"}>電話番号: {userInfo?.telephone} </Typography>
