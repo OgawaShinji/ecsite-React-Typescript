@@ -20,7 +20,6 @@ import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.slice";
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
-import {Items} from "~/gql/components/items";
 
 const ItemDetail: React.FC = () => {
     const item = useSelector(selectItemDetail)
@@ -146,9 +145,6 @@ const ItemDetail: React.FC = () => {
     const classes = entryIndexStyle();
 
     return (<div className={classes.align_child}>
-
-            <Items/>
-
             <Card className={classes.outline_card}>
                 <Grid container justify={"center"} spacing={1} alignItems={"center"}>
 
