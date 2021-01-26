@@ -116,16 +116,24 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
                             </Link>
                         </Grid>
                         <Grid item xs={2}/>
-                        <Grid item xs={3} container justify={"center"} alignItems={"center"}>
-                            <Grid item xs={2}/>
-                            <Grid item xs={4}>
-                                <Link to={Path.itemList} className={classes.headerItem}>商品一覧</Link>
+                        {auth ? (
+                            <Grid item xs={3} container justify={"center"} alignItems={"center"}>
+                                <Grid item xs={1}/>
+                                <Grid item xs={5}>
+                                    <Link to={Path.itemList} style={{textDecoration: 'none'}}>
+                                        <Button style={{color: 'white'}}>商品一覧</Button>
+                                    </Link>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <Link to={Path.cart} style={{textDecoration: 'none'}}>
+                                        <Button style={{color: 'white'}}>カート一覧</Button>
+                                    </Link>
+                                </Grid>
+                                <Grid item xs={1}/>
                             </Grid>
-                            <Grid item xs={4}>
-                                <Link to={Path.cart} className={classes.headerItem}>カート一覧</Link>
-                            </Grid>
-                            <Grid item xs={2}/>
-                        </Grid>
+                        ) : (
+                            <Grid item xs={3}/>
+                        )}
                         <Grid item xs={1}>
                             {auth ? (
                                 <IconButton
