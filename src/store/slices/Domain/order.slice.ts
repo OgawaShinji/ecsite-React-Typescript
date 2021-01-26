@@ -179,8 +179,8 @@ export const orderSlice = createSlice({
             state.order.paymentMethod = action.payload
         }),
         setOrderItemsAndSubTotalPrice: ((state: orderState, action: PayloadAction<OrderItem[]>) => {
-            state.order.orderItems = action.payload
             if (action.payload) {
+                state.order.orderItems = action.payload
                 //注文内容の小計を初期化
                 state.orderSubTotalPrice = 0
                 let orderSubTotalPrice = state.orderSubTotalPrice
@@ -206,6 +206,7 @@ export const orderSlice = createSlice({
                 })
                 state.orderSubTotalPrice = orderSubTotalPrice
             }else{
+                state.order.orderItems = []
                 state.orderSubTotalPrice = 0
             }
         }),
