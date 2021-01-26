@@ -33,9 +33,13 @@ const useStyles = makeStyles({
     cartList: {
         backgroundColor: '#dcdcdc'
     },
-    emptyOrderItems: {
+    emptyCartList: {
+        backgroundColor: '#dcdcdc',
         textAlign: 'center',
-        margin: 'auto'
+        // alignItems: 'center',
+    },
+    emptyOrderItems: {
+        paddingTop: 60,
     },
     orderOperator: {
         position: 'sticky',
@@ -74,9 +78,9 @@ const CartList: React.FC = () => {
      */
     const updateOrderItems = async ({orderItem}: { orderItem: OrderItem }) => {
 
+        // サーバーに送るデータをorderItemsToPostに詰め替える処理
         let updatedOrderToppings: { topping: number }[] = []
         if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t.topping.id}))
-
         const updatedOrderItem: orderItem = {
             id: orderItem.id,
             item: orderItem.item.id,
@@ -85,13 +89,12 @@ const CartList: React.FC = () => {
             size: orderItem.size === 'M' ? 'M' : 'L'
         }
         let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
-
-        // サーバーに送るデータ
         const orderItemsToPost: OrderItemsToPost = {
             orderItems: updatedOrderItems,
             status: 0,
             newTotalPrice: orderSubTotalPrice
         }
+
         await dispatch(asyncUpdateOrderItem(orderItemsToPost)).catch((e) => {
             dispatch(setError({isError: true, code: e.message}))
         })
@@ -114,13 +117,25 @@ const CartList: React.FC = () => {
         })
     }
 
+    // カートに商品があるかどうかでレイアウトを切り替えるため
+    let styleCartList
+    if (orderItems && orderItems?.length > 0) {
+        styleCartList = classes.cartList
+    } else {
+        styleCartList = classes.emptyCartList
+    }
+
 
     return (
         <div className={classes.root}>
-            <Grid container>
-                <Grid item xs={8} className={classes.cartList}>
-                    <Typography variant="h4" gutterBottom className={classes.title}>
-                        注文商品
+            <Grid container style={{paddingLeft: 20}}>
+                <Grid item xs={8} className={styleCartList}>
+                    <Typography
+                        variant="h4"
+                        gutterBottom
+                        className={classes.title}
+                    >
+                        ショッピングカート
                     </Typography>
                     {orderItems && orderItems?.length > 0 ? (<List>
                         {orderItems &&
@@ -133,7 +148,11 @@ const CartList: React.FC = () => {
                             />
                         ))}
                     </List>) : (
-                        <div className={classes.emptyOrderItems}>注文がありません</div>
+                        <div className={classes.emptyOrderItems}>
+                            <Typography variant="h6" gutterBottom>
+                                カートに商品がありません
+                            </Typography>
+                        </div>
                     )}
                 </Grid>
                 <Grid item xs={4}>

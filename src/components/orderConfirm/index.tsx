@@ -3,9 +3,12 @@ import {asyncFetchOrderItems, selectOrderItems} from "~/store/slices/Domain/orde
 import {useDispatch, useSelector} from "react-redux";
 import OrderForm from "~/components/orderConfirm/orderForm";
 import OrderItemCard from "~/components/elements/orderItemCard/OrderItemCard";
-import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
+import {selectLoginUser} from "~/store/slices/App/auth.slice";
 
 import {Grid, makeStyles} from "@material-ui/core";
+import {setError} from "~/store/slices/App/error.slice";
+import {AppDispatch} from "~/store";
+import {RouteComponentProps, withRouter} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     control: {
@@ -16,26 +19,27 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const OrderConfirm: React.FC = () => {
+const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
 
     const classes = useStyles();
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
 
     //storeのstateにあるorderItemの取得
     let orderItems = useSelector(selectOrderItems);
     //storeのstateにあるloginUserの取得
     let loginUser = useSelector(selectLoginUser);
 
-
     useEffect(() => {
-        dispatch(asyncFetchOrderItems());
+        dispatch(asyncFetchOrderItems()).catch((e) => {
+            dispatch(setError({isError: true, code: e.message}))
+        })
     }, [dispatch])
 
     useEffect(() => {
-        if (loginUser === null) {
-            dispatch(fetchLoginUser());
+        if (orderItems && orderItems.length === 0) {
+            props.history.push({pathname: '/'})
         }
-    }, [dispatch, loginUser])
+    }, [orderItems, props.history])
 
     return (
         <>
@@ -55,4 +59,4 @@ const OrderConfirm: React.FC = () => {
         </>
     )
 }
-export default OrderConfirm;
+export default withRouter(OrderConfirm);

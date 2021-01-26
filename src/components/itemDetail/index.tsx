@@ -5,7 +5,7 @@ import {
     Card,
     CardActions,
     CardContent,
-    Grid,
+    Grid, LinearProgress,
     Typography
 } from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
@@ -15,11 +15,12 @@ import {useHistory, useParams} from "react-router-dom"
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import {Item, Topping} from "~/types/interfaces";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
-import img from "~/assets/img/img.png"
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.slice";
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
+import {THEME_COLOR_2} from "~/assets/color";
+import {selectIsLoading, setIsLoading} from "~/store/slices/App/displayUI.slice";
 
 const ItemDetail: React.FC = () => {
     const item = useSelector(selectItemDetail)
@@ -28,18 +29,28 @@ const ItemDetail: React.FC = () => {
     const history = useHistory();
     const [detail, setDetail] = useState<Item | null>(item);
 
+    const isLoading = useSelector(selectIsLoading);
+
     let {itemId}: any = useParams()
     itemId = Number(itemId)
+
     useEffect(() => {
-        if (typeof itemId !== "number") console.log('this is error: itemId is only number')//throw new Error()
-        if (item === null) dispatch(fetchItemDetail(itemId))
-            .then((i) => {
-                if (i.payload.item) setDetail(i.payload.item)
-            })
-            .catch((e) => dispatch(setError({isError: true, code: e.message})))
-        if (toppings.length === 0) dispatch(fetchToppings()).then()
-            .catch((e) => dispatch(setError({isError: true, code: e.message})))
-        if (detail !== null) setTotalPrice(detail?.priceM)
+        const firstEffect = async () => {
+            if (typeof itemId !== "number") console.log('this is error: itemId is only number')//throw new Error()
+
+            if (item === null) {
+                await dispatch(fetchItemDetail(itemId))
+                    .then((i) => {
+                        if (i.payload.item) setDetail(i.payload.item)
+                    })
+                    .catch((e) => dispatch(setError({isError: true, code: e.message})))
+            }
+            if (toppings.length === 0) await dispatch(fetchToppings()).then()
+                .catch((e) => dispatch(setError({isError: true, code: e.message})))
+            if (detail !== null) await setTotalPrice(detail?.priceM)
+        }
+        firstEffect().then(() => dispatch(setIsLoading(false))
+        )
     }, [dispatch, itemId, item, toppings, detail])
 
     const [size, setSize] = useState<string>('M');
@@ -93,7 +104,7 @@ const ItemDetail: React.FC = () => {
     /**
      * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
      */
-    const handleOrderClick = async () => {
+    const handleOrderClick = async (moveTo: string) => {
         if (detail === null) throw new Error()
         let newOrderToppings: { topping: number }[] = []
         if (selectedToppings.length !== 0) selectedToppings.map((t) => newOrderToppings.push({topping: t.id}))
@@ -108,8 +119,16 @@ const ItemDetail: React.FC = () => {
             status: 0,
             newTotalPrice: totalPrice
         }
-        await dispatch(asyncPostOrderItem(newOrder)).then((i) => {
-            if (i.payload === '200') history.push(Path.cart)
+        await dispatch(asyncPostOrderItem(newOrder)).then(async (i) => {
+            await dispatch(setIsLoading(true))
+            if (i.payload === '200' && moveTo === 'cart') {
+                await dispatch(setIsLoading(true))
+                await history.push(Path.cart)
+            }
+            if (i.payload === '200' && moveTo === 'confirm') {
+                await dispatch(setIsLoading(true))
+                await history.push(Path.orderConfirm)
+            }
         }).catch((e) => {
             dispatch(setError({isError: true, code: e.message}))
         })
@@ -132,9 +151,16 @@ const ItemDetail: React.FC = () => {
         },
         order_button: {
             fontWeight: "bold",
-            backgroundColor: "#f8bbd0",
+            backgroundColor: THEME_COLOR_2,
             margin: "5%",
-            padding: "3%",
+            padding: "7%",
+            '&:hover': {
+                background: "#FFBEDA"
+            }
+        },
+        button_font: {
+            color: "white",
+            fontWeight: "bold"
         },
         total_price: {
             fontWeight: "bold",
@@ -144,69 +170,81 @@ const ItemDetail: React.FC = () => {
 
     const classes = entryIndexStyle();
 
-    return (<div className={classes.align_child}>
-            <Card className={classes.outline_card}>
-                <Grid container justify={"center"} spacing={1} alignItems={"center"}>
+    return (isLoading ?
+            <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
+            : <div className={classes.align_child}>
+                <Card style={{display: "flex"}}>
+                    <Grid container justify={"center"} alignContent={"center"}>
 
-                    {/*商品画像*/}
-                    <Grid item xs={12}>
-                        <CardContent className={classes.align_child}>{detail?.imagePath
-                            ? (<Avatar src={`${detail?.imagePath}`} style={{width: "50%", height: "auto"}}
-                                       variant={"rounded"}/>)
-                            : (<Avatar src={img} style={{width: "50%", height: "auto"}} variant={"rounded"}/>)}
-                        </CardContent>
-                        <CardContent className={classes.align_child}>
-                            <Typography variant={"h4"} component={"u"}>{detail?.name}</Typography>
-                        </CardContent>
-                    </Grid>
+                        {/*商品画像*/}
+                        <Grid item xs={12}>
+                            <CardContent className={classes.align_child}>{detail?.imagePath
+                                ? (<Avatar src={`${detail?.imagePath}`} style={{width: "50%", height: "auto"}}
+                                           variant={"rounded"}/>)
+                                : (<Avatar src={""} style={{width: "50%", height: "auto"}} variant={"rounded"}/>)}
+                            </CardContent>
+                            <CardContent className={classes.align_child}>
+                                <Typography variant={"h4"} component={"u"}>{detail?.name}</Typography>
+                            </CardContent>
+                        </Grid>
 
-                    {/*説明文*/}
-                    <Grid item xs={12} className={classes.description_content}>
-                        <CardContent style={{width: "70%", textAlign: "center"}}>
-                            <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
-                                {detail?.description}
-                                <br/>＊写真はイメージです＊
-                            </Typography>
-                        </CardContent>
+                        {/*説明文*/}
+                        <Grid item xs={12} className={classes.description_content}>
+                            <CardContent style={{width: "70%", textAlign: "center"}}>
+                                <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
+                                    {detail?.description}
+                                    <br/>＊写真はイメージです＊
+                                </Typography>
+                            </CardContent>
+                        </Grid>
                     </Grid>
 
                     {/*注文入力部分*/}
-                    <Grid item xs={12}>
-                        <CardContent style={{height: "auto", width: "90%"}}>
-                            <OrderItemEntry
-                                selectedState={selectedState}
-                                parentComponent={"itemDetail"}
-                                onSizeChange={(s) => handleSizeChange(s)}
-                                onQuantityChange={(q) => handleQuantityChange(q)}
-                                onToppingChange={(t) => handleToppingChange(t)}/>
-                            <CardContent className={classes.align_child}>
-                                <Typography variant={"h3"}
-                                            className={classes.total_price}>合計金額: {totalPrice ? totalPrice.toLocaleString() : totalPrice}￥(税込)</Typography>
+                    <Grid container justify={"center"} alignItems={"center"}>
+
+                        <Grid item xs={12}>
+                            <CardContent style={{height: "auto", width: "90%"}}>
+                                <OrderItemEntry
+                                    selectedState={selectedState}
+                                    parentComponent={"itemDetail"}
+                                    onSizeChange={(s) => handleSizeChange(s)}
+                                    onQuantityChange={(q) => handleQuantityChange(q)}
+                                    onToppingChange={(t) => handleToppingChange(t)}/>
+                                <CardContent className={classes.align_child}>
+                                    <Typography variant={"h3"}
+                                                className={classes.total_price}>合計金額
+                                        {` : `}{totalPrice ? totalPrice.toLocaleString() : totalPrice} 円(税抜)</Typography>
+                                </CardContent>
                             </CardContent>
-                        </CardContent>
+                        </Grid>
 
                         {/*注文確定ボタン*/}
-                        <CardActions>
-                            <Grid item xs={6} className={classes.align_child}>
-                                <Button variant={"contained"} className={classes.order_button} onClick={() => {
-                                    handleOrderClick()
-                                }}>
-                                    商品をカートに入れる
-                                </Button>
-                            </Grid>
-                            <Grid item xs={6} className={classes.align_child}>
-                                <Button variant={"contained"} className={classes.order_button} onClick={() => {
-                                    handleOrderClick()
-                                }}>
-                                    すぐに注文確認画面へ進む
-                                </Button>
-                            </Grid>
-                        </CardActions>
+                        <Grid item xs={12}>
+                            <CardActions>
+                                <Grid item xs={6} className={classes.align_child}>
+                                    <Button variant={"contained"} className={classes.order_button} onClick={() => {
+                                        handleOrderClick('cart').then()
+                                    }}>
+                                        <Typography className={classes.button_font}>
+                                            商品をカートに入れる
+                                        </Typography>
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={6} className={classes.align_child}>
+                                    <Button variant={"contained"} className={classes.order_button} onClick={() => {
+                                        handleOrderClick('confirm').then()
+                                    }}>
+                                        <Typography className={classes.button_font}>
+                                            すぐに注文確認画面へ進む
+                                        </Typography>
+                                    </Button>
+                                </Grid>
+                            </CardActions>
+                        </Grid>
                     </Grid>
 
-                </Grid>
-            </Card>
-        </div>
+                </Card>
+            </div>
     )
 };
 export default ItemDetail;

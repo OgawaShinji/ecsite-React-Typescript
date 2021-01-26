@@ -6,6 +6,7 @@ import {toppingSlice} from "./slices/Domain/topping.slice";
 import {userSlice} from "./slices/Domain/user.slice";
 import {authSlice} from "./slices/App/auth.slice";
 import {errorSlice} from "~/store/slices/App/error.slice";
+import {displaySlice} from "~/store/slices/App/displayUI.slice";
 
 const store = configureStore({
     reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
         user: userSlice.reducer,
         auth: authSlice.reducer,
         error: errorSlice.reducer,
+        display:displaySlice.reducer,
     }
 });
 export default store;
