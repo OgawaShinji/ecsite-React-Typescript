@@ -2,12 +2,10 @@ import React, {useRef, useState} from "react";
 import {
     Button,
     Card,
-    DialogContent,
+    Divider,
     FormControl,
     FormControlLabel,
-    FormLabel,
     Grid,
-    InputLabel,
     MenuItem,
     Modal,
     Radio,
@@ -70,82 +68,107 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
     return (
         <Grid justify={"center"} container className={classes.modal}>
             <Grid item xs={12} className={classes.title_grid}>
-                <Typography className={classes.title_words}>注文入力フォーム</Typography>
+                <Typography className={classes.title_words}>
+                    {props.parentComponent === 'CartItem' ? '注文変更フォーム' : '注文入力フォーム'}
+                </Typography>
             </Grid>
             <Card className={classes.form_card}>
+                <Grid item container>
 
-                <Grid container className={classes.left_grid}>
-                    <Grid item xs={12}>
-                        <Grid container justify={"center"} className={classes.form_grid}>
-                            <FormControl className={classes.size_form}>
-                                <FormLabel>サイズ</FormLabel>
-                                <RadioGroup row aria-label="サイズ" name="size" value={props.selectedState.size}
-                                            onChange={handleSizeChange}>
-                                    <FormControlLabel value="M" control={<Radio color={"primary"}/>}
-                                                      labelPlacement={"start"}
-                                                      label="M : "/>
-                                    <FormControlLabel value="L" control={<Radio color={"primary"}/>}
-                                                      labelPlacement={"start"}
-                                                      label="L : "/>
-                                </RadioGroup>
-                            </FormControl>
+                    {/* サイズ・数量を変更できるフォーム */}
+                    <Grid item xs={6} container className={classes.left_grid}>
+                        <Grid item xs={12}>
+                            <Grid container justify={"center"} className={classes.form_grid}>
+                                <FormControl className={classes.size_form}>
+                                    サイズ
+                                    <Divider/>
+                                    <RadioGroup row aria-label="サイズ" name="size" value={props.selectedState.size}
+                                                onChange={handleSizeChange}>
+                                        <FormControlLabel value="M" control={<Radio color={"primary"}/>}
+                                                          labelPlacement={"start"}
+                                                          label="M : "/>
+                                        <FormControlLabel value="L" control={<Radio color={"primary"}/>}
+                                                          labelPlacement={"start"}
+                                                          label="L : "/>
+                                    </RadioGroup>
+                                </FormControl>
+                            </Grid>
                         </Grid>
+
+                        {/*数量選択*/}
+                        <Grid item xs={12}>
+                            <Grid container justify={"center"} className={classes.form_grid}>
+                                <FormControl className={classes.quantity_form}>
+                                    数量
+                                    <Divider/>
+                                    <Select
+                                        labelId="quantity-label"
+                                        id="quantity-select"
+                                        value={props.selectedState.quantity}
+                                        onChange={handleQuantityChange}
+                                        variant={"standard"}
+                                        style={{height: "60%"}}
+                                    >
+                                        {quantityList.map((i) => {
+                                            return <MenuItem value={i.value}
+                                                             key={"quantity-select" + i.text}>{i.text}</MenuItem>
+                                        })}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                        {props.parentComponent === 'CartItem' && (
+                            <Grid item xs={12} className={classes.left_form_attention}>
+                                ※全ての変更は自動で更新されます
+                            </Grid>
+                        )}
                     </Grid>
 
-                    {/*数量選択*/}
-                    <Grid item xs={12}>
-                        <Grid container justify={"center"} className={classes.form_grid}>
-                            <FormControl className={classes.quantity_form}>
-                                <InputLabel style={{fontSize: "120%"}}>数量</InputLabel>
-                                <Select
-                                    labelId="quantity-label"
-                                    id="quantity-select"
-                                    value={props.selectedState.quantity}
-                                    onChange={handleQuantityChange}
-                                    variant={"standard"}
-                                    style={{height: "60%"}}
-                                >
-                                    {quantityList.map((i) => {
-                                        return <MenuItem value={i.value}
-                                                         key={"quantity-select" + i.text}>{i.text}</MenuItem>
-                                    })}
-                                </Select>
-                            </FormControl>
+                    {/*トッピング入力フォーム*/}
+                    <Grid item xs={6} container justify={"center"} style={{alignContent: "center"}}>
+                        <Grid item xs={12} className={classes.selected_topping_grid}>
+
+                            {/*SelectToppingモーダル表示ボタン*/}
+                            <Button onClick={() => setIsOpen(true)}
+                                    variant={"contained"}
+                                    color={"primary"}
+                                    className={classes.modal_open_button}>
+                                <Typography>トッピング選択はこちら</Typography>
+                            </Button>
                         </Grid>
+                        {/*選択済みトッピング表示部分*/}
+                        {selectedToppings.map((t) =>
+                            <Grid item xs={12} className={classes.selected_topping_grid} key={t.name}>
+                                <Card key={t.name} className={classes.selected_topping_card}>
+                                    <Typography variant={"body1"} style={{color: "white"}}
+                                                component={"p"}>{t.name}
+                                    </Typography>
+                                </Card>
+                            </Grid>)}
                     </Grid>
                 </Grid>
-
-                {/*トッピング入力フォーム*/}
-                <Grid container justify={"center"} style={{alignContent: "center"}}>
-                    <Grid item xs={12} className={classes.selected_topping_grid}>
-
-                        {/*SelectToppingモーダル表示ボタン*/}
-                        <Button onClick={() => setIsOpen(true)}
-                                variant={"contained"}
-                                color={"primary"}
-                                className={classes.modal_open_button}>
-                            <Typography>トッピング選択はこちら</Typography>
+                {props.parentComponent === 'CartItem' && (
+                    <Grid item container className={classes.entry_close_btn} justify="center" alignItems="center">
+                        <Button
+                            onClick={props.onClickCloseOrderItemEntity}
+                            variant={"contained"}
+                            color={"primary"}
+                        >
+                            <Typography>close</Typography>
                         </Button>
                     </Grid>
-                    {/*選択済みトッピング表示部分*/}
-                    {selectedToppings.map((t) =>
-                        <Grid item xs={12} className={classes.selected_topping_grid} key={t.name}>
-                            <Card key={t.name} className={classes.selected_topping_card}>
-                                <Typography variant={"body1"} style={{color: "white"}}
-                                            component={"p"}>{t.name}
-                                </Typography>
-                            </Card>
-                        </Grid>)}
-                </Grid>
+                )}
+
+                {/* トッピング選択モーダル */}
                 <Modal
                     open={modalIsOpen}
                     onClose={() => setIsOpen(false)}>
-                    <DialogContent className={classes.dialog}>
+                    <div className={classes.dialog}>
                         <WrappedSelectTopping selectedSize={props.selectedState.size}
                                               onClickClose={() => setIsOpen(false)}
                                               customRef={selectToppingRef} propTopping={selectedToppings}
                                               onToppingChange={(t) => handleToppingChange(t)}/>
-                    </DialogContent>
+                    </div>
                 </Modal>
 
             </Card>
@@ -157,6 +180,10 @@ export default OrderItemEntry;
 const orderItemEntryStyleInCart = makeStyles(() => createStyles({
 
     modal: {},
+    //タイトル部分のGrid
+    title_grid: {backgroundColor: THEME_COLOR_2, paddingLeft: "3%"},
+    //タイトルの文字
+    title_words: {color: "white", fontSize: "200%"},
     entry_title: {
         width: "100%",
         backgroundColor: "#ffa500"
@@ -170,7 +197,15 @@ const orderItemEntryStyleInCart = makeStyles(() => createStyles({
         alignItems: "center",
     },
     //左部分の枠
-    left_grid: {height: "auto", paddingTop: "10%", paddingBottom: "10%"},
+    left_grid: {
+        height: "auto",
+        paddingTop: "10%",
+        paddingBottom: "10%"
+    },
+    left_form_attention: {
+        textAlign: "center",
+        paddingTop: 50
+    },
     //左部分各入力フォームの枠
     entry_parts_grid: {
         margin: "3%",
@@ -187,35 +222,41 @@ const orderItemEntryStyleInCart = makeStyles(() => createStyles({
         height: "80%",
         // backgroundColor: "#ffcdd2"
     },
+    // エントリーモーダルを閉じるボタン
+    entry_close_btn: {
+        height: 60
+    },
     //モーダル表示ボタン
     modal_open_button: {
         fontWeight: "bold",
-        backgroundColor: "#ffcdd2",
         margin: "5%",
-        padding: "3%"
+        padding: "3%",
+        width: "70%",
+        height: "80%"
     },
     //選択済みトッピングカードの外枠
     selected_topping_grid: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        margin: "1%"
     },
     //選択済みトッピング表示カード
     selected_topping_card: {
         width: "60%",
         margin: "3%",
-        height: "50px",
+        height: "100%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#ffe0b2",//#ffb74d
+        backgroundColor: THEME_COLOR_1,
     },
 
     dialog: {
-        width: '95%',
+        width: '80%',
         position: 'absolute',
         top: '50%',
-        left: '50%',
+        left: '48%',
         transform: "translate(-50%, -50%)"
     },
     entry_right: {}
@@ -232,7 +273,7 @@ const orderItemEntryStyle = makeStyles(() => createStyles({
     //Card内左部分全体のGrid
     left_grid: {height: "auto", paddingTop: "10%", paddingBottom: "10%"},
     //サイズと数量の入力部分のGrid
-    form_grid: {display: "flex",marginTop:"5%"},
+    form_grid: {display: "flex", marginTop: "5%"},
     //サイズ入力
     size_form: {marginTop: "auto"},
     //数量入力
@@ -265,7 +306,7 @@ const orderItemEntryStyle = makeStyles(() => createStyles({
 
     },
     dialog: {
-        height:"100%",
+        height: "100%",
         width: '100%',
         position: 'absolute',
         top: '50%',

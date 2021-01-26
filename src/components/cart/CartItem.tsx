@@ -15,7 +15,6 @@ import {
     ListItem,
     makeStyles,
     Modal,
-    Paper,
     Theme,
     Typography
 } from "@material-ui/core";
@@ -52,7 +51,8 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         modal: {},
         dialog: {
-            width: '70%',
+            backgroundColor:'red',
+            width: '40%',
             position: 'absolute',
             top: '50%',
             left: '50%',
@@ -220,7 +220,7 @@ const CartItem: FC<Props & RouteComponentProps> = (props) => {
                 open={modalIsOpen}
                 onClose={() => setIsOpen(false)}
             >
-                <Paper className={classes.dialog}>
+                <div className={classes.dialog}>
                     <OrderItemEntry
                         selectedState={selectedState}
                         parentComponent={"CartItem"}
@@ -229,7 +229,7 @@ const CartItem: FC<Props & RouteComponentProps> = (props) => {
                         onToppingChange={(t) => handleToppingChange(t)}
                         onClickCloseOrderItemEntity={onClickCloseOrderItemEntry}
                     />
-                </Paper>
+                </div>
             </Modal>
         </ListItem>
     );
