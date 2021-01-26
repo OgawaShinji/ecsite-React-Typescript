@@ -51,8 +51,8 @@ const App: React.FC<RouteComponentProps> = () => {
 
     // 401error発生時、執行されているがAppに保持され続けているtokenを削除
     useEffect(() => {
-        if(errorInStore.code==401) localStorage.removeItem('Authorization')
-    },[errorInStore])
+        if (errorInStore.code == 401) localStorage.removeItem('Authorization')
+    }, [errorInStore])
 
 
     return (
