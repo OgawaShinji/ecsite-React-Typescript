@@ -8,6 +8,7 @@ import {selectLoginUser} from "~/store/slices/App/auth.slice";
 import {Grid, makeStyles} from "@material-ui/core";
 import {setError} from "~/store/slices/App/error.slice";
 import {AppDispatch} from "~/store";
+import {RouteComponentProps, withRouter} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     control: {
@@ -18,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const OrderConfirm: React.FC = () => {
+const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
 
     const classes = useStyles();
     const dispatch: AppDispatch = useDispatch();
@@ -33,6 +34,12 @@ const OrderConfirm: React.FC = () => {
             dispatch(setError({isError: true, code: e.message}))
         })
     }, [dispatch])
+
+    useEffect(() => {
+        if (orderItems && orderItems.length === 0) {
+            props.history.push({pathname: '/'})
+        }
+    }, [orderItems, props.history])
 
     return (
         <>
@@ -52,4 +59,4 @@ const OrderConfirm: React.FC = () => {
         </>
     )
 }
-export default OrderConfirm;
+export default withRouter(OrderConfirm);
