@@ -12,20 +12,25 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             '& .MuiTextField-root': {
-                margin: theme.spacing(1),
-                width: 400,
+                margin: theme.spacing(2),
             },
         },
         pad: {
             padding: theme.spacing(2),
         },
         root2: {
-            width: 550,
+            width: '55ch',
         },
         color: {
             backgroundColor: "#ffa500",
             color: "white"
-        }
+        },
+        zipForm: {
+            width: '27ch',
+        },
+        telForm: {
+            width: '17ch',
+        },
     }),
 );
 
@@ -182,42 +187,64 @@ const Register: FC = () => {
                         <div className={classes.root}>
                             <Typography className={classes.pad} component="h5" variant="h5"
                                         align={"center"}>新規ユーザー登録</Typography>
-                            <div>
+                            <Grid item xs={11}>
                                 <div style={{color: 'red'}}>{name.errorMessage}</div>
                                 <TextField
+                                    size={"small"}
                                     id="name"
                                     label="名前"
                                     variant="outlined"
                                     value={name.value}
                                     error={name.errorMessage.length > 0}
                                     onChange={handleChangeName}
+                                    fullWidth
                                 />
-                            </div>
-                            <div>
+                            </Grid>
+                            <Grid item xs={11}>
                                 <div style={{color: 'red'}}>{email.errorMessage}</div>
                                 <TextField
+                                    size={"small"}
                                     id="email"
                                     label="メールアドレス"
                                     variant="outlined"
                                     value={email.value}
                                     error={email.errorMessage.length > 0}
                                     onChange={handleChangeEmail}
+                                    fullWidth
                                 />
-                            </div>
-                            <div>
-                                <div style={{color: 'red'}}>{zipcode.errorMessage}</div>
-                                <TextField
-                                    id="zipcode"
-                                    label="郵便番号（ハイフンなし）"
-                                    variant="outlined"
-                                    value={zipcode.value}
-                                    error={zipcode.errorMessage.length > 0}
-                                    onChange={handleChangeZipcode}
-                                />
-                            </div>
-                            <div>
+                            </Grid>
+                            <Grid container  alignItems={"center"}>
+                                <Grid item xs={5}>
+                                    <div style={{color: 'red'}}>{zipcode.errorMessage}</div>
+                                    <TextField
+                                        size={"small"}
+                                        id="zipcode"
+                                        label="郵便番号（○○○）"
+                                        variant="outlined"
+                                        value={zipcode.value}
+                                        error={zipcode.errorMessage.length > 0}
+                                        onChange={handleChangeZipcode}
+                                    />
+                                </Grid>
+                                <Grid item ><Typography align={"center"}>-</Typography></Grid>
+                                <Grid item xs={6}>
+                                    <div style={{color: 'red'}}>{zipcode.errorMessage}</div>
+                                    <TextField
+                                        size={"small"}
+                                        id="zipcode"
+                                        label="郵便番号（○○○○）"
+                                        variant="outlined"
+                                        value={zipcode.value}
+                                        error={zipcode.errorMessage.length > 0}
+                                        onChange={handleChangeZipcode}
+                                        className={classes.zipForm}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={11}>
                                 <div style={{color: 'red'}}>{address.errorMessage}</div>
                                 <TextField
+                                    size={"small"}
                                     id="address"
                                     label="住所"
                                     variant="outlined"
@@ -226,40 +253,74 @@ const Register: FC = () => {
                                     onChange={handleChangeAddress}
                                     fullWidth
                                 />
-                            </div>
-                            <div>
-                                <div style={{color: 'red'}}>{telephone.errorMessage}</div>
-                                <TextField
-                                    id="telephone"
-                                    label="電話番号(ハイフン必須)"
-                                    variant="outlined"
-                                    value={telephone.value}
-                                    error={telephone.errorMessage.length > 0}
-                                    onChange={handleChangeTel}
-                                />
-                            </div>
-                            <div>
+                            </Grid>
+                            <Grid container alignItems={"center"}>
+                                <Grid item xs={3}>
+                                    <div style={{color: 'red'}}>{telephone.errorMessage}</div>
+                                    <TextField
+                                        size={"small"}
+                                        id="telephone1"
+                                        label="電話番号"
+                                        variant="outlined"
+                                        value={telephone.value}
+                                        error={telephone.errorMessage.length > 0}
+                                        onChange={handleChangeTel}
+                                    />
+                                </Grid>
+                                <Grid item ><Typography align={"center"}>-</Typography></Grid>
+                                <Grid item xs={4}>
+                                    <div style={{color: 'red'}}>{telephone.errorMessage}</div>
+                                    <TextField
+                                        size={"small"}
+                                        id="telephone2"
+                                        label="電話番号"
+                                        variant="outlined"
+                                        value={telephone.value}
+                                        error={telephone.errorMessage.length > 0}
+                                        onChange={handleChangeTel}
+                                    />
+                                </Grid>
+                                <Grid item ><Typography align={"center"}>-</Typography></Grid>
+                                <Grid item xs={4} >
+                                    <div style={{color: 'red'}}>{telephone.errorMessage}</div>
+                                    <TextField
+                                        size={"small"}
+                                        id="telephone3"
+                                        label="電話番号"
+                                        variant="outlined"
+                                        value={telephone.value}
+                                        error={telephone.errorMessage.length > 0}
+                                        onChange={handleChangeTel}
+                                        className={classes.telForm}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={11}>
                                 <div style={{color: 'red'}}>{password.errorMessage}</div>
                                 <TextField
+                                    size={"small"}
                                     id="password"
                                     label="パスワード"
                                     variant="outlined"
                                     value={password.value}
                                     error={password.errorMessage.length > 0}
                                     onChange={handleChangePassword}
+                                    fullWidth
                                 />
-                            </div>
-                            <div>
+                            </Grid>
+                            <Grid item xs={11}>
                                 <div style={{color: 'red'}}>{confirmationPassword.errorMessage}</div>
                                 <TextField
+                                    size={"small"}
                                     id="confirmationPassword"
                                     label="確認用パスワード"
                                     variant="outlined"
                                     value={confirmationPassword.value}
                                     error={confirmationPassword.errorMessage.length > 0}
                                     onChange={handleChangeConfirmationPassword}
+                                    fullWidth
                                 />
-                            </div>
+                            </Grid>
                             {emailDuplicated &&
                             <Typography className={classes.pad} variant={"subtitle1"} align={"center"}
                                         color={"secondary"}>メールアドレスが重複しています</Typography>}
