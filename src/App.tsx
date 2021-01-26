@@ -9,6 +9,9 @@ import ErrorPage from "~/components/error";
 import {makeStyles} from "@material-ui/core";
 import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {useDispatch, useSelector} from "react-redux";
+import {ApolloProvider, HttpLink, InMemoryCache} from "@apollo/react-hooks";
+import {ApolloClient} from "@apollo/client";
+import {REST_URL} from "~/store/api";
 
 const useStyles = makeStyles({
     App: {
@@ -45,14 +48,26 @@ function App() {
         }
     }, [dispatch, loginUser, token])
 
+    const client = new ApolloClient({
+        cache: new InMemoryCache(),
+        link: new HttpLink({
+            uri: REST_URL + "/django_ql/",
+            headers: {
+                Authorization: localStorage.getItem("Authorization")
+            },
+        })
+    });
+
     return (
         <div className={classes.App}>
-            <BrowserRouter>
-                <Header isLogin={isLogin}/>
-                {errorInStore.isError ?
-                    <ErrorPage/> : routes}
-                <Footer/>
-            </BrowserRouter>
+            <ApolloProvider client={client}>
+                <BrowserRouter>
+                    <Header isLogin={isLogin}/>
+                    {errorInStore.isError ?
+                        <ErrorPage/> : routes}
+                    <Footer/>
+                </BrowserRouter>
+            </ApolloProvider>
         </div>
     );
 }

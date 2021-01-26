@@ -20,36 +20,7 @@ import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.slice";
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
-import ApolloClient from "apollo-boost"
-import gql from "graphql-tag"
-import {REST_URL} from "~/store/api";
-
-const client = new ApolloClient({
-    uri: REST_URL + '/django_ql/',
-    request: operation => {
-        operation.setContext({
-            headers: {
-                Authorization: localStorage.getItem("Authorization")
-            }
-        });
-    }
-});
-const query = gql(`query {
-  items {
-    edges {
-      node {
-        id
-        name
-        description
-        priceM
-        priceL
-        imagePath
-        deleted
-      }
-    }
-  }
-}
-`)
+import {Items} from "~/gql/components/items";
 
 const ItemDetail: React.FC = () => {
     const item = useSelector(selectItemDetail)
@@ -57,8 +28,6 @@ const ItemDetail: React.FC = () => {
     const dispatch: AppDispatch = useDispatch()
     const history = useHistory();
     const [detail, setDetail] = useState<Item | null>(item);
-
-    client.query({query}).then(result => console.log(result)).catch((e) => console.log(e))
 
     let {itemId}: any = useParams()
     itemId = Number(itemId)
@@ -177,6 +146,9 @@ const ItemDetail: React.FC = () => {
     const classes = entryIndexStyle();
 
     return (<div className={classes.align_child}>
+
+            <Items/>
+
             <Card className={classes.outline_card}>
                 <Grid container justify={"center"} spacing={1} alignItems={"center"}>
 
