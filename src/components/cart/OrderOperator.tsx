@@ -16,9 +16,6 @@ const useStyles = makeStyles({
         maxWidth: 345,
         margin: 'auto'
     },
-    media: {
-        height: 140,
-    },
     btn: {
         margin: 'auto'
     },
