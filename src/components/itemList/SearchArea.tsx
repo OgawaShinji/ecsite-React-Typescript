@@ -53,7 +53,7 @@ const SearchArea: React.FC<Props> = props => {
     };
 
     /**
-     * Enter押下時にseach()を行う.
+     * Enter押下時にsearch()を行う.
      * @param key キー
      */
     const handleKeyPress = (key: string) => {
@@ -64,7 +64,9 @@ const SearchArea: React.FC<Props> = props => {
         <div>
             <Grid container justify={"center"} alignItems={"center"}>
                 <Grid item xs={1}>
-                    <Search fontSize={"default"}/>
+                    <Grid container justify={"center"} alignItems={"flex-end"}>
+                        <Search fontSize={"default"}/>
+                    </Grid>
                 </Grid>
                 <Grid item xs={7}>
                     <Autocomplete
