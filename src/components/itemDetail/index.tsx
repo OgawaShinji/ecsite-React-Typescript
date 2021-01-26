@@ -15,7 +15,6 @@ import {useHistory, useParams} from "react-router-dom"
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import {Item, Topping} from "~/types/interfaces";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
-import img from "~/assets/img/img.png"
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.slice";
 import {Path} from "~/router/routes";
@@ -141,6 +140,10 @@ const ItemDetail: React.FC = () => {
                 background: "#FFBEDA"
             }
         },
+        button_font: {
+            color: "white",
+            fontWeight: "bold"
+        },
         total_price: {
             fontWeight: "bold",
             margin: "3%",
@@ -158,7 +161,7 @@ const ItemDetail: React.FC = () => {
                         <CardContent className={classes.align_child}>{detail?.imagePath
                             ? (<Avatar src={`${detail?.imagePath}`} style={{width: "50%", height: "auto"}}
                                        variant={"rounded"}/>)
-                            : (<Avatar src={img} style={{width: "50%", height: "auto"}} variant={"rounded"}/>)}
+                            : (<Avatar src={""} style={{width: "50%", height: "auto"}} variant={"rounded"}/>)}
                         </CardContent>
                         <CardContent className={classes.align_child}>
                             <Typography variant={"h4"} component={"u"}>{detail?.name}</Typography>
@@ -190,7 +193,7 @@ const ItemDetail: React.FC = () => {
                             <CardContent className={classes.align_child}>
                                 <Typography variant={"h3"}
                                             className={classes.total_price}>合計金額
-                                    ￥{totalPrice ? totalPrice.toLocaleString() : totalPrice}(税抜)</Typography>
+                                    {` : `}{totalPrice ? totalPrice.toLocaleString() : totalPrice} 円(税抜)</Typography>
                             </CardContent>
                         </CardContent>
                     </Grid>
@@ -202,14 +205,18 @@ const ItemDetail: React.FC = () => {
                                 <Button variant={"contained"} className={classes.order_button} onClick={() => {
                                     handleOrderClick('cart').then()
                                 }}>
-                                    商品をカートに入れる
+                                    <Typography className={classes.button_font}>
+                                        商品をカートに入れる
+                                    </Typography>
                                 </Button>
                             </Grid>
                             <Grid item xs={6} className={classes.align_child}>
                                 <Button variant={"contained"} className={classes.order_button} onClick={() => {
                                     handleOrderClick('confirm').then()
                                 }}>
-                                    すぐに注文確認画面へ進む
+                                    <Typography className={classes.button_font}>
+                                        すぐに注文確認画面へ進む
+                                    </Typography>
                                 </Button>
                             </Grid>
                         </CardActions>
