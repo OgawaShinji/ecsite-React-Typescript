@@ -62,6 +62,8 @@ const LoginForm: React.FC = () => {
                     await dispatch(fetchLoginUser()).then().catch((e) => {
                         dispatch(setError({isError: true, code: e.message}))
                     })
+
+                    //loading画面表示可能にした後画面遷移
                     await dispatch(setIsLoading(true))
                     await routeHistory.push(Path.itemList)
                 } else {
