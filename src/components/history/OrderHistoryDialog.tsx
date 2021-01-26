@@ -39,7 +39,7 @@ const OrderHistoryDialog: React.FC<Props> = props => {
                 <DialogContent>
                     <Grid container justify={"center"} alignItems={"center"}>
 
-                        <Grid item xs={10}>
+                        <Grid item xs={11}>
                             {props.orderItems.map((orderItem) => (
                                 <div key={orderItem.id} className={classes.control}>
                                     <OrderItemCard orderItem={orderItem}/>
