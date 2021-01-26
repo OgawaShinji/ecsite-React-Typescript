@@ -159,7 +159,6 @@ const LoginForm: React.FC = () => {
 export default LoginForm;
 const login_form_style = makeStyles(() => createStyles({
     button: {
-        '&$disabled': {color: "gray"},
         marginBottom: "5%",
         backgroundColor: THEME_COLOR_2,
         color: "white",
