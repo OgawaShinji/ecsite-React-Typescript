@@ -177,15 +177,20 @@ const OrderForm: React.FC<Props> = (props) => {
                 const consumptionTax = orderSubTotalPrice * 0.1
                 const totalPrice = orderSubTotalPrice + consumptionTax
                 let paymentMethod;
+                let status;
                 if (checkedCash) {
                     paymentMethod = "1";
+                    status = 1;
                 } else if (checkedCredit) {
                     paymentMethod = "2";
+                    status = 2;
                 } else {
                     paymentMethod = "1";
+                    status = 1;
                 }
+
                 const order = {
-                    status: 1,
+                    status: status,
                     totalPrice: totalPrice,
                     orderDate: orderDate,
                     destinationName: userInfo?.name,
