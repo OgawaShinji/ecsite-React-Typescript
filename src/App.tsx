@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import '~/assets/css/App.css';
-import {BrowserRouter} from "react-router-dom";
+import {Redirect, RouteComponentProps, withRouter} from "react-router-dom";
 import routes from '~/router/routes';
 import Header from "~/components/elements/Header"
 import Footer from "~/components/elements/Footer"
-import {selectError} from "~/store/slices/App/error.slice";
+import {selectError, setError} from "~/store/slices/App/error.slice";
 import ErrorPage from "~/components/error";
 import {makeStyles} from "@material-ui/core";
 import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch} from "~/store";
 import ScrollToTop from "~/components/elements/ScrollToTop";
 
 const useStyles = makeStyles({
@@ -24,9 +25,9 @@ const useStyles = makeStyles({
     }
 });
 
-function App() {
+const App: React.FC<RouteComponentProps> = () => {
     const classes = useStyles();
-    const dispatch = useDispatch()
+    const dispatch: AppDispatch = useDispatch()
 
     const [isLogin, setIsLogin] = useState(false)
     // login処理が走ったかを一時的に監視するために用意
@@ -37,7 +38,9 @@ function App() {
 
     useEffect(() => {
         if (!loginUser && token) {
-            dispatch(fetchLoginUser())
+            dispatch(fetchLoginUser()).catch((e) => {
+                dispatch(setError({isError: true, code: e.message}))
+            })
         }
         if (token) {
             setIsLogin(true)
@@ -46,17 +49,21 @@ function App() {
         }
     }, [dispatch, loginUser, token])
 
+    // 401error発生時、執行されているがAppに保持され続けているtokenを削除
+    useEffect(() => {
+        if(errorInStore.code==401) localStorage.removeItem('Authorization')
+    },[errorInStore])
+
+
     return (
         <div className={classes.App}>
-            <BrowserRouter>
-                <ScrollToTop/>
-                <Header isLogin={isLogin}/>
-                {errorInStore.isError ?
-                    <ErrorPage/> : routes}
-                <Footer/>
-            </BrowserRouter>
+            <ScrollToTop/>
+            <Header isLogin={isLogin}/>
+            {errorInStore.isError ? errorInStore.code == 401 ? <Redirect to="/login"/> :
+                <ErrorPage/> : routes}
+            <Footer/>
         </div>
     );
 }
 
-export default App;
+export default withRouter(App);

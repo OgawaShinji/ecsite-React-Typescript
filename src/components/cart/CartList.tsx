@@ -33,9 +33,13 @@ const useStyles = makeStyles({
     cartList: {
         backgroundColor: '#dcdcdc'
     },
-    emptyOrderItems: {
+    emptyCartList: {
+        backgroundColor: '#dcdcdc',
         textAlign: 'center',
-        margin: 'auto'
+        // alignItems: 'center',
+    },
+    emptyOrderItems: {
+        paddingTop: 60,
     },
     orderOperator: {
         position: 'sticky',
@@ -114,13 +118,20 @@ const CartList: React.FC = () => {
         })
     }
 
+    let styleCartList
+    if (orderItems && orderItems?.length > 0) {
+        styleCartList = classes.cartList
+    } else {
+        styleCartList = classes.emptyCartList
+    }
+
 
     return (
         <div className={classes.root}>
-            <Grid container>
-                <Grid item xs={8} className={classes.cartList}>
+            <Grid container style={{paddingLeft: 20}}>
+                <Grid item xs={8} className={styleCartList}>
                     <Typography variant="h4" gutterBottom className={classes.title}>
-                        注文商品
+                        ショッピングカート
                     </Typography>
                     {orderItems && orderItems?.length > 0 ? (<List>
                         {orderItems &&
@@ -133,7 +144,11 @@ const CartList: React.FC = () => {
                             />
                         ))}
                     </List>) : (
-                        <div className={classes.emptyOrderItems}>注文がありません</div>
+                        <div className={classes.emptyOrderItems}>
+                            <Typography variant="h6" gutterBottom>
+                                カートに商品がありません
+                            </Typography>
+                        </div>
                     )}
                 </Grid>
                 <Grid item xs={4}>
