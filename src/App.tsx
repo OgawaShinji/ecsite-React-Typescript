@@ -6,12 +6,11 @@ import Header from "~/components/elements/Header"
 import Footer from "~/components/elements/Footer"
 import {selectError, setError} from "~/store/slices/App/error.slice";
 import ErrorPage from "~/components/error";
-import {CircularProgress, makeStyles} from "@material-ui/core";
+import {makeStyles} from "@material-ui/core";
 import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "~/store";
 import ScrollToTop from "~/components/elements/ScrollToTop";
-import {selectIsLoading} from "~/store/slices/App/displayUI.slice";
 
 const useStyles = makeStyles({
     App: {
@@ -36,7 +35,6 @@ const App: React.FC<RouteComponentProps> = () => {
     const token = localStorage.getItem('Authorization')
 
     const errorInStore = useSelector(selectError);
-    const isLoadingInStore = useSelector(selectIsLoading);
 
     useEffect(() => {
         if (!loginUser && token) {
@@ -62,8 +60,7 @@ const App: React.FC<RouteComponentProps> = () => {
             <ScrollToTop/>
             <Header isLogin={isLogin}/>
             {errorInStore.isError ? errorInStore.code == 401 ? <Redirect to="/login"/> :
-                <ErrorPage/> : isLoadingInStore ?
-                <CircularProgress style={{margin: "50%"}} color={"secondary"}/> : routes}
+                <ErrorPage/> : routes}
             <Footer/>
         </div>
     );
