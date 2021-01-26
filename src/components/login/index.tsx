@@ -1,11 +1,18 @@
-import React from "react"
+import React, {useEffect} from "react"
 import LoginForm from "~/components/login/LoginForm";
 import {Link} from 'react-router-dom'
 import {Path} from "~/router/routes";
 import {createStyles, Grid} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
+import {AppDispatch} from "~/store";
+import {useDispatch} from "react-redux";
+import {setIsLoading} from "~/store/slices/App/displayUI.slice"
 
 const Login: React.FC = () => {
+    const dispatch: AppDispatch = useDispatch();
+    useEffect(() => {
+        dispatch(setIsLoading(false))
+    }, [dispatch])
     const loginStyle = makeStyles(() => createStyles({
         LoginForm: {},
         Link: {},

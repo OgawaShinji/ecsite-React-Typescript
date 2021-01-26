@@ -20,6 +20,7 @@ import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.s
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
 import {THEME_COLOR_2} from "~/assets/color";
+import {setIsLoading} from "~/store/slices/App/displayUI.slice";
 
 const ItemDetail: React.FC = () => {
     const item = useSelector(selectItemDetail)
@@ -40,6 +41,7 @@ const ItemDetail: React.FC = () => {
         if (toppings.length === 0) dispatch(fetchToppings()).then()
             .catch((e) => dispatch(setError({isError: true, code: e.message})))
         if (detail !== null) setTotalPrice(detail?.priceM)
+        dispatch(setIsLoading(false))
     }, [dispatch, itemId, item, toppings, detail])
 
     const [size, setSize] = useState<string>('M');
@@ -108,9 +110,10 @@ const ItemDetail: React.FC = () => {
             status: 0,
             newTotalPrice: totalPrice
         }
-        await dispatch(asyncPostOrderItem(newOrder)).then((i) => {
-            if (i.payload === '200' && moveTo === 'cart') history.push(Path.cart)
-            if (i.payload === '200' && moveTo === 'confirm') history.push(Path.orderConfirm)
+        await dispatch(asyncPostOrderItem(newOrder)).then(async (i) => {
+            await dispatch(setIsLoading(true))
+            if (i.payload === '200' && moveTo === 'cart') await history.push(Path.cart)
+            if (i.payload === '200' && moveTo === 'confirm') await history.push(Path.orderConfirm)
         }).catch((e) => {
             dispatch(setError({isError: true, code: e.message}))
         })
