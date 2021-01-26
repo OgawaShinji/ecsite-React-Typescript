@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, CardActionArea, CardActions, CardContent, makeStyles} from "@material-ui/core";
+import {Button, Card, CardActions, CardContent, makeStyles} from "@material-ui/core";
 import {OrderItem} from "~/types/interfaces";
 import TotalPrice from "~/components/elements/totalPrice/totalPrice"
 import {RouteComponentProps, withRouter} from 'react-router-dom';
@@ -51,11 +51,9 @@ const OrderOperator: React.FC<Props & RouteComponentProps> = (props) => {
 
     return (
         <Card className={classes.root}>
-            <CardActionArea>
-                <CardContent>
-                    <TotalPrice subTotalPrice={props.subTotalPrice}/>
-                </CardContent>
-            </CardActionArea>
+            <CardContent>
+                <TotalPrice subTotalPrice={props.subTotalPrice}/>
+            </CardContent>
             <CardActions>
                 <Button
                     variant="outlined"
@@ -63,7 +61,7 @@ const OrderOperator: React.FC<Props & RouteComponentProps> = (props) => {
                     onClick={() => props.history.push({pathname: `/orderConfirm`})}
                     disabled={props.orderItems === undefined}
                 >
-                    注文する
+                    注文確認画面へ進む
                 </Button>
             </CardActions>
             <CardActions className={classes.btn}>

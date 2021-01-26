@@ -14,10 +14,12 @@ import {
     Grid,
     ListItem,
     makeStyles,
-    Modal, Paper,
+    Modal,
+    Paper,
     Theme,
     Typography
 } from "@material-ui/core";
+import {RouteComponentProps, withRouter} from "react-router-dom";
 
 interface Props {
     orderItem: OrderItem
@@ -48,20 +50,18 @@ const useStyles = makeStyles((theme: Theme) =>
             "margin-right": 40,
             "margin-left": 40
         },
-        modal:{
-
-        },
-        dialog:{
-            width:'70%',
+        modal: {},
+        dialog: {
+            width: '70%',
             position: 'absolute',
-            top:'50%',
-            left:'50%',
+            top: '50%',
+            left: '50%',
             transform: "translate(-50%, -50%)"
         }
     }),
 );
 
-const CartItem: FC<Props> = (props) => {
+const CartItem: FC<Props & RouteComponentProps> = (props) => {
 
     const dispatch = useDispatch()
     const classes = useStyles();
@@ -128,6 +128,10 @@ const CartItem: FC<Props> = (props) => {
         updateOrderItems({orderItem: changedOrderItem})
     }
 
+    const toItemDetail = () => {
+        props.history.push({pathname: `/itemDetail/${props.orderItem.item.id}`})
+    }
+
 
     return (
         <ListItem>
@@ -135,7 +139,7 @@ const CartItem: FC<Props> = (props) => {
                 <Grid container spacing={2}>
                     {/*image*/}
                     <Grid item xs={3} container justify={"center"} alignItems={"center"}>
-                        <ButtonBase className={classes.image}>
+                        <ButtonBase className={classes.image} onClick={toItemDetail}>
                             <img className={classes.img} alt="complex" src={orderItem.item.imagePath}/>
                         </ButtonBase>
                     </Grid>
@@ -144,11 +148,13 @@ const CartItem: FC<Props> = (props) => {
                             <Grid item container>
                                 <Grid item xs={1}/>
                                 <Grid item xs={11}>
-                                    <Typography gutterBottom variant="h6">
-                                        <Box fontWeight="fontWeightBold">
-                                            {orderItem.item.name}
-                                        </Box>
-                                    </Typography>
+                                    <ButtonBase onClick={toItemDetail}>
+                                        <Typography gutterBottom variant="h6">
+                                            <Box fontWeight="fontWeightBold">
+                                                {orderItem.item.name}
+                                            </Box>
+                                        </Typography>
+                                    </ButtonBase>
                                     <Divider/>
                                 </Grid>
                             </Grid>
@@ -160,7 +166,13 @@ const CartItem: FC<Props> = (props) => {
                                     >
                                         価格
                                         ：{orderItem.size === 'M' ? orderItem.item.priceM.toLocaleString() : orderItem.item.priceL.toLocaleString()}円</Typography>
-                                    <Typography gutterBottom>サイズ： {orderItem.size}</Typography>
+                                    <Typography
+                                        gutterBottom
+                                    >サイズ： {orderItem.size}
+                                    </Typography>
+                                    <Typography variant="subtitle1">
+                                        個数 ： {orderItem.quantity + '個'}
+                                    </Typography>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <ul>
@@ -192,15 +204,11 @@ const CartItem: FC<Props> = (props) => {
                         </Grid>
                     </Grid>
                     <Grid item xs={3} container alignItems="center">
-                        <Grid item xs={5}>
-                            <Typography variant="subtitle1">
-                                {orderItem.quantity + '個'}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={7}>
+                        <Grid item xs={2}/>
+                        <Grid item xs={10}>
                             <Typography variant='h5'>
                                 <Box fontWeight="fontWeightBold">
-                                    {orderItem.subTotalPrice!.toLocaleString() + '円'}
+                                    小計：{orderItem.subTotalPrice!.toLocaleString() + '円'}
                                 </Box>
                             </Typography>
                         </Grid>
@@ -226,4 +234,4 @@ const CartItem: FC<Props> = (props) => {
         </ListItem>
     );
 }
-export default CartItem;
+export default withRouter(CartItem);
