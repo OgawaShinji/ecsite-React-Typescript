@@ -28,7 +28,6 @@ const OrderConfirm: React.FC = () => {
     //storeのstateにあるloginUserの取得
     let loginUser = useSelector(selectLoginUser);
 
-
     useEffect(() => {
         dispatch(asyncFetchOrderItems()).catch((e) => {
             dispatch(setError({isError: true, code: e.message}))

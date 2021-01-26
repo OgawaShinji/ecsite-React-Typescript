@@ -10,6 +10,7 @@ import {makeStyles} from "@material-ui/core";
 import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "~/store";
+import ScrollToTop from "~/components/elements/ScrollToTop";
 
 const useStyles = makeStyles({
     App: {
@@ -56,6 +57,7 @@ const App: React.FC<RouteComponentProps> = () => {
 
     return (
         <div className={classes.App}>
+            <ScrollToTop/>
             <Header isLogin={isLogin}/>
             {errorInStore.isError ? errorInStore.code == 401 ? <Redirect to="/login"/> :
                 <ErrorPage/> : routes}

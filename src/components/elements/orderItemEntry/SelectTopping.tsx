@@ -50,9 +50,8 @@ export const SelectTopping: React.FC<selectToppingProps> = (props) => {
             </Grid>
             <Grid container justify={"center"}>
                 <Grid item sm={1}>
-                    <Button onClick={props.onClickClose} variant={"contained"}
-                            className={classes.topping_close_button}>
-                        Close
+                    <Button onClick={props.onClickClose} variant={"contained"} color={"primary"}>
+                        <Typography>close</Typography>
                     </Button>
                 </Grid>
             </Grid>
@@ -65,7 +64,8 @@ export const WrappedSelectTopping = React.forwardRef<HTMLDivElement, selectToppi
 
 const toppingStyles = makeStyles(() => createStyles({
     topping_modal: {
-        backgroundColor: "#bbdefb"
+        backgroundColor: "#BBBBBB",
+        padding: "2%"
     },
     topping_card: {
         display: "flex",
@@ -73,9 +73,5 @@ const toppingStyles = makeStyles(() => createStyles({
         alignItems: "center",
         paddingBottom: "0.5%",
         paddingRight: "10"
-    },
-    topping_close_button: {
-        color: "black",
-        backgroundColor: "#f78da7"
     }
 }));

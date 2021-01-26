@@ -2,7 +2,6 @@ import React, {useRef, useState} from "react";
 import {
     Button,
     Card,
-    CardHeader,
     DialogContent,
     FormControl,
     FormControlLabel,
@@ -11,7 +10,6 @@ import {
     InputLabel,
     MenuItem,
     Modal,
-    Paper,
     Radio,
     RadioGroup,
     Select,
@@ -20,6 +18,7 @@ import {
 import {Topping} from "~/types/interfaces";
 import {WrappedSelectTopping} from "~/components/elements/orderItemEntry/SelectTopping";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
+import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
 
 export type itemEntryState = {
     size: string;
@@ -70,15 +69,15 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
 
     return (
         <Grid justify={"center"} container className={classes.modal}>
-            <CardHeader title={"注文はこちらから！"} className={classes.entry_title}/>
-            <Card className={classes.entry_form}>
-                {/*注文入力フォーム左側(サイズと数量)*/}
-                <Grid container justify={"space-around"} style={{display: "flex"}} className={classes.entry_left}>
+            <Grid item xs={12} className={classes.title_grid}>
+                <Typography className={classes.title_words}>注文入力フォーム</Typography>
+            </Grid>
+            <Card className={classes.form_card}>
 
-                    {/*サイズ入力フォーム*/}
-                    <Grid item xs={12} className={classes.entry_parts_grid}>
-                        <Paper className={classes.entry_parts_paper}>
-                            <FormControl margin={"normal"}>
+                <Grid container className={classes.left_grid}>
+                    <Grid item xs={12}>
+                        <Grid container justify={"center"} className={classes.form_grid}>
+                            <FormControl className={classes.size_form}>
                                 <FormLabel>サイズ</FormLabel>
                                 <RadioGroup row aria-label="サイズ" name="size" value={props.selectedState.size}
                                             onChange={handleSizeChange}>
@@ -90,13 +89,13 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                                                       label="L : "/>
                                 </RadioGroup>
                             </FormControl>
-                        </Paper>
+                        </Grid>
                     </Grid>
 
-                    {/*数量入力フォーム*/}
-                    <Grid item xs={12} className={classes.entry_parts_grid}>
-                        <Paper className={classes.entry_parts_paper}>
-                            <FormControl margin={"normal"}>
+                    {/*数量選択*/}
+                    <Grid item xs={12}>
+                        <Grid container justify={"center"} className={classes.form_grid}>
+                            <FormControl className={classes.quantity_form}>
                                 <InputLabel style={{fontSize: "120%"}}>数量</InputLabel>
                                 <Select
                                     labelId="quantity-label"
@@ -112,44 +111,43 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                                     })}
                                 </Select>
                             </FormControl>
-                        </Paper>
+                        </Grid>
                     </Grid>
                 </Grid>
 
                 {/*トッピング入力フォーム*/}
-                <Grid container justify={"center"}>
-                    <Grid item xs={12} style={{}}>
-                        <Paper style={{margin: "3%"}} className={classes.entry_right}>
+                <Grid container justify={"center"} style={{alignContent: "center"}}>
+                    <Grid item xs={12} className={classes.selected_topping_grid}>
 
-                            {/*SelectToppingモーダル表示ボタン*/}
-                            <Button onClick={() => setIsOpen(true)}
-                                    variant={"contained"}
-                                    className={classes.modal_open_button}>
-                                <Typography>トッピング選択はこちら</Typography>
-                            </Button>
-
-                            {/*選択済みトッピング表示部分*/}
-                            {selectedToppings.map((t) =>
-                                <Grid item xs={12} className={classes.selected_topping_grid} key={t.name}>
-                                    <Card key={t.name} className={classes.selected_topping_card}>
-                                        <Typography variant={"body1"} color={"primary"}
-                                                    component={"p"}>{t.name}
-                                        </Typography>
-                                    </Card>
-                                </Grid>)}
-                        </Paper>
+                        {/*SelectToppingモーダル表示ボタン*/}
+                        <Button onClick={() => setIsOpen(true)}
+                                variant={"contained"}
+                                color={"primary"}
+                                className={classes.modal_open_button}>
+                            <Typography>トッピング選択はこちら</Typography>
+                        </Button>
                     </Grid>
-                    <Modal
-                        open={modalIsOpen}
-                        onClose={() => setIsOpen(false)}>
-                        <DialogContent className={classes.dialog}>
-                            <WrappedSelectTopping selectedSize={props.selectedState.size}
-                                                  onClickClose={() => setIsOpen(false)}
-                                                  customRef={selectToppingRef} propTopping={selectedToppings}
-                                                  onToppingChange={(t) => handleToppingChange(t)}/>
-                        </DialogContent>
-                    </Modal>
+                    {/*選択済みトッピング表示部分*/}
+                    {selectedToppings.map((t) =>
+                        <Grid item xs={12} className={classes.selected_topping_grid} key={t.name}>
+                            <Card key={t.name} className={classes.selected_topping_card}>
+                                <Typography variant={"body1"} style={{color: "white"}}
+                                            component={"p"}>{t.name}
+                                </Typography>
+                            </Card>
+                        </Grid>)}
                 </Grid>
+                <Modal
+                    open={modalIsOpen}
+                    onClose={() => setIsOpen(false)}>
+                    <DialogContent className={classes.dialog}>
+                        <WrappedSelectTopping selectedSize={props.selectedState.size}
+                                              onClickClose={() => setIsOpen(false)}
+                                              customRef={selectToppingRef} propTopping={selectedToppings}
+                                              onToppingChange={(t) => handleToppingChange(t)}/>
+                    </DialogContent>
+                </Modal>
+
             </Card>
         </Grid>
     )
@@ -172,16 +170,7 @@ const orderItemEntryStyleInCart = makeStyles(() => createStyles({
         alignItems: "center",
     },
     //左部分の枠
-    entry_left: {
-        width: "80%",
-        height: "90%",
-        margin: "1%",
-        border: "1%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: ""
-    },
+    left_grid: {height: "auto", paddingTop: "10%", paddingBottom: "10%"},
     //左部分各入力フォームの枠
     entry_parts_grid: {
         margin: "3%",
@@ -234,83 +223,53 @@ const orderItemEntryStyleInCart = makeStyles(() => createStyles({
 
 const orderItemEntryStyle = makeStyles(() => createStyles({
     modal: {},
-    entry_title: {
-        width: "92%",
-        backgroundColor: "#ffa500"
-    },
-    //大外の枠
-    entry_form: {
-        width: "95%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: ""
-    },
-    //左部分の枠
-    entry_left: {
-        width: "80%",
-        height: "90%",
-        margin: "1%",
-        border: "1%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: ""
-    },
-    //左部分各入力フォームの枠
-    entry_parts_grid: {
-        margin: "3%",
-        height: "100px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        paddingTop: "1%",
-        alignContent: "flex-start",
-    },
-    //左部分各入力フォームの背景色指定用
-    entry_parts_paper: {
-        width: "90%",
-        height: "80%",
-        backgroundColor: "#ffcdd2",
-        display: "flex",
-        justifyContent: "center",
-    },
+    //タイトル部分のGrid
+    title_grid: {backgroundColor: THEME_COLOR_2, paddingLeft: "3%"},
+    //タイトルの文字
+    title_words: {color: "white", fontSize: "200%"},
+    //タイトル下全体のCard
+    form_card: {width: "100%", display: "flex"},
+    //Card内左部分全体のGrid
+    left_grid: {height: "auto", paddingTop: "10%", paddingBottom: "10%"},
+    //サイズと数量の入力部分のGrid
+    form_grid: {display: "flex",marginTop:"5%"},
+    //サイズ入力
+    size_form: {marginTop: "auto"},
+    //数量入力
+    quantity_form: {marginTop: "5%", width: "30%"},
+    //選択済みトッピング表示カード
     //モーダル表示ボタン
     modal_open_button: {
         fontWeight: "bold",
-        backgroundColor: "#ffcdd2",
         margin: "5%",
-        padding: "3%"
+        padding: "3%",
+        width: "70%",
+        height: "80%"
     },
-    //選択済みトッピングカードの外枠
+    //選択済みトッピングカードのGrid
     selected_topping_grid: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        margin: "1%"
     },
-    //選択済みトッピング表示カード
+    //選択済みトッピングカード
     selected_topping_card: {
         width: "60%",
         margin: "3%",
-        height: "50px",
+        height: "100%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#ffe0b2",//#ffb74d
+        backgroundColor: THEME_COLOR_1,
 
     },
-
     dialog: {
-        width: '95%',
+        height:"100%",
+        width: '100%',
         position: 'absolute',
         top: '50%',
         left: '50%',
         transform: "translate(-50%, -50%)"
     },
-    entry_right: {
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center"
-    }
 }));

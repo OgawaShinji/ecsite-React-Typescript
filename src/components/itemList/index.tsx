@@ -12,6 +12,7 @@ import SearchArea from "~/components/itemList/SearchArea";
 import OptionForm from "~/components/itemList/OptionForm";
 import ItemCard from "~/components/itemList/ItemCard";
 
+import {animateScroll as scroll} from 'react-scroll';
 
 const useStyles = makeStyles((theme) => ({
     itemCard: {
@@ -106,7 +107,8 @@ const ItemList: React.FC = () => {
             {/*Pagination*/}
             <Grid container justify={"center"} alignItems={"center"}>
                 <Pagination count={pageCount} page={page} onChange={(e, val) => {
-                    setPage(val)
+                    setPage(val);
+                    scroll.scrollToTop();
                 }} className={classes.pagination} size={"large"}/>
             </Grid>
 
