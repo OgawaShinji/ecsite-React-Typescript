@@ -119,7 +119,7 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                         </Grid>
                         {props.parentComponent === 'CartItem' && (
                             <Grid item xs={12} className={classes.left_form_attention}>
-                                ※全ての変更は自動で更新されます
+                                ※注文内容の変更は自動で更新されます
                             </Grid>
                         )}
                     </Grid>

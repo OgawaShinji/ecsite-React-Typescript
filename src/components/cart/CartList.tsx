@@ -78,9 +78,9 @@ const CartList: React.FC = () => {
      */
     const updateOrderItems = async ({orderItem}: { orderItem: OrderItem }) => {
 
+        // サーバーに送るデータをorderItemsToPostに詰め替える処理
         let updatedOrderToppings: { topping: number }[] = []
         if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t.topping.id}))
-
         const updatedOrderItem: orderItem = {
             id: orderItem.id,
             item: orderItem.item.id,
@@ -89,13 +89,12 @@ const CartList: React.FC = () => {
             size: orderItem.size === 'M' ? 'M' : 'L'
         }
         let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
-
-        // サーバーに送るデータ
         const orderItemsToPost: OrderItemsToPost = {
             orderItems: updatedOrderItems,
             status: 0,
             newTotalPrice: orderSubTotalPrice
         }
+
         await dispatch(asyncUpdateOrderItem(orderItemsToPost)).catch((e) => {
             dispatch(setError({isError: true, code: e.message}))
         })
@@ -118,6 +117,7 @@ const CartList: React.FC = () => {
         })
     }
 
+    // カートに商品があるかどうかでレイアウトを切り替えるため
     let styleCartList
     if (orderItems && orderItems?.length > 0) {
         styleCartList = classes.cartList
@@ -130,7 +130,11 @@ const CartList: React.FC = () => {
         <div className={classes.root}>
             <Grid container style={{paddingLeft: 20}}>
                 <Grid item xs={8} className={styleCartList}>
-                    <Typography variant="h4" gutterBottom className={classes.title}>
+                    <Typography
+                        variant="h4"
+                        gutterBottom
+                        className={classes.title}
+                    >
                         ショッピングカート
                     </Typography>
                     {orderItems && orderItems?.length > 0 ? (<List>

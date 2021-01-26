@@ -1,8 +1,9 @@
-import React, {FC, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {OrderItem, OrderTopping, Topping} from "~/types/interfaces"
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
+import {RouteComponentProps, withRouter} from "react-router-dom";
 import {
     Box,
     Button,
@@ -18,7 +19,8 @@ import {
     Theme,
     Typography
 } from "@material-ui/core";
-import {RouteComponentProps, withRouter} from "react-router-dom";
+import {AppDispatch} from "~/store";
+import {setError} from "~/store/slices/App/error.slice";
 
 interface Props {
     orderItem: OrderItem
@@ -51,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         modal: {},
         dialog: {
-            backgroundColor:'red',
+            backgroundColor: 'red',
             width: '40%',
             position: 'absolute',
             top: '50%',
@@ -61,20 +63,18 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const CartItem: FC<Props & RouteComponentProps> = (props) => {
+const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
 
-    const dispatch = useDispatch()
+    const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
     const {orderItem, updateOrderItems, deleteOrderItem} = props
 
     const toppings: Topping[] = useSelector(selectToppings)
     const [modalIsOpen, setIsOpen] = useState<boolean>(false)
 
+    // OrderItemEntryで受け渡す変数を定義
     const selectedTopping: Topping[] = []
-    orderItem.orderToppings?.forEach(orderTopping => {
-        selectedTopping.push(orderTopping.topping)
-    })
-
+    orderItem.orderToppings?.forEach(orderTopping => selectedTopping.push(orderTopping.topping))
     const selectedState: itemEntryState = {
         size: orderItem.size,
         quantity: orderItem.quantity,
@@ -83,9 +83,9 @@ const CartItem: FC<Props & RouteComponentProps> = (props) => {
 
     // 初期表示
     useEffect(() => {
-        if (toppings.length === 0) {
-            dispatch(fetchToppings())
-        }
+        if (toppings.length === 0) dispatch(fetchToppings()).catch((e) => {
+            dispatch(setError({isError: true, code: e.message}))
+        })
     })
 
     /**
@@ -115,7 +115,7 @@ const CartItem: FC<Props & RouteComponentProps> = (props) => {
 
     /**
      * 商品のトッピングを変更する関数
-     * @Params inputSize: string
+     * @Params toppings: Topping[]
      */
     const handleToppingChange = (toppings: Topping[]) => {
         // setSelectToppings(toppings)
@@ -161,16 +161,13 @@ const CartItem: FC<Props & RouteComponentProps> = (props) => {
                             <Grid item container>
                                 <Grid item xs={1}/>
                                 <Grid item xs={5}>
-                                    <Typography
-                                        gutterBottom
-                                    >
+                                    <Typography gutterBottom>
                                         価格
                                         ：{orderItem.size === 'M' ? orderItem.item.priceM.toLocaleString() : orderItem.item.priceL.toLocaleString()}円</Typography>
-                                    <Typography
-                                        gutterBottom
-                                    >サイズ： {orderItem.size}
+                                    <Typography gutterBottom>
+                                        サイズ： {orderItem.size}
                                     </Typography>
-                                    <Typography variant="subtitle1">
+                                    <Typography gutterBottom>
                                         個数 ： {orderItem.quantity + '個'}
                                     </Typography>
                                 </Grid>
@@ -191,13 +188,17 @@ const CartItem: FC<Props & RouteComponentProps> = (props) => {
                                             color="secondary"
                                             className={classes.btn}
                                             onClick={() => deleteOrderItem(orderItem.id!)}
-                                        >削除</Button>
+                                        >
+                                            削除
+                                        </Button>
                                         <Button
                                             variant="outlined"
                                             color="primary"
                                             className={classes.btn}
                                             onClick={() => setIsOpen(true)}
-                                        >注文内容を変更</Button>
+                                        >
+                                            注文内容を変更
+                                        </Button>
                                     </CardActions>
                                 </Grid>
                             </Grid>

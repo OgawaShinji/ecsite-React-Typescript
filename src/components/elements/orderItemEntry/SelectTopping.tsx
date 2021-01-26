@@ -42,7 +42,7 @@ export const SelectTopping: React.FC<selectToppingProps> = (props) => {
                                 }}>
                                     <Typography variant={"body1"} color={"primary"}
                                                 component={"p"}>
-                                        {t.name}<br/>{props.selectedSize === 'M' ? ` M : ${t.priceM}￥` : ` L : ${t.priceL}￥`}
+                                        {t.name}<br/>{props.selectedSize === 'M' ? ` M : ${t.priceM}円` : ` L : ${t.priceL}円`}
                                     </Typography>
                                 </Card>
                             </ButtonBase>
