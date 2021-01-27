@@ -13,7 +13,8 @@ import OptionForm from "~/components/itemList/OptionForm";
 import ItemCard from "~/components/itemList/ItemCard";
 
 import {animateScroll as scroll} from 'react-scroll';
-import {SearchForm} from "~/types/interfaces";
+
+import {useLocation} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     itemCard: {
@@ -40,6 +41,8 @@ const ItemList: React.FC = () => {
 
     const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
+    const location = useLocation<{ judge: boolean }>();
+
 
     // 表示件数
     const displayItems = [
@@ -58,9 +61,11 @@ const ItemList: React.FC = () => {
     const itemCount = useSelector(selectItemCount);
 
     // コンポーネント上のstate
-    const [displayCount, setDisplayCount] = useState(displayItems[0].value);
-    const [pageCount, setPageCount] = useState(0);
-    const [page, setPage] = useState(1);
+    const [displayCount, setDisplayCount] = useState(displayItems[0].value);   // 表示件数
+    const [pageCount, setPageCount] = useState(0);   // 総ページ数
+    const [page, setPage] = useState(1);   // 現在のページ
+    const [sortId, setSortId] = useState(0);   // 並び順
+    const [itemName, setItemName] = useState('');   // 検索ワード
 
     useEffect(() => {
         dispatch(fetchItems({itemName: '', sortId: 0}))
@@ -81,26 +86,42 @@ const ItemList: React.FC = () => {
             setPageCount(totalPageCount);
             setPage(1);
         }
-
     }, [items, displayCount]);
 
-    const handleSearch = (searchForm: SearchForm) => {
-        dispatch(fetchItems(searchForm))
+    // methods
+    /**
+     * 商品検索を行う.
+     **/
+    const search = () => {
+        dispatch(fetchItems({itemName: itemName, sortId: sortId}))
             .catch((e) => {
                 dispatch(setError({isError: true, code: e.message}));
             });
     }
 
-    const handleShowAll = () => {
+    /**
+     * 商品一覧を全件表示に戻し、検索フォームをリセットする.
+     **/
+    const showAll = () => {
+        setSortId(0);
+        setItemName('');
         dispatch(fetchItems({itemName: '', sortId: 0}))
             .catch((e) => {
                 dispatch(setError({isError: true, code: e.message}));
             });
     }
 
+    // Headerのロゴ、商品一覧ボタンを押した際に走る処理
+    // 検索フォームをリセットし、全件表示に戻す
+    if (location.state) {
+        if (location.state.judge) {
+            showAll();
+            location.state.judge = false;
+        }
+    }
+
     return (
         <div>
-
             <Grid container justify={"center"} alignItems={"center"} className={classes.control}>
 
                 {/*検索フォーム*/}
@@ -108,9 +129,11 @@ const ItemList: React.FC = () => {
                     <Paper variant={"outlined"} elevation={0} color={'#FFFFFF'} className={classes.paper}>
                         <Grid container justify={"center"} alignItems={"center"}>
                             <Grid item xs={12}>
-                                <SearchArea handleSearch={(searchForm) => {
-                                    handleSearch(searchForm)
-                                }}/>
+                                <SearchArea itemName={itemName} sortId={sortId} handleItemNameChange={(itemName) => {
+                                    setItemName(itemName)
+                                }} handleSortIdChange={(sortId) => {
+                                    setSortId(sortId)
+                                }} handleSearch={search}/>
                             </Grid>
                         </Grid>
                     </Paper>
@@ -134,7 +157,7 @@ const ItemList: React.FC = () => {
                         {itemCount && itemCount !== items?.length && (
                             // 一覧表示数と全商品数が一致しない場合に表示
                             <Grid container justify={"center"} alignItems={"center"}>
-                                <Button color={"default"} variant={"outlined"} onClick={handleShowAll}
+                                <Button color={"default"} variant={"outlined"} onClick={showAll}
                                         className={classes.control}>
                                     商品を全件表示する
                                 </Button>
