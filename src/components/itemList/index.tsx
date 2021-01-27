@@ -5,7 +5,7 @@ import {fetchItems, selectItemCount, selectItems} from "~/store/slices/Domain/it
 import {setError} from "~/store/slices/App/error.slice";
 import {AppDispatch} from "~/store";
 
-import {Button, Grid, makeStyles, Typography, Paper} from "@material-ui/core";
+import {Button, Grid, makeStyles, Typography, Paper, CircularProgress} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
 
 import SearchArea from "~/components/itemList/SearchArea";
@@ -29,7 +29,10 @@ const useStyles = makeStyles((theme) => ({
         color: 'red',
         margin: theme.spacing(3)
     },
-    control: {
+    controlPadding: {
+        padding: theme.spacing(2)
+    },
+    controlMargin: {
         margin: theme.spacing(2)
     },
     paper: {
@@ -66,6 +69,7 @@ const ItemList: React.FC = () => {
     const [page, setPage] = useState(1);   // 現在のページ
     const [sortId, setSortId] = useState(0);   // 並び順
     const [itemName, setItemName] = useState('');   // 検索ワード
+    const [isLoading, setIsLoading] = useState(false); // loading
 
     useEffect(() => {
         dispatch(fetchItems({itemName: '', sortId: 0}))
@@ -75,17 +79,26 @@ const ItemList: React.FC = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        // 総ページ数の算出
-        let totalPageCount;
-        if (items) {
-            if (items.length % displayCount === 0) {
-                totalPageCount = items.length / displayCount;
-            } else {
-                totalPageCount = Math.floor((items.length / displayCount) + 1);
-            }
-            setPageCount(totalPageCount);
-            setPage(1);
+        setIsLoading(true);
+        const loading = async () => {
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 500)
         }
+        loading().then(() => {
+            // 総ページ数の算出
+            let totalPageCount;
+            if (items) {
+                if (items.length % displayCount === 0) {
+                    totalPageCount = items.length / displayCount;
+                } else {
+                    totalPageCount = Math.floor((items.length / displayCount) + 1);
+                }
+                setPageCount(totalPageCount);
+                setPage(1);
+            }
+        });
+
     }, [items, displayCount]);
 
     // methods
@@ -93,6 +106,7 @@ const ItemList: React.FC = () => {
      * 商品検索を行う.
      **/
     const search = () => {
+        setIsLoading(true);
         dispatch(fetchItems({itemName: itemName, sortId: sortId}))
             .catch((e) => {
                 dispatch(setError({isError: true, code: e.message}));
@@ -103,6 +117,7 @@ const ItemList: React.FC = () => {
      * 商品一覧を全件表示に戻し、検索フォームをリセットする.
      **/
     const showAll = () => {
+        setIsLoading(true);
         setSortId(0);
         setItemName('');
         dispatch(fetchItems({itemName: '', sortId: 0}))
@@ -122,7 +137,7 @@ const ItemList: React.FC = () => {
 
     return (
         <div>
-            <Grid container justify={"center"} alignItems={"center"} className={classes.control}>
+            <Grid container justify={"center"} alignItems={"center"} className={classes.controlPadding}>
 
                 {/*検索フォーム*/}
                 <Grid item xs={7}>
@@ -151,50 +166,55 @@ const ItemList: React.FC = () => {
             </Grid>
 
             {/*商品一覧*/}
-            <Grid container justify={"center"} alignItems={"center"}>
-                <Grid item xs={10}>
-                    <Grid container justify={"center"} alignItems={"center"}>
-                        {itemCount && itemCount !== items?.length && (
-                            // 一覧表示数と全商品数が一致しない場合に表示
-                            <Grid container justify={"center"} alignItems={"center"}>
-                                <Button color={"default"} variant={"outlined"} onClick={showAll}
-                                        className={classes.control}>
-                                    商品を全件表示する
-                                </Button>
-                            </Grid>
-                        )}
-
-                        {items && items.slice(displayCount * (page - 1), displayCount * page).map((item) => (
-                            // 商品一覧を表示
-                            <Grid key={item.id} item xs={3} className={classes.itemCard}>
-                                <ItemCard item={item}/>
-                            </Grid>
-                        ))}
-
-                        {items && items.length === 0 && (
-                            // 検索結果が0件の場合に表示
-                            <Typography className={classes.search0}>
-                                検索された商品は存在しません。
-                            </Typography>
-                        )}
-                    </Grid>
-                </Grid>
-            </Grid>
-
-            {/*Pagination*/}
-            {items && items.length !== 0 && (
+            {isLoading ? (
                 <Grid container justify={"center"} alignItems={"center"}>
-                    <Pagination count={pageCount} page={page} onChange={(e, val) => {
-                        setPage(val);
-                        scroll.scrollToTop();
-                    }} className={classes.pagination} size={"large"}/>
+                    <CircularProgress color={"secondary"} style={{margin: '10%'}}/>
+                </Grid>
+            ) : (
+                <Grid container justify={"center"} alignItems={"center"}>
+                    <Grid item xs={10}>
+                        <Grid container justify={"center"} alignItems={"center"}>
+                            {itemCount && itemCount !== items?.length && (
+                                // 一覧表示数と全商品数が一致しない場合に表示
+                                <Grid container justify={"center"} alignItems={"center"}>
+                                    <Button color={"default"} variant={"outlined"} onClick={showAll}
+                                            className={classes.controlMargin}>
+                                        商品を全件表示する
+                                    </Button>
+                                </Grid>
+                            )}
+
+                            {items && items.slice(displayCount * (page - 1), displayCount * page).map((item) => (
+                                // 商品一覧を表示
+                                <Grid key={item.id} item xs={3} className={classes.itemCard}>
+                                    <ItemCard item={item}/>
+                                </Grid>
+                            ))}
+
+                            {items && items.length === 0 && (
+                                // 検索結果が0件の場合に表示
+                                <Typography className={classes.search0}>
+                                    検索された商品は存在しません。
+                                </Typography>
+                            )}
+                        </Grid>
+                    </Grid>
                 </Grid>
             )}
 
-            {items && items.length !== 0 && (
-                <Grid container justify={"center"} alignItems={"center"}>
-                    ※価格は全て税抜です。
-                </Grid>
+            {/*Pagination*/}
+            {!isLoading && items && items.length !== 0 && (
+                <div>
+                    <Grid container justify={"center"} alignItems={"center"}>
+                        <Pagination count={pageCount} page={page} onChange={(e, val) => {
+                            setPage(val);
+                            scroll.scrollToTop();
+                        }} className={classes.pagination} size={"large"}/>
+                    </Grid>
+                    <Grid container justify={"center"} alignItems={"center"}>
+                        ※価格は全て税抜です。
+                    </Grid>
+                </div>
             )}
         </div>
     );
