@@ -1,11 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 
 import {useDispatch, useSelector} from "react-redux";
 import {fetchItemNames, selectItemNames} from "~/store/slices/Domain/item.slice";
 import {setError} from "~/store/slices/App/error.slice";
 import {AppDispatch} from "~/store";
-
-import {SearchForm} from '~/types/interfaces';
 
 import OptionForm from "~/components/itemList/OptionForm";
 import {Button, Grid, TextField} from "@material-ui/core";
@@ -13,7 +11,11 @@ import {Autocomplete} from '@material-ui/lab';
 import {Search} from "@material-ui/icons";
 
 type Props = {
-    handleSearch: (searchForm: SearchForm) => void;
+    itemName: string;
+    sortId: number;
+    handleItemNameChange: (itemName: string) => void;
+    handleSortIdChange: (sortId: number) => void;
+    handleSearch: () => void;
 }
 
 const SearchArea: React.FC<Props> = props => {
@@ -40,16 +42,12 @@ const SearchArea: React.FC<Props> = props => {
             });
     }, [dispatch]);
 
-    // searchForm stateとして管理
-    const [sortId, setSortId] = useState(optionItems[0].value);
-    const [itemName, setItemName] = useState('');
-
     // methods
     /**
      * 検索を行う(親コンポーネントへイベントアップ).
      */
     const search = () => {
-        props.handleSearch({itemName: itemName, sortId: sortId});
+        props.handleSearch();
     };
 
     /**
@@ -73,8 +71,9 @@ const SearchArea: React.FC<Props> = props => {
                         id="item-name-auto"
                         freeSolo
                         onInputChange={(e, val) => {
-                            setItemName(val);
+                            props.handleItemNameChange(val);
                         }}
+                        value={props.itemName}
                         options={itemNames.map((itemName) => itemName)}
                         renderInput={(params) => (
                             <TextField {...params} label="商品名" margin="normal" variant="outlined"
@@ -83,9 +82,10 @@ const SearchArea: React.FC<Props> = props => {
                     />
                 </Grid>
                 <Grid item xs={2}>
-                    <OptionForm label={'並び替え'} value={sortId} optionItems={optionItems} handleChange={(sortId) => {
-                        setSortId(sortId);
-                    }}/>
+                    <OptionForm label={'並び替え'} value={props.sortId} optionItems={optionItems}
+                                handleChange={(sortId) => {
+                                    props.handleSortIdChange(sortId);
+                                }}/>
                 </Grid>
                 <Grid item xs={1}>
                     <Button variant={"contained"} color={"primary"} disableElevation onClick={() => {
