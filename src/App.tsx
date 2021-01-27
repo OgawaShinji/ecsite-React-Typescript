@@ -11,6 +11,10 @@ import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "~/store";
 import ScrollToTop from "~/components/elements/ScrollToTop";
+import {ApolloProvider, HttpLink} from "@apollo/react-hooks";
+import {ApolloClient, InMemoryCache} from "@apollo/client";
+import {REST_URL} from "~/store/api";
+
 
 const useStyles = makeStyles({
     App: {
@@ -54,14 +58,25 @@ const App: React.FC<RouteComponentProps> = () => {
         if (errorInStore.code == 401) localStorage.removeItem('Authorization')
     }, [errorInStore])
 
+    const client = new ApolloClient({
+        cache: new InMemoryCache(),
+        link: new HttpLink({
+            uri: REST_URL + "/django_ql/",
+            headers: {
+                Authorization: localStorage.getItem("Authorization")
+            },
+        })
+    });
 
     return (
         <div className={classes.App}>
-            <ScrollToTop/>
-            <Header isLogin={isLogin}/>
-            {errorInStore.isError ? errorInStore.code == 401 ? <Redirect to="/login"/> :
-                <ErrorPage/> : routes}
-            <Footer/>
+            <ApolloProvider client={client}>
+                <ScrollToTop/>
+                <Header isLogin={isLogin}/>
+                {errorInStore.isError ? errorInStore.code == 401 ? <Redirect to="/login"/> :
+                    <ErrorPage/> : routes}
+                <Footer/>
+            </ApolloProvider>
         </div>
     );
 };
