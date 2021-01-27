@@ -174,7 +174,6 @@ const ItemDetail: React.FC = () => {
     return (isLoading ?
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
             : <div className={classes.align_child}>
-                <Items/>
                 <Card style={{display: "flex"}}>
                     <Grid container justify={"center"} alignContent={"center"}>
 
