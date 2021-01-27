@@ -21,6 +21,7 @@ import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
 import {THEME_COLOR_2} from "~/assets/color";
 import {setItemDetail} from "~/store/slices/Domain/item.slice"
+import {Items} from "~/gql/components/items";
 
 const ItemDetail: React.FC = () => {
     const item = useSelector(selectItemDetail)
@@ -188,6 +189,7 @@ const ItemDetail: React.FC = () => {
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
             : <div className={classes.align_child}>
                 <Card style={{display: "flex"}}>
+                    <Items/>
                     <Grid container justify={"center"} alignContent={"center"}>
 
                         {/*商品画像*/}
