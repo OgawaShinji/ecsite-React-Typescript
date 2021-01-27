@@ -51,7 +51,7 @@ const App: React.FC<RouteComponentProps> = () => {
 
     // 401error発生時、執行されているがAppに保持され続けているtokenを削除
     useEffect(() => {
-        if (errorInStore.code == 401) localStorage.removeItem('Authorization')
+        if (errorInStore.code === '401') localStorage.removeItem('Authorization')
     }, [errorInStore])
 
 
@@ -59,7 +59,7 @@ const App: React.FC<RouteComponentProps> = () => {
         <div className={classes.App}>
             <ScrollToTop/>
             <Header isLogin={isLogin}/>
-            {errorInStore.isError ? errorInStore.code == 401 ? <Redirect to="/login"/> :
+            {errorInStore.isError ? errorInStore.code === '401' ? <Redirect to="/login"/> :
                 <ErrorPage/> : routes}
             <Footer/>
         </div>
