@@ -144,7 +144,7 @@ const Register: FC = () => {
         if (!value) return '※パスワードを入力してください'
         const regex = /^[0-9]+$/;
         if (!regex.test(value)) return '※半角数字を入力してください'
-        if (value.length < 6) return '※6字以上で入力してください'
+        if (value.length < 6 || 16 < value.length) return '※6字以上16字以内で入力してください'
         return ''
     }
     const confirmationPasswordValidation = (value: string): string => {
@@ -152,7 +152,7 @@ const Register: FC = () => {
         if (value !== password.value) return '※パスワードと一致していません'
         const regex = /^[0-9]+$/;
         if (!regex.test(value)) return '※半角数字を入力してください'
-        if (value.length < 6) return '※6字以上で入力してください'
+        if (value.length < 6　|| 16 < value.length) return '※6字以上6字以上16字以内で入力してください'
         return ''
     }
 
@@ -244,6 +244,11 @@ const Register: FC = () => {
         }
     }
 
+    //form送信によるリロードが行われずにすむやり方？(loginForm.tsx参照)
+    const handleKeyPress = (e: string) => {
+        if (e === "Enter") handleClickRegister().then();
+    }
+
     /**
      * [登録]ボタン押下時の処理　
      */
@@ -272,7 +277,7 @@ const Register: FC = () => {
             <Grid container alignContent="center" justify="center" className={classes.pad}>
                 <Paper className={classes.root2}>
                     <Grid container alignContent="center" justify="center">
-                        <div className={classes.root}>
+                        <div className={classes.root} >
                             <Typography className={classes.pad} component="h5" variant="h5"
                                         align={"center"}>新規ユーザー登録</Typography>
                             <Grid item xs={11}>
@@ -286,6 +291,7 @@ const Register: FC = () => {
                                     value={name.value}
                                     error={name.errorMessage.length > 0}
                                     onChange={handleChangeName}
+                                    onKeyPress={(e) => handleKeyPress(e.key)}
                                     fullWidth
                                 />
                             </Grid>
@@ -300,6 +306,7 @@ const Register: FC = () => {
                                     value={email.value}
                                     error={email.errorMessage.length > 0}
                                     onChange={handleChangeEmail}
+                                    onKeyPress={(e) => handleKeyPress(e.key)}
                                     fullWidth
                                 />
                             </Grid>
@@ -323,6 +330,7 @@ const Register: FC = () => {
                                         value={firstZipcode.value}
                                         error={firstZipcode.errorMessage.length > 0}
                                         onChange={handleChangeFirstZipcode}
+                                        onKeyPress={(e) => handleKeyPress(e.key)}
                                     />
                                 </Grid>
                                 <Grid item><Typography align={"center"}>-</Typography></Grid>
@@ -335,6 +343,7 @@ const Register: FC = () => {
                                         value={secondZipcode.value}
                                         error={secondZipcode.errorMessage.length > 0}
                                         onChange={handleChangeSecondZipcode}
+                                        onKeyPress={(e) => handleKeyPress(e.key)}
                                         className={classes.zipForm}
                                     />
                                 </Grid>
@@ -350,6 +359,7 @@ const Register: FC = () => {
                                     value={address.value}
                                     error={address.errorMessage.length > 0}
                                     onChange={handleChangeAddress}
+                                    onKeyPress={(e) => handleKeyPress(e.key)}
                                     fullWidth
                                 />
                             </Grid>
@@ -377,6 +387,7 @@ const Register: FC = () => {
                                         value={firstTelNum.value}
                                         error={firstTelNum.errorMessage.length > 0}
                                         onChange={handleChangeFirstTelNum}
+                                        onKeyPress={(e) => handleKeyPress(e.key)}
                                     />
                                 </Grid>
                                 <Grid item><Typography align={"center"}>-</Typography></Grid>
@@ -390,6 +401,7 @@ const Register: FC = () => {
                                         value={secondTelNum.value}
                                         error={secondTelNum.errorMessage.length > 0}
                                         onChange={handleChangeSecondTelNum}
+                                        onKeyPress={(e) => handleKeyPress(e.key)}
                                     />
                                 </Grid>
                                 <Grid item><Typography align={"center"}>-</Typography></Grid>
@@ -402,6 +414,7 @@ const Register: FC = () => {
                                         value={thirdTelNum.value}
                                         error={thirdTelNum.errorMessage.length > 0}
                                         onChange={handleChangeThirdTelNum}
+                                        onKeyPress={(e) => handleKeyPress(e.key)}
                                         className={classes.telForm}
                                     />
                                 </Grid>
@@ -427,6 +440,7 @@ const Register: FC = () => {
                                         value={password.value}
                                         error={password.errorMessage.length > 0}
                                         onChange={handleChangePassword}
+                                        onKeyPress={(e) => handleKeyPress(e.key)}
                                         fullWidth
                                     />
                                 </Grid>
@@ -452,6 +466,7 @@ const Register: FC = () => {
                                         value={confirmationPassword.value}
                                         error={confirmationPassword.errorMessage.length > 0}
                                         onChange={handleChangeConfirmationPassword}
+                                        onKeyPress={(e) => handleKeyPress(e.key)}
                                         fullWidth
                                     />
                                 </Grid>
