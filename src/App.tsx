@@ -11,8 +11,8 @@ import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "~/store";
 import ScrollToTop from "~/components/elements/ScrollToTop";
-import {ApolloProvider, HttpLink, InMemoryCache} from "@apollo/react-hooks";
-import {ApolloClient} from "@apollo/client";
+import {ApolloProvider, HttpLink} from "@apollo/react-hooks";
+import {ApolloClient, InMemoryCache} from "@apollo/client";
 import {REST_URL} from "~/store/api";
 
 
