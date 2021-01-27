@@ -21,6 +21,7 @@ import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
 import {THEME_COLOR_2} from "~/assets/color";
 import {selectIsLoading, setIsLoading} from "~/store/slices/App/displayUI.slice";
+import {Items} from "~/gql/components/items";
 
 const ItemDetail: React.FC = () => {
     const item = useSelector(selectItemDetail)
@@ -173,6 +174,7 @@ const ItemDetail: React.FC = () => {
     return (isLoading ?
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
             : <div className={classes.align_child}>
+                <Items/>
                 <Card style={{display: "flex"}}>
                     <Grid container justify={"center"} alignContent={"center"}>
 

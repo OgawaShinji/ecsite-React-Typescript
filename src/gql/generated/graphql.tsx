@@ -229,7 +229,7 @@ export type FetchItemNamesQuery = (
 );
 
 export type FetchItemsQueryVariables = Exact<{
-  first?: Maybe<Scalars['Int']>;
+  f?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   sort?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -288,8 +288,8 @@ export type FetchItemNamesQueryHookResult = ReturnType<typeof useFetchItemNamesQ
 export type FetchItemNamesLazyQueryHookResult = ReturnType<typeof useFetchItemNamesLazyQuery>;
 export type FetchItemNamesQueryResult = Apollo.QueryResult<FetchItemNamesQuery, FetchItemNamesQueryVariables>;
 export const FetchItemsDocument = gql`
-    query fetchItems($first: Int, $offset: Int, $sort: String, $name: String) {
-  items(first: $first, orderBy: $sort, offset: $offset, name_Icontains: $name) {
+    query fetchItems($f: Int, $offset: Int, $sort: String, $name: String) {
+  items(first: $f, orderBy: $sort, offset: $offset, name_Icontains: $name) {
     edges {
       node {
         id
@@ -317,7 +317,7 @@ export const FetchItemsDocument = gql`
  * @example
  * const { data, loading, error } = useFetchItemsQuery({
  *   variables: {
- *      first: // value for 'first'
+ *      f: // value for 'f'
  *      offset: // value for 'offset'
  *      sort: // value for 'sort'
  *      name: // value for 'name'

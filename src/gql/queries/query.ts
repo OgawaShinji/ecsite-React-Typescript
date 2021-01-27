@@ -10,8 +10,8 @@ const fetchItemNames = gql(`query fetchItemNames {
   }
 }
 `)
-gql(`query fetchItems($first:Int,$offset:Int,$sort:String,$name:String) {
-  items(first:$first,orderBy:$sort,offset:$offset,name_Icontains:$name) {
+gql(`query fetchItems($f:Int,$offset:Int,$sort:String,$name:String) {
+  items(first:$f,orderBy:$sort,offset:$offset,name_Icontains:$name) {
     edges {
       node {
         id

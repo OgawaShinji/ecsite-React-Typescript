@@ -3,12 +3,13 @@ import {useFetchItemNamesQuery, useFetchItemsLazyQuery, useFetchItemsQuery} from
 export const Items: React.FC = () => {
     const {loading, error, data, refetch, networkStatus} = useFetchItemNamesQuery();
 
-    const [getItems] = useFetchItemsLazyQuery({
+    const [getItems,{}] = useFetchItemsLazyQuery({
         fetchPolicy: "network-only",
     });
+    console.log(data)
     const handleClick = () => {
         const items = getItems({
-            variables: {first: 9, offset: 0, sort: "priceM", name: ""},
+            variables: {f: 9, offset: 0, sort: "priceM", name: ""},
         })
         console.log(items)
     }
@@ -18,9 +19,9 @@ export const Items: React.FC = () => {
 
     return (
         <div>
-            items:{data?.items?.edges.map((n) => {
+            {/*items:{data?.items?.edges.map((n) => {
             return <p>{n?.node?.name}</p>
-        })}<br/>
+        })}<br/>*/}
             <button type={"button"} onClick={() => handleClick()}>button</button>
         </div>
     )
