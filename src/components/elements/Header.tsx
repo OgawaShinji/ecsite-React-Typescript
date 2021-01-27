@@ -30,15 +30,25 @@ const useStyles = makeStyles(() =>
             backgroundColor: "#ffa500",
             height: 80
         },
+        header_content:{
+          paddingTop:15
+        },
         headerItem: {
             textDecoration: 'none',
             color: 'white'
         },
         title: {
+            fontWeight: 'bold',
+            fontFamily: 'Zapfino',
+            fontSize:25,
             flexGrow: 1,
-            color: 'white'
+            color: 'white',
         },
         link: {
+            textDecoration: 'none',
+            color: 'black'
+        },
+        login_btn:{
             textDecoration: 'none',
             color: 'black'
         }
@@ -107,11 +117,21 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
         <div className={classes.root}>
             <AppBar position="static">
                 <Toolbar className={classes.header}>
-                    <Grid container>
+                    <Grid container className={classes.header_content}>
                         <Grid item xs={6} container justify={"center"} alignItems={"center"}>
                             <Link to={Path.itemList} className={classes.link}>
-                                <Typography variant="h4" className={classes.title}>
-                                    らくらくピザ
+                                <Typography align="center" className={classes.title}>
+                                    <span style={{color: "red"}}>
+                                       R
+                                    </span>
+                                    akuraku&nbsp;&nbsp;
+                                    <span style={{color: "red"}}>
+                                        P
+                                    </span>
+                                    izza&nbsp;&nbsp;
+                                    <span style={{fontSize:40}}>
+                                        🍕
+                                    </span>
                                 </Typography>
                             </Link>
                         </Grid>
@@ -146,8 +166,13 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
                                     <AccountCircle/>
                                 </IconButton>
                             ) : history.location.pathname !== '/login' ? (
-                                <Link to={Path.login} className={classes.link}>
-                                    <Button color="inherit">Login</Button>
+                                <Link to={Path.login} className={classes.login_btn}>
+                                    <Button
+                                        variant="outlined"
+                                        color="inherit"
+                                    >
+                                        Login
+                                    </Button>
                                 </Link>
                             ) : (
                                 <div/>
