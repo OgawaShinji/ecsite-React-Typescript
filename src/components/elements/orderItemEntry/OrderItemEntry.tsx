@@ -119,7 +119,7 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                         </Grid>
                         {props.parentComponent === 'CartItem' && (
                             <Grid item xs={12} className={classes.left_form_attention}>
-                                ※注文内容の変更は自動で更新されます
+                                ※注文の変更は自動で更新されます
                             </Grid>
                         )}
                     </Grid>
@@ -204,7 +204,8 @@ const orderItemEntryStyleInCart = makeStyles(() => createStyles({
     },
     left_form_attention: {
         textAlign: "center",
-        paddingTop: 50
+        paddingTop: 50,
+        paddingLeft:20
     },
     //左部分各入力フォームの枠
     entry_parts_grid: {
@@ -251,7 +252,15 @@ const orderItemEntryStyleInCart = makeStyles(() => createStyles({
         alignItems: "center",
         backgroundColor: THEME_COLOR_1,
     },
-
+    size_form:{
+        marginBottom:20,
+        textAlign: "center",
+        width:'60%'
+    },
+    quantity_form:{
+        textAlign: "center",
+        width:'60%'
+    },
     dialog: {
         width: '80%',
         position: 'absolute',
