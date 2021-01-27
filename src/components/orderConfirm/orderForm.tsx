@@ -1,5 +1,6 @@
 import React, {useEffect} from "react";
 import {
+    Box,
     Button,
     Checkbox,
     createStyles,
@@ -176,8 +177,7 @@ const OrderForm: React.FC<Props> = (props) => {
 
     //[この内容で注文する]ボタン押下時の処理　
     const handleOrder = async () => {
-        deliveryDateValidation(selectedDate.date);
-        setSelectedDate({date: selectedDate.date, errorMessage: selectedDate.errorMessage});
+        setSelectedDate({date: selectedDate.date, errorMessage: deliveryDateValidation(selectedDate.date)});
         if (selectedDate.errorMessage.length === 0) {
             const date = new Date();
             if (selectedDate.date) {
@@ -196,7 +196,6 @@ const OrderForm: React.FC<Props> = (props) => {
                     paymentMethod = "1";
                     status = 1;
                 }
-
                 const order = {
                     status: status,
                     totalPrice: totalPrice,
@@ -222,11 +221,8 @@ const OrderForm: React.FC<Props> = (props) => {
     const deliveryDateValidation = (date: Date | null): string => {
         if (date) {
             const orderDate = new Date();
-            if (orderDate > date) {
-                return '現在時刻よりも後を選んでください'
-            } else {
-                return ''
-            }
+            if (orderDate > date) return '現在時刻よりも後を選んでください'
+            return ''
         } else {
             return ''
         }
@@ -244,7 +240,11 @@ const OrderForm: React.FC<Props> = (props) => {
                                 <Grid container spacing={1} alignItems="center">
                                     <Grid item xs={6} sm={3}>
                                         <Typography component="h6" variant="h5" align="left"
-                                                    className={classes.typoGraphColor}>お届け先情報</Typography>
+                                                    className={classes.typoGraphColor}>
+                                            <Box fontWeight="fontWeightBold">
+                                                お届け先情報
+                                            </Box>
+                                        </Typography>
                                     </Grid>
                                     <Grid item xs={6} sm={2}>
                                         <Button variant="contained"
@@ -258,39 +258,50 @@ const OrderForm: React.FC<Props> = (props) => {
                                     </Grid>
                                     <Grid item xs={6} sm={7}>
                                         <Typography component="h6" variant="h5" align={"center"}
-                                                    className={classes.typoGraphColor}>お支払方法</Typography>
+                                                    className={classes.typoGraphColor}>
+                                            <Box fontWeight="fontWeightBold">
+                                                お支払方法
+                                            </Box>
+                                        </Typography>
                                     </Grid>
                                 </Grid>
                             </Grid>
                             <Grid container spacing={1} justify="center" alignItems="center">
                                 <Grid item xs={6} sm={7}>
                                     <br/>
-                                    <Typography align="left" variant={"subtitle2"}>お名前: {userInfo?.name} </Typography>
-                                    <Typography align="left"
-                                                variant={"subtitle2"}
-                                    >
+                                    <Typography align="left" variant={"subtitle2"}
+                                                style={{color: "black"}}>お名前: {userInfo?.name} </Typography>
+                                    <Typography align="left" variant={"subtitle2"} style={{color: "black"}}>
                                         郵便番号: {userInfo?.zipcode.substr(0, 3)} - {userInfo?.zipcode.substr(3, 4)}
                                     </Typography>
-                                    <Typography align="left" variant={"subtitle2"}>住所: {userInfo?.address} </Typography>
-                                    <Typography align="left"
-                                                variant={"subtitle2"}>電話番号: {userInfo?.telephone} </Typography>
+                                    <Typography align="left" variant={"subtitle2"}
+                                                style={{color: "black"}}>住所: {userInfo?.address} </Typography>
+                                    <Typography align="left" variant={"subtitle2"}
+                                                style={{color: "black"}}>電話番号: {userInfo?.telephone} </Typography>
                                 </Grid>
                                 <Grid item xs={6} sm={5}>
-                                    <Grid item xs={6} sm={12}>
-                                        <Checkbox
-                                            color="default"
-                                            checked={checkedCash}
-                                            onChange={handleChangePaymentCash}
-                                        />
-                                        代金引換
-                                    </Grid>
-                                    <Grid item xs={6} sm={12}>
-                                        <Checkbox
-                                            color="default"
-                                            checked={checkedCredit}
-                                            onChange={handleChangePaymentCredit}
-                                        />
-                                        クレジットカード決済
+                                    <Grid container alignItems={"center"} >
+                                        <Grid item xs={2} >
+                                            <Checkbox
+                                                color="default"
+                                                checked={checkedCash}
+                                                onChange={handleChangePaymentCash}
+                                            />
+
+                                        </Grid>
+                                        <Grid item xs={10}>
+                                            <Typography style={{color: "black"}}>代金引換</Typography>
+                                        </Grid>
+                                        <Grid item xs={2} >
+                                            <Checkbox
+                                                color="default"
+                                                checked={checkedCredit}
+                                                onChange={handleChangePaymentCredit}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={10}>
+                                            <Typography style={{color: "black"}}>クレジットカード決済</Typography>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -299,7 +310,11 @@ const OrderForm: React.FC<Props> = (props) => {
                                 <Grid container spacing={3} alignItems="center">
                                     <Grid item xs={2}>
                                         <Typography component="h6" variant="h5" align="left"
-                                                    className={classes.typoGraphColor}>配送日時</Typography>
+                                                    className={classes.typoGraphColor}>
+                                            <Box fontWeight="fontWeightBold">
+                                                配送日時
+                                            </Box>
+                                        </Typography>
                                     </Grid>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <Grid item xs={3}>
