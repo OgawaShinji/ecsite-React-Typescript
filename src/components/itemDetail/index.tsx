@@ -20,7 +20,7 @@ import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.s
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
 import {THEME_COLOR_2} from "~/assets/color";
-import {selectIsLoading, setIsLoading} from "~/store/slices/App/displayUI.slice";
+import {setItemDetail} from "~/store/slices/Domain/item.slice"
 
 const ItemDetail: React.FC = () => {
     const item = useSelector(selectItemDetail)
@@ -29,34 +29,47 @@ const ItemDetail: React.FC = () => {
     const history = useHistory();
     const [detail, setDetail] = useState<Item | null>(item);
 
-    const isLoading = useSelector(selectIsLoading);
+    //const isLoading = useSelector(selectIsLoading);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     let {itemId}: any = useParams()
     itemId = Number(itemId)
 
     useEffect(() => {
-        const firstEffect = async () => {
-            if (typeof itemId !== "number") console.log('this is error: itemId is only number')//throw new Error()
+        //ページ遷移して来たときにURLのitemIdがNumberに直せるかとトッピングがstoreに入っているかをチェック
+        if (typeof itemId !== "number") console.log('this is error: itemId is only number')//throw new Error()
+        if (toppings.length === 0) dispatch(fetchToppings()).then()
+            .catch((e) => dispatch(setError({isError: true, code: e.message})))
+    }, [itemId, toppings.length, dispatch])
 
-            if (item === null) {
-                await dispatch(fetchItemDetail(itemId))
-                    .then((i) => {
-                        if (i.payload.item) setDetail(i.payload.item)
-                    })
-                    .catch((e) => dispatch(setError({isError: true, code: e.message})))
-            }
-            if (toppings.length === 0) await dispatch(fetchToppings()).then()
-                .catch((e) => dispatch(setError({isError: true, code: e.message})))
-            if (detail !== null) await setTotalPrice(detail?.priceM)
+    useEffect(() => {
+        //unmount時の処理
+        return () => {
+            dispatch(setItemDetail(null))
         }
-        firstEffect().then(() => dispatch(setIsLoading(false))
-        )
-    }, [dispatch, itemId, item, toppings, detail])
+    }, [dispatch])
+
+    useEffect(() => {
+        //itemList以外から遷移してくると詳細情報がstoreに入っていないのでDBに取りに行く
+        if (item === null) {
+            dispatch(fetchItemDetail(itemId))
+                .then(async (i) => {
+                    if (i.payload.item) {
+                        await setDetail(i.payload.item)
+                        await setTotalPrice(i.payload.item.priceM)
+                        await setIsLoading(false)
+                    }
+
+                })
+                .catch((e) => dispatch(setError({isError: true, code: e.message})))
+        }
+        setIsLoading(false)
+    }, [dispatch, item, itemId])
 
     const [size, setSize] = useState<string>('M');
     const [quantity, setQuantity] = useState<number>(1);
     const [selectedToppings, setSelectToppings] = useState<Topping[]>([])
-    const [totalPrice, setTotalPrice] = useState<number>(0)
+    const [totalPrice, setTotalPrice] = useState<number>(detail?.priceM ? detail.priceM : 0)
 
     const selectedState: itemEntryState = {
         size: size,
@@ -120,13 +133,14 @@ const ItemDetail: React.FC = () => {
             newTotalPrice: totalPrice
         }
         await dispatch(asyncPostOrderItem(newOrder)).then(async (i) => {
-            await dispatch(setIsLoading(true))
+            //await dispatch(setIsLoading(true))
+            await setIsLoading(true)
             if (i.payload === '200' && moveTo === 'cart') {
-                await dispatch(setIsLoading(true))
+                //await dispatch(setIsLoading(true))
                 await history.push(Path.cart)
             }
             if (i.payload === '200' && moveTo === 'confirm') {
-                await dispatch(setIsLoading(true))
+                //await dispatch(setIsLoading(true))
                 await history.push(Path.orderConfirm)
             }
         }).catch((e) => {
