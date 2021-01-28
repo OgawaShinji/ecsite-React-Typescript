@@ -5,7 +5,7 @@ import {fetchItems, selectItemCount, selectItems} from "~/store/slices/Domain/it
 import {setError} from "~/store/slices/App/error.slice";
 import {AppDispatch} from "~/store";
 
-import {Button, Grid, makeStyles, Typography, Paper, CircularProgress} from "@material-ui/core";
+import {Button, Grid, LinearProgress, makeStyles, Paper, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
 
 import SearchArea from "~/components/itemList/SearchArea";
@@ -167,9 +167,7 @@ const ItemList: React.FC = () => {
 
             {/*商品一覧*/}
             {isLoading ? (
-                <Grid container justify={"center"} alignItems={"center"}>
-                    <CircularProgress color={"secondary"} style={{margin: '10%'}}/>
-                </Grid>
+                <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
             ) : (
                 <Grid container justify={"center"} alignItems={"center"}>
                     <Grid item xs={10}>
