@@ -135,7 +135,6 @@ const OrderForm: React.FC<Props> = (props) => {
             setCheckedCash(false)
         }
     };
-
     //配達日時選択中の処理 動的に日付の内容を更新
     const handleDateChange = (date: Date | null) => {
         if (date) {
@@ -147,7 +146,6 @@ const OrderForm: React.FC<Props> = (props) => {
             errorMessage: deliveryDateValidation(date)
         })
     };
-
     //配送時間選択中の処理　動的に時間を更新
     const handleDeliveryHour = async (event: React.ChangeEvent<{ value: unknown }>) => {
         setDeliveryHour(event.target.value as string);
@@ -166,7 +164,6 @@ const OrderForm: React.FC<Props> = (props) => {
             errorMessage: deliveryDateValidation(selectedDate.date)
         })
     }
-
     // 日付をYYYY-MM-DDの書式で返す
     function formatDate(date: Date | null) {
         if (date) {
@@ -176,8 +173,6 @@ const OrderForm: React.FC<Props> = (props) => {
             return (year + '-' + month + '-' + day);
         }
     }
-
-
     //[この内容で注文する]ボタン押下時の処理　
     const handleOrder = async () => {
         props.setLoading(true);
@@ -221,7 +216,6 @@ const OrderForm: React.FC<Props> = (props) => {
             }
         }
     }
-
     //配送日時のバリデーションチェック
     const deliveryDateValidation = (date: Date | null): string => {
         if (date) {
@@ -235,7 +229,6 @@ const OrderForm: React.FC<Props> = (props) => {
             return ''
         }
     }
-
     const classes = useStyles();
 
     return (
@@ -280,7 +273,7 @@ const OrderForm: React.FC<Props> = (props) => {
                                     <Typography align="left" variant={"subtitle2"}
                                                 style={{color: "black"}}>お名前: {userInfo?.name} </Typography>
                                     <Typography align="left" variant={"subtitle2"} style={{color: "black"}}>
-                                        郵便番号: {userInfo?.zipcode.substr(0, 3)} - {userInfo?.zipcode.substr(3, 4)}
+                                        郵便番号: {userInfo?.zipcode.substr(0, 3)}-{userInfo?.zipcode.substr(3, 4)}
                                     </Typography>
                                     <Typography align="left" variant={"subtitle2"}
                                                 style={{color: "black"}}>住所: {userInfo?.address} </Typography>
