@@ -14,7 +14,7 @@ import {OrderItem} from "~/types/interfaces";
 
 import OrderInfo from "~/components/history/OrderInfo";
 import OrderHistoryDialog from "~/components/history/OrderHistoryDialog";
-import {makeStyles, Grid, List, ListItem, Divider, Typography, CircularProgress} from "@material-ui/core";
+import {Divider, Grid, LinearProgress, List, ListItem, makeStyles, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
@@ -125,9 +125,7 @@ const OrderConfirm: React.FC = () => {
 
             {isLoading ? (
                 // Loading
-                <Grid container justify={"center"} alignItems={"center"}>
-                    <CircularProgress color={"secondary"} style={{margin: '10%'}}/>
-                </Grid>
+                <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
             ) : (
                 // 注文履歴
                 <Grid container justify={"center"} alignItems={"center"}>

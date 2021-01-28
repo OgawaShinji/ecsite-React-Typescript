@@ -15,9 +15,8 @@ import {
     selectOrder,
     selectOrderSubTotalPrice
 } from "~/store/slices/Domain/order.slice"
-import {Grid, List, makeStyles, Typography} from "@material-ui/core";
+import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
 import {setError} from "~/store/slices/App/error.slice";
-import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles({
     root: {
@@ -68,7 +67,7 @@ const CartList: React.FC = () => {
                 setIsLoading(false);
             }, 500)
         }
-        loading().then(() =>{
+        loading().then(() => {
             dispatch(asyncFetchOrderItems()).catch((e) => {
                 dispatch(setError({isError: true, code: e.message}))
             })
@@ -139,9 +138,7 @@ const CartList: React.FC = () => {
     return (
         <div>
             {isLoading ? (
-                <Grid container justify={"center"} alignItems={"center"}>
-                    <CircularProgress color={"secondary"} style={{margin: '10%'}}/>
-                </Grid>
+                <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
             ) : (
                 <div className={classes.root}>
                     <Grid container style={{paddingLeft: 20}}>
