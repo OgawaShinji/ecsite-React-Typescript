@@ -5,7 +5,7 @@ import {
     Button,
     createStyles,
     Grid,
-    IconButton,
+    IconButton, LinearProgress,
     makeStyles,
     Paper,
     TextField,
@@ -87,6 +87,8 @@ const Register: FC = () => {
     //ブラインドのステータス
     const [passType, setPassType] = useState("password");
     const [confirmPassType, setConfirmPassType] = useState("password");
+    //ローディング処理
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
     //-----------------------　バリデーション : ○○Validation　-------------------------------------------
@@ -253,6 +255,7 @@ const Register: FC = () => {
      * [登録]ボタン押下時の処理　
      */
     const handleClickRegister = async () => {
+        setIsLoading( true);
         const zipcode = firstZipcode.value + secondZipcode.value;
         const telephone = firstTelNum.value + '-' + secondTelNum.value + '-' + thirdTelNum.value;
         let userInfo: User = {
@@ -265,15 +268,22 @@ const Register: FC = () => {
         }
         await dispatch(postRegisterUser(userInfo)).then((i) => {
             if (i.payload === '200') routeHistory.push(Path.login);
-        }).catch((e) => {
+        }).catch( async (e) => {
             if (e.message === '400') {
-                setEmailDuplicated(true);
+                const loading = async () => {
+                    setTimeout( () => {
+                        setIsLoading(false);
+                    }, 500)
+                }
+                loading().then( () => {
+                    setEmailDuplicated(true);
+                })
             }
         });
     }
 
-    return (
-        <>
+    return ( isLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (
+        <div>
             <Grid container alignContent="center" justify="center" className={classes.pad}>
                 <Paper className={classes.root2}>
                     <Grid container alignContent="center" justify="center">
@@ -497,7 +507,7 @@ const Register: FC = () => {
                     </Grid>
                 </Paper>
             </Grid>
-        </>
-    )
+        </div>
+    ))
 }
 export default Register;
