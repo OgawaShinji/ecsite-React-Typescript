@@ -1,13 +1,18 @@
 import React from "react";
-
-import {Paper, makeStyles, Grid, Avatar, CardActionArea, Typography} from '@material-ui/core';
-import {Item} from '~/types/interfaces';
+import {withRouter, RouteComponentProps} from 'react-router-dom';
 
 import {useDispatch} from "react-redux";
-import {setItemDetail} from '~/store/slices/Domain/item.slice';
 import {AppDispatch} from "~/store";
+import {setItemDetail} from '~/store/slices/Domain/item.slice';
 
-import {withRouter, RouteComponentProps} from 'react-router-dom';
+import {Paper, makeStyles, Grid, Avatar, CardActionArea, Typography} from '@material-ui/core';
+
+import {Item} from '~/types/interfaces';
+import {setError} from "~/store/slices/App/error.slice";
+
+type Props = {
+    item: Item;
+};
 
 const useStyles = makeStyles((theme) => ({
     avatar: {
@@ -31,27 +36,29 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-type Props = {
-    item: Item;
-}
-
 const ItemCard: React.FC<Props & RouteComponentProps> = props => {
 
     const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
 
-    const toItemDetail = async () => {
+    const dispatchItemDetail = async () => {
         dispatch(setItemDetail(props.item));
-    }
+    };
+
+    const toItemDetail = () => {
+        dispatchItemDetail()
+            .then(() => {
+                props.history.push({pathname: `/itemDetail/${props.item.id}`});
+            })
+            .catch((e) => {
+                dispatch(setError({isError: true, code: e.message}));
+            });
+    };
 
     return (
         <div>
             <Paper elevation={0}>
-                <CardActionArea onClick={() => {
-                    toItemDetail().then(() => {
-                        props.history.push({pathname: `/itemDetail/${props.item.id}`});
-                    })
-                }}>
+                <CardActionArea onClick={toItemDetail}>
                     <Grid container justify={"center"} alignItems={"center"}>
                         <Grid item xs={12}>
                             <Avatar variant={"rounded"} alt={'pizza'}
