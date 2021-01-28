@@ -205,7 +205,7 @@ const ItemDetail: React.FC = () => {
                         {/*説明文*/}
                         <Grid item xs={12} className={classes.description_content}>
                             <CardContent style={{width: "70%", textAlign: "center"}}>
-                                <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
+                                <Typography variant={"body1"} color={"textSecondary"} component={"p"} data-testId="item-description">
                                     {detail?.description}
                                     <br/>＊写真はイメージです＊
                                 </Typography>
