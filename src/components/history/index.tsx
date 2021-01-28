@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch} from "~/store";
 import {
     fetchOrderHistory,
     fetchOrderHistoryTotalCount,
@@ -8,14 +9,14 @@ import {
     selectOrderHistoryTotalCount
 } from "~/store/slices/Domain/history.slice";
 import {setError} from '~/store/slices/App/error.slice';
-import {AppDispatch} from "~/store";
-
-import {OrderItem} from "~/types/interfaces";
 
 import OrderInfo from "~/components/history/OrderInfo";
 import OrderHistoryDialog from "~/components/history/OrderHistoryDialog";
+
 import {Divider, Grid, LinearProgress, List, ListItem, makeStyles, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
+
+import {OrderItem} from "~/types/interfaces";
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -40,6 +41,7 @@ const OrderConfirm: React.FC = () => {
     const orders = useSelector(selectOrderHistory);
     const ordersTotalCount = useSelector(selectOrderHistoryTotalCount);
 
+    // コンポ―ネント上で管理するstate
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(1);
     const [isOpen, setIsOpen] = useState(false);
@@ -82,7 +84,7 @@ const OrderConfirm: React.FC = () => {
         }, 500)
     }, [orders])
 
-    // orderInfoコンポーネント一覧のJSXを作成
+    // 注文情報一覧のJSXを作成
     const orderInfoList = orders.map((order, index) => {
         const listItem = (
             <ListItem button onClick={() => {
@@ -131,7 +133,7 @@ const OrderConfirm: React.FC = () => {
                     </Grid>
                 </Grid>
             ) : (
-                // 注文履歴
+                // 注文履歴一覧
                 <Grid container justify={"center"} alignItems={"center"}>
                     <Grid item xs={10}>
                         <List>
