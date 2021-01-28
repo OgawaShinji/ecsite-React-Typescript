@@ -69,7 +69,6 @@ const OrderForm: React.FC<Props> = (props) => {
 
     const dispatch: AppDispatch = useDispatch();
     const routeHistory = useHistory();
-    // const {user, setLoading} = props;
 
     //配送時間（○○時）
     const hourOption: string[] = [
@@ -227,8 +226,6 @@ const OrderForm: React.FC<Props> = (props) => {
     const deliveryDateValidation = (date: Date | null): string => {
         if (date) {
             const orderDate = new Date();
-            console.log(date)
-            console.log(orderDate)
             if (orderDate > date) {
                 return '現在時刻よりも後を選んでください'
             } else {
