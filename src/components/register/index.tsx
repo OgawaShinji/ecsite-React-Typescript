@@ -106,14 +106,14 @@ const Register: FC = () => {
         if (!value || value === '') return '※郵便番号を入力してください'
         const regex = /^[0-9]+$/;
         if (!regex.test(value)) return '※半角数字を入力してください'
-        if (3 < value.length) return '※3字以内で入力してください'
+        if (3 !== value.length) return '※3桁で入力してください'
         return ''
     }
     const secondZipcodeValidation = (value: string): string => {
         if (!value || value === '') return '※郵便番号を入力してください'
         const regex = /^[0-9]+$/;
         if (!regex.test(value)) return '※半角数字を入力してください'
-        if (4 < value.length) return '※4字以内で入力してください'
+        if (4 !== value.length) return '※4桁で入力してください'
         return ''
     }
     const addressValidation = (value: string): string => {
