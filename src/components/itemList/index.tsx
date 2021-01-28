@@ -167,7 +167,11 @@ const ItemList: React.FC = () => {
 
             {/*商品一覧*/}
             {isLoading ? (
-                <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
+                <Grid container justify={"center"} alignItems={"center"}>
+                    <Grid item xs={7}>
+                        <LinearProgress style={{margin: '10%'}}/>
+                    </Grid>
+                </Grid>
             ) : (
                 <Grid container justify={"center"} alignItems={"center"}>
                     <Grid item xs={10}>

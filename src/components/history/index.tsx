@@ -125,7 +125,11 @@ const OrderConfirm: React.FC = () => {
 
             {isLoading ? (
                 // Loading
-                <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
+                <Grid container justify={"center"} alignItems={"center"}>
+                    <Grid item xs={7}>
+                        <LinearProgress style={{margin: '10%'}}/>
+                    </Grid>
+                </Grid>
             ) : (
                 // 注文履歴
                 <Grid container justify={"center"} alignItems={"center"}>
