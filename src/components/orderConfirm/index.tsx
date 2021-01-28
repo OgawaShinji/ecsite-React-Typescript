@@ -1,11 +1,11 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {asyncFetchOrderItems, selectOrderItems} from "~/store/slices/Domain/order.slice";
 import {useDispatch, useSelector} from "react-redux";
 import OrderForm from "~/components/orderConfirm/orderForm";
 import OrderItemCard from "~/components/elements/orderItemCard/OrderItemCard";
 import {selectLoginUser} from "~/store/slices/App/auth.slice";
 
-import {Grid, makeStyles} from "@material-ui/core";
+import {Grid, LinearProgress, makeStyles} from "@material-ui/core";
 import {setError} from "~/store/slices/App/error.slice";
 import {AppDispatch} from "~/store";
 import {RouteComponentProps, withRouter} from "react-router-dom";
@@ -29,9 +29,24 @@ const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
     //storeのstateにあるloginUserの取得
     let loginUser = useSelector(selectLoginUser);
 
+    //ローディング処理
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    //注文確認時の発火させるローディング処理
+    const setLoading = (boolean: boolean) => {
+        setIsLoading(boolean);
+    }
+
     useEffect(() => {
-        dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
+        const loading = async () => {
+            setTimeout( () => {
+                setIsLoading(false);
+            }, 500)
+        }
+        loading().then( () => {
+            dispatch(asyncFetchOrderItems()).catch((e) => {
+                dispatch(setError({isError: true, code: e.message}))
+            })
         })
     }, [dispatch])
 
@@ -41,8 +56,8 @@ const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
         }
     }, [orderItems, props.history])
 
-    return (
-        <>
+    return ( isLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (
+        <div>
             <Grid container justify={"center"} alignItems={"center"}>
                 <Grid item xs={9}>
                     {orderItems && orderItems.map((orderItem) => (
@@ -52,11 +67,10 @@ const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
                     ))}
                 </Grid>
             </Grid>
-
             <div className={classes.pad}>
-                <OrderForm user={loginUser}/>
+                <OrderForm user={loginUser} setLoading={setLoading}/>
             </div>
-        </>
-    )
+        </div>
+    ))
 }
 export default withRouter(OrderConfirm);

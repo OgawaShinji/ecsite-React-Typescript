@@ -25,7 +25,8 @@ import {setError} from "~/store/slices/App/error.slice";
 import {THEME_COLOR_2} from "~/assets/color";
 
 type Props = {
-    user: null | User
+    user: null | User,
+    setLoading: (boolean: boolean) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -68,6 +69,7 @@ const OrderForm: React.FC<Props> = (props) => {
 
     const dispatch: AppDispatch = useDispatch();
     const routeHistory = useHistory();
+    // const {user, setLoading} = props;
 
     //配送時間（○○時）
     const hourOption: string[] = [
@@ -95,6 +97,7 @@ const OrderForm: React.FC<Props> = (props) => {
     //デフォルトの配送時間をセット
     const [deliveryHour, setDeliveryHour] = React.useState<string>(String(new Date().getHours() + 2));
     const [deliveryMinutes, setDeliveryMinutes] = React.useState<string>("00");
+
 
     useEffect(() => {
         setUserInfo(props.user)
@@ -175,15 +178,17 @@ const OrderForm: React.FC<Props> = (props) => {
         }
     }
 
+
     //[この内容で注文する]ボタン押下時の処理　
     const handleOrder = async () => {
+        props.setLoading(true);
         setSelectedDate({date: selectedDate.date, errorMessage: deliveryDateValidation(selectedDate.date)});
         if (selectedDate.errorMessage.length === 0) {
             const date = new Date();
             if (selectedDate.date) {
                 const orderDate = formatDate(date);
-                const consumptionTax = orderSubTotalPrice * 0.1
-                const totalPrice = orderSubTotalPrice + consumptionTax
+                const consumptionTax = orderSubTotalPrice * 0.1;
+                const totalPrice = orderSubTotalPrice + consumptionTax;
                 let paymentMethod;
                 let status;
                 if (checkedCash) {
@@ -210,7 +215,8 @@ const OrderForm: React.FC<Props> = (props) => {
                 }
                 await dispatch(postOrder(order)).then((i) => {
                     if (i.payload) routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
-                }).catch((e) => {
+                }).catch(async (e) => {
+                    await props.setLoading(false);
                     dispatch(setError({isError: true, code: e.message}));
                 });
             }
@@ -221,8 +227,13 @@ const OrderForm: React.FC<Props> = (props) => {
     const deliveryDateValidation = (date: Date | null): string => {
         if (date) {
             const orderDate = new Date();
-            if (orderDate > date) return '現在時刻よりも後を選んでください'
-            return ''
+            console.log(date)
+            console.log(orderDate)
+            if (orderDate > date) {
+                return '現在時刻よりも後を選んでください'
+            } else {
+                return ''
+            }
         } else {
             return ''
         }
@@ -231,7 +242,7 @@ const OrderForm: React.FC<Props> = (props) => {
     const classes = useStyles();
 
     return (
-        <>
+        <div>
             <div className={classes.root}>
                 <Grid container spacing={3} justify="center" alignItems="center">
                     <Grid item xs={6} sm={7}>
@@ -280,8 +291,8 @@ const OrderForm: React.FC<Props> = (props) => {
                                                 style={{color: "black"}}>電話番号: {userInfo?.telephone} </Typography>
                                 </Grid>
                                 <Grid item xs={6} sm={5}>
-                                    <Grid container alignItems={"center"} >
-                                        <Grid item xs={2} >
+                                    <Grid container alignItems={"center"}>
+                                        <Grid item xs={2}>
                                             <Checkbox
                                                 color="default"
                                                 checked={checkedCash}
@@ -292,7 +303,7 @@ const OrderForm: React.FC<Props> = (props) => {
                                         <Grid item xs={10}>
                                             <Typography style={{color: "black"}}>代金引換</Typography>
                                         </Grid>
-                                        <Grid item xs={2} >
+                                        <Grid item xs={2}>
                                             <Checkbox
                                                 color="default"
                                                 checked={checkedCredit}
@@ -322,7 +333,9 @@ const OrderForm: React.FC<Props> = (props) => {
                                                 id="date-picker-dialog"
                                                 label="配送日"
                                                 format="yyyy/MM/dd"
-                                                value={selectedDate.date}
+                                                //20時,21時に描画された場合、１日後にセット
+                                                value={deliveryHour === "22" || deliveryHour === "23" ?
+                                                    selectedDate.date?.setDate(selectedDate.date?.getDate() + 1) : selectedDate.date}
                                                 onChange={handleDateChange}
                                                 error={selectedDate.errorMessage.length > 0}
                                             />
@@ -330,7 +343,8 @@ const OrderForm: React.FC<Props> = (props) => {
                                         <Grid item xs={1}>
                                             <InputLabel htmlFor="age-native-simple">時</InputLabel>
                                             <Select onChange={handleDeliveryHour}
-                                                    value={deliveryHour ? deliveryHour : ''}
+                                                //セットされた時間がオプションに含まれていない場合、デフォルトで正午にセット
+                                                    value={hourOption.includes(deliveryHour) ? deliveryHour : '12'}
                                                     error={selectedDate.errorMessage.length > 0}
                                             >
                                                 {hourOption.map((hour: string, index: number) => (
@@ -377,7 +391,7 @@ const OrderForm: React.FC<Props> = (props) => {
                     </Grid>
                 </Grid>
             </div>
-        </>
+        </div>
     )
 }
 export default OrderForm
