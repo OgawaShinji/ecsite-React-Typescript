@@ -17,6 +17,7 @@ import {
 } from "~/store/slices/Domain/order.slice"
 import {Grid, List, makeStyles, Typography} from "@material-ui/core";
 import {setError} from "~/store/slices/App/error.slice";
+import {useFetchOrderItemsQuery} from "~/gql/generated/mock/OrderGraphql";
 
 const useStyles = makeStyles({
     root: {
@@ -57,6 +58,9 @@ const CartList: React.FC = () => {
     let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
 
     const [orderItems, setOrderItems] = useState<OrderItem[] | undefined>()
+
+    const {loading, error, data, refetch, networkStatus} = useFetchOrderItemsQuery()
+    console.log(data)
 
     // 初期表示
     useEffect(() => {
