@@ -53,7 +53,6 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         modal: {},
         dialog: {
-            backgroundColor: 'red',
             width: '40%',
             position: 'absolute',
             top: '50%',

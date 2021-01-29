@@ -1,9 +1,13 @@
 import React from "react";
-import {Avatar, Paper, Grid, makeStyles, Typography, Box, Divider, Button} from "@material-ui/core";
-
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 
+import {Avatar, Paper, Grid, makeStyles, Typography, Box, Divider, Button} from "@material-ui/core";
+
 import {OrderItem} from "~/types/interfaces";
+
+type Props = {
+    orderItem: OrderItem
+};
 
 const useStyles = makeStyles((theme) => ({
     avatar: {
@@ -18,22 +22,16 @@ const useStyles = makeStyles((theme) => ({
     },
     control: {
         padding: theme.spacing(1)
-    },
-    subTotalPrice: {
-        borderBottom: 'dashed 2px grey'
     }
 }));
 
-type Props = {
-    orderItem: OrderItem
-}
+const OrderItems: React.FC<Props & RouteComponentProps> = props => {
 
-const OrderItems: React.FC<Props & RouteComponentProps> = (props) => {
     const classes = useStyles();
 
     const toItemDetail = () => {
-        props.history.push({pathname: `/itemDetail/${props.orderItem.item.id}`})
-    }
+        props.history.push({pathname: `/itemDetail/${props.orderItem.item.id}`});
+    };
 
     return (
         <Paper variant={"outlined"} elevation={0}>
@@ -63,17 +61,15 @@ const OrderItems: React.FC<Props & RouteComponentProps> = (props) => {
                         <Grid item container>
                             <Grid item xs={1}/>
                             <Grid item xs={5}>
-                                <Typography
-                                    gutterBottom>
+                                <Typography gutterBottom>
                                     {/*>注文内容のサイズによって表示を変える*/}
                                     価格
                                     : {props.orderItem.size === 'M' ? props.orderItem.item.priceM.toLocaleString() : null}
                                     {props.orderItem.size === 'L' ? props.orderItem.item.priceL.toLocaleString() : null}
                                     円
                                 </Typography>
-                                <Typography
-                                    gutterBottom
-                                >サイズ : {props.orderItem.size}
+                                <Typography gutterBottom>
+                                    サイズ : {props.orderItem.size}
                                 </Typography>
                                 <Typography variant="subtitle1">
                                     数量 : {props.orderItem.quantity + '個'}

@@ -15,7 +15,6 @@ import {ApolloProvider, HttpLink} from "@apollo/react-hooks";
 import {ApolloClient, InMemoryCache} from "@apollo/client";
 import {REST_URL} from "~/store/api";
 
-
 const useStyles = makeStyles({
     App: {
         minHeight: "100vh", /* ←コンテンツの高さの最小値＝ブラウザの高さに指定 */
@@ -55,7 +54,7 @@ const App: React.FC<RouteComponentProps> = () => {
 
     // 401error発生時、執行されているがAppに保持され続けているtokenを削除
     useEffect(() => {
-        if (errorInStore.code == 401) localStorage.removeItem('Authorization')
+        if (errorInStore.code === '401') localStorage.removeItem('Authorization')
     }, [errorInStore])
 
     const client = new ApolloClient({
@@ -73,7 +72,7 @@ const App: React.FC<RouteComponentProps> = () => {
             <ApolloProvider client={client}>
                 <ScrollToTop/>
                 <Header isLogin={isLogin}/>
-                {errorInStore.isError ? errorInStore.code == 401 ? <Redirect to="/login"/> :
+                {errorInStore.isError ? errorInStore.code === "401" ? <Redirect to="/login"/> :
                     <ErrorPage/> : routes}
                 <Footer/>
             </ApolloProvider>

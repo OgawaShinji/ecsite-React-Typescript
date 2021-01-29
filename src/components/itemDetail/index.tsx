@@ -29,7 +29,6 @@ const ItemDetail: React.FC = () => {
     const history = useHistory();
     const [detail, setDetail] = useState<Item | null>(item);
 
-    //const isLoading = useSelector(selectIsLoading);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     let {itemId}: any = useParams()
@@ -71,6 +70,7 @@ const ItemDetail: React.FC = () => {
     const [selectedToppings, setSelectToppings] = useState<Topping[]>([])
     const [totalPrice, setTotalPrice] = useState<number>(detail?.priceM ? detail.priceM : 0)
 
+    //OrderItemEntryにpropsで渡すためのデータ整形
     const selectedState: itemEntryState = {
         size: size,
         quantity: quantity,
@@ -136,11 +136,9 @@ const ItemDetail: React.FC = () => {
             //await dispatch(setIsLoading(true))
             await setIsLoading(true)
             if (i.payload === '200' && moveTo === 'cart') {
-                //await dispatch(setIsLoading(true))
                 await history.push(Path.cart)
             }
             if (i.payload === '200' && moveTo === 'confirm') {
-                //await dispatch(setIsLoading(true))
                 await history.push(Path.orderConfirm)
             }
         }).catch((e) => {

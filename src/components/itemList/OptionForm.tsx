@@ -1,13 +1,6 @@
 import React from "react";
 import {FormControl, Select, InputLabel, makeStyles, MenuItem} from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 90,
-    }
-}));
-
 type OptionItem = {
     value: number;
     label: string;
@@ -19,6 +12,13 @@ type Props = {
     optionItems: Array<OptionItem>;
     handleChange: (value: number) => void;
 };
+
+const useStyles = makeStyles((theme) => ({
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 90,
+    }
+}));
 
 const OptionForm: React.FC<Props> = props => {
 
