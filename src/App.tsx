@@ -11,9 +11,7 @@ import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "~/store";
 import ScrollToTop from "~/components/elements/ScrollToTop";
-import {ApolloProvider, HttpLink} from "@apollo/react-hooks";
-import {ApolloClient, InMemoryCache} from "@apollo/client";
-import {REST_URL} from "~/store/api";
+import {ApolloClient, ApolloProvider, HttpLink, InMemoryCache} from "@apollo/client";
 
 const useStyles = makeStyles({
     App: {
@@ -57,10 +55,11 @@ const App: React.FC<RouteComponentProps> = () => {
         if (errorInStore.code === '401') localStorage.removeItem('Authorization')
     }, [errorInStore])
 
+    // apolloClientの環境設定
     const client = new ApolloClient({
         cache: new InMemoryCache(),
         link: new HttpLink({
-            uri: REST_URL + "/django_ql/",
+            uri: "http://localhost:4000/",
             headers: {
                 Authorization: localStorage.getItem("Authorization")
             },
