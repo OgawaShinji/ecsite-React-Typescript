@@ -9,7 +9,7 @@ import {
     Typography
 } from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchItemDetail, selectItemDetail} from "~/store/slices/Domain/item.slice";
+import {fetchItemDetail, selectItemDetail, setItemDetail} from "~/store/slices/Domain/item.slice";
 import {AppDispatch} from "~/store";
 import {useHistory, useParams} from "react-router-dom"
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
@@ -20,14 +20,13 @@ import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.s
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
 import {THEME_COLOR_2} from "~/assets/color";
-import {setItemDetail} from "~/store/slices/Domain/item.slice"
 
 const ItemDetail: React.FC = () => {
-    const item = useSelector(selectItemDetail)
+    const item: Item | null = useSelector(selectItemDetail)
     const toppings: Topping[] = useSelector(selectToppings)
     const dispatch: AppDispatch = useDispatch()
     const history = useHistory();
-    const [detail, setDetail] = useState<Item | null>(item);
+    const [detail, setDetail] = useState<Item | null>(item ? typeof item !== "undefined" ? item : null : null);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -35,11 +34,10 @@ const ItemDetail: React.FC = () => {
     itemId = Number(itemId)
 
     useEffect(() => {
-        //ページ遷移して来たときにURLのitemIdがNumberに直せるかとトッピングがstoreに入っているかをチェック
-        if (typeof itemId !== "number") console.log('this is error: itemId is only number')//throw new Error()
+        //ページ遷移して来たときにトッピングがstoreに入っているかをチェック
         if (toppings.length === 0) dispatch(fetchToppings()).then()
             .catch((e) => dispatch(setError({isError: true, code: e.message})))
-    }, [itemId, toppings.length, dispatch])
+    }, [toppings.length, dispatch])
 
     useEffect(() => {
         //unmount時の処理
@@ -49,6 +47,9 @@ const ItemDetail: React.FC = () => {
     }, [dispatch])
 
     useEffect(() => {
+        //ページ遷移して来たときにURLのitemIdがNumberに直せるか
+        if (typeof itemId !== "number") console.log('this is error: itemId is only number')//throw new Error()
+
         //itemList以外から遷移してくると詳細情報がstoreに入っていないのでDBに取りに行く
         if (item === null) {
             dispatch(fetchItemDetail(itemId))
