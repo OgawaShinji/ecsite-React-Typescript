@@ -1,11 +1,12 @@
 import React from "react"
 import '@testing-library/jest-dom/extend-expect'
 import ItemDetail from "~/components/itemDetail"
-import {act, renderHook} from "@testing-library/react-hooks";
 
 import {Item, Topping} from "~/types/interfaces";
 import {Provider, useDispatch, useSelector} from "react-redux";
 import store, {RootState} from "~/store";
+import {act, render, screen} from "@testing-library/react";
+import {unmountComponentAtNode} from "react-dom";
 
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom") as {},
@@ -47,7 +48,7 @@ const mockFetchToppings = () => {
 }
 
 jest.mock('~/store/slices/Domain/item.slice', () => ({
-    ...jest.requireActual('~/store/slices/Domain/item.slice')as{},
+    ...jest.requireActual('~/store/slices/Domain/item.slice') as {},
     fetchItemDetail: (itemId: number) => {
         return mockFetchItemDetail(itemId)
     },
@@ -61,12 +62,14 @@ jest.mock('~/store/slices/Domain/item.slice', () => ({
 }))
 
 jest.mock("~/store/slices/Domain/topping.slice", () => ({
+    ...jest.requireActual('~/store/slices/Domain/topping.slice') as {},
     selectToppings: (state: RootState) => {
         return state.topping.toppings
     },
     fetchToppings: () => {
         return mockFetchToppings();
     }
+
 }))
 
 let initialItemState: Item | null = null;
@@ -92,9 +95,7 @@ let mockAppState: appStateType = {
 
 //jest.useFakeTimers()
 describe('ItemDetail', () => {
-    afterEach(() => {
-        jest.resetAllMocks()
-    })
+    let container: null | Element | any = null;
     beforeEach(() => {
         (useSelector as jest.Mock).mockImplementation(callback => {
             //useSelectorをそのまま使ってる？それでも良い？
@@ -103,24 +104,44 @@ describe('ItemDetail', () => {
         mockDispatch.mockReturnValue(async (i: any) => {
             return i
         });
+        container = document.createElement('div');
+        document.body.appendChild(container);
+    })
+    afterEach(() => {
+        jest.resetAllMocks()
+        if (container !== null) {
+            unmountComponentAtNode(container);
+            container.remove();
+            container = null;
+        }
     })
 
+
+    /**
+     * テストリスト
+     *
+     * 画面初期表示時loading表示になっている
+     * 商品詳細情報がストアに入っていればそれが表示される
+     * なければfetchItemDetailが呼び出される
+     * 　それが表示される
+     * 　エラー時setErrorが呼び出される
+     *
+     * サイズ変更メソッドが呼ばれると選択中のサイズ情報が代わり、金額が変更される
+     * 数量・トッピングも同様
+     *
+     * カートに入れる・注文に進むボタン押下でRouter遷移メソッド呼び出し
+     */
     test("商品詳細のレンダリング:store(item:null, topping:[])", async () => {
 
         initialItemState = null;
         initialToppingsState = []
 
-        //const itemComponent=render(<Provider store={mockStore}><ItemDetail/></Provider>)
-        //console.log(itemComponent)
         await act(async () => {
-            const {result, rerender, waitFor, waitForNextUpdate, waitForValueToChange}
-                = renderHook(() => ItemDetail({}), {});
-            await console.log(mockFetchToppings.call.length)
-            await waitForNextUpdate();
-            await console.log(mockFetchToppings.call.length)
-        });
-        await expect(mockFetchItemDetail.call.length).toBe(1);
-        //unmount
-        expect(mockFetchToppings.call.length).toBe(1);
-    },100000)
+            await render(<Provider store={store}><ItemDetail/></Provider>, container)
+            //loading中の処理
+            await screen.debug();
+        })
+        //loading後の処理
+        await screen.debug();
+    })
 })
