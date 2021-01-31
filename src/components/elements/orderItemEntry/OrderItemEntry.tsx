@@ -21,7 +21,8 @@ import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
 export type itemEntryState = {
     size: string;
     quantity: number;
-    toppings: Topping[]
+    toppings: Topping[],
+    totalPrice?:number
 }
 export type entryProps = {
     selectedState: itemEntryState;

@@ -120,9 +120,6 @@ export const itemSlice = createSlice({
         })
 
         //fetchItemDetail
-        builder.addCase(fetchItemDetail.fulfilled, (state, action) => {
-            itemSlice.caseReducers.setItemDetail(state, itemSlice.actions.setItemDetail(action.payload))
-        })
         builder.addCase(fetchItemDetail.rejected, (state, action) => {
             throw new Error(action.error.message);
         })
