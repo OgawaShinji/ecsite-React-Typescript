@@ -187,8 +187,7 @@ const resolvers = {
     },
     Mutation: {
         postUser(parent, args) {
-            console.log(parent)
-            let user = {
+            const user = {
                 id: Math.floor(Math.random() * 100),
                 status: 1,
                 ...args
@@ -204,7 +203,6 @@ const resolvers = {
             users[index].name = args.name
             users[index].email = args.email
             return users
-
         },
 
     }
