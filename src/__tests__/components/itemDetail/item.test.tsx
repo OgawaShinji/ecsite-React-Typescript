@@ -15,7 +15,7 @@ jest.mock("react-router-dom", () => ({
     })
 }));
 
-const itemFromDB: Item = {
+let itemFromDB: Item = {
     id: 1,
     name: "item name",
     description: "description",
@@ -34,23 +34,23 @@ jest.mock('react-redux', () => ({
     useDispatch: jest.fn()
 }));
 
-const mockFetchItemDetail = (itemId: number) => {
+let mockFetchItemDetail = jest.fn().mockImplementation(() => {
     mockAppState.item.itemDetail = itemFromDB;
     return {
         payload: {
             item: itemFromDB
         }
     }
-}
-const mockFetchToppings = () => {
+});
+let mockFetchToppings = jest.fn().mockImplementation(() => {
     mockAppState.topping.toppings = toppingFromDB;
     return ""
-}
+});
 
 jest.mock('~/store/slices/Domain/item.slice', () => ({
     ...jest.requireActual('~/store/slices/Domain/item.slice') as {},
     fetchItemDetail: (itemId: number) => {
-        return mockFetchItemDetail(itemId)
+        return mockFetchItemDetail()
     },
     setItemDetail: (item: Item | null) => {
         mockAppState.item.itemDetail = item
@@ -72,9 +72,6 @@ jest.mock("~/store/slices/Domain/topping.slice", () => ({
 
 }))
 
-let initialItemState: Item | null = null;
-let initialToppingsState: Topping[] = [];
-
 type appStateType = {
     item: {
         itemDetail: Item | null
@@ -86,14 +83,13 @@ type appStateType = {
 
 let mockAppState: appStateType = {
     item: {
-        itemDetail: initialItemState
+        itemDetail: null
     },
     topping: {
-        toppings: initialToppingsState
+        toppings: []
     }
 }
 
-//jest.useFakeTimers()
 describe('ItemDetail', () => {
     let container: null | Element | any = null;
     beforeEach(() => {
@@ -118,7 +114,7 @@ describe('ItemDetail', () => {
 
 
     /**
-     * テストリスト
+     * テストリスト的な
      *
      * 画面初期表示時loading表示になっている
      * 商品詳細情報がストアに入っていればそれが表示される
@@ -133,15 +129,48 @@ describe('ItemDetail', () => {
      */
     test("商品詳細のレンダリング:store(item:null, topping:[])", async () => {
 
-        initialItemState = null;
-        initialToppingsState = []
+        mockAppState = {
+            item: {
+                itemDetail: null
+            },
+            topping: {
+                toppings: []
+            }
+        }
+        await act(async () => {
+            await render(<Provider store={store}><ItemDetail/></Provider>, container)
+            //loading中の処理
+            //await screen.debug();
+            await expect(mockFetchItemDetail.mock.calls.length).toBe(0);
+            await expect(mockFetchToppings.mock.calls.length).toBe(0);
+        })
+        //loading後の処理
+        //await screen.debug();
+        await expect(mockFetchItemDetail.mock.calls.length).toBe(1);
+        await expect(mockFetchToppings.mock.calls.length).toBe(1);
+    });
+
+    test("商品詳細のレンダリング:store(item:itemFromDB, topping:toppingFromDB)", async () => {
+
+        mockAppState = {
+            item: {
+                itemDetail: itemFromDB
+            },
+            topping: {
+                toppings: toppingFromDB
+            }
+        }
 
         await act(async () => {
             await render(<Provider store={store}><ItemDetail/></Provider>, container)
             //loading中の処理
-            await screen.debug();
+            //await screen.debug();
+            await expect(mockFetchItemDetail.mock.calls.length).toBe(0);
+            await expect(mockFetchToppings.mock.calls.length).toBe(0);
         })
         //loading後の処理
-        await screen.debug();
-    })
+        //await screen.debug();
+        await expect(mockFetchItemDetail.mock.calls.length).toBe(0);
+        await expect(mockFetchToppings.mock.calls.length).toBe(0);
+    });
 })

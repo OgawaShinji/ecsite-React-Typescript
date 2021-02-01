@@ -52,6 +52,7 @@ const ItemDetail: React.FC = () => {
         if (item === null) {
             dispatch(fetchItemDetail(itemId))
                 .then(async (i) => {
+                    console.log(i)
                     if (i.payload.item) {
                         await setDisplayItem(i.payload.item)
                         await setIsLoading(false)
