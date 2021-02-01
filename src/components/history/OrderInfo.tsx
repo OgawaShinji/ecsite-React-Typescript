@@ -5,7 +5,7 @@ import {Order} from '~/types/interfaces';
 
 type Props = {
     order: Order;
-}
+};
 
 const useStyles = makeStyles(({
     title: {
@@ -24,8 +24,18 @@ const useStyles = makeStyles(({
 const OrderInfo: React.FC<Props> = props => {
 
     const classes = useStyles();
+
+    // 郵便番号
     const zipcode = props.order.destinationZipcode;
+
+    // 注文日（Stringに変換）
     const orderDate: string = String(props.order.orderDate);
+
+    // 注文商品数
+    const orderItemCount = props.order.orderItems?.length;
+
+    // 注文商品一枚目の画像URL
+    const imagePath1 = props.order.orderItems && props.order.orderItems[0].item.imagePath;
 
     /**
      * [status]
@@ -35,9 +45,9 @@ const OrderInfo: React.FC<Props> = props => {
      * 4: 配送完了
      */
     const status = props.order.status;
-    let chip;
 
-    // <Chip/>の作成
+    // statusに対応する<Chip/>の作成
+    let chip;
     if (status === 1) {
         chip = <Chip style={{color: '#FF6633', fontWeight: 'bold'}} color={'default'} label={'未入金'}/>;
     } else if (status === 2) {
@@ -47,12 +57,6 @@ const OrderInfo: React.FC<Props> = props => {
     } else {
         chip = <Chip color={"primary"} label={'配送完了'}/>;
     }
-
-    // 注文商品数
-    const orderItemCount = props.order.orderItems?.length;
-
-    // 注文商品一枚目の画像URL
-    const imagePath1 = props.order.orderItems && props.order.orderItems[0].item.imagePath;
 
     return (
         <Grid container justify={"center"} alignItems={"center"} direction={"row"}>

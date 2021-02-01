@@ -117,11 +117,6 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                                 </FormControl>
                             </Grid>
                         </Grid>
-                        {props.parentComponent === 'CartItem' && (
-                            <Grid item xs={12} className={classes.left_form_attention}>
-                                ※注文の変更は自動で更新されます
-                            </Grid>
-                        )}
                     </Grid>
 
                     {/*トッピング入力フォーム*/}
@@ -148,15 +143,22 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                     </Grid>
                 </Grid>
                 {props.parentComponent === 'CartItem' && (
-                    <Grid item container className={classes.entry_close_btn} justify="center" alignItems="center">
-                        <Button
-                            onClick={props.onClickCloseOrderItemEntity}
-                            variant={"contained"}
-                            color={"primary"}
-                        >
-                            <Typography>close</Typography>
-                        </Button>
-                    </Grid>
+                    <div>
+                        <Grid item xs={12} className={classes.left_form_attention}>
+                            ※注文の変更は自動で更新されます
+                        </Grid>
+                        <Divider/>
+                        <Grid item container className={classes.entry_close_btn} justify="center" alignItems="center">
+                            <Button
+                                onClick={props.onClickCloseOrderItemEntity}
+                                variant={"contained"}
+                                color={"primary"}
+                            >
+                                <Typography>close</Typography>
+                            </Button>
+                        </Grid>
+                    </div>
+
                 )}
 
                 {/* トッピング選択モーダル */}
@@ -179,11 +181,19 @@ export default OrderItemEntry;
 
 const orderItemEntryStyleInCart = makeStyles(() => createStyles({
 
-    modal: {},
+    form_card: {
+        width: "100%"
+    },
     //タイトル部分のGrid
-    title_grid: {backgroundColor: THEME_COLOR_2, paddingLeft: "3%"},
+    title_grid: {
+        backgroundColor: THEME_COLOR_2,
+        paddingLeft: "3%"
+    },
     //タイトルの文字
-    title_words: {color: "white", fontSize: "200%"},
+    title_words: {
+        color: "white",
+        fontSize: "200%"
+    },
     entry_title: {
         width: "100%",
         backgroundColor: "#ffa500"
@@ -204,8 +214,6 @@ const orderItemEntryStyleInCart = makeStyles(() => createStyles({
     },
     left_form_attention: {
         textAlign: "center",
-        paddingTop: 50,
-        paddingLeft:20
     },
     //左部分各入力フォームの枠
     entry_parts_grid: {
@@ -252,14 +260,14 @@ const orderItemEntryStyleInCart = makeStyles(() => createStyles({
         alignItems: "center",
         backgroundColor: THEME_COLOR_1,
     },
-    size_form:{
-        marginBottom:20,
+    size_form: {
+        marginBottom: 20,
         textAlign: "center",
-        width:'60%'
+        width: '60%'
     },
-    quantity_form:{
+    quantity_form: {
         textAlign: "center",
-        width:'60%'
+        width: '60%'
     },
     dialog: {
         width: '80%',

@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-const fetchItemNames = gql(`query fetchItemNames {
+gql(`query fetchItemNames {
   items {
     edges {
       node {
