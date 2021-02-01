@@ -49,7 +49,7 @@ let mockFetchToppings = jest.fn().mockImplementation(() => {
 
 jest.mock('~/store/slices/Domain/item.slice', () => ({
     ...jest.requireActual('~/store/slices/Domain/item.slice') as {},
-    fetchItemDetail: (itemId: number) => {
+    fetchItemDetail: () => {
         return mockFetchItemDetail()
     },
     setItemDetail: (item: Item | null) => {
