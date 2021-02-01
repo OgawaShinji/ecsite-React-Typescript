@@ -1,6 +1,8 @@
 const {GraphQLScalarType, Kind} = require('graphql');
+const {ApolloServer, gql} = require('apollo-server');
 
 // customScalar
+// date型を作成
 const dateScalar = new GraphQLScalarType({
     name: 'Date',
     description: 'Date custom scalar type',
@@ -18,18 +20,13 @@ const dateScalar = new GraphQLScalarType({
     },
 });
 
-const {ApolloServer, gql} = require('apollo-server');
 
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
+// graphQLで管理するデータ型とクエリを管理
 const typeDefs = gql`
+  # カスタムスカラーの定義
   scalar Date
 
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
-
-  # This "Book" type defines the queryable fields for every book in our data source.
-  
+  # データ型の定義  
   type User{
     id: Int
     name: String
@@ -89,17 +86,38 @@ const typeDefs = gql`
     orderItems: [OrderItem]
 }
 
+  type SearchForm {
+    itemName: String
+    sortId: Int
+}
 
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
   # ここに書いたオブジェクトたちをqueryで持ってくることができる
   type Query {
     order: Order
+    users: [User]
   }
   
+  type Mutation{
+     postUser(
+        name: String
+        email: String
+        zipcode: String
+        address: String
+        telephone: String
+        status: Int
+        password: String
+     ): [User]
+     
+     update(
+        id: ID!
+        name: String
+        email: String
+    ): [User]
+
+  }
 `;
 
+// 初期値として入れておきたい値を設定してください
 
 const order = {
     id: 1,
@@ -155,11 +173,40 @@ const order = {
 }
 
 
-// サーバーが渡してくれるやつ
+// ダミーデータ
+const users = []
+
+
+// serverが渡してくれるやつ
+// queryやmutationの処理を定義
 const resolvers = {
     Date: dateScalar,
     Query: {
         order: () => order,
+        users: () => users
+    },
+    Mutation: {
+        postUser(parent, args) {
+            console.log(parent)
+            let user = {
+                id: Math.floor(Math.random() * 100),
+                status: 1,
+                ...args
+            }
+            users.push(user)
+            //登録したユーザー情報が返ってくる
+            return users
+        },
+        update(parent, args) {
+            //ユーザーリストから対象ユーザーをidで特定する
+            const index = users.findIndex(({id}) => id === Number(args.id));
+            //対象ユーザーの情報を更新
+            users[index].name = args.name
+            users[index].email = args.email
+            return users
+
+        },
+
     }
 };
 
