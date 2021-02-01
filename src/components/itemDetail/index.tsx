@@ -1,33 +1,30 @@
 import React, {useEffect, useState} from "react";
 import {
     Avatar,
-    Button,
     Card,
-    CardActions,
     CardContent,
     Grid, LinearProgress,
     Typography
 } from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchItemDetail, selectItemDetail} from "~/store/slices/Domain/item.slice";
+import {fetchItemDetail, selectItemDetail, setItemDetail} from "~/store/slices/Domain/item.slice";
 import {AppDispatch} from "~/store";
 import {useHistory, useParams} from "react-router-dom"
-import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import {Item, Topping} from "~/types/interfaces";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.slice";
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
-import {THEME_COLOR_2} from "~/assets/color";
-import {setItemDetail} from "~/store/slices/Domain/item.slice"
+import {OrderItemForm} from "~/components/itemDetail/OrderItemForm";
+import {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 
 const ItemDetail: React.FC = () => {
-    const item = useSelector(selectItemDetail)
+    const item: Item | null = useSelector(selectItemDetail)
     const toppings: Topping[] = useSelector(selectToppings)
     const dispatch: AppDispatch = useDispatch()
     const history = useHistory();
-    const [detail, setDetail] = useState<Item | null>(item);
+    const [displayItem, setDisplayItem] = useState<Item | null>(item);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -35,11 +32,10 @@ const ItemDetail: React.FC = () => {
     itemId = Number(itemId)
 
     useEffect(() => {
-        //ページ遷移して来たときにURLのitemIdがNumberに直せるかとトッピングがstoreに入っているかをチェック
-        if (typeof itemId !== "number") console.log('this is error: itemId is only number')//throw new Error()
+        //ページ遷移して来たときにトッピングがstoreに入っているかをチェック
         if (toppings.length === 0) dispatch(fetchToppings()).then()
             .catch((e) => dispatch(setError({isError: true, code: e.message})))
-    }, [itemId, toppings.length, dispatch])
+    }, [toppings.length, dispatch])
 
     useEffect(() => {
         //unmount時の処理
@@ -49,88 +45,43 @@ const ItemDetail: React.FC = () => {
     }, [dispatch])
 
     useEffect(() => {
+        //ページ遷移して来たときにURLのitemIdがNumberに直せるか
+        if (typeof itemId !== "number") console.log('this is error: itemId is only number')//throw new Error()
+
         //itemList以外から遷移してくると詳細情報がstoreに入っていないのでDBに取りに行く
         if (item === null) {
             dispatch(fetchItemDetail(itemId))
                 .then(async (i) => {
+                    console.log(i)
                     if (i.payload.item) {
-                        await setDetail(i.payload.item)
-                        await setTotalPrice(i.payload.item.priceM)
+                        await setDisplayItem(i.payload.item)
                         await setIsLoading(false)
                     }
-
                 })
                 .catch((e) => dispatch(setError({isError: true, code: e.message})))
+        } else {
+            setIsLoading(false)
         }
-        setIsLoading(false)
     }, [dispatch, item, itemId])
 
-    const [size, setSize] = useState<string>('M');
-    const [quantity, setQuantity] = useState<number>(1);
-    const [selectedToppings, setSelectToppings] = useState<Topping[]>([])
-    const [totalPrice, setTotalPrice] = useState<number>(detail?.priceM ? detail.priceM : 0)
 
-    //OrderItemEntryにpropsで渡すためのデータ整形
-    const selectedState: itemEntryState = {
-        size: size,
-        quantity: quantity,
-        toppings: selectedToppings
-    }
-
-    /**
-     * サイズが変更された際にサイズと合計金額のStateを変更
-     * @param inputSize:変更後のサイズ
-     */
-    const handleSizeChange = (inputSize: string) => {
-        setSize(inputSize);
-        //Stateのsizeが変更される前に以下処理が走るためStateのサイズではなく、inputSizeを用いて合計金額を変更するので以下をメソッドとして吐き出していない
-        let newTotalPrice = 0;
-        if (selectedToppings.length !== 0) selectedToppings.map((t) => newTotalPrice += inputSize === 'M' ? t.priceM! : t.priceL!)
-        newTotalPrice += (inputSize === 'M' ? detail!.priceM : detail!.priceL)
-        setTotalPrice(newTotalPrice * quantity);
-    }
-
-    /**
-     * 数量が変更された際に数量と合計金額のStateを変更
-     * @param inputQuantity:変更後の数量
-     */
-    const handleQuantityChange = (inputQuantity: number) => {
-        setQuantity(inputQuantity);
-        //同上
-        let newTotalPrice = 0;
-        if (selectedToppings.length !== 0) selectedToppings.map((t) => newTotalPrice += size === 'M' ? t.priceM! : t.priceL!)
-        newTotalPrice += (size === 'M' ? detail!.priceM : detail!.priceL)
-        setTotalPrice(newTotalPrice * inputQuantity);
-    }
-    /**
-     * トッピングが変更された際にトッピングと合計金額のStateを変更
-     * @param newToppings:変更後の選択済みのトッピング配列
-     */
-    const handleToppingChange = (newToppings: Topping[]) => {
-        setSelectToppings(newToppings);
-        //同上
-        let newTotalPrice = 0;
-        if (toppings.length !== 0) newToppings.map((t) => newTotalPrice += size === 'M' ? t.priceM! : t.priceL!)
-        newTotalPrice += (size === 'M' ? detail!.priceM : detail!.priceL)
-        setTotalPrice(newTotalPrice * quantity);
-    }
     /**
      * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
      */
-    const handleOrderClick = async (moveTo: string) => {
-        if (detail === null) throw new Error()
+    const handleOrderClick = async (moveTo: string, selectedState: itemEntryState) => {
+        if (item === null) throw new Error()
         let newOrderToppings: { topping: number }[] = []
-        if (selectedToppings.length !== 0) selectedToppings.map((t) => newOrderToppings.push({topping: t.id}))
+        if (selectedState.toppings.length !== 0) selectedState.toppings.map((t) => newOrderToppings.push({topping: t.id}))
 
         const newOrder: OrderItemToPost = {
             newItem: {
-                item: detail.id,
+                item: item.id,
                 orderToppings: newOrderToppings,
-                quantity: quantity,
-                size: size === 'M' ? 'M' : 'L'
+                quantity: selectedState.quantity,
+                size: selectedState.size === 'M' ? 'M' : 'L'
             },
             status: 0,
-            newTotalPrice: totalPrice
+            newTotalPrice: selectedState.totalPrice!
         }
         await dispatch(asyncPostOrderItem(newOrder)).then(async (i) => {
             //await dispatch(setIsLoading(true))
@@ -161,23 +112,7 @@ const ItemDetail: React.FC = () => {
             display: "flex",
             justifyContent: "center",
         },
-        order_button: {
-            fontWeight: "bold",
-            backgroundColor: THEME_COLOR_2,
-            margin: "5%",
-            padding: "7%",
-            '&:hover': {
-                background: "#FFBEDA"
-            }
-        },
-        button_font: {
-            color: "white",
-            fontWeight: "bold"
-        },
-        total_price: {
-            fontWeight: "bold",
-            margin: "3%",
-        }
+
     }));
 
     const classes = entryIndexStyle();
@@ -190,13 +125,13 @@ const ItemDetail: React.FC = () => {
 
                         {/*商品画像*/}
                         <Grid item xs={12}>
-                            <CardContent className={classes.align_child}>{detail?.imagePath
-                                ? (<Avatar src={`${detail?.imagePath}`} style={{width: "50%", height: "auto"}}
+                            <CardContent className={classes.align_child}>{displayItem?.imagePath
+                                ? (<Avatar src={`${displayItem?.imagePath}`} style={{width: "50%", height: "auto"}}
                                            variant={"rounded"}/>)
                                 : (<Avatar src={""} style={{width: "50%", height: "auto"}} variant={"rounded"}/>)}
                             </CardContent>
                             <CardContent className={classes.align_child}>
-                                <Typography variant={"h4"} component={"u"}>{detail?.name}</Typography>
+                                <Typography variant={"h4"} component={"u"}>{displayItem?.name}</Typography>
                             </CardContent>
                         </Grid>
 
@@ -204,7 +139,7 @@ const ItemDetail: React.FC = () => {
                         <Grid item xs={12} className={classes.description_content}>
                             <CardContent style={{width: "70%", textAlign: "center"}}>
                                 <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
-                                    {detail?.description}
+                                    {displayItem?.description}
                                     <br/>＊写真はイメージです＊
                                 </Typography>
                             </CardContent>
@@ -212,48 +147,7 @@ const ItemDetail: React.FC = () => {
                     </Grid>
 
                     {/*注文入力部分*/}
-                    <Grid container justify={"center"} alignItems={"center"}>
-
-                        <Grid item xs={12}>
-                            <CardContent style={{height: "auto", width: "90%"}}>
-                                <OrderItemEntry
-                                    selectedState={selectedState}
-                                    parentComponent={"itemDetail"}
-                                    onSizeChange={(s) => handleSizeChange(s)}
-                                    onQuantityChange={(q) => handleQuantityChange(q)}
-                                    onToppingChange={(t) => handleToppingChange(t)}/>
-                                <CardContent className={classes.align_child}>
-                                    <Typography variant={"h3"}
-                                                className={classes.total_price}>合計金額
-                                        {` : `}{totalPrice ? totalPrice.toLocaleString() : totalPrice} 円(税抜)</Typography>
-                                </CardContent>
-                            </CardContent>
-                        </Grid>
-
-                        {/*注文確定ボタン*/}
-                        <Grid item xs={12}>
-                            <CardActions>
-                                <Grid item xs={6} className={classes.align_child}>
-                                    <Button variant={"contained"} className={classes.order_button} onClick={() => {
-                                        handleOrderClick('cart').then()
-                                    }}>
-                                        <Typography className={classes.button_font}>
-                                            商品をカートに入れる
-                                        </Typography>
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={6} className={classes.align_child}>
-                                    <Button variant={"contained"} className={classes.order_button} onClick={() => {
-                                        handleOrderClick('confirm').then()
-                                    }}>
-                                        <Typography className={classes.button_font}>
-                                            すぐに注文確認画面へ進む
-                                        </Typography>
-                                    </Button>
-                                </Grid>
-                            </CardActions>
-                        </Grid>
-                    </Grid>
+                    <OrderItemForm item={displayItem} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
 
                 </Card>
             </div>
