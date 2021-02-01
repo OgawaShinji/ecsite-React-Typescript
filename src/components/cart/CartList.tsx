@@ -17,7 +17,7 @@ import {
 } from "~/store/slices/Domain/order.slice"
 import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
 import {setError} from "~/store/slices/App/error.slice";
-import {useFetchOrderItemsQuery} from "~/gql/generated/mock/OrderGraphql";
+import {useFetchOrderItemsQuery} from "~/gql/generated/order.graphql";
 
 const useStyles = makeStyles({
     root: {

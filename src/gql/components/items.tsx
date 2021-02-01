@@ -1,4 +1,4 @@
-import {useFetchItemNamesQuery, useFetchItemsLazyQuery, useFetchItemsQuery} from "~/gql/generated/graphql";
+import {useFetchItemNamesQuery, useFetchItemsLazyQuery, useFetchItemsQuery} from "~/gql/generated/item.graphql";
 
 export const Items: React.FC = () => {
     const {loading, error, data, refetch, networkStatus} = useFetchItemNamesQuery();
