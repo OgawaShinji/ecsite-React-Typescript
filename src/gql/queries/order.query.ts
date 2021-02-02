@@ -21,11 +21,9 @@ gql(`query fetchOrderItems {
           priceM
           priceL
         }
-        orderItemId
       }
       quantity
       size
-      subTotalPrice
     }
   }
 }
@@ -139,11 +137,9 @@ const fetchOrder = gql(` query fetchOrder{
           name
           priceM
         }
-        orderItemId
       }
       quantity
       size
-      subTotalPrice
     }
   }
 }

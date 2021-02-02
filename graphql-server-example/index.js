@@ -67,7 +67,6 @@ const typeDefs = gql`
   type OrderTopping{
     id: ID
     topping: Topping
-    orderItemId: Int
   }
   
   type Order{
