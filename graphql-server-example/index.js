@@ -39,7 +39,7 @@ const typeDefs = gql`
   }
   
   type Item{
-    id: ID
+    id: Int
     name: String
     description: String
     priceM: Int
@@ -56,7 +56,7 @@ const typeDefs = gql`
   }
   
   type OrderItem{
-    id: ID
+    id: Int
     item: Item
     orderToppings: [OrderTopping]
     quantity: Int
@@ -65,7 +65,7 @@ const typeDefs = gql`
   }
   
   type OrderTopping{
-    id: ID
+    id: Int
     topping: Topping
     orderItemId: Int
   }
@@ -127,7 +127,7 @@ const typeDefs = gql`
      updateOrderInfo(orderInfo: OrderInfo!): Order
      
      update(
-        id: ID!
+        id: Int!
         name: String
         email: String
     ): [User]
@@ -193,8 +193,6 @@ const order = {
 
 // ダミーデータ
 const users = []
-
-
 
 
 // serverが渡してくれるやつ
