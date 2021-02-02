@@ -23,6 +23,8 @@ import {useHistory} from "react-router-dom";
 import {AppDispatch} from "~/store";
 import {setError} from "~/store/slices/App/error.slice";
 import {THEME_COLOR_2} from "~/assets/color";
+import {useMutation} from "@apollo/client";
+import {useUpdateOrderMutation} from "~/gql/generated/order.graphql";
 
 type Props = {
     user: null | User,
@@ -231,9 +233,34 @@ const OrderForm: React.FC<Props> = (props) => {
     }
     const classes = useStyles();
 
+
+    const [updateOrderMutation,{data,loading,error}] = useUpdateOrderMutation()
+
+    const handleClick = async () => {
+        const orderInfo = {
+            status:2,
+            orderDate:"2020-12-25",
+            destinationName:"aiueo",
+            destinationEmail: "test@test.com",
+            destinationZipcode:"1234567",
+            destinationAddress:"埼玉県熊谷市",
+            destinationTel:"090-1234-5678",
+            deliveryTime:new Date(),
+            totalPrice:10000,
+            paymentMethod:"2"
+        }
+        console.log(orderInfo)
+        await updateOrderMutation({variables:{orderInfo:orderInfo}}).then( () => {
+            console.log(data)
+        })
+    }
+
+
+
     return (
         <div>
             <div className={classes.root}>
+                <button type={"button"} onClick={handleClick}>postOrder</button>
                 <Grid container spacing={3} justify="center" alignItems="center">
                     <Grid item xs={6} sm={7}>
                         <Paper className={classes.orderFormPaper}>
