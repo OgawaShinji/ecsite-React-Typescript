@@ -24,8 +24,8 @@ import {Topping, useFetchToppingsQuery} from "~/gql/generated/topping.graphql";
 
 interface Props {
     orderItem: OrderItem | null
-    updateOrderItems: ({orderItem}: { orderItem: OrderItem | null }) => void
-    deleteOrderItem: (orderItemId: string) => void
+    updateOrderItems: ({orderItem}: { orderItem: OrderItem }) => void
+    deleteOrderItem: (orderItemId: number) => void
 }
 
 const useStyles = makeStyles((theme: Theme) =>

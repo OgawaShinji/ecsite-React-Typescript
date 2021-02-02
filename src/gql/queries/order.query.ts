@@ -54,7 +54,6 @@ gql(`mutation updateOrderItem($orderItemInput: OrderItemInput!,$totalPrice:Total
           priceM
           priceL
         }
-        orderItemId
       }
       quantity
       size
@@ -86,7 +85,6 @@ gql(`mutation deleteOrder($deleteOrderItemId: DeleteOrderItemId!) {
           priceM
           priceL
         }
-        orderItemId
       }
       quantity
       size

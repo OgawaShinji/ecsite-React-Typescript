@@ -11,7 +11,7 @@ import {
 interface Props {
     subTotalPrice: number
     orderItems: any
-    deleteOrderItem: (orderItemId: string) => void
+    deleteOrderItem: (orderItemId: number) => void
 }
 
 
