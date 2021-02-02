@@ -1,8 +1,8 @@
 overwrite: true
 schema: "http://localhost:4000/"
-documents: "src/gql/queries/order.query.ts"
+documents: "query.graphql.ts"
 generates:
-  src/gql/generated/order.graphql.ts:
+  src/generated/graphql.ts:
     plugins:
       - "typescript"
       - "typescript-operations"
