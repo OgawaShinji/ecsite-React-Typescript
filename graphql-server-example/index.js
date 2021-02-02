@@ -151,7 +151,7 @@ input UpTopping{
      updateOrderInfo(orderInfo: OrderInfo!): Order
      
      update(
-        id: ID!
+        id: Int!
         name: String
         email: String
     ): [User]
@@ -270,8 +270,8 @@ const cart = {
 const users = []
 
 
-
 // GraphQL の operation（query や mutation や subscription）が、実際にどのような処理を行なってデータを返すのかという指示書
+
 const resolvers = {
     Date: dateScalar,
     Query: {

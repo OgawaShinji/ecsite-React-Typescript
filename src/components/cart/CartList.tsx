@@ -13,8 +13,14 @@ import {
     asyncFetchOrderItems,
     asyncUpdateOrderItem,
     orderItem,
-    OrderItemsToPost
-} from "~/store/slices/Domain/order.slice";
+    OrderItemsToPost,
+    selectOrder,
+    selectOrderSubTotalPrice
+} from "~/store/slices/Domain/order.slice"
+import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
+import {setError} from "~/store/slices/App/error.slice";
+import {OrderItemFragFragmentDoc, useFetchOrderItemsQuery} from "~/gql/generated/order.graphql";
+import {filter} from "graphql-anywhere";
 
 const useStyles = makeStyles({
     root: {
@@ -58,6 +64,15 @@ const CartList: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false); // loading
 
     const { data } = useFetchOrderItemsQuery()
+
+    let orderItem;
+
+    if(data){
+        orderItem = filter(OrderItemFragFragmentDoc, data?.order?.orderItems);
+        console.log(orderItem)
+    }
+
+
 
     // 初期表示
     useEffect(() => {
@@ -119,7 +134,6 @@ const CartList: React.FC = () => {
         styleCartList = classes.emptyCartList
     }
 
-
     return (
         <div>
             {isLoading ? (
@@ -156,8 +170,10 @@ const CartList: React.FC = () => {
                         <Grid item xs={4}>
                             <div className={classes.orderOperator}>
                                 <OrderOperator
+
+                                    orderItems={orderItem}
                                     subTotalPrice={0}
-                                    orderItems={orderItems}
+                           
                                     deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
                                 />
                             </div>
