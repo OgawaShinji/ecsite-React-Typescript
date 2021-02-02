@@ -4,7 +4,7 @@ import React from "react";
 type propsType = {
     price: number
 }
-export const ItemPrice: React.FC<propsType> = (props) => {
+const ItemPrice: React.FC<propsType> = (props) => {
     return (
         <Typography variant={"h3"}
                     style={{
@@ -13,4 +13,5 @@ export const ItemPrice: React.FC<propsType> = (props) => {
                     }}>合計金額
             {` : `}{props.price.toLocaleString()} 円(税抜)</Typography>
     )
-}
+};
+export default ItemPrice;

@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {
     Avatar,
-    Card,
     CardContent,
     Grid, LinearProgress,
     Typography
@@ -16,7 +15,7 @@ import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.slice";
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
-import {OrderItemForm} from "~/components/itemDetail/OrderItemForm";
+import OrderItemForm from "~/components/itemDetail/OrderItemForm";
 import {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 
 const ItemDetail: React.FC = () => {
@@ -51,16 +50,16 @@ const ItemDetail: React.FC = () => {
         //itemList以外から遷移してくると詳細情報がstoreに入っていないのでDBに取りに行く
         if (item === null) {
             dispatch(fetchItemDetail(itemId))
-                .then(async (i) => {
-                    console.log(i)
-                    if (i.payload.item) {
-                        await setDisplayItem(i.payload.item)
-                        await setIsLoading(false)
-                    }
+                .then((i) => {
+                    if (!(i.payload.item)) dispatch(setError({isError: true, code: 400}));
+                    if (i.payload.item) setDisplayItem(i.payload.item)
+                    setTimeout(() => {
+                        setIsLoading(false);
+                    }, 500)
                 })
-                .catch((e) => dispatch(setError({isError: true, code: e.message})))
+                .catch((e) => dispatch(setError({isError: true, code: e.message})));
         } else {
-            setIsLoading(false)
+            setIsLoading(false);
         }
     }, [dispatch, item, itemId])
 
@@ -84,7 +83,6 @@ const ItemDetail: React.FC = () => {
             newTotalPrice: selectedState.totalPrice!
         }
         await dispatch(asyncPostOrderItem(newOrder)).then(async (i) => {
-            //await dispatch(setIsLoading(true))
             await setIsLoading(true)
             if (i.payload === '200' && moveTo === 'cart') {
                 await history.push(Path.cart)
@@ -97,39 +95,22 @@ const ItemDetail: React.FC = () => {
         })
     }
 
-    const entryIndexStyle = makeStyles(() => createStyles({
-        outline_card: {
-            margin: "3%",
-            height: "auto",
-            width: "80%",
-        },
-        align_child: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-        },
-        description_content: {
-            display: "flex",
-            justifyContent: "center",
-        },
-
-    }));
-
     const classes = entryIndexStyle();
 
     return (isLoading ?
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
             : <div className={classes.align_child}>
-                <Card style={{display: "flex"}}>
+                <div style={{display: "flex"}}>
                     <Grid container justify={"center"} alignContent={"center"}>
 
                         {/*商品画像*/}
                         <Grid item xs={12}>
-                            <CardContent className={classes.align_child}>{displayItem?.imagePath
-                                ? (<Avatar src={`${displayItem?.imagePath}`} style={{width: "50%", height: "auto"}}
-                                           variant={"rounded"}/>)
-                                : (<Avatar src={""} style={{width: "50%", height: "auto"}} variant={"rounded"}/>)}
+                            <CardContent className={classes.align_child}>
+                                <Avatar src={`${displayItem?.imagePath}`} style={{width: "50%", height: "auto"}}
+                                        variant={"rounded"} alt={'🍕'}/>
                             </CardContent>
+
+                            {/*商品名*/}
                             <CardContent className={classes.align_child}>
                                 <Typography variant={"h4"} component={"u"}>{displayItem?.name}</Typography>
                             </CardContent>
@@ -142,6 +123,10 @@ const ItemDetail: React.FC = () => {
                                     {displayItem?.description}
                                     <br/>＊写真はイメージです＊
                                 </Typography>
+                                <br/>
+                                <Typography variant={"h6"} color={"textPrimary"} component={"p"}>
+                                    {`Mサイズ：` + displayItem?.priceM + `円　🍕　Lサイズ：` + displayItem?.priceL + `円`}
+                                </Typography>
                             </CardContent>
                         </Grid>
                     </Grid>
@@ -149,8 +134,25 @@ const ItemDetail: React.FC = () => {
                     {/*注文入力部分*/}
                     <OrderItemForm item={displayItem} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
 
-                </Card>
+                </div>
             </div>
     )
 };
 export default ItemDetail;
+const entryIndexStyle = makeStyles(() => createStyles({
+    outline_card: {
+        margin: "3%",
+        height: "auto",
+        width: "80%",
+    },
+    align_child: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    description_content: {
+        display: "flex",
+        justifyContent: "center",
+    },
+
+}));
