@@ -307,24 +307,25 @@ const resolvers = {
             console.log(args.totalPrice.totalPrice)
             return cart
         },
-        deleteOrderItem(parent,args){
+        deleteOrderItem(parent,args) {
             console.log(args)
             return cart
+        },
         //今回は初期値にセットしてある内容を更新する
         updateOrderInfo(parent, args, context, info){
             //引数に渡されたデータを確認
             console.log(args)
-            order.status = args.orderInfo.status
-            order.paymentMethod = args.orderInfo.paymentMethod
-            order.orderDate = args.orderInfo.orderDate
-            order.deliveryTime = args.orderInfo.deliveryTime
-            order.destinationName = args.orderInfo.destinationName
-            order.destinationEmail = args.orderInfo.destinationEmail
-            order.destinationZipcode = args.orderInfo.destinationZipcode
-            order.destinationAddress = args.orderInfo.destinationAddress
-            order.destinationTel = args.orderInfo.destinationTel
-            order.totalPrice = args.orderInfo.totalPrice
-            return order
+            cart.status = args.orderInfo.status
+            cart.paymentMethod = args.orderInfo.paymentMethod
+            cart.orderDate = args.orderInfo.orderDate
+            cart.deliveryTime = args.orderInfo.deliveryTime
+            cart.destinationName = args.orderInfo.destinationName
+            cart.destinationEmail = args.orderInfo.destinationEmail
+            cart.destinationZipcode = args.orderInfo.destinationZipcode
+            cart.destinationAddress = args.orderInfo.destinationAddress
+            cart.destinationTel = args.orderInfo.destinationTel
+            cart.totalPrice = args.orderInfo.totalPrice
+            return cart
         }
     }
 };

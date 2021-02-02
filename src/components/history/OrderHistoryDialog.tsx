@@ -36,7 +36,7 @@ const OrderHistoryDialog: React.FC<Props> = props => {
     console.log(data)
 
     // 注文商品一覧JSXの作成
-    const orderItemCardList = data?.order?.orderItems && data?.order.orderItems.map((orderItem) => (
+    const orderItemCardList = data?.cart?.orderItems && data?.cart.orderItems.map((orderItem) => (
         <div key={orderItem && orderItem.id} className={classes.control}>
             <OrderItemCard orderItem={orderItem}/>
         </div>
