@@ -5,9 +5,7 @@ import OrderOperator from "./OrderOperator"
 import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
 import {
     FetchOrderItemsQuery, FetchOrderItemsQueryHookResult, FetchOrderItemsQueryResult,
-    FetchOrderItemsQueryVariables, FetchOrderQuery, OrderItem,
-
-    useFetchOrderItemsQuery
+    FetchOrderItemsQueryVariables, FetchOrderQuery, OrderItem, useFetchOrderItemsQuery
 } from "~/gql/generated/order.graphql";
 import {
     asyncFetchOrderItems,
@@ -17,9 +15,8 @@ import {
     selectOrder,
     selectOrderSubTotalPrice
 } from "~/store/slices/Domain/order.slice"
-import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
 import {setError} from "~/store/slices/App/error.slice";
-import {OrderItemFragFragmentDoc, useFetchOrderItemsQuery} from "~/gql/generated/order.graphql";
+import {OrderItemFragFragmentDoc} from "~/gql/generated/order.graphql";
 import {filter} from "graphql-anywhere";
 
 const useStyles = makeStyles({
@@ -68,10 +65,9 @@ const CartList: React.FC = () => {
     let orderItem;
 
     if(data){
-        orderItem = filter(OrderItemFragFragmentDoc, data?.order?.orderItems);
+        orderItem = filter(OrderItemFragFragmentDoc, data?.cart?.orderItems);
         console.log(orderItem)
     }
-
 
 
     // 初期表示
