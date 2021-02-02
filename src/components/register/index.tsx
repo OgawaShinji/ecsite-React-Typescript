@@ -17,6 +17,8 @@ import {Path} from "~/router/routes";
 import {User} from "~/types/interfaces";
 import {AppDispatch} from "~/store";
 import {Visibility, VisibilityOff} from "@material-ui/icons";
+import { usePostRegisterMutation} from "~/gql/generated/user.graphql";
+
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -282,6 +284,39 @@ const Register: FC = () => {
         });
     }
 
+    //mockサーバーにデータを送る
+    const [postRegisterMutation, { data, loading, error }] = usePostRegisterMutation();
+    const handleClick = async () => {
+        setIsLoading(true);
+        const userInfo = {
+            name:name.value,
+            email:email.value,
+            zipcode:firstZipcode.value + secondZipcode.value,
+            address:address.value,
+            telephone:firstTelNum.value + '-' + secondTelNum.value + '-' + thirdTelNum.value,
+            password:password.value
+        }
+        console.log(userInfo)
+        //入力されたデータを引数にセット
+        await postRegisterMutation({variables:{userInfo:userInfo}}).then( () => {
+            routeHistory.push(Path.login);
+        }).catch(async (e) => {
+            if (e.message === '400') {
+                const loading = async () => {
+                    setTimeout(() => {
+                        setIsLoading(false);
+                    }, 500)
+                }
+                loading().then(() => {
+                    setEmailDuplicated(true);
+                })
+            }
+        });
+    }
+
+    if (loading) return (<div>loading</div>);
+    if (error) return (<div>error</div>);
+
     return (isLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (
         <div>
             <Grid container alignContent="center" justify="center" className={classes.pad}>
@@ -488,7 +523,7 @@ const Register: FC = () => {
                                 <Button
                                     variant="contained"
                                     className={classes.color}
-                                    onClick={handleClickRegister}
+                                    onClick={handleClick}
                                     disabled={
                                         name.errorMessage.length > 0 || name.value === '' ||
                                         email.errorMessage.length > 0 || email.value === '' ||

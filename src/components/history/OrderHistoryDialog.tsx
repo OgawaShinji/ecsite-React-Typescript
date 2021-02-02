@@ -13,6 +13,7 @@ import {
 import {Cancel} from "@material-ui/icons";
 
 import {OrderItem} from "~/types/interfaces";
+import {useFetchOrderItemsQuery} from "~/gql/generated/order.graphql";
 
 type Props = {
     handleClose: () => void;
@@ -26,13 +27,17 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+
 const OrderHistoryDialog: React.FC<Props> = props => {
 
     const classes = useStyles();
 
+    const {data} = useFetchOrderItemsQuery( )
+    console.log(data)
+
     // 注文商品一覧JSXの作成
-    const orderItemCardList = props.orderItems.map((orderItem) => (
-        <div key={orderItem.id} className={classes.control}>
+    const orderItemCardList = data?.order?.orderItems && data?.order.orderItems.map((orderItem) => (
+        <div key={orderItem && orderItem.id} className={classes.control}>
             <OrderItemCard orderItem={orderItem}/>
         </div>
     ));

@@ -9,6 +9,7 @@ import {Grid, LinearProgress, makeStyles} from "@material-ui/core";
 import {setError} from "~/store/slices/App/error.slice";
 import {AppDispatch} from "~/store";
 import {RouteComponentProps, withRouter} from "react-router-dom";
+import {useFetchOrderItemsQuery} from "~/gql/generated/order.graphql";
 
 const useStyles = makeStyles((theme) => ({
     control: {
@@ -32,6 +33,10 @@ const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
     //ローディング処理
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    const {data} = useFetchOrderItemsQuery( )
+    console.log(data)
+
+
     //注文確認時の発火させるローディング処理
     const setLoading = (boolean: boolean) => {
         setIsLoading(boolean);
@@ -47,6 +52,7 @@ const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
             dispatch(asyncFetchOrderItems()).catch((e) => {
                 dispatch(setError({isError: true, code: e.message}))
             })
+
         })
     }, [dispatch])
 
@@ -60,9 +66,9 @@ const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
         <div>
             <Grid container justify={"center"} alignItems={"center"}>
                 <Grid item xs={9}>
-                    {orderItems && orderItems.map((orderItem) => (
-                        <div key={orderItem.id} className={classes.control}>
-                            <OrderItemCard orderItem={orderItem}/>
+                    {data?.order?.orderItems && data.order.orderItems.map((orderItem) => (
+                        <div key={orderItem && orderItem.id} className={classes.control}>
+                            <OrderItemCard orderItem={ orderItem }/>
                         </div>
                     ))}
                 </Grid>
