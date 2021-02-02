@@ -30,8 +30,8 @@ const OptionForm: React.FC<Props> = props => {
     ));
 
     return (
-        <FormControl variant="standard" className={classes.formControl}>
-            <InputLabel>{props.label}</InputLabel>
+        <FormControl variant="standard" className={classes.formControl} role={'formControl'}>
+            <InputLabel role={'inputLabel'}>{props.label}</InputLabel>
             <Select
                 labelId="select-form-label"
                 id="select-form"
