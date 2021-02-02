@@ -3,10 +3,15 @@ import {Button, Card, CardActions, CardContent, makeStyles} from "@material-ui/c
 import TotalPrice from "~/components/elements/totalPrice/totalPrice"
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {OrderItemFragFragment} from "~/gql/generated/order.graphql";
-
+import {
+    FetchOrderItemsQuery,
+    FetchOrderItemsQueryHookResult,
+    FetchOrderItemsQueryResult, OrderItem
+} from "~/gql/generated/order.graphql";
+        
 interface Props {
     subTotalPrice: number
-    orderItems: OrderItemFragFragment[] | undefined
+    orderItems: OrderItemFragFragment[] | undefined        
     deleteOrderItem: (orderItemId: number) => void
 }
 

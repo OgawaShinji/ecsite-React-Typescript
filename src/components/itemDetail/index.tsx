@@ -71,11 +71,11 @@ const ItemDetail: React.FC = () => {
     const [totalPrice, setTotalPrice] = useState<number>(detail?.priceM ? detail.priceM : 0)
 
     //OrderItemEntryにpropsで渡すためのデータ整形
-    const selectedState: itemEntryState = {
-        size: size,
-        quantity: quantity,
-        toppings: selectedToppings
-    }
+    // const selectedState: itemEntryState = {
+    //     size: size,
+    //     quantity: quantity,
+    //     toppings: selectedToppings
+    // }
 
     /**
      * サイズが変更された際にサイズと合計金額のStateを変更
@@ -216,12 +216,12 @@ const ItemDetail: React.FC = () => {
 
                         <Grid item xs={12}>
                             <CardContent style={{height: "auto", width: "90%"}}>
-                                <OrderItemEntry
-                                    selectedState={selectedState}
-                                    parentComponent={"itemDetail"}
-                                    onSizeChange={(s) => handleSizeChange(s)}
-                                    onQuantityChange={(q) => handleQuantityChange(q)}
-                                    onToppingChange={(t) => handleToppingChange(t)}/>
+                                {/*<OrderItemEntry*/}
+                                {/*    selectedState={selectedState}*/}
+                                {/*    parentComponent={"itemDetail"}*/}
+                                {/*    onSizeChange={(s) => handleSizeChange(s)}*/}
+                                {/*    onQuantityChange={(q) => handleQuantityChange(q)}*/}
+                                {/*    onToppingChange={(t) => handleToppingChange(t)}/>*/}
                                 <CardContent className={classes.align_child}>
                                     <Typography variant={"h3"}
                                                 className={classes.total_price}>合計金額

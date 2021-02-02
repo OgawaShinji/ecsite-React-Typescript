@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "~/store";
 
 import CartItem from "./CartItem"
 import OrderOperator from "./OrderOperator"
-import {OrderItem} from "~/types/interfaces";
-
+import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
 import {
-    asyncDeleteOrderItem,
+    FetchOrderItemsQuery, FetchOrderItemsQueryHookResult, FetchOrderItemsQueryResult,
+    FetchOrderItemsQueryVariables, FetchOrderQuery, OrderItem,
+
+    useFetchOrderItemsQuery
+} from "~/gql/generated/order.graphql";
+import {
     asyncFetchOrderItems,
     asyncUpdateOrderItem,
     orderItem,
@@ -52,17 +54,16 @@ const useStyles = makeStyles({
 
 const CartList: React.FC = () => {
 
-    const dispatch: AppDispatch = useDispatch()
+    // const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
 
-    let iniOrder = useSelector(selectOrder)
-    let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
+    // let iniOrder = useSelector(selectOrder)
+    // let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
 
-    const [orderItems, setOrderItems] = useState<OrderItem[] | undefined>()
+    const [orderItems, setOrderItems] = useState<any>()
     const [isLoading, setIsLoading] = useState(false); // loading
 
-    const {loading, error, data, refetch, networkStatus} = useFetchOrderItemsQuery()
-    console.log(data)
+    const { data } = useFetchOrderItemsQuery()
 
     let orderItem;
 
@@ -82,16 +83,9 @@ const CartList: React.FC = () => {
             }, 500)
         }
         loading().then(() => {
-            dispatch(asyncFetchOrderItems()).catch((e) => {
-                dispatch(setError({isError: true, code: e.message}))
-            })
+            setOrderItems(data?.cart?.orderItems)
         })
-    }, [dispatch])
-
-    // iniOrder
-    useEffect(() => {
-        setOrderItems(iniOrder.orderItems)
-    }, [iniOrder])
+    }, [data])
 
 
     /**
@@ -103,27 +97,19 @@ const CartList: React.FC = () => {
 
         // サーバーに送るデータをorderItemsToPostに詰め替える処理
         let updatedOrderToppings: { topping: number }[] = []
-        if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t.topping.id}))
+        if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t!.topping!.id!}))
         const updatedOrderItem: orderItem = {
-            id: orderItem.id,
-            item: orderItem.item.id,
+            id: orderItem.id!,
+            item: orderItem.item?.id!,
             orderToppings: updatedOrderToppings,
-            quantity: orderItem.quantity,
+            quantity: orderItem.quantity!,
             size: orderItem.size === 'M' ? 'M' : 'L'
         }
         let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
-        const orderItemsToPost: OrderItemsToPost = {
-            orderItems: updatedOrderItems,
-            status: 0,
-            newTotalPrice: orderSubTotalPrice
-        }
 
-        await dispatch(asyncUpdateOrderItem(orderItemsToPost)).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
-        await dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
+        // 更新mutation呼び出し
+
+
     }
 
     /**
@@ -132,17 +118,17 @@ const CartList: React.FC = () => {
      * @return
      */
     const deleteOrderItem = async (orderItemId: number) => {
-        await dispatch(asyncDeleteOrderItem(orderItemId)).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
-        dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
+        // await dispatch(asyncDeleteOrderItem(orderItemId)).catch((e) => {
+        //     dispatch(setError({isError: true, code: e.message}))
+        // })
+        // dispatch(asyncFetchOrderItems()).catch((e) => {
+        //     dispatch(setError({isError: true, code: e.message}))
+        // })
     }
 
     // カートに商品があるかどうかでレイアウトを切り替えるため
     let styleCartList
-    if (orderItems && orderItems?.length > 0) {
+    if (orderItems! && orderItems?.length > 0) {
         styleCartList = classes.cartList
     } else {
         styleCartList = classes.emptyCartList
@@ -163,12 +149,12 @@ const CartList: React.FC = () => {
                             >
                                 ショッピングカート
                             </Typography>
-                            {orderItems && orderItems?.length > 0 ? (<List>
+                            {orderItems! && orderItems?.length > 0 ? (<List>
                                 {orderItems &&
-                                orderItems!.map((orderItem) => (
+                                orderItems.map((orderItem:any) => (
                                     <CartItem
                                         orderItem={orderItem}
-                                        key={orderItem.id}
+                                        key={orderItem!.id}
                                         updateOrderItems={({orderItem}) => updateOrderItems({orderItem})}
                                         deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
                                     />
@@ -184,8 +170,10 @@ const CartList: React.FC = () => {
                         <Grid item xs={4}>
                             <div className={classes.orderOperator}>
                                 <OrderOperator
-                                    subTotalPrice={orderSubTotalPrice}
+
                                     orderItems={orderItem}
+                                    subTotalPrice={0}
+                           
                                     deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
                                 />
                             </div>

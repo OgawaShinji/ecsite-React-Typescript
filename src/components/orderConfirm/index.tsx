@@ -66,7 +66,7 @@ const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
         <div>
             <Grid container justify={"center"} alignItems={"center"}>
                 <Grid item xs={9}>
-                    {data?.order?.orderItems && data.order.orderItems.map((orderItem) => (
+                    {data?.cart?.orderItems && data.cart.orderItems.map((orderItem) => (
                         <div key={orderItem && orderItem.id} className={classes.control}>
                             <OrderItemCard orderItem={ orderItem }/>
                         </div>
