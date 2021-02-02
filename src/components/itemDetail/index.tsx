@@ -68,13 +68,13 @@ const ItemDetail: React.FC = () => {
      * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
      */
     const handleOrderClick = async (moveTo: string, selectedState: itemEntryState) => {
-        if (item === null) throw new Error()
+        if (displayItem === null) throw new Error()
         let newOrderToppings: { topping: number }[] = []
         if (selectedState.toppings.length !== 0) selectedState.toppings.map((t) => newOrderToppings.push({topping: t.id}))
 
         const newOrder: OrderItemToPost = {
             newItem: {
-                item: item.id,
+                item: displayItem.id,
                 orderToppings: newOrderToppings,
                 quantity: selectedState.quantity,
                 size: selectedState.size === 'M' ? 'M' : 'L'
