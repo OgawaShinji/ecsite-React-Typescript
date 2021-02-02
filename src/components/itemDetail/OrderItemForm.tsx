@@ -1,7 +1,7 @@
 import {Button, CardActions, CardContent, createStyles, Grid, Typography} from "@material-ui/core";
 import React, {useState} from "react";
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
-import {ItemPrice} from "~/components/itemDetail/ItemPrice";
+import ItemPrice from "~/components/itemDetail/ItemPrice";
 import {makeStyles} from "@material-ui/core/styles";
 import {Item, Topping} from "~/types/interfaces";
 import {THEME_COLOR_2} from "~/assets/color";
@@ -10,7 +10,7 @@ type propsType = {
     item: Item | null,
     handleOrderClick: (moveTo: string, selectedState: itemEntryState) => void,
 }
-export const OrderItemForm: React.FC<propsType> = (props) => {
+const OrderItemForm: React.FC<propsType> = (props) => {
 
     const classes = style();
 
@@ -130,3 +130,4 @@ const style = makeStyles(() => createStyles({
         fontWeight: "bold"
     },
 }))
+export default OrderItemForm;
