@@ -2,12 +2,12 @@ import React from "react";
 import {Button, Card, CardActions, CardContent, makeStyles} from "@material-ui/core";
 import TotalPrice from "~/components/elements/totalPrice/totalPrice"
 import {RouteComponentProps, withRouter} from 'react-router-dom';
-import {OrderItemFragFragment} from "~/gql/generated/order.graphql";
 import {
     FetchOrderItemsQuery,
     FetchOrderItemsQueryHookResult,
     FetchOrderItemsQueryResult, OrderItem
 } from "~/gql/generated/order.graphql";
+import {OrderItemFragFragment} from "~/generated/graphql";
         
 interface Props {
     subTotalPrice: number
