@@ -1,6 +1,7 @@
 import React from "react";
 import {Redirect, Switch} from 'react-router-dom';
 import GuardedRoute from "~/router/guardedRoute";
+import LoginGuardedRoute from "~/router/LoginGuardedRoute";
 
 import itemList from '../components/itemList';
 import cart from '../components/cart/index';
@@ -28,7 +29,7 @@ const routes = (
         <GuardedRoute exact path={Path.cart} component={cart}/>
         <GuardedRoute exact path={Path.history} component={history}/>
         <GuardedRoute exact path={Path.itemDetail} component={itemDetail}/>
-        <GuardedRoute exact path={Path.login} component={login}/>
+        <LoginGuardedRoute exact path={Path.login} component={login}/>
         <GuardedRoute exact path={Path.orderComplete} component={orderComplete}/>
         <GuardedRoute exact path={Path.orderConfirm} component={orderConfirm}/>
         <GuardedRoute exact path={Path.register} component={register}/>

@@ -1,12 +1,13 @@
 import React from "react";
-import {
-    Avatar,
-    Paper,
-    Grid,
-    makeStyles,
-    Typography,
-} from "@material-ui/core";
+import {RouteComponentProps, withRouter} from 'react-router-dom';
+
+import {Avatar, Paper, Grid, makeStyles, Typography, Box, Divider, Button} from "@material-ui/core";
+
 import {OrderItem} from "~/types/interfaces";
+
+type Props = {
+    orderItem: OrderItem
+};
 
 const useStyles = makeStyles((theme) => ({
     avatar: {
@@ -21,84 +22,89 @@ const useStyles = makeStyles((theme) => ({
     },
     control: {
         padding: theme.spacing(1)
-    },
-    subTotalPrice: {
-        borderBottom: 'dashed 2px grey'
     }
 }));
 
-type Props = {
-    orderItem: OrderItem
-}
+const OrderItems: React.FC<Props & RouteComponentProps> = props => {
 
-const OrderItems: React.FC<Props> = (props) => {
     const classes = useStyles();
+
+    const toItemDetail = () => {
+        props.history.push({pathname: `/itemDetail/${props.orderItem.item.id}`});
+    };
 
     return (
         <Paper variant={"outlined"} elevation={0}>
-            <Grid container justify={"center"} alignItems={"center"} className={classes.control}>
-                <Grid item xs={2}>
-                    {/*画像表示*/}
-                    <Avatar variant={"rounded"} alt={'pizza'}
-                            src={props.orderItem.item.imagePath}
-                            className={classes.avatar}/>
+            <Grid container spacing={2} className={classes.control}>
+                <Grid item xs={3} container justify={"center"} alignItems={"center"}>
+                    <Button onClick={toItemDetail}>
+                        <Avatar variant={"rounded"} alt={'pizza'}
+                                src={props.orderItem.item.imagePath}
+                                className={classes.avatar}/>
+                    </Button>
                 </Grid>
-                <Grid item xs={8}>
-                    <Grid container justify={"flex-start"} alignItems={"stretch"} direction={"column"}>
-                        <Grid item xs={12}>
-                            <Grid container justify={"flex-start"} alignItems={"flex-start"}>
-                                <Grid item>
-                                    <Typography className={classes.title}>
-                                        {props.orderItem.item.name}
+                <Grid item xs={6} sm container>
+                    <Grid item xs container direction="column" spacing={2}>
+                        <Grid item container>
+                            <Grid item xs={1}/>
+                            <Grid item xs={11}>
+                                <Button onClick={toItemDetail}>
+                                    <Typography gutterBottom variant="h6">
+                                        <Box fontWeight="fontWeightBold">
+                                            {props.orderItem.item.name}
+                                        </Box>
                                     </Typography>
-                                </Grid>
+                                </Button>
+                                <Divider/>
                             </Grid>
-
                         </Grid>
-                        <Grid item xs={12}>
-                            <Grid container justify={"space-around"} direction={"row"}>
-                                <Grid item>
-                                    <Grid container justify={"space-between"} alignItems={"stretch"}
-                                          direction={"column"}>
-                                        <Grid item>
-                                            {/*注文内容のサイズによって表示を変える*/}
-                                            価格:
-                                            {props.orderItem.size === 'M' ? props.orderItem.item.priceM.toLocaleString() : null}
-                                            {props.orderItem.size === 'L' ? props.orderItem.item.priceL.toLocaleString() : null}
-                                            円
-                                        </Grid>
-                                        <Grid item>&nbsp;</Grid>
-                                        <Grid item>
-                                            サイズ: {props.orderItem.size}
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                                <Grid item style={{wordBreak: 'break-all'}}>
-                                    トッピング:
-                                    <ul>
-                                        {props.orderItem.orderToppings && props.orderItem.orderToppings.map((orderTopping, index) => (
-                                            <li key={index}
-                                                style={{wordBreak: 'break-all'}}>{orderTopping.topping.name}</li>
-                                        ))}
-
-                                        {/*トッピングが無い場合*/}
-                                        {props.orderItem.orderToppings && props.orderItem.orderToppings.length === 0 && 'なし'}
-                                    </ul>
-                                </Grid>
-                                <Grid item>
-                                    数量: {props.orderItem.quantity}
-                                </Grid>
+                        <Grid item container>
+                            <Grid item xs={1}/>
+                            <Grid item xs={5}>
+                                <Typography gutterBottom>
+                                    {/*>注文内容のサイズによって表示を変える*/}
+                                    価格
+                                    : {props.orderItem.size === 'M' ? props.orderItem.item.priceM.toLocaleString() : null}
+                                    {props.orderItem.size === 'L' ? props.orderItem.item.priceL.toLocaleString() : null}
+                                    円
+                                </Typography>
+                                <Typography gutterBottom>
+                                    サイズ : {props.orderItem.size}
+                                </Typography>
+                                <Typography variant="subtitle1">
+                                    数量 : {props.orderItem.quantity + '個'}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <ul style={{listStyleType: 'circle'}}>
+                                    {props.orderItem.orderToppings?.map((orderTopping, index) => (
+                                        <li key={index}>{orderTopping.topping.name}</li>
+                                    ))}
+                                </ul>
                             </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={2} className={classes.control}>
-                    <Typography className={classes.subTotalPrice}>
-                        小計: {props.orderItem.subTotalPrice && props.orderItem.subTotalPrice.toLocaleString()}円
-                    </Typography>
+                <Grid item xs={3} container alignItems="center">
+                    <Grid item xs={2}/>
+                    <Grid item xs={10}>
+                        <Grid container direction={"column"}>
+                            <Grid item>
+                                小計 :
+                            </Grid>
+                            <Grid item>
+                                <Typography variant='h5'>
+                                    <Box fontWeight="fontWeightBold">
+                                        {props.orderItem.subTotalPrice!.toLocaleString() + '円'}
+                                    </Box>
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         </Paper>
-    )
-}
-export default OrderItems;
+    );
+};
+
+export default withRouter(OrderItems);

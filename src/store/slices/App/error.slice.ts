@@ -4,7 +4,7 @@ import {RootState} from "~/store";
 type errorState = {
     error: {
         isError: boolean,
-        code?: number
+        code?: string
     }
 }
 const initialErrorState: errorState = {

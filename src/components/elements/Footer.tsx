@@ -7,20 +7,24 @@ const useStyles = makeStyles(() => ({
         bottom: 0,
         width: "100%",
         backgroundColor: '#696969',
-        paddingTop:50,
-        paddingBottom:30,
-        color:'white'
+        paddingTop: 50,
+        paddingBottom: 30,
+        color: 'white'
     },
     footer: {
         height: 100,
     },
     title: {
-        flexGrow: 1
+        fontWeight: 'bold',
+        fontFamily: "'Zapfino', 'Gabriola'",
+        fontSize: 45,
+        flexGrow: 1,
+        color: 'white'
     },
-    footerItemContent:{
-        "padding-left":"20%",
-        "padding-right":"20%",
-        "padding-top":40,
+    footerItemContent: {
+        "padding-left": "20%",
+        "padding-right": "20%",
+        "padding-top": 40,
     },
     footerItem: {
         margin: "auto"
@@ -35,8 +39,18 @@ const Footer: React.FC = () => {
         <div className={classes.root}>
             <Grid className={classes.footer}>
                 <Grid item container justify={"center"} alignItems={"center"}>
-                    <Typography variant="h4">
-                        らくらくピザ
+                    <Typography align="center" className={classes.title}>
+                                    <span style={{color: "red"}}>
+                                       R
+                                    </span>
+                        akuraku&nbsp;&nbsp;
+                        <span style={{color: "red"}}>
+                                        P
+                                    </span>
+                        izza&nbsp;&nbsp;
+                        <span style={{fontSize: 40}}>
+                                        🍕
+                                    </span>
                     </Typography>
                 </Grid>
                 <Grid item container justify={"center"} alignItems={"center"} className={classes.footerItemContent}>

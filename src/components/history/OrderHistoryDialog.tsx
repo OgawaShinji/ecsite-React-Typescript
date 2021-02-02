@@ -1,6 +1,7 @@
 import React from "react";
 
 import OrderItemCard from '~/components/elements/orderItemCard/OrderItemCard';
+
 import {
     Dialog,
     DialogTitle,
@@ -10,13 +11,14 @@ import {
     Grid, makeStyles
 } from '@material-ui/core';
 import {Cancel} from "@material-ui/icons";
+
 import {OrderItem} from "~/types/interfaces";
 
 type Props = {
     handleClose: () => void;
     isOpen: boolean;
     orderItems: Array<OrderItem>;
-}
+};
 
 const useStyles = makeStyles((theme) => ({
     control: {
@@ -28,6 +30,13 @@ const OrderHistoryDialog: React.FC<Props> = props => {
 
     const classes = useStyles();
 
+    // 注文商品一覧JSXの作成
+    const orderItemCardList = props.orderItems.map((orderItem) => (
+        <div key={orderItem.id} className={classes.control}>
+            <OrderItemCard orderItem={orderItem}/>
+        </div>
+    ));
+
     return (
         <div>
             <Dialog open={props.isOpen} onClose={props.handleClose} fullWidth={true} maxWidth={"md"}>
@@ -38,16 +47,10 @@ const OrderHistoryDialog: React.FC<Props> = props => {
                 </Grid>
                 <DialogContent>
                     <Grid container justify={"center"} alignItems={"center"}>
-
-                        <Grid item xs={10}>
-                            {props.orderItems.map((orderItem) => (
-                                <div key={orderItem.id} className={classes.control}>
-                                    <OrderItemCard orderItem={orderItem}/>
-                                </div>
-                            ))}
+                        <Grid item xs={11}>
+                            {orderItemCardList}
                         </Grid>
                     </Grid>
-
                 </DialogContent>
                 <DialogActions>
                     <Grid container justify={"center"} alignItems={"center"}>

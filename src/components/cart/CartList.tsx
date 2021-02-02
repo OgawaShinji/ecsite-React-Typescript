@@ -15,7 +15,7 @@ import {
     selectOrder,
     selectOrderSubTotalPrice
 } from "~/store/slices/Domain/order.slice"
-import {Grid, List, makeStyles, Typography} from "@material-ui/core";
+import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
 import {setError} from "~/store/slices/App/error.slice";
 
 const useStyles = makeStyles({
@@ -33,9 +33,13 @@ const useStyles = makeStyles({
     cartList: {
         backgroundColor: '#dcdcdc'
     },
-    emptyOrderItems: {
+    emptyCartList: {
+        backgroundColor: '#dcdcdc',
         textAlign: 'center',
-        margin: 'auto'
+        // alignItems: 'center',
+    },
+    emptyOrderItems: {
+        paddingTop: 60,
     },
     orderOperator: {
         position: 'sticky',
@@ -53,11 +57,20 @@ const CartList: React.FC = () => {
     let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
 
     const [orderItems, setOrderItems] = useState<OrderItem[] | undefined>()
+    const [isLoading, setIsLoading] = useState(false); // loading
 
     // 初期表示
     useEffect(() => {
-        dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
+        setIsLoading(true);
+        const loading = async () => {
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 500)
+        }
+        loading().then(() => {
+            dispatch(asyncFetchOrderItems()).catch((e) => {
+                dispatch(setError({isError: true, code: e.message}))
+            })
         })
     }, [dispatch])
 
@@ -74,9 +87,9 @@ const CartList: React.FC = () => {
      */
     const updateOrderItems = async ({orderItem}: { orderItem: OrderItem }) => {
 
+        // サーバーに送るデータをorderItemsToPostに詰め替える処理
         let updatedOrderToppings: { topping: number }[] = []
         if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t.topping.id}))
-
         const updatedOrderItem: orderItem = {
             id: orderItem.id,
             item: orderItem.item.id,
@@ -85,13 +98,12 @@ const CartList: React.FC = () => {
             size: orderItem.size === 'M' ? 'M' : 'L'
         }
         let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
-
-        // サーバーに送るデータ
         const orderItemsToPost: OrderItemsToPost = {
             orderItems: updatedOrderItems,
             status: 0,
             newTotalPrice: orderSubTotalPrice
         }
+
         await dispatch(asyncUpdateOrderItem(orderItemsToPost)).catch((e) => {
             dispatch(setError({isError: true, code: e.message}))
         })
@@ -114,38 +126,60 @@ const CartList: React.FC = () => {
         })
     }
 
+    // カートに商品があるかどうかでレイアウトを切り替えるため
+    let styleCartList
+    if (orderItems && orderItems?.length > 0) {
+        styleCartList = classes.cartList
+    } else {
+        styleCartList = classes.emptyCartList
+    }
+
 
     return (
-        <div className={classes.root}>
-            <Grid container>
-                <Grid item xs={8} className={classes.cartList}>
-                    <Typography variant="h4" gutterBottom className={classes.title}>
-                        注文商品
-                    </Typography>
-                    {orderItems && orderItems?.length > 0 ? (<List>
-                        {orderItems &&
-                        orderItems!.map((orderItem) => (
-                            <CartItem
-                                orderItem={orderItem}
-                                key={orderItem.id}
-                                updateOrderItems={({orderItem}) => updateOrderItems({orderItem})}
-                                deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
-                            />
-                        ))}
-                    </List>) : (
-                        <div className={classes.emptyOrderItems}>注文がありません</div>
-                    )}
-                </Grid>
-                <Grid item xs={4}>
-                    <div className={classes.orderOperator}>
-                        <OrderOperator
-                            subTotalPrice={orderSubTotalPrice}
-                            orderItems={orderItems}
-                            deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
-                        />
-                    </div>
-                </Grid>
-            </Grid>
+        <div>
+            {isLoading ? (
+                <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
+            ) : (
+                <div className={classes.root}>
+                    <Grid container style={{paddingLeft: 20}}>
+                        <Grid item xs={8} className={styleCartList}>
+                            <Typography
+                                variant="h4"
+                                gutterBottom
+                                className={classes.title}
+                            >
+                                ショッピングカート
+                            </Typography>
+                            {orderItems && orderItems?.length > 0 ? (<List>
+                                {orderItems &&
+                                orderItems!.map((orderItem) => (
+                                    <CartItem
+                                        orderItem={orderItem}
+                                        key={orderItem.id}
+                                        updateOrderItems={({orderItem}) => updateOrderItems({orderItem})}
+                                        deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
+                                    />
+                                ))}
+                            </List>) : (
+                                <div className={classes.emptyOrderItems}>
+                                    <Typography variant="h6" gutterBottom>
+                                        カートに商品がありません
+                                    </Typography>
+                                </div>
+                            )}
+                        </Grid>
+                        <Grid item xs={4}>
+                            <div className={classes.orderOperator}>
+                                <OrderOperator
+                                    subTotalPrice={orderSubTotalPrice}
+                                    orderItems={orderItems}
+                                    deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
+                                />
+                            </div>
+                        </Grid>
+                    </Grid>
+                </div>
+            )}
         </div>
     )
 }

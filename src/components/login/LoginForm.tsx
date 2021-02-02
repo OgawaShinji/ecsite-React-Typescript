@@ -1,16 +1,25 @@
 import React, {useState} from "react";
-import {Button, Card, CardActions, CardContent, CardHeader, TextField, Typography} from "@material-ui/core";
+import {
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    createStyles,
+    Grid,
+    TextField,
+    Typography
+} from "@material-ui/core";
 import {AppDispatch} from "~/store";
 import {useDispatch} from "react-redux";
 import {fetchLoginUser, login, loginForm} from "~/store/slices/App/auth.slice";
 import {useHistory} from "react-router-dom"
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice";
+import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
+import {makeStyles} from "@material-ui/core/styles";
+import {setIsLoading} from "~/store/slices/App/displayUI.slice"
 
-type Props = {
-    styleProps: React.CSSProperties
-}
-const LoginForm: React.FC<Props> = (props) => {
+const LoginForm: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const [email, setEmail] = useState<{ value: string, errorMessage: string }>({
         value: '',
@@ -38,7 +47,7 @@ const LoginForm: React.FC<Props> = (props) => {
      * @param e:押されたKeyの値
      */
     const handleKeyPress = (e: string) => {
-        if (e === "Enter") handleLoginClick();
+        if (e === "Enter") handleLoginClick().then();
     }
 
     /**
@@ -50,9 +59,12 @@ const LoginForm: React.FC<Props> = (props) => {
             const input: loginForm = {email: email.value, password: password.value}
             await dispatch(login(input)).then(async (body) => {
                 if (body?.payload) {
-                    await dispatch(fetchLoginUser()).then((i)=>console.log(i)).catch((e) => {
+                    await dispatch(fetchLoginUser()).then().catch((e) => {
                         dispatch(setError({isError: true, code: e.message}))
                     })
+
+                    //loading画面表示可能にした後画面遷移
+                    await dispatch(setIsLoading(true))
                     await routeHistory.push(Path.itemList)
                 } else {
                     setIsIncorrectEntry(true);
@@ -94,54 +106,65 @@ const LoginForm: React.FC<Props> = (props) => {
             <Typography color={"secondary"}>{message}
             </Typography></Card>)
     }
+    const classes = login_form_style();
 
-    return (<>
-        <Card style={props.styleProps}>
-            <CardHeader title="Login" style={{backgroundColor: "#ffa500"}}/>
-            <CardContent>
-                <div>
-                    {isIncorrectEntry ? errorMessageCard("メールアドレスもしくはパスワードが違います") : ""}
-                    {email.errorMessage.length > 0 ? errorMessageCard(email.errorMessage) : ""}
-                    <TextField
-                        error={email.errorMessage.length > 0}
-                        fullWidth
-                        id="email"
-                        type="email"
-                        label="e-mail"
-                        placeholder="***@***.***"
-                        margin="normal"
-                        value={email.value}
-                        onChange={handleEmailChange}
-                        onKeyPress={(e) => handleKeyPress(e.key)}
-                    />
-                    {password.errorMessage.length > 0 ? errorMessageCard(password.errorMessage) : ""}
-                    <TextField
-                        error={password.errorMessage.length > 0}
-                        fullWidth
-                        id="password"
-                        type="password"
-                        label="password"
-                        placeholder="Password"
-                        margin="normal"
-                        value={password.value}
-                        onChange={handlePasswordChange}
-                        onKeyPress={(e) => handleKeyPress(e.key)}
-                    />
-                </div>
-            </CardContent>
-            <CardActions>
-                <Button
-                    variant="contained"
-                    size="large"
-                    color={"secondary"}
-                    style={{left: '35%'}}
-                    onClick={handleLoginClick}
-                    disabled={email.errorMessage.length > 0 || password.errorMessage.length > 0 || email.value === '' || password.value === ''}
-                >
-                    Login
-                </Button>
-            </CardActions>
+    return (
+        <Card>
+            <Grid container justify={"center"}>
+                <Grid item xs={12}>
+                    <CardHeader title="Login" style={{backgroundColor: THEME_COLOR_1}}/>
+                </Grid>
+                <Grid item xs={12}>
+                    <CardContent>
+                        {isIncorrectEntry ? errorMessageCard("メールアドレスもしくはパスワードが違います") : ""}
+                        {email.errorMessage.length > 0 ? errorMessageCard(email.errorMessage) : ""}
+                        <TextField
+                            error={email.errorMessage.length > 0}
+                            fullWidth
+                            id="email"
+                            type="email"
+                            label="e-mail"
+                            placeholder="***@***.***"
+                            margin="normal"
+                            value={email.value}
+                            onChange={handleEmailChange}
+                            onKeyPress={(e) => handleKeyPress(e.key)}
+                        />
+                        {password.errorMessage.length > 0 ? errorMessageCard(password.errorMessage) : ""}
+                        <TextField
+                            error={password.errorMessage.length > 0}
+                            fullWidth
+                            id="password"
+                            type="password"
+                            label="password"
+                            placeholder="Password"
+                            margin="normal"
+                            value={password.value}
+                            onChange={handlePasswordChange}
+                            onKeyPress={(e) => handleKeyPress(e.key)}
+                        />
+                    </CardContent>
+                </Grid>
+                <Grid item xs={12}>
+                    <Button
+                        variant="contained"
+                        size="large"
+                        onClick={handleLoginClick}
+                        className={classes.button}
+                        disabled={email.errorMessage.length > 0 || password.errorMessage.length > 0 || email.value === '' || password.value === ''}
+                    >
+                        Login
+                    </Button>
+                </Grid>
+            </Grid>
         </Card>
-    </>)
-}
+    )
+};
 export default LoginForm;
+const login_form_style = makeStyles(() => createStyles({
+    button: {
+        marginBottom: "5%",
+        backgroundColor: THEME_COLOR_2,
+        color: "white",
+    }
+}))

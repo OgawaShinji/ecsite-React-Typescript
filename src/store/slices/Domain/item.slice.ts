@@ -7,14 +7,16 @@ import Axios from "~/store/api";
 import snakecaseKeys from "snakecase-keys";
 
 type itemState = {
-    items: Array<Item>;
+    items: Array<Item> | null;
     itemNames: Array<string>;
+    itemCount: number | null;
     itemDetail: Item | null;
 }
 
 const initialItemState: itemState = {
-    items: [],
+    items: null,
     itemNames: [],
+    itemCount: null,
     itemDetail: null
 }
 
@@ -92,8 +94,9 @@ export const itemSlice = createSlice({
         setItems: ((state: itemState, action) => {
             state.items = action.payload.items;
         }),
-        setItemNames: ((state: itemState, action) => {
+        setItemNamesAndItemCount: ((state: itemState, action) => {
             state.itemNames = action.payload.itemNames;
+            state.itemCount = action.payload.itemNames.length;
         }),
         setItemDetail: ((state, action) => {
             state.itemDetail = action.payload
@@ -110,24 +113,22 @@ export const itemSlice = createSlice({
 
         // fetchItemNames
         builder.addCase(fetchItemNames.fulfilled, (state, action) => {
-            itemSlice.caseReducers.setItemNames(state, itemSlice.actions.setItems(action.payload));
+            itemSlice.caseReducers.setItemNamesAndItemCount(state, itemSlice.actions.setItems(action.payload));
         })
         builder.addCase(fetchItemNames.rejected, (state, action) => {
             throw new Error(action.error.message);
         })
 
         //fetchItemDetail
-        builder.addCase(fetchItemDetail.fulfilled, (state, action) => {
-            itemSlice.caseReducers.setItemDetail(state, itemSlice.actions.setItemDetail(action.payload))
-        })
         builder.addCase(fetchItemDetail.rejected, (state, action) => {
             throw new Error(action.error.message);
         })
     })
 })
 
-export const {setItemDetail} = itemSlice.actions;
+export const {setItems, setItemNamesAndItemCount, setItemDetail} = itemSlice.actions;
 
 export const selectItems = (state: RootState) => state.item.items;
 export const selectItemNames = (state: RootState) => state.item.itemNames;
+export const selectItemCount = (state: RootState) => state.item.itemCount;
 export const selectItemDetail = (state: RootState) => state.item.itemDetail;
