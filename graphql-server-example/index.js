@@ -90,6 +90,29 @@ const typeDefs = gql`
     itemName: String
     sortId: Int
 }
+  
+  # 引数に入れるオブジェクトの型を定義
+  input UserInfo {
+        name: String!
+        email: String!
+        zipcode: String!
+        address: String!
+        telephone: String!
+        password: String!
+  }
+  
+  input OrderInfo {
+        status: Int
+        orderDate: String
+        deliveryTime: Date
+        destinationName: String
+        destinationEmail: String
+        destinationZipcode: String
+        destinationAddress: String
+        destinationTel: String
+        paymentMethod: String
+        totalPrice: Int
+  }
 
   # ここに書いたオブジェクトたちをqueryで持ってくることができる
   type Query {
@@ -98,15 +121,10 @@ const typeDefs = gql`
   }
   
   type Mutation{
-     postUser(
-        name: String
-        email: String
-        zipcode: String
-        address: String
-        telephone: String
-        status: Int
-        password: String
-     ): [User]
+  
+     postUser(userInfo: UserInfo!): User
+     
+     updateOrderInfo(orderInfo: OrderInfo!): Order
      
      update(
         id: ID!
@@ -176,6 +194,8 @@ const order = {
 // ダミーデータ
 const users = []
 
+const fakeDatabase = {};
+
 
 // serverが渡してくれるやつ
 // queryやmutationの処理を定義
@@ -183,18 +203,19 @@ const resolvers = {
     Date: dateScalar,
     Query: {
         order: () => order,
-        users: () => users
+        users: () => users,
     },
     Mutation: {
-        postUser(parent, args) {
+        postUser(parent, args, context, info) {
+            console.log(args)
             const user = {
                 id: Math.floor(Math.random() * 100),
                 status: 1,
-                ...args
+                ...args.userInfo
             }
             users.push(user)
             //登録したユーザー情報が返ってくる
-            return users
+            return user
         },
         update(parent, args) {
             //ユーザーリストから対象ユーザーをidで特定する
@@ -204,7 +225,22 @@ const resolvers = {
             users[index].email = args.email
             return users
         },
+        //今回は初期値にセットしてある内容を更新する
+        updateOrderInfo(parent, args, context, info){
+            console.log(args)
+            order.status = args.orderInfo.status
+            order.paymentMethod = args.orderInfo.paymentMethod
+            order.orderDate = args.orderInfo.orderDate
+            order.deliveryTime = args.orderInfo.deliveryTime
+            order.destinationName = args.orderInfo.destinationName
+            order.destinationEmail = args.orderInfo.destinationEmail
+            order.destinationZipcode = args.orderInfo.destinationZipcode
+            order.destinationAddress = args.orderInfo.destinationAddress
+            order.destinationTel = args.orderInfo.destinationTel
+            order.totalPrice = args.orderInfo.totalPrice
 
+            return order
+        }
     }
 };
 

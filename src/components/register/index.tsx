@@ -17,6 +17,9 @@ import {Path} from "~/router/routes";
 import {User} from "~/types/interfaces";
 import {AppDispatch} from "~/store";
 import {Visibility, VisibilityOff} from "@material-ui/icons";
+import {ListUserDocument, PostRegisterDocument, usePostRegisterMutation} from "~/gql/generated/user.graphql";
+import {useLazyQuery} from "@apollo/client";
+
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -282,8 +285,39 @@ const Register: FC = () => {
         });
     }
 
+    const [getUser,{data:data2}] = useLazyQuery(ListUserDocument,{
+        fetchPolicy: "network-only"
+    });
+
+    const [postRegisterMutation, { data, loading, error }] = usePostRegisterMutation();
+
+    const handleClick = async () => {
+        const userInfo = {
+            name:name.value,
+            email:email.value,
+            zipcode:firstZipcode.value + secondZipcode.value,
+            address:address.value,
+            telephone:firstTelNum.value + '-' + secondTelNum.value + '-' + thirdTelNum.value,
+            password:password.value
+        }
+        console.log(userInfo)
+        await postRegisterMutation({variables:{userInfo:userInfo}}).then( async () => {
+               await console.log(data)
+        });
+    }
+
+    const handleClick2 = async () => {
+        getUser();
+        await console.log(data2)
+    }
+
+    if (loading) return (<div>loading</div>);
+    if (error) return (<div>error</div>);
+
     return (isLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (
         <div>
+            <button type={"button"} onClick={handleClick}>てすと</button>
+            <button type={"button"} onClick={handleClick2}>get</button>
             <Grid container alignContent="center" justify="center" className={classes.pad}>
                 <Paper className={classes.root2}>
                     <Grid container alignContent="center" justify="center">
