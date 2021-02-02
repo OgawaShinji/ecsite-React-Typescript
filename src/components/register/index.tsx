@@ -17,8 +17,7 @@ import {Path} from "~/router/routes";
 import {User} from "~/types/interfaces";
 import {AppDispatch} from "~/store";
 import {Visibility, VisibilityOff} from "@material-ui/icons";
-import {ListUserDocument, PostRegisterDocument, usePostRegisterMutation} from "~/gql/generated/user.graphql";
-import {useLazyQuery} from "@apollo/client";
+import { usePostRegisterMutation} from "~/gql/generated/user.graphql";
 
 
 
@@ -285,13 +284,10 @@ const Register: FC = () => {
         });
     }
 
-    const [getUser,{data:data2}] = useLazyQuery(ListUserDocument,{
-        fetchPolicy: "network-only"
-    });
-
+    //mockサーバーにデータを送る
     const [postRegisterMutation, { data, loading, error }] = usePostRegisterMutation();
-
     const handleClick = async () => {
+        setIsLoading(true);
         const userInfo = {
             name:name.value,
             email:email.value,
@@ -301,14 +297,21 @@ const Register: FC = () => {
             password:password.value
         }
         console.log(userInfo)
-        await postRegisterMutation({variables:{userInfo:userInfo}}).then( async () => {
-               await console.log(data)
+        //入力されたデータを引数にセット
+        await postRegisterMutation({variables:{userInfo:userInfo}}).then( () => {
+            routeHistory.push(Path.login);
+        }).catch(async (e) => {
+            if (e.message === '400') {
+                const loading = async () => {
+                    setTimeout(() => {
+                        setIsLoading(false);
+                    }, 500)
+                }
+                loading().then(() => {
+                    setEmailDuplicated(true);
+                })
+            }
         });
-    }
-
-    const handleClick2 = async () => {
-        getUser();
-        await console.log(data2)
     }
 
     if (loading) return (<div>loading</div>);
@@ -316,8 +319,6 @@ const Register: FC = () => {
 
     return (isLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (
         <div>
-            <button type={"button"} onClick={handleClick}>てすと</button>
-            <button type={"button"} onClick={handleClick2}>get</button>
             <Grid container alignContent="center" justify="center" className={classes.pad}>
                 <Paper className={classes.root2}>
                     <Grid container alignContent="center" justify="center">
@@ -522,7 +523,7 @@ const Register: FC = () => {
                                 <Button
                                     variant="contained"
                                     className={classes.color}
-                                    onClick={handleClickRegister}
+                                    onClick={handleClick}
                                     disabled={
                                         name.errorMessage.length > 0 || name.value === '' ||
                                         email.errorMessage.length > 0 || email.value === '' ||
