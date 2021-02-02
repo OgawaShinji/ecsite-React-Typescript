@@ -22,7 +22,7 @@ jest.mock("react-router-dom", () => ({
     }),
     useHistory: () => ({
         push: jest.fn().mockImplementation((to: string) => {
-            calledMethod.history = to;
+            methodStatus.history = to;
         })
     })
 }));
@@ -47,9 +47,15 @@ const toppingsFromDB: Topping[] = [{
         priceM: 15,
         priceL: 30
     }]
-let calledMethod = {
+type methodStatusType = {
+    url: string;
+    history: string;
+    requestBody: any
+}
+let methodStatus: methodStatusType = {
     url: '',
-    history: ''
+    history: '',
+    requestBody: null
 };
 const server = setupServer(
     rest.get(REST_URL + '/flask/item/1', (req, res, ctx) => {
@@ -63,7 +69,8 @@ const server = setupServer(
         }))
     }),
     rest.post(REST_URL + '/django/cart/', ((req, res, ctx) => {
-        calledMethod.url = `${req.url}`
+        methodStatus.url = `${req.url}`
+        methodStatus.requestBody = req.body
         return res(ctx.status(200), ctx.body('200'))
     }))
 );
@@ -88,8 +95,9 @@ afterEach(() => {
     server.resetHandlers();
     cleanup();
     jest.resetAllMocks();
-    calledMethod.history = '';
-    calledMethod.url = '';
+    methodStatus.history = '';
+    methodStatus.url = '';
+    methodStatus.requestBody = null;
 });
 
 afterAll(() => {
@@ -97,7 +105,8 @@ afterAll(() => {
 });
 
 describe('商品詳細画面', () => {
-    it('index, OrderItemForm, OrderItemEntry, SelectTopping統合テスト', async () => {
+    it('(index, OrderItemForm, OrderItemEntry, SelectTopping)コンポーネントと' +
+        '(itemSlice.fetchItemDetail, toppingSlice.fetchToppings, orderSlice.asyncPostOrderItem)統合テスト', async () => {
         render(
             <Provider store={store}>
                 <BrowserRouter>
@@ -112,15 +121,11 @@ describe('商品詳細画面', () => {
         //商品情報がレンダリングされていないこと
         expect(screen.queryByText(itemFromDB.name)).toBeNull();
 
-        //await screen.debug();
-
 
         /*loading中*/
         expect(await screen.findByRole('progressbar')).toBeTruthy();
         //商品情報がレンダリングされていないこと
         expect(screen.queryByText(itemFromDB.name)).toBeNull();
-
-        //await screen.debug();
 
 
         /*loading終了後*/
@@ -192,11 +197,21 @@ describe('商品詳細画面', () => {
             //const r = screen.getByRole('', {hidden: true})
         });
         //商品をカートに追加するAsyncThunkメソッドが呼び出されていること
-        await expect(calledMethod.url).toBe(REST_URL + '/django/cart/');
+        await expect(methodStatus.url).toBe(REST_URL + '/django/cart/');
+        await expect(methodStatus.requestBody).toStrictEqual({
+            order_item: {
+                item: itemFromDB.id,
+                order_toppings: [{topping: toppingsFromDB[0].id!}],
+                quantity: 3,
+                size: 'L'
+            },
+            status: 0,
+            total_price: (itemFromDB.priceL + toppingsFromDB[0].priceL!) * 3
+        })
         //loading画面になっていること
         await expect(await screen.findByRole('progressbar')).toBeTruthy();
         //cart画面に遷移するメソッドが呼び出されていること
-        await expect(calledMethod.history).toBe('/cart')
+        await expect(methodStatus.history).toBe('/cart')
 
     })
 });
