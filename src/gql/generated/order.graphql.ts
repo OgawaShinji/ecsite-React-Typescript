@@ -84,9 +84,62 @@ export type Order = {
   orderItems?: Maybe<Array<Maybe<OrderItem>>>;
 };
 
+export type SearchForm = {
+  __typename?: 'SearchForm';
+  itemName?: Maybe<Scalars['String']>;
+  sortId?: Maybe<Scalars['Int']>;
+};
+
+export type UserInfo = {
+  name: Scalars['String'];
+  email: Scalars['String'];
+  zipcode: Scalars['String'];
+  address: Scalars['String'];
+  telephone: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type OrderInfo = {
+  status?: Maybe<Scalars['Int']>;
+  orderDate?: Maybe<Scalars['String']>;
+  deliveryTime?: Maybe<Scalars['Date']>;
+  destinationName?: Maybe<Scalars['String']>;
+  destinationEmail?: Maybe<Scalars['String']>;
+  destinationZipcode?: Maybe<Scalars['String']>;
+  destinationAddress?: Maybe<Scalars['String']>;
+  destinationTel?: Maybe<Scalars['String']>;
+  paymentMethod?: Maybe<Scalars['String']>;
+  totalPrice?: Maybe<Scalars['Int']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   order?: Maybe<Order>;
+  users?: Maybe<Array<Maybe<User>>>;
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  postUser?: Maybe<User>;
+  updateOrderInfo?: Maybe<Order>;
+  update?: Maybe<Array<Maybe<User>>>;
+};
+
+
+export type MutationPostUserArgs = {
+  userInfo: UserInfo;
+};
+
+
+export type MutationUpdateOrderInfoArgs = {
+  orderInfo: OrderInfo;
+};
+
+
+export type MutationUpdateArgs = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
 };
 
 export enum CacheControlScope {
@@ -114,6 +167,45 @@ export type FetchOrderItemsQuery = (
         & { topping?: Maybe<(
           { __typename?: 'Topping' }
           & Pick<Topping, 'id' | 'name' | 'priceM' | 'priceL'>
+        )> }
+      )>>> }
+    )>>> }
+  )> }
+);
+
+export type UpdateOrderMutationVariables = Exact<{
+  orderInfo: OrderInfo;
+}>;
+
+
+export type UpdateOrderMutation = (
+  { __typename?: 'Mutation' }
+  & { updateOrderInfo?: Maybe<(
+    { __typename?: 'Order' }
+    & Pick<Order, 'status' | 'orderDate' | 'destinationName' | 'destinationEmail' | 'destinationZipcode' | 'destinationAddress' | 'destinationTel' | 'deliveryTime' | 'totalPrice' | 'paymentMethod'>
+  )> }
+);
+
+export type FetchOrderQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchOrderQuery = (
+  { __typename?: 'Query' }
+  & { order?: Maybe<(
+    { __typename?: 'Order' }
+    & Pick<Order, 'id' | 'status' | 'orderDate' | 'deliveryTime' | 'destinationName' | 'destinationEmail' | 'destinationZipcode' | 'destinationAddress' | 'destinationTel' | 'totalPrice' | 'paymentMethod'>
+    & { orderItems?: Maybe<Array<Maybe<(
+      { __typename?: 'OrderItem' }
+      & Pick<OrderItem, 'id' | 'quantity' | 'size' | 'subTotalPrice'>
+      & { item?: Maybe<(
+        { __typename?: 'Item' }
+        & Pick<Item, 'name' | 'description' | 'priceM'>
+      )>, orderToppings?: Maybe<Array<Maybe<(
+        { __typename?: 'OrderTopping' }
+        & Pick<OrderTopping, 'id' | 'orderItemId'>
+        & { topping?: Maybe<(
+          { __typename?: 'Topping' }
+          & Pick<Topping, 'id' | 'name' | 'priceM'>
         )> }
       )>>> }
     )>>> }
@@ -177,3 +269,106 @@ export function useFetchOrderItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type FetchOrderItemsQueryHookResult = ReturnType<typeof useFetchOrderItemsQuery>;
 export type FetchOrderItemsLazyQueryHookResult = ReturnType<typeof useFetchOrderItemsLazyQuery>;
 export type FetchOrderItemsQueryResult = Apollo.QueryResult<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>;
+export const UpdateOrderDocument = gql`
+    mutation updateOrder($orderInfo: OrderInfo!) {
+  updateOrderInfo(orderInfo: $orderInfo) {
+    status
+    orderDate
+    destinationName
+    destinationEmail
+    destinationZipcode
+    destinationAddress
+    destinationTel
+    deliveryTime
+    totalPrice
+    paymentMethod
+  }
+}
+    `;
+export type UpdateOrderMutationFn = Apollo.MutationFunction<UpdateOrderMutation, UpdateOrderMutationVariables>;
+
+/**
+ * __useUpdateOrderMutation__
+ *
+ * To run a mutation, you first call `useUpdateOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOrderMutation, { data, loading, error }] = useUpdateOrderMutation({
+ *   variables: {
+ *      orderInfo: // value for 'orderInfo'
+ *   },
+ * });
+ */
+export function useUpdateOrderMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOrderMutation, UpdateOrderMutationVariables>) {
+        return Apollo.useMutation<UpdateOrderMutation, UpdateOrderMutationVariables>(UpdateOrderDocument, baseOptions);
+      }
+export type UpdateOrderMutationHookResult = ReturnType<typeof useUpdateOrderMutation>;
+export type UpdateOrderMutationResult = Apollo.MutationResult<UpdateOrderMutation>;
+export type UpdateOrderMutationOptions = Apollo.BaseMutationOptions<UpdateOrderMutation, UpdateOrderMutationVariables>;
+export const FetchOrderDocument = gql`
+    query fetchOrder {
+  order {
+    id
+    status
+    orderDate
+    deliveryTime
+    destinationName
+    destinationEmail
+    destinationZipcode
+    destinationAddress
+    destinationTel
+    totalPrice
+    paymentMethod
+    orderItems {
+      id
+      item {
+        name
+        description
+        priceM
+      }
+      orderToppings {
+        id
+        topping {
+          id
+          name
+          priceM
+        }
+        orderItemId
+      }
+      quantity
+      size
+      subTotalPrice
+    }
+  }
+}
+    `;
+
+/**
+ * __useFetchOrderQuery__
+ *
+ * To run a query within a React component, call `useFetchOrderQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchOrderQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchOrderQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFetchOrderQuery(baseOptions?: Apollo.QueryHookOptions<FetchOrderQuery, FetchOrderQueryVariables>) {
+        return Apollo.useQuery<FetchOrderQuery, FetchOrderQueryVariables>(FetchOrderDocument, baseOptions);
+      }
+export function useFetchOrderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchOrderQuery, FetchOrderQueryVariables>) {
+          return Apollo.useLazyQuery<FetchOrderQuery, FetchOrderQueryVariables>(FetchOrderDocument, baseOptions);
+        }
+export type FetchOrderQueryHookResult = ReturnType<typeof useFetchOrderQuery>;
+export type FetchOrderLazyQueryHookResult = ReturnType<typeof useFetchOrderLazyQuery>;
+export type FetchOrderQueryResult = Apollo.QueryResult<FetchOrderQuery, FetchOrderQueryVariables>;
