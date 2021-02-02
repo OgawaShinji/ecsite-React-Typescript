@@ -17,7 +17,8 @@ import {
 } from "~/store/slices/Domain/order.slice"
 import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
 import {setError} from "~/store/slices/App/error.slice";
-import {useFetchOrderItemsQuery} from "~/gql/generated/order.graphql";
+import {OrderItemFragFragmentDoc, useFetchOrderItemsQuery} from "~/gql/generated/order.graphql";
+import {filter} from "graphql-anywhere";
 
 const useStyles = makeStyles({
     root: {
@@ -62,6 +63,15 @@ const CartList: React.FC = () => {
 
     const {loading, error, data, refetch, networkStatus} = useFetchOrderItemsQuery()
     console.log(data)
+
+    let orderItem;
+
+    if(data){
+        orderItem = filter(OrderItemFragFragmentDoc, data?.order?.orderItems);
+        console.log(orderItem)
+    }
+
+
 
     // 初期表示
     useEffect(() => {
@@ -138,7 +148,6 @@ const CartList: React.FC = () => {
         styleCartList = classes.emptyCartList
     }
 
-
     return (
         <div>
             {isLoading ? (
@@ -176,7 +185,7 @@ const CartList: React.FC = () => {
                             <div className={classes.orderOperator}>
                                 <OrderOperator
                                     subTotalPrice={orderSubTotalPrice}
-                                    orderItems={orderItems}
+                                    orderItems={orderItem}
                                     deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
                                 />
                             </div>
