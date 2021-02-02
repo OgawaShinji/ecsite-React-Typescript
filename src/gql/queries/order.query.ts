@@ -1,34 +1,51 @@
 import gql from "graphql-tag";
 
-gql(`query fetchOrderItems{
+gql(`
+query fetchOrderItems{
   order{
     orderItems{
-      id
-      item{
-        id
-        name
-        description
-        priceM
-        priceL
-        imagePath
-        deleted
-        }
-      orderToppings{
-        id
-        topping{
-          id
-          name
-          priceM
-          priceL
-        }
-        orderItemId
-      }
-      quantity
-      size
-      subTotalPrice
+      ...OrderItemFrag
     }
   }
-}`)
+}
+fragment OrderItemFrag on OrderItem {     
+  id
+  item{
+    ...ItemFrag
+  }
+  orderToppings{
+    ...OrderToppingFrag
+  }
+  quantity
+  size
+  subTotalPrice 
+}
+
+fragment ItemFrag on Item {
+  id
+  name
+  description
+  priceM
+  priceL
+  imagePath
+  deleted
+}
+
+fragment OrderToppingFrag on OrderTopping {
+  id
+  topping{
+    ...ToppingFrag
+  }
+  orderItemId
+}
+
+fragment ToppingFrag on Topping {
+  id
+  name
+  priceM
+  priceL
+}
+`)
 
 const postOrder = gql(`mutation updateOrder($orderInfo: OrderInfo!) {
     updateOrderInfo(orderInfo: $orderInfo ){
