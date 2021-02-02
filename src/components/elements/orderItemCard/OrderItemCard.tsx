@@ -2,11 +2,10 @@ import React from "react";
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 
 import {Avatar, Paper, Grid, makeStyles, Typography, Box, Divider, Button} from "@material-ui/core";
-
-import {OrderItem} from "~/types/interfaces";
+import { OrderItem } from "~/gql/generated/order.graphql";
 
 type Props = {
-    orderItem: OrderItem
+    orderItem: OrderItem | null
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +29,10 @@ const OrderItems: React.FC<Props & RouteComponentProps> = props => {
     const classes = useStyles();
 
     const toItemDetail = () => {
-        props.history.push({pathname: `/itemDetail/${props.orderItem.item.id}`});
+        if(props.orderItem?.item){
+            props.history.push({pathname: `/itemDetail/${ props.orderItem.item.id}`});
+        }
+
     };
 
     return (
@@ -39,7 +41,7 @@ const OrderItems: React.FC<Props & RouteComponentProps> = props => {
                 <Grid item xs={3} container justify={"center"} alignItems={"center"}>
                     <Button onClick={toItemDetail}>
                         <Avatar variant={"rounded"} alt={'pizza'}
-                                src={props.orderItem.item.imagePath}
+                                src={ props.orderItem?.item?.imagePath ? props.orderItem.item.imagePath : ""}
                                 className={classes.avatar}/>
                     </Button>
                 </Grid>
@@ -51,7 +53,7 @@ const OrderItems: React.FC<Props & RouteComponentProps> = props => {
                                 <Button onClick={toItemDetail}>
                                     <Typography gutterBottom variant="h6">
                                         <Box fontWeight="fontWeightBold">
-                                            {props.orderItem.item.name}
+                                            {props.orderItem?.item && props.orderItem.item.name}
                                         </Box>
                                     </Typography>
                                 </Button>
@@ -64,21 +66,21 @@ const OrderItems: React.FC<Props & RouteComponentProps> = props => {
                                 <Typography gutterBottom>
                                     {/*>注文内容のサイズによって表示を変える*/}
                                     価格
-                                    : {props.orderItem.size === 'M' ? props.orderItem.item.priceM.toLocaleString() : null}
-                                    {props.orderItem.size === 'L' ? props.orderItem.item.priceL.toLocaleString() : null}
+                                    : { props.orderItem?.size && props.orderItem.item?.priceM && props.orderItem.size === 'M' ? props.orderItem.item.priceM.toLocaleString() : null}
+                                    { props.orderItem?.size && props.orderItem.item?.priceL && props.orderItem.size === 'L' ? props.orderItem.item.priceL.toLocaleString() : null}
                                     円
                                 </Typography>
                                 <Typography gutterBottom>
-                                    サイズ : {props.orderItem.size}
+                                    サイズ : {props.orderItem && props.orderItem.size}
                                 </Typography>
                                 <Typography variant="subtitle1">
-                                    数量 : {props.orderItem.quantity + '個'}
+                                    数量 : {props.orderItem && props.orderItem.quantity + '個'}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
                                 <ul style={{listStyleType: 'circle'}}>
-                                    {props.orderItem.orderToppings?.map((orderTopping, index) => (
-                                        <li key={index}>{orderTopping.topping.name}</li>
+                                    {props.orderItem?.orderToppings && props.orderItem.orderToppings?.map(( orderTopping, index) => (
+                                        <li key={index && index}>{ orderTopping && orderTopping.topping?.name }</li>
                                     ))}
                                 </ul>
                             </Grid>
@@ -95,7 +97,7 @@ const OrderItems: React.FC<Props & RouteComponentProps> = props => {
                             <Grid item>
                                 <Typography variant='h5'>
                                     <Box fontWeight="fontWeightBold">
-                                        {props.orderItem.subTotalPrice!.toLocaleString() + '円'}
+                                        {props.orderItem && props.orderItem.subTotalPrice!.toLocaleString() + '円'}
                                     </Box>
                                 </Typography>
                             </Grid>
