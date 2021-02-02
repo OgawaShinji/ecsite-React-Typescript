@@ -33,7 +33,7 @@ export type User = {
 
 export type Item = {
   __typename?: 'Item';
-  id?: Maybe<Scalars['ID']>;
+  id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   priceM?: Maybe<Scalars['Int']>;
@@ -44,7 +44,7 @@ export type Item = {
 
 export type Topping = {
   __typename?: 'Topping';
-  id?: Maybe<Scalars['ID']>;
+  id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   priceM?: Maybe<Scalars['Int']>;
   priceL?: Maybe<Scalars['Int']>;
@@ -52,7 +52,7 @@ export type Topping = {
 
 export type OrderItem = {
   __typename?: 'OrderItem';
-  id?: Maybe<Scalars['ID']>;
+  id?: Maybe<Scalars['Int']>;
   item?: Maybe<Item>;
   orderToppings?: Maybe<Array<Maybe<OrderTopping>>>;
   quantity?: Maybe<Scalars['Int']>;
@@ -62,9 +62,8 @@ export type OrderItem = {
 
 export type OrderTopping = {
   __typename?: 'OrderTopping';
-  id?: Maybe<Scalars['ID']>;
+  id?: Maybe<Scalars['Int']>;
   topping?: Maybe<Topping>;
-  orderItemId?: Maybe<Scalars['Int']>;
 };
 
 export type Order = {
@@ -99,16 +98,57 @@ export type UserInfo = {
   password: Scalars['String'];
 };
 
+export type OrderInfo = {
+  status?: Maybe<Scalars['Int']>;
+  orderDate?: Maybe<Scalars['String']>;
+  deliveryTime?: Maybe<Scalars['Date']>;
+  destinationName?: Maybe<Scalars['String']>;
+  destinationEmail?: Maybe<Scalars['String']>;
+  destinationZipcode?: Maybe<Scalars['String']>;
+  destinationAddress?: Maybe<Scalars['String']>;
+  destinationTel?: Maybe<Scalars['String']>;
+  paymentMethod?: Maybe<Scalars['String']>;
+  totalPrice?: Maybe<Scalars['Int']>;
+};
+
+export type UpTopping = {
+  topping?: Maybe<Scalars['Int']>;
+};
+
+export type UpOrderItem = {
+  id?: Maybe<Scalars['Int']>;
+  item?: Maybe<Scalars['Int']>;
+  orderToppings?: Maybe<Array<Maybe<UpTopping>>>;
+  size?: Maybe<Scalars['String']>;
+  quantity?: Maybe<Scalars['Int']>;
+};
+
+export type OrderItemInput = {
+  orderItems?: Maybe<Array<Maybe<UpOrderItem>>>;
+};
+
+export type TotalPrice = {
+  totalPrice?: Maybe<Scalars['Int']>;
+};
+
+export type DeleteOrderItemId = {
+  orderItemId?: Maybe<Scalars['Int']>;
+};
+
 export type Query = {
   __typename?: 'Query';
-  order?: Maybe<Order>;
+  cart?: Maybe<Order>;
   users?: Maybe<Array<Maybe<User>>>;
+  toppings?: Maybe<Array<Maybe<Topping>>>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   postUser?: Maybe<User>;
+  updateOrderInfo?: Maybe<Order>;
   update?: Maybe<Array<Maybe<User>>>;
+  updateOrderItem?: Maybe<Order>;
+  deleteOrderItem?: Maybe<Order>;
 };
 
 
@@ -117,10 +157,27 @@ export type MutationPostUserArgs = {
 };
 
 
+export type MutationUpdateOrderInfoArgs = {
+  orderInfo: OrderInfo;
+};
+
+
 export type MutationUpdateArgs = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateOrderItemArgs = {
+  orderItemInput: OrderItemInput;
+  status?: Maybe<Scalars['Int']>;
+  totalPrice?: Maybe<TotalPrice>;
+};
+
+
+export type MutationDeleteOrderItemArgs = {
+  deleteOrderItemId: DeleteOrderItemId;
 };
 
 export enum CacheControlScope {

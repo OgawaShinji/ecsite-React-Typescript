@@ -39,7 +39,7 @@ const typeDefs = gql`
   }
   
   type Item{
-    id: ID
+    id: Int
     name: String
     description: String
     priceM: Int
@@ -49,14 +49,14 @@ const typeDefs = gql`
   }
   
   type Topping{
-    id: ID
+    id: Int
     name: String
     priceM: Int
     priceL: Int
   }
   
   type OrderItem{
-    id: ID
+    id: Int
     item: Item
     orderToppings: [OrderTopping]
     quantity: Int
@@ -65,7 +65,7 @@ const typeDefs = gql`
   }
   
   type OrderTopping{
-    id: ID
+    id: Int
     topping: Topping
   }
   

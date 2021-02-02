@@ -33,7 +33,7 @@ export type User = {
 
 export type Item = {
   __typename?: 'Item';
-  id?: Maybe<Scalars['ID']>;
+  id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   priceM?: Maybe<Scalars['Int']>;
@@ -44,7 +44,7 @@ export type Item = {
 
 export type Topping = {
   __typename?: 'Topping';
-  id?: Maybe<Scalars['ID']>;
+  id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   priceM?: Maybe<Scalars['Int']>;
   priceL?: Maybe<Scalars['Int']>;
@@ -52,7 +52,7 @@ export type Topping = {
 
 export type OrderItem = {
   __typename?: 'OrderItem';
-  id?: Maybe<Scalars['ID']>;
+  id?: Maybe<Scalars['Int']>;
   item?: Maybe<Item>;
   orderToppings?: Maybe<Array<Maybe<OrderTopping>>>;
   quantity?: Maybe<Scalars['Int']>;
@@ -62,9 +62,8 @@ export type OrderItem = {
 
 export type OrderTopping = {
   __typename?: 'OrderTopping';
-  id?: Maybe<Scalars['ID']>;
+  id?: Maybe<Scalars['Int']>;
   topping?: Maybe<Topping>;
-  orderItemId?: Maybe<Scalars['Int']>;
 };
 
 export type Order = {
@@ -196,13 +195,13 @@ export type FetchOrderItemsQuery = (
     { __typename?: 'Order' }
     & { orderItems?: Maybe<Array<Maybe<(
       { __typename?: 'OrderItem' }
-      & Pick<OrderItem, 'id' | 'quantity' | 'size' | 'subTotalPrice'>
+      & Pick<OrderItem, 'id' | 'quantity' | 'size'>
       & { item?: Maybe<(
         { __typename?: 'Item' }
         & Pick<Item, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
       )>, orderToppings?: Maybe<Array<Maybe<(
         { __typename?: 'OrderTopping' }
-        & Pick<OrderTopping, 'id' | 'orderItemId'>
+        & Pick<OrderTopping, 'id'>
         & { topping?: Maybe<(
           { __typename?: 'Topping' }
           & Pick<Topping, 'id' | 'name' | 'priceM' | 'priceL'>
@@ -230,7 +229,7 @@ export type UpdateOrderItemMutation = (
         & Pick<Item, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
       )>, orderToppings?: Maybe<Array<Maybe<(
         { __typename?: 'OrderTopping' }
-        & Pick<OrderTopping, 'id' | 'orderItemId'>
+        & Pick<OrderTopping, 'id'>
         & { topping?: Maybe<(
           { __typename?: 'Topping' }
           & Pick<Topping, 'id' | 'name' | 'priceM' | 'priceL'>
@@ -257,7 +256,7 @@ export type DeleteOrderMutation = (
         & Pick<Item, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
       )>, orderToppings?: Maybe<Array<Maybe<(
         { __typename?: 'OrderTopping' }
-        & Pick<OrderTopping, 'id' | 'orderItemId'>
+        & Pick<OrderTopping, 'id'>
         & { topping?: Maybe<(
           { __typename?: 'Topping' }
           & Pick<Topping, 'id' | 'name' | 'priceM' | 'priceL'>
@@ -290,13 +289,13 @@ export type FetchOrderQuery = (
     & Pick<Order, 'id' | 'status' | 'orderDate' | 'deliveryTime' | 'destinationName' | 'destinationEmail' | 'destinationZipcode' | 'destinationAddress' | 'destinationTel' | 'totalPrice' | 'paymentMethod'>
     & { orderItems?: Maybe<Array<Maybe<(
       { __typename?: 'OrderItem' }
-      & Pick<OrderItem, 'id' | 'quantity' | 'size' | 'subTotalPrice'>
+      & Pick<OrderItem, 'id' | 'quantity' | 'size'>
       & { item?: Maybe<(
         { __typename?: 'Item' }
         & Pick<Item, 'name' | 'description' | 'priceM'>
       )>, orderToppings?: Maybe<Array<Maybe<(
         { __typename?: 'OrderTopping' }
-        & Pick<OrderTopping, 'id' | 'orderItemId'>
+        & Pick<OrderTopping, 'id'>
         & { topping?: Maybe<(
           { __typename?: 'Topping' }
           & Pick<Topping, 'id' | 'name' | 'priceM'>
@@ -329,11 +328,9 @@ export const FetchOrderItemsDocument = gql`
           priceM
           priceL
         }
-        orderItemId
       }
       quantity
       size
-      subTotalPrice
     }
   }
 }
@@ -389,7 +386,6 @@ export const UpdateOrderItemDocument = gql`
           priceM
           priceL
         }
-        orderItemId
       }
       quantity
       size
@@ -446,7 +442,6 @@ export const DeleteOrderDocument = gql`
           priceM
           priceL
         }
-        orderItemId
       }
       quantity
       size
@@ -549,11 +544,9 @@ export const FetchOrderDocument = gql`
           name
           priceM
         }
-        orderItemId
       }
       quantity
       size
-      subTotalPrice
     }
   }
 }
