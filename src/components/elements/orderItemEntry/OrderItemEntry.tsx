@@ -13,10 +13,10 @@ import {
     Select,
     Typography
 } from "@material-ui/core";
-import {Topping} from "~/types/interfaces";
 import {WrappedSelectTopping} from "~/components/elements/orderItemEntry/SelectTopping";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
+import {Topping} from "~/gql/generated/order.graphql";
 
 export type itemEntryState = {
     size: string;

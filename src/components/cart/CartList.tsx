@@ -1,23 +1,15 @@
-import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "~/store";
+import React, {useState} from "react";
 
 import CartItem from "./CartItem"
 import OrderOperator from "./OrderOperator"
-import {OrderItem} from "~/types/interfaces";
-
-import {
-    asyncDeleteOrderItem,
-    asyncFetchOrderItems,
-    asyncUpdateOrderItem,
-    orderItem,
-    OrderItemsToPost,
-    selectOrder,
-    selectOrderSubTotalPrice
-} from "~/store/slices/Domain/order.slice"
+// import {OrderItem} from "~/types/interfaces";
 import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
-import {setError} from "~/store/slices/App/error.slice";
-import {useFetchOrderItemsQuery} from "~/gql/generated/order.graphql";
+import {
+    FetchOrderItemsQuery, FetchOrderItemsQueryResult,
+    FetchOrderItemsQueryVariables,
+    OrderItem,
+    useFetchOrderItemsQuery
+} from "~/gql/generated/order.graphql";
 
 const useStyles = makeStyles({
     root: {
@@ -51,37 +43,35 @@ const useStyles = makeStyles({
 
 const CartList: React.FC = () => {
 
-    const dispatch: AppDispatch = useDispatch()
+    // const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
 
-    let iniOrder = useSelector(selectOrder)
-    let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
+    // let iniOrder = useSelector(selectOrder)
+    // let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
 
-    const [orderItems, setOrderItems] = useState<OrderItem[] | undefined>()
+    // const [orderItems, setOrderItems] = useState<FetchOrderItemsQuery>()
     const [isLoading, setIsLoading] = useState(false); // loading
 
-    const {loading, error, data, refetch, networkStatus} = useFetchOrderItemsQuery()
-    console.log(data)
-
+    const { data } = useFetchOrderItemsQuery()
     // 初期表示
-    useEffect(() => {
-        setIsLoading(true);
-        const loading = async () => {
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 500)
-        }
-        loading().then(() => {
-            dispatch(asyncFetchOrderItems()).catch((e) => {
-                dispatch(setError({isError: true, code: e.message}))
-            })
-        })
-    }, [dispatch])
+    // useEffect(() => {
+    //     setIsLoading(true);
+    //     const loading = async () => {
+    //         setTimeout(() => {
+    //             setIsLoading(false);
+    //         }, 500)
+    //     }
+    //     loading().then(() => {
+    //         dispatch(asyncFetchOrderItems()).catch((e) => {
+    //             dispatch(setError({isError: true, code: e.message}))
+    //         })
+    //     })
+    // }, [dispatch])
 
     // iniOrder
-    useEffect(() => {
-        setOrderItems(iniOrder.orderItems)
-    }, [iniOrder])
+    // useEffect(() => {
+    //     setOrderItems(iniOrder.orderItems)
+    // }, [iniOrder])
 
 
     /**
@@ -89,31 +79,31 @@ const CartList: React.FC = () => {
      * @Params orderItem: OrderItem, index?: number
      * @return
      */
-    const updateOrderItems = async ({orderItem}: { orderItem: OrderItem }) => {
+    const updateOrderItems = async ({orderItem}: { orderItem: OrderItem|null }) => {
 
         // サーバーに送るデータをorderItemsToPostに詰め替える処理
-        let updatedOrderToppings: { topping: number }[] = []
-        if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t.topping.id}))
-        const updatedOrderItem: orderItem = {
-            id: orderItem.id,
-            item: orderItem.item.id,
-            orderToppings: updatedOrderToppings,
-            quantity: orderItem.quantity,
-            size: orderItem.size === 'M' ? 'M' : 'L'
-        }
-        let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
-        const orderItemsToPost: OrderItemsToPost = {
-            orderItems: updatedOrderItems,
-            status: 0,
-            newTotalPrice: orderSubTotalPrice
-        }
-
-        await dispatch(asyncUpdateOrderItem(orderItemsToPost)).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
-        await dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
+        // let updatedOrderToppings: { topping: number }[] = []
+        // if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t.topping.id}))
+        // const updatedOrderItem: orderItem = {
+        //     id: orderItem.id,
+        //     item: orderItem.item.id,
+        //     orderToppings: updatedOrderToppings,
+        //     quantity: orderItem.quantity,
+        //     size: orderItem.size === 'M' ? 'M' : 'L'
+        // }
+        // let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
+        // const orderItemsToPost: OrderItemsToPost = {
+        //     orderItems: updatedOrderItems,
+        //     status: 0,
+        //     newTotalPrice: orderSubTotalPrice
+        // }
+        //
+        // await dispatch(asyncUpdateOrderItem(orderItemsToPost)).catch((e) => {
+        //     dispatch(setError({isError: true, code: e.message}))
+        // })
+        // await dispatch(asyncFetchOrderItems()).catch((e) => {
+        //     dispatch(setError({isError: true, code: e.message}))
+        // })
     }
 
     /**
@@ -121,18 +111,18 @@ const CartList: React.FC = () => {
      * @Params orderItemId: number
      * @return
      */
-    const deleteOrderItem = async (orderItemId: number) => {
-        await dispatch(asyncDeleteOrderItem(orderItemId)).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
-        dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
+    const deleteOrderItem = async (orderItemId: string) => {
+        // await dispatch(asyncDeleteOrderItem(orderItemId)).catch((e) => {
+        //     dispatch(setError({isError: true, code: e.message}))
+        // })
+        // dispatch(asyncFetchOrderItems()).catch((e) => {
+        //     dispatch(setError({isError: true, code: e.message}))
+        // })
     }
 
     // カートに商品があるかどうかでレイアウトを切り替えるため
     let styleCartList
-    if (orderItems && orderItems?.length > 0) {
+    if (data?.cart?.orderItems! && data?.cart?.orderItems?.length > 0) {
         styleCartList = classes.cartList
     } else {
         styleCartList = classes.emptyCartList
@@ -154,14 +144,14 @@ const CartList: React.FC = () => {
                             >
                                 ショッピングカート
                             </Typography>
-                            {orderItems && orderItems?.length > 0 ? (<List>
-                                {orderItems &&
-                                orderItems!.map((orderItem) => (
+                            {data?.cart?.orderItems! && data?.cart?.orderItems?.length > 0 ? (<List>
+                                {data?.cart?.orderItems &&
+                                data?.cart?.orderItems.map(orderItem => (
                                     <CartItem
                                         orderItem={orderItem}
-                                        key={orderItem.id}
+                                        key={orderItem!.id}
                                         updateOrderItems={({orderItem}) => updateOrderItems({orderItem})}
-                                        deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
+                                        deleteOrderItem={(orderItemId: string) => deleteOrderItem(orderItemId)}
                                     />
                                 ))}
                             </List>) : (
@@ -175,9 +165,9 @@ const CartList: React.FC = () => {
                         <Grid item xs={4}>
                             <div className={classes.orderOperator}>
                                 <OrderOperator
-                                    subTotalPrice={orderSubTotalPrice}
-                                    orderItems={orderItems}
-                                    deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
+                                    subTotalPrice={0}
+                                    orderItems={data?.cart?.orderItems}
+                                    deleteOrderItem={(orderItemId: string) => deleteOrderItem(orderItemId)}
                                 />
                             </div>
                         </Grid>
