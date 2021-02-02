@@ -129,7 +129,7 @@ export const itemSlice = createSlice({
     })
 })
 
-export const {setItemDetail} = itemSlice.actions;
+export const {setItems, setItemNamesAndItemCount, setItemDetail} = itemSlice.actions;
 
 export const selectItems = (state: RootState) => state.item.items;
 export const selectItemNames = (state: RootState) => state.item.itemNames;
