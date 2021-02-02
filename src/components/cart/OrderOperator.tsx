@@ -1,13 +1,17 @@
 import React from "react";
 import {Button, Card, CardActions, CardContent, makeStyles} from "@material-ui/core";
-import {OrderItem} from "~/types/interfaces";
 import TotalPrice from "~/components/elements/totalPrice/totalPrice"
 import {RouteComponentProps, withRouter} from 'react-router-dom';
+import {
+    FetchOrderItemsQuery,
+    FetchOrderItemsQueryHookResult,
+    FetchOrderItemsQueryResult, OrderItem
+} from "~/gql/generated/order.graphql";
 
 interface Props {
     subTotalPrice: number
-    orderItems: Array<OrderItem> | undefined
-    deleteOrderItem: (orderItemId: number) => void
+    orderItems: any
+    deleteOrderItem: (orderItemId: string) => void
 }
 
 

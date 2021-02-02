@@ -114,10 +114,35 @@ const typeDefs = gql`
         totalPrice: Int
   }
 
+input UpTopping{
+    topping: Int
+}
+ 
+ input UpOrderItem{
+      id: Int,
+      item: Int,
+      orderToppings: [UpTopping]
+      size: String
+      quantity: Int
+ }
+ 
+ input OrderItemInput{
+      orderItems: [UpOrderItem]
+ }
+ 
+ input TotalPrice{
+    totalPrice: Int
+ }
+ 
+ input DeleteOrderItemId{
+    orderItemId: Int
+ }
+ 
   # ここに書いたオブジェクトたちをqueryで持ってくることができる
   type Query {
-    order: Order
+    cart: Order
     users: [User]
+    toppings: [Topping]
   }
   
   type Mutation{
@@ -132,12 +157,53 @@ const typeDefs = gql`
         email: String
     ): [User]
 
+    updateOrderItem(
+        orderItemInput: OrderItemInput!
+        status: Int
+        totalPrice: TotalPrice
+    ):Order
+    
+    deleteOrderItem(
+        deleteOrderItemId: DeleteOrderItemId!
+    ):Order
   }
 `;
 
 // 初期値として入れておきたい値を設定してください
 
-const order = {
+const toppings=[
+    {
+        id: 1,
+        name: "フレッシュモッツァレラチーズ",
+        priceM: 20,
+        priceL: 50
+    },{
+        id: 2,
+        name: "topping 2",
+        priceM: 15,
+        priceL: 30
+    },
+    {
+        id: 3,
+        name: "topping 3",
+        priceM: 25,
+        priceL: 35
+    },
+    {
+        id: 4,
+        name: "topping 4",
+        priceM: 25,
+        priceL: 35
+    },
+    {
+        id: 5,
+        name: "topping 5",
+        priceM: 25,
+        priceL: 35
+    },
+]
+
+const cart = {
     id: 1,
     status: 0,
     orderDate: null,
@@ -149,6 +215,16 @@ const order = {
     destinationTel: "000-1111-2222",
     paymentMethod: "1",
     totalPrice: 1000,
+    user:{
+        id: 1,
+        name:"yama",
+        email:"ko@gmail.com",
+        password:"123456",
+        zipcode:"000-1111",
+        address:"tokyo",
+        telephone:"000-1111-2222",
+        status:0
+    },
     orderItems: [
         {
             id: 1,
@@ -163,7 +239,7 @@ const order = {
             },
             orderToppings: [
                 {
-                    id: 2,
+                    id: 13,
                     topping: {
                         id: 13,
                         name: "topping 13",
@@ -196,14 +272,14 @@ const users = []
 
 
 
-
-// serverが渡してくれるやつ
-// queryやmutationの処理を定義
+// GraphQL の operation（query や mutation や subscription）が、実際にどのような処理を行なってデータを返すのかという指示書
 const resolvers = {
     Date: dateScalar,
     Query: {
-        order: () => order,
-        users: () => users,
+        // この中で引数に設定した値をもとにfilterをかけることができる
+        cart: () => cart,
+        toppings:()=>toppings,
+        users: () => users
     },
     Mutation: {
         postUser(parent, args, context, info) {
@@ -226,6 +302,14 @@ const resolvers = {
             users[index].email = args.email
             return users
         },
+        updateOrderItem(parent,args){
+            console.log(args.orderItemInput.orderItems)
+            console.log(args.totalPrice.totalPrice)
+            return cart
+        },
+        deleteOrderItem(parent,args){
+            console.log(args)
+            return cart
         //今回は初期値にセットしてある内容を更新する
         updateOrderInfo(parent, args, context, info){
             //引数に渡されたデータを確認

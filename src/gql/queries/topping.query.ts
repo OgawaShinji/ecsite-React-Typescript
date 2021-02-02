@@ -1,1 +1,10 @@
-export const toppingqs=1;
+import gql from "graphql-tag";
+
+gql(`query fetchToppings{
+  toppings{
+    id
+    name
+    priceM
+    priceL
+  }
+}`)
