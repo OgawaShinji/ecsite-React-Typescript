@@ -194,7 +194,7 @@ const order = {
 // ダミーデータ
 const users = []
 
-const fakeDatabase = {};
+
 
 
 // serverが渡してくれるやつ
@@ -207,6 +207,7 @@ const resolvers = {
     },
     Mutation: {
         postUser(parent, args, context, info) {
+            //引数に渡されたデータを確認
             console.log(args)
             const user = {
                 id: Math.floor(Math.random() * 100),
@@ -227,6 +228,7 @@ const resolvers = {
         },
         //今回は初期値にセットしてある内容を更新する
         updateOrderInfo(parent, args, context, info){
+            //引数に渡されたデータを確認
             console.log(args)
             order.status = args.orderInfo.status
             order.paymentMethod = args.orderInfo.paymentMethod
@@ -238,7 +240,6 @@ const resolvers = {
             order.destinationAddress = args.orderInfo.destinationAddress
             order.destinationTel = args.orderInfo.destinationTel
             order.totalPrice = args.orderInfo.totalPrice
-
             return order
         }
     }
