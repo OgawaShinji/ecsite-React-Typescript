@@ -137,16 +137,16 @@ export const postOrder = createAsyncThunk(
         const {data} = await Axios.post(
             `/django/order/`,
             {
-                status:orderInfo.status,
-                total_price : orderInfo.totalPrice,
+                status: orderInfo.status,
+                total_price: orderInfo.totalPrice,
                 order_date: orderInfo.orderDate,
-                destination_name:orderInfo.destinationName,
-                destination_email:orderInfo.destinationEmail,
-                destination_zipcode:orderInfo.destinationZipcode,
-                destination_address:orderInfo.destinationAddress,
-                destination_tel:orderInfo.destinationTel,
-                delivery_time:orderInfo.deliveryTime,
-                payment_method:orderInfo.paymentMethod
+                destination_name: orderInfo.destinationName,
+                destination_email: orderInfo.destinationEmail,
+                destination_zipcode: orderInfo.destinationZipcode,
+                destination_address: orderInfo.destinationAddress,
+                destination_tel: orderInfo.destinationTel,
+                delivery_time: orderInfo.deliveryTime,
+                payment_method: orderInfo.paymentMethod
             },
             {
                 method: 'POST',
@@ -166,18 +166,6 @@ export const orderSlice = createSlice({
     name: 'order',
     initialState: initialState,
     reducers: {
-        setOrderUserInfo: ((state: orderState, action) => {
-            state.order.user = action.payload
-        }),
-        setOrderDate: ((state: orderState, action) => {
-            state.order.orderDate = action.payload
-        }),
-        setDeliveryTime: ((state: orderState, action) => {
-            state.order.deliveryTime = action.payload
-        }),
-        setPaymentMethod: ((state: orderState, action) => {
-            state.order.paymentMethod = action.payload
-        }),
         setOrderItemsAndSubTotalPrice: ((state: orderState, action: PayloadAction<OrderItem[]>) => {
             if (action.payload) {
                 state.order.orderItems = action.payload
@@ -205,17 +193,10 @@ export const orderSlice = createSlice({
                     orderSubTotalPrice += orderItem.subTotalPrice
                 })
                 state.orderSubTotalPrice = orderSubTotalPrice
-            }else{
+            } else {
                 state.order.orderItems = []
                 state.orderSubTotalPrice = 0
             }
-        }),
-        //追加機能
-        // setUserAddress: ((state: orderState, action) => {
-        //
-        // }),
-        setOrder: ((state, action) => {
-            state.order = action.payload
         })
     },
     extraReducers: (builder => {
@@ -268,6 +249,8 @@ export const orderSlice = createSlice({
         })
     })
 })
+
+export const {setOrderItemsAndSubTotalPrice} = orderSlice.actions
 
 export const selectOrderDate = (state: RootState) => state.order.order.orderDate
 export const selectDeliveryTime = (state: RootState) => state.order.order.deliveryTime
