@@ -145,23 +145,18 @@ input UpTopping{
   }
   
   type Mutation{
-  
      postUser(userInfo: UserInfo!): User
-     
      updateOrderInfo(orderInfo: OrderInfo!): Order
-     
      update(
         id: Int!
         name: String
         email: String
     ): [User]
-
     updateOrderItem(
         orderItemInput: OrderItemInput!
         status: Int
         totalPrice: TotalPrice
     ):Order
-    
     deleteOrderItem(
         deleteOrderItemId: DeleteOrderItemId!
     ):Order
@@ -173,7 +168,7 @@ input UpTopping{
 const toppings=[
     {
         id: 1,
-        name: "フレッシュモッツァレラチーズ",
+        name: "topping 1",
         priceM: 20,
         priceL: 50
     },{
@@ -238,10 +233,10 @@ const cart = {
             },
             orderToppings: [
                 {
-                    id: 13,
+                    id: 1,
                     topping: {
-                        id: 13,
-                        name: "topping 13",
+                        id: 1,
+                        name: "topping 1",
                         priceM: 25,
                         priceL: 35
                     },
@@ -265,13 +260,10 @@ const cart = {
     ]
 }
 
-
-// ダミーデータ
 const users = []
 
 
 // GraphQL の operation（query や mutation や subscription）が、実際にどのような処理を行なってデータを返すのかという指示書
-
 const resolvers = {
     Date: dateScalar,
     Query: {
@@ -329,11 +321,8 @@ const resolvers = {
     }
 };
 
-// The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
 const server = new ApolloServer({typeDefs, resolvers});
 
-// The `listen` method launches a web server.
 server.listen().then(({url}) => {
     console.log(`🚀  Server ready at ${url}`);
 });

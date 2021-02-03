@@ -193,6 +193,7 @@ export type FetchOrderItemsQuery = (
   { __typename?: 'Query' }
   & { cart?: Maybe<(
     { __typename?: 'Order' }
+    & Pick<Order, 'totalPrice'>
     & { orderItems?: Maybe<Array<Maybe<(
       { __typename?: 'OrderItem' }
       & Pick<OrderItem, 'quantity' | 'size' | 'subTotalPrice'>
@@ -260,12 +261,12 @@ export type UpdateOrderItemMutation = (
   )> }
 );
 
-export type DeleteOrderMutationVariables = Exact<{
+export type DeleteOrderItemMutationVariables = Exact<{
   deleteOrderItemId: DeleteOrderItemId;
 }>;
 
 
-export type DeleteOrderMutation = (
+export type DeleteOrderItemMutation = (
   { __typename?: 'Mutation' }
   & { deleteOrderItem?: Maybe<(
     { __typename?: 'Order' }
@@ -412,6 +413,7 @@ export const FetchOrderItemsDocument = gql`
       size
       subTotalPrice
     }
+    totalPrice
   }
 }
     ${OrderItemFragFragmentDoc}`;
@@ -500,8 +502,8 @@ export function useUpdateOrderItemMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateOrderItemMutationHookResult = ReturnType<typeof useUpdateOrderItemMutation>;
 export type UpdateOrderItemMutationResult = Apollo.MutationResult<UpdateOrderItemMutation>;
 export type UpdateOrderItemMutationOptions = Apollo.BaseMutationOptions<UpdateOrderItemMutation, UpdateOrderItemMutationVariables>;
-export const DeleteOrderDocument = gql`
-    mutation deleteOrder($deleteOrderItemId: DeleteOrderItemId!) {
+export const DeleteOrderItemDocument = gql`
+    mutation deleteOrderItem($deleteOrderItemId: DeleteOrderItemId!) {
   deleteOrderItem(deleteOrderItemId: $deleteOrderItemId) {
     orderItems {
       id
@@ -530,31 +532,31 @@ export const DeleteOrderDocument = gql`
   }
 }
     `;
-export type DeleteOrderMutationFn = Apollo.MutationFunction<DeleteOrderMutation, DeleteOrderMutationVariables>;
+export type DeleteOrderItemMutationFn = Apollo.MutationFunction<DeleteOrderItemMutation, DeleteOrderItemMutationVariables>;
 
 /**
- * __useDeleteOrderMutation__
+ * __useDeleteOrderItemMutation__
  *
- * To run a mutation, you first call `useDeleteOrderMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteOrderMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useDeleteOrderItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteOrderItemMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [deleteOrderMutation, { data, loading, error }] = useDeleteOrderMutation({
+ * const [deleteOrderItemMutation, { data, loading, error }] = useDeleteOrderItemMutation({
  *   variables: {
  *      deleteOrderItemId: // value for 'deleteOrderItemId'
  *   },
  * });
  */
-export function useDeleteOrderMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOrderMutation, DeleteOrderMutationVariables>) {
-        return Apollo.useMutation<DeleteOrderMutation, DeleteOrderMutationVariables>(DeleteOrderDocument, baseOptions);
+export function useDeleteOrderItemMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOrderItemMutation, DeleteOrderItemMutationVariables>) {
+        return Apollo.useMutation<DeleteOrderItemMutation, DeleteOrderItemMutationVariables>(DeleteOrderItemDocument, baseOptions);
       }
-export type DeleteOrderMutationHookResult = ReturnType<typeof useDeleteOrderMutation>;
-export type DeleteOrderMutationResult = Apollo.MutationResult<DeleteOrderMutation>;
-export type DeleteOrderMutationOptions = Apollo.BaseMutationOptions<DeleteOrderMutation, DeleteOrderMutationVariables>;
+export type DeleteOrderItemMutationHookResult = ReturnType<typeof useDeleteOrderItemMutation>;
+export type DeleteOrderItemMutationResult = Apollo.MutationResult<DeleteOrderItemMutation>;
+export type DeleteOrderItemMutationOptions = Apollo.BaseMutationOptions<DeleteOrderItemMutation, DeleteOrderItemMutationVariables>;
 export const UpdateOrderDocument = gql`
     mutation updateOrder($orderInfo: OrderInfo!) {
   updateOrderInfo(orderInfo: $orderInfo) {
