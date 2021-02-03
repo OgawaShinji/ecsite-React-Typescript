@@ -186,7 +186,6 @@ const ItemDetail: React.FC = () => {
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
             : <div className={classes.align_child}>
                 <Card style={{display: "flex"}}>
-                    <Items/>
                     <Grid container justify={"center"} alignContent={"center"}>
 
                         {/*商品画像*/}
