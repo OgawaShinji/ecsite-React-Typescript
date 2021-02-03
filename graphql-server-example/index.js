@@ -142,6 +142,8 @@ input UpTopping{
     cart: Order
     users: [User]
     toppings: [Topping]
+    items:[Item]
+    item:Item
   }
   
   type Mutation{
@@ -164,14 +166,96 @@ input UpTopping{
 `;
 
 // 初期値として入れておきたい値を設定してください
-
-const toppings=[
+const items = [
+    {
+        deleted: 0,
+        description: "ホクホクのポテトと旨味が凝縮されたベーコンを特製マヨソースで味わって頂く商品です。バター風味豊かなキューブチーズが食材の味を一層引き立てます。",
+        id: 1,
+        imagePath: "http://34.84.118.239/static/img/item/1.jpg",
+        name: "じゃがバターベーコン",
+        priceL: 2570,
+        priceM: 1490
+    },
+    {
+        deleted: 0,
+        description: "グリーンアスパラと相性の良いベーコンにいろどりのフレッシュトマトをトッピングし特製マヨソースでまとめた商品です",
+        id: 2,
+        imagePath: "http://34.84.118.239/static/img/item/2.jpg",
+        name: "アスパラ・ミート",
+        priceL: 2570,
+        priceM: 1490
+    },
+    {
+        deleted: 0,
+        description: "マッシュルームと熟成ベーコンにブラックペッパーをトッピングしたシンプルなピザ！",
+        id: 3,
+        imagePath: "http://34.84.118.239/static/img/item/3.jpg",
+        name: "熟成ベーコンとマッシュルーム",
+        priceL: 2570,
+        priceM: 1490
+    },
+    {
+        deleted: 0,
+        description: "マイルドな味付けのカレーに大きくカットしたポテトをのせた、バターとチーズの風味が食欲をそそるお子様でも楽しめる商品です",
+        id: 4,
+        imagePath: "http://34.84.118.239/static/img/item/4.jpg",
+        name: "カレーじゃがバター",
+        priceL: 2980,
+        priceM: 1900
+    },
+    {
+        deleted: 0,
+        description: "大きくカットしたポテトにコーンとベーコンをトッピングして、明太クリームソース、バター、チーズを合わせた、家族で楽しめるピザです",
+        id: 5,
+        imagePath: "http://34.84.118.239/static/img/item/5.jpg",
+        name: "明太バターチーズ",
+        priceL: 2980,
+        priceM: 1900
+    },
+    {
+        deleted: 0,
+        description: "「デラックス」、「ミート・シュプリーム」、「ツナマイルド」、「ガーリック・トマト」の組み合わせ。「チャリティー4」1枚のご注文につき、世界の飢餓救済に",
+        id: 8,
+        imagePath: "http://34.84.118.239/static/img/item/8.jpg",
+        name: "Charity4",
+        priceL: 3380,
+        priceM: 2160
+    },
+    {
+        deleted: 0,
+        description: "あらびきスライスソーセージとイタリアンソーセージの2種類のソーセージを、トマトソースと特製マヨソースの2種類のソースで召し上がって頂く商品です",
+        id: 13,
+        imagePath: "http://34.84.118.239/static/img/item/13.jpg",
+        name: "めちゃマヨミート",
+        priceL: 3380,
+        priceM: 2160
+    },
+    {
+        deleted: 0,
+        description: "「めちゃマヨ・ミート」「ガーリック・トマト」「えびマヨコーン」、「フレッシュモッツァレラのマルゲリータ」が一つになった4種のピザ",
+        id: 12,
+        imagePath: "http://34.84.118.239/static/img/item/12.jpg",
+        name: "バラエティー４",
+        priceL: 3380,
+        priceM: 2160
+    },
+    {
+        deleted: 0,
+        description: "ピザの王道！トマトとフレッシュモッツァレラが絶妙です",
+        id: 10,
+        imagePath: "http://34.84.118.239/static/img/item/10.jpg",
+        name: "フレッシュモッツァレラ",
+        priceL: 3380,
+        priceM: 2160
+    }
+]
+const toppings = [
     {
         id: 1,
         name: "topping 1",
         priceM: 20,
         priceL: 50
-    },{
+    }, {
         id: 2,
         name: "topping 2",
         priceM: 15,
@@ -209,15 +293,15 @@ const cart = {
     destinationTel: "000-1111-2222",
     paymentMethod: "1",
     totalPrice: 1000,
-    user:{
+    user: {
         id: 1,
-        name:"yama",
-        email:"ko@gmail.com",
-        password:"123456",
-        zipcode:"000-1111",
-        address:"tokyo",
-        telephone:"000-1111-2222",
-        status:0
+        name: "yama",
+        email: "ko@gmail.com",
+        password: "123456",
+        zipcode: "000-1111",
+        address: "tokyo",
+        telephone: "000-1111-2222",
+        status: 0
     },
     orderItems: [
         {
@@ -269,8 +353,10 @@ const resolvers = {
     Query: {
         // この中で引数に設定した値をもとにfilterをかけることができる
         cart: () => cart,
-        toppings:()=>toppings,
-        users: () => users
+        toppings: () => toppings,
+        users: () => users,
+        items: () => items,
+        item: (id) => items.filter((i) => i.id === id)
     },
     Mutation: {
         postUser(parent, args, context, info) {
@@ -293,17 +379,17 @@ const resolvers = {
             users[index].email = args.email
             return users
         },
-        updateOrderItem(parent,args){
+        updateOrderItem(parent, args) {
             console.log(args.orderItemInput.orderItems)
             console.log(args.totalPrice.totalPrice)
             return cart
         },
-        deleteOrderItem(parent,args) {
+        deleteOrderItem(parent, args) {
             console.log(args)
             return cart
         },
         //今回は初期値にセットしてある内容を更新する
-        updateOrderInfo(parent, args, context, info){
+        updateOrderInfo(parent, args, context, info) {
             //引数に渡されたデータを確認
             console.log(args)
             cart.status = args.orderInfo.status

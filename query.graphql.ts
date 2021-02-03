@@ -172,6 +172,20 @@ gql(`query fetchToppings{
   }
 }`)
 
+// ============================= item ====================================================================
+
+gql(`query fetchItems{
+  items{
+    id
+    name
+    description
+    priceM
+    priceL
+    imagePath
+    deleted
+  }
+}`)
+
 // ============================ user ============================================================================
 
 const postRegister = gql(`mutation postRegister($userInfo: UserInfo!) {
