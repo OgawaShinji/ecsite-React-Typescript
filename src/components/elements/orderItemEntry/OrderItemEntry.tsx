@@ -21,7 +21,8 @@ import {Topping} from "~/generated/graphql";
 export type itemEntryState = {
     size: string;
     quantity: number;
-    toppings: Topping[]
+    toppings: Topping[];
+    totalPrice?: number;
 }
 export type entryProps = {
     selectedState: itemEntryState;
