@@ -83,6 +83,11 @@ export type Order = {
   orderItems?: Maybe<Array<Maybe<OrderItem>>>;
 };
 
+export type ReturnOrder = {
+  __typename?: 'ReturnOrder';
+  order?: Maybe<Order>;
+};
+
 export type SearchForm = {
   __typename?: 'SearchForm';
   itemName?: Maybe<Scalars['String']>;
@@ -127,6 +132,13 @@ export type OrderItemInput = {
   orderItems?: Maybe<Array<Maybe<UpOrderItem>>>;
 };
 
+export type OrderIInput = {
+  item?: Maybe<Scalars['Int']>;
+  orderToppings?: Maybe<Array<Maybe<UpTopping>>>;
+  size?: Maybe<Scalars['String']>;
+  quantity?: Maybe<Scalars['Int']>;
+};
+
 export type TotalPrice = {
   totalPrice?: Maybe<Scalars['Int']>;
 };
@@ -140,6 +152,12 @@ export type Query = {
   cart?: Maybe<Order>;
   users?: Maybe<Array<Maybe<User>>>;
   toppings?: Maybe<Array<Maybe<Topping>>>;
+  item?: Maybe<Item>;
+};
+
+
+export type QueryItemArgs = {
+  id?: Maybe<Scalars['Int']>;
 };
 
 export type Mutation = {
@@ -149,6 +167,7 @@ export type Mutation = {
   update?: Maybe<Array<Maybe<User>>>;
   updateOrderItem?: Maybe<Order>;
   deleteOrderItem?: Maybe<Order>;
+  addCart?: Maybe<ReturnOrder>;
 };
 
 
@@ -178,6 +197,13 @@ export type MutationUpdateOrderItemArgs = {
 
 export type MutationDeleteOrderItemArgs = {
   deleteOrderItemId: DeleteOrderItemId;
+};
+
+
+export type MutationAddCartArgs = {
+  orderItem: OrderIInput;
+  status?: Maybe<Scalars['Int']>;
+  totalPrice: Scalars['Int'];
 };
 
 export enum CacheControlScope {
@@ -327,6 +353,36 @@ export type FetchOrderQuery = (
   )> }
 );
 
+export type AddCartMutationVariables = Exact<{
+  orderItem: OrderIInput;
+  totalPrice: Scalars['Int'];
+}>;
+
+
+export type AddCartMutation = (
+  { __typename?: 'Mutation' }
+  & { addCart?: Maybe<(
+    { __typename?: 'ReturnOrder' }
+    & { order?: Maybe<(
+      { __typename?: 'Order' }
+      & Pick<Order, 'status' | 'totalPrice'>
+      & { orderItems?: Maybe<Array<Maybe<(
+        { __typename?: 'OrderItem' }
+        & { item?: Maybe<(
+          { __typename?: 'Item' }
+          & Pick<Item, 'name'>
+        )>, orderToppings?: Maybe<Array<Maybe<(
+          { __typename?: 'OrderTopping' }
+          & { topping?: Maybe<(
+            { __typename?: 'Topping' }
+            & Pick<Topping, 'name'>
+          )> }
+        )>>> }
+      )>>> }
+    )> }
+  )> }
+);
+
 export type FetchToppingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -336,6 +392,19 @@ export type FetchToppingsQuery = (
     { __typename?: 'Topping' }
     & Pick<Topping, 'id' | 'name' | 'priceM' | 'priceL'>
   )>>> }
+);
+
+export type FetchItemQueryVariables = Exact<{
+  id?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type FetchItemQuery = (
+  { __typename?: 'Query' }
+  & { item?: Maybe<(
+    { __typename?: 'Item' }
+    & Pick<Item, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
+  )> }
 );
 
 export type PostRegisterMutationVariables = Exact<{
@@ -658,6 +727,52 @@ export function useFetchOrderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type FetchOrderQueryHookResult = ReturnType<typeof useFetchOrderQuery>;
 export type FetchOrderLazyQueryHookResult = ReturnType<typeof useFetchOrderLazyQuery>;
 export type FetchOrderQueryResult = Apollo.QueryResult<FetchOrderQuery, FetchOrderQueryVariables>;
+export const AddCartDocument = gql`
+    mutation addCart($orderItem: OrderIInput!, $totalPrice: Int!) {
+  addCart(orderItem: $orderItem, status: 0, totalPrice: $totalPrice) {
+    order {
+      orderItems {
+        item {
+          name
+        }
+        orderToppings {
+          topping {
+            name
+          }
+        }
+      }
+      status
+      totalPrice
+    }
+  }
+}
+    `;
+export type AddCartMutationFn = Apollo.MutationFunction<AddCartMutation, AddCartMutationVariables>;
+
+/**
+ * __useAddCartMutation__
+ *
+ * To run a mutation, you first call `useAddCartMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddCartMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addCartMutation, { data, loading, error }] = useAddCartMutation({
+ *   variables: {
+ *      orderItem: // value for 'orderItem'
+ *      totalPrice: // value for 'totalPrice'
+ *   },
+ * });
+ */
+export function useAddCartMutation(baseOptions?: Apollo.MutationHookOptions<AddCartMutation, AddCartMutationVariables>) {
+        return Apollo.useMutation<AddCartMutation, AddCartMutationVariables>(AddCartDocument, baseOptions);
+      }
+export type AddCartMutationHookResult = ReturnType<typeof useAddCartMutation>;
+export type AddCartMutationResult = Apollo.MutationResult<AddCartMutation>;
+export type AddCartMutationOptions = Apollo.BaseMutationOptions<AddCartMutation, AddCartMutationVariables>;
 export const FetchToppingsDocument = gql`
     query fetchToppings {
   toppings {
@@ -693,6 +808,45 @@ export function useFetchToppingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type FetchToppingsQueryHookResult = ReturnType<typeof useFetchToppingsQuery>;
 export type FetchToppingsLazyQueryHookResult = ReturnType<typeof useFetchToppingsLazyQuery>;
 export type FetchToppingsQueryResult = Apollo.QueryResult<FetchToppingsQuery, FetchToppingsQueryVariables>;
+export const FetchItemDocument = gql`
+    query fetchItem($id: Int) {
+  item(id: $id) {
+    id
+    name
+    description
+    priceM
+    priceL
+    imagePath
+    deleted
+  }
+}
+    `;
+
+/**
+ * __useFetchItemQuery__
+ *
+ * To run a query within a React component, call `useFetchItemQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchItemQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFetchItemQuery(baseOptions?: Apollo.QueryHookOptions<FetchItemQuery, FetchItemQueryVariables>) {
+        return Apollo.useQuery<FetchItemQuery, FetchItemQueryVariables>(FetchItemDocument, baseOptions);
+      }
+export function useFetchItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchItemQuery, FetchItemQueryVariables>) {
+          return Apollo.useLazyQuery<FetchItemQuery, FetchItemQueryVariables>(FetchItemDocument, baseOptions);
+        }
+export type FetchItemQueryHookResult = ReturnType<typeof useFetchItemQuery>;
+export type FetchItemLazyQueryHookResult = ReturnType<typeof useFetchItemLazyQuery>;
+export type FetchItemQueryResult = Apollo.QueryResult<FetchItemQuery, FetchItemQueryVariables>;
 export const PostRegisterDocument = gql`
     mutation postRegister($userInfo: UserInfo!) {
   postUser(userInfo: $userInfo) {

@@ -85,6 +85,10 @@ const typeDefs = gql`
     orderItems: [OrderItem]
 }
 
+# サーバーサイドが返却するOrderの形はなぜかネスト一つ深くしてんの意味わかんない
+type ReturnOrder{
+    order:Order
+}
   type SearchForm {
     itemName: String
     sortId: Int
@@ -124,9 +128,16 @@ input UpTopping{
       size: String
       quantity: Int
  }
- 
+ # その形で欲しいならOrderItemInputをUpOrderItemの型にしてOrderItemInputの配列を使えば良いのでは??（サーバーサイドがそうしてます）
  input OrderItemInput{
       orderItems: [UpOrderItem]
+ }
+ 
+ input OrderIInput{
+    item: Int
+    orderToppings: [UpTopping]
+    size: String
+    quantity: Int
  }
  
  input TotalPrice{
@@ -142,8 +153,7 @@ input UpTopping{
     cart: Order
     users: [User]
     toppings: [Topping]
-    items:[Item]
-    item:Item
+    item(id: Int):Item
   }
   
   type Mutation{
@@ -162,6 +172,7 @@ input UpTopping{
     deleteOrderItem(
         deleteOrderItemId: DeleteOrderItemId!
     ):Order
+    addCart(orderItem:OrderIInput!,status:Int,totalPrice:Int!):ReturnOrder
   }
 `;
 
@@ -355,8 +366,11 @@ const resolvers = {
         cart: () => cart,
         toppings: () => toppings,
         users: () => users,
-        items: () => items,
-        item: (id) => items.filter((i) => i.id === id)
+        item: (p, args) => {
+            const item=items.filter((i) => i.id === args.id)[0]
+            if (item===undefined) throw new Error('no item')
+            return item
+        }
     },
     Mutation: {
         postUser(parent, args, context, info) {
@@ -403,6 +417,11 @@ const resolvers = {
             cart.destinationTel = args.orderInfo.destinationTel
             cart.totalPrice = args.orderInfo.totalPrice
             return cart
+        },
+        addCart(parent, args) {
+            cart.orderItems.push(args.orderItem);
+            cart.totalPrice+=args.totalPrice;
+            return {order:cart}
         }
     }
 };

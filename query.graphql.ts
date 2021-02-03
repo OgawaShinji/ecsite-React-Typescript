@@ -160,6 +160,24 @@ const fetchOrder = gql(` query fetchOrder{
   }
 }
 `)
+gql(`mutation addCart($orderItem:OrderIInput!,$totalPrice:Int!){
+  addCart(orderItem:$orderItem,status:0,totalPrice:$totalPrice){
+    order{
+      orderItems{
+        item{
+          name
+        }
+        orderToppings{
+          topping{
+            name
+          }
+        }
+      }
+      status
+      totalPrice
+    }  
+  }
+}`)
 
 // ============================= topping ====================================================================
 
@@ -174,8 +192,8 @@ gql(`query fetchToppings{
 
 // ============================= item ====================================================================
 
-gql(`query fetchItems{
-  items{
+gql(`query fetchItem($id:Int){
+  item(id:$id){
     id
     name
     description
