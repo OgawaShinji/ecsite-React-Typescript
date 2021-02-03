@@ -2,16 +2,11 @@ import React from "react";
 import {Button, Card, CardActions, CardContent, makeStyles} from "@material-ui/core";
 import TotalPrice from "~/components/elements/totalPrice/totalPrice"
 import {RouteComponentProps, withRouter} from 'react-router-dom';
-import {
-    FetchOrderItemsQuery,
-    FetchOrderItemsQueryHookResult,
-    FetchOrderItemsQueryResult, OrderItem
-} from "~/gql/generated/order.graphql";
 import {OrderItemFragFragment} from "~/generated/graphql";
-        
+
 interface Props {
-    subTotalPrice: number
-    orderItems: OrderItemFragFragment[] | undefined        
+    subTotalPrice: number | null | undefined
+    orderItems: OrderItemFragFragment[] | undefined
     deleteOrderItem: (orderItemId: number) => void
 }
 
@@ -47,7 +42,6 @@ const OrderOperator: React.FC<Props & RouteComponentProps> = (props) => {
             props.deleteOrderItem(Number(orderItem.id!))
         }))
     }
-    console.log(props.orderItems)
 
     return (
         <Card className={classes.root}>

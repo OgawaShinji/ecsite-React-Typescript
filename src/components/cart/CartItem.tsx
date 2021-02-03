@@ -1,6 +1,4 @@
 import React, {useState} from "react";
-import {useDispatch} from "react-redux";
-// import { OrderTopping, Topping} from "~/types/interfaces"
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {
@@ -18,9 +16,7 @@ import {
     Theme,
     Typography
 } from "@material-ui/core";
-import {AppDispatch} from "~/store";
-import {OrderItem} from "~/gql/generated/order.graphql";
-import {Topping, useFetchToppingsQuery} from "~/gql/generated/topping.graphql";
+import {OrderItem, OrderTopping, Topping} from "~/generated/graphql";
 
 interface Props {
     orderItem: OrderItem | null
@@ -64,11 +60,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
 
-    const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
     const {orderItem, updateOrderItems, deleteOrderItem} = props
 
-    const toppings = useFetchToppingsQuery()
     const [modalIsOpen, setIsOpen] = useState<boolean>(false)
 
     // OrderItemEntryで受け渡す変数を定義
@@ -110,14 +104,13 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
      * @Params toppings: Topping[]
      */
     const handleToppingChange = (toppings: Topping[]) => {
-        // setSelectToppings(toppings)
-        // const newOrderToppings: OrderTopping[] = []
-        // toppings.forEach(topping => {
-        //     const changedOrderTopping: OrderTopping = {topping: topping}
-        //     newOrderToppings.push(changedOrderTopping)
-        // })
-        // const changedOrderItem = {...orderItem, orderToppings: newOrderToppings}
-        // updateOrderItems({orderItem: changedOrderItem})
+        const newOrderToppings: OrderTopping[] = []
+        toppings.forEach(topping => {
+            const changedOrderTopping: OrderTopping = {topping: topping}
+            newOrderToppings.push(changedOrderTopping)
+        })
+        const changedOrderItem = {...orderItem, orderToppings: newOrderToppings}
+        updateOrderItems({orderItem: changedOrderItem})
     }
 
     const toItemDetail = () => {

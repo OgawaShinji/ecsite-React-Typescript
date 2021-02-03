@@ -10,6 +10,7 @@ gql(`query fetchOrderItems {
       size
       subTotalPrice
     }
+    totalPrice
   }
 }
 fragment OrderItemFrag on OrderItem {     
@@ -80,7 +81,7 @@ gql(`mutation updateOrderItem($orderItemInput: OrderItemInput!,$totalPrice:Total
     }
   }
 }`)
-gql(`mutation deleteOrder($deleteOrderItemId: DeleteOrderItemId!) {
+gql(`mutation deleteOrderItem($deleteOrderItemId: DeleteOrderItemId!) {
    deleteOrderItem(
     deleteOrderItemId:$deleteOrderItemId
   ){
