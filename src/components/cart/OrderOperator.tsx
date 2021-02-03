@@ -1,15 +1,14 @@
 import React from "react";
 import {Button, Card, CardActions, CardContent, makeStyles} from "@material-ui/core";
-import {OrderItem} from "~/types/interfaces";
 import TotalPrice from "~/components/elements/totalPrice/totalPrice"
 import {RouteComponentProps, withRouter} from 'react-router-dom';
+import {OrderItemFragFragment} from "~/generated/graphql";
 
 interface Props {
-    subTotalPrice: number
-    orderItems: Array<OrderItem> | undefined
+    subTotalPrice: number | null | undefined
+    orderItems: OrderItemFragFragment[] | undefined
     deleteOrderItem: (orderItemId: number) => void
 }
-
 
 const useStyles = makeStyles({
     root: {
@@ -30,7 +29,6 @@ const useStyles = makeStyles({
     }
 });
 
-
 const OrderOperator: React.FC<Props & RouteComponentProps> = (props) => {
 
     const classes = useStyles();
@@ -39,12 +37,11 @@ const OrderOperator: React.FC<Props & RouteComponentProps> = (props) => {
      * OrderItemEntryのダイアログを非表示にする関数
      * @Params orderItems: OrderItem[]
      */
-    const allDeleteOrderItems = (orderItems: OrderItem[]) => {
+    const allDeleteOrderItems = (orderItems: OrderItemFragFragment[]) => {
         orderItems.forEach((orderItem => {
-            props.deleteOrderItem(orderItem.id!)
+            props.deleteOrderItem(Number(orderItem.id!))
         }))
     }
-
 
     return (
         <Card className={classes.root}>
@@ -79,8 +76,10 @@ const OrderOperator: React.FC<Props & RouteComponentProps> = (props) => {
                 >
                     買い物を続ける
                 </Button>
+
             </CardActions>
         </Card>
     )
 }
 export default withRouter(OrderOperator);
+

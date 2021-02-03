@@ -21,7 +21,6 @@ import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
 import {THEME_COLOR_2} from "~/assets/color";
 import {setItemDetail} from "~/store/slices/Domain/item.slice"
-import {Items} from "~/gql/components/items";
 
 const ItemDetail: React.FC = () => {
     const item = useSelector(selectItemDetail)
@@ -30,7 +29,6 @@ const ItemDetail: React.FC = () => {
     const history = useHistory();
     const [detail, setDetail] = useState<Item | null>(item);
 
-    //const isLoading = useSelector(selectIsLoading);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     let {itemId}: any = useParams()
@@ -72,11 +70,12 @@ const ItemDetail: React.FC = () => {
     const [selectedToppings, setSelectToppings] = useState<Topping[]>([])
     const [totalPrice, setTotalPrice] = useState<number>(detail?.priceM ? detail.priceM : 0)
 
-    const selectedState: itemEntryState = {
-        size: size,
-        quantity: quantity,
-        toppings: selectedToppings
-    }
+    //OrderItemEntryにpropsで渡すためのデータ整形
+    // const selectedState: itemEntryState = {
+    //     size: size,
+    //     quantity: quantity,
+    //     toppings: selectedToppings
+    // }
 
     /**
      * サイズが変更された際にサイズと合計金額のStateを変更
@@ -137,11 +136,9 @@ const ItemDetail: React.FC = () => {
             //await dispatch(setIsLoading(true))
             await setIsLoading(true)
             if (i.payload === '200' && moveTo === 'cart') {
-                //await dispatch(setIsLoading(true))
                 await history.push(Path.cart)
             }
             if (i.payload === '200' && moveTo === 'confirm') {
-                //await dispatch(setIsLoading(true))
                 await history.push(Path.orderConfirm)
             }
         }).catch((e) => {
@@ -220,12 +217,12 @@ const ItemDetail: React.FC = () => {
 
                         <Grid item xs={12}>
                             <CardContent style={{height: "auto", width: "90%"}}>
-                                <OrderItemEntry
-                                    selectedState={selectedState}
-                                    parentComponent={"itemDetail"}
-                                    onSizeChange={(s) => handleSizeChange(s)}
-                                    onQuantityChange={(q) => handleQuantityChange(q)}
-                                    onToppingChange={(t) => handleToppingChange(t)}/>
+                                {/*<OrderItemEntry*/}
+                                {/*    selectedState={selectedState}*/}
+                                {/*    parentComponent={"itemDetail"}*/}
+                                {/*    onSizeChange={(s) => handleSizeChange(s)}*/}
+                                {/*    onQuantityChange={(q) => handleQuantityChange(q)}*/}
+                                {/*    onToppingChange={(t) => handleToppingChange(t)}/>*/}
                                 <CardContent className={classes.align_child}>
                                     <Typography variant={"h3"}
                                                 className={classes.total_price}>合計金額

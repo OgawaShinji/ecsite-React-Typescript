@@ -1,22 +1,21 @@
 import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "~/store";
 
 import CartItem from "./CartItem"
 import OrderOperator from "./OrderOperator"
-import {OrderItem} from "~/types/interfaces";
-
+import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
+import {filter} from "graphql-anywhere";
 import {
-    asyncDeleteOrderItem,
-    asyncFetchOrderItems,
-    asyncUpdateOrderItem,
-    orderItem,
-    OrderItemsToPost,
-    selectOrder,
-    selectOrderSubTotalPrice
-} from "~/store/slices/Domain/order.slice"
-import {Grid, List, makeStyles, Typography} from "@material-ui/core";
-import {setError} from "~/store/slices/App/error.slice";
+    DeleteOrderItemId,
+    OrderItem,
+    OrderItemFragFragment,
+    OrderItemFragFragmentDoc,
+    OrderItemInput,
+    TotalPrice,
+    UpOrderItem,
+    useDeleteOrderItemMutation,
+    useFetchOrderItemsQuery,
+    useUpdateOrderItemMutation
+} from "~/generated/graphql";
 
 const useStyles = makeStyles({
     root: {
@@ -50,25 +49,33 @@ const useStyles = makeStyles({
 
 const CartList: React.FC = () => {
 
-    const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
 
-    let iniOrder = useSelector(selectOrder)
-    let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
+    const [orderItems, setOrderItems] = useState<OrderItemFragFragment[] | undefined>()
+    const [orderTotalPrice, setOrderTotalPrice] = useState<number | null>()
+    const [isLoading, setIsLoading] = useState(false); // loading
 
-    const [orderItems, setOrderItems] = useState<OrderItem[] | undefined>()
+    const {data: fetchOrderItemData} = useFetchOrderItemsQuery()
+    const [updateOrderItemMutation, {data: updateOrderItemData}] = useUpdateOrderItemMutation()
+    const [deleteOrderItemMutation, {data: deleteOrderItemData}] = useDeleteOrderItemMutation()
 
     // 初期表示
     useEffect(() => {
-        dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
-    }, [dispatch])
-
-    // iniOrder
-    useEffect(() => {
-        setOrderItems(iniOrder.orderItems)
-    }, [iniOrder])
+        setIsLoading(true);
+            const loading = async () => {
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 500)
+            }
+            loading().then(() => {
+                // データ取得の際ネスト構造になっているgraphQLでは、各プロパティごとにデータ型を定義したフラグメントを作成し、セットする際にfilterを通す必要がある
+                if (fetchOrderItemData?.cart?.orderItems) {
+                    const orderItemFlag=filter(OrderItemFragFragmentDoc, fetchOrderItemData.cart.orderItems)
+                    setOrderItems(orderItemFlag)
+                    setOrderTotalPrice(fetchOrderItemData?.cart?.totalPrice)
+                }
+            })
+    }, [fetchOrderItemData])
 
 
     /**
@@ -80,26 +87,34 @@ const CartList: React.FC = () => {
 
         // サーバーに送るデータをorderItemsToPostに詰め替える処理
         let updatedOrderToppings: { topping: number }[] = []
-        if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t.topping.id}))
-        const updatedOrderItem: orderItem = {
-            id: orderItem.id,
-            item: orderItem.item.id,
+        if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t!.topping!.id!}))
+
+        // updateOrderItemMutationを定義
+        // 引数のデータ型はinput type
+        const updatedOrderItem: UpOrderItem = {
+            id: orderItem.id!,
+            item: orderItem.item?.id!,
             orderToppings: updatedOrderToppings,
-            quantity: orderItem.quantity,
+            quantity: orderItem.quantity!,
             size: orderItem.size === 'M' ? 'M' : 'L'
         }
-        let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
-        const orderItemsToPost: OrderItemsToPost = {
-            orderItems: updatedOrderItems,
-            status: 0,
-            newTotalPrice: orderSubTotalPrice
+        const updatedOrderItems: OrderItemInput = {
+            orderItems: [updatedOrderItem]
+        }
+        const totalPrice: TotalPrice = {
+            totalPrice: orderTotalPrice
         }
 
-        await dispatch(asyncUpdateOrderItem(orderItemsToPost)).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
-        await dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
+        // 更新mutation呼び出し
+        await updateOrderItemMutation({
+            variables: {
+                orderItemInput: updatedOrderItems,
+                totalPrice: totalPrice
+            }
+        }).then(() => {
+            // resolverで値が変わるように変更しておけば実際の値も更新されるかも？
+            console.log('update')
+            console.log(updateOrderItemData)
         })
     }
 
@@ -109,62 +124,68 @@ const CartList: React.FC = () => {
      * @return
      */
     const deleteOrderItem = async (orderItemId: number) => {
-        await dispatch(asyncDeleteOrderItem(orderItemId)).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
-        dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
+        const deleteOrderItemId: DeleteOrderItemId = {
+            orderItemId: orderItemId
+        }
+        await deleteOrderItemMutation({variables: {deleteOrderItemId: deleteOrderItemId}}).then(() => {
+            console.log('delete')
+            console.log(deleteOrderItemData)
         })
     }
 
     // カートに商品があるかどうかでレイアウトを切り替えるため
     let styleCartList
-    if (orderItems && orderItems?.length > 0) {
+    if (orderItems! && orderItems?.length > 0) {
         styleCartList = classes.cartList
     } else {
         styleCartList = classes.emptyCartList
     }
 
-
     return (
-        <div className={classes.root}>
-            <Grid container style={{paddingLeft: 20}}>
-                <Grid item xs={8} className={styleCartList}>
-                    <Typography
-                        variant="h4"
-                        gutterBottom
-                        className={classes.title}
-                    >
-                        ショッピングカート
-                    </Typography>
-                    {orderItems && orderItems?.length > 0 ? (<List>
-                        {orderItems &&
-                        orderItems!.map((orderItem) => (
-                            <CartItem
-                                orderItem={orderItem}
-                                key={orderItem.id}
-                                updateOrderItems={({orderItem}) => updateOrderItems({orderItem})}
-                                deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
-                            />
-                        ))}
-                    </List>) : (
-                        <div className={classes.emptyOrderItems}>
-                            <Typography variant="h6" gutterBottom>
-                                カートに商品がありません
+        <div>
+            {isLoading ? (
+                <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
+            ) : (
+                <div className={classes.root}>
+                    <Grid container style={{paddingLeft: 20}}>
+                        <Grid item xs={8} className={styleCartList}>
+                            <Typography
+                                variant="h4"
+                                gutterBottom
+                                className={classes.title}
+                            >
+                                ショッピングカート
                             </Typography>
-                        </div>
-                    )}
-                </Grid>
-                <Grid item xs={4}>
-                    <div className={classes.orderOperator}>
-                        <OrderOperator
-                            subTotalPrice={orderSubTotalPrice}
-                            orderItems={orderItems}
-                            deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
-                        />
-                    </div>
-                </Grid>
-            </Grid>
+                            {orderItems! && orderItems?.length > 0 ? (<List>
+                                {orderItems &&
+                                orderItems.map((orderItem: any) => (
+                                    <CartItem
+                                        orderItem={orderItem}
+                                        key={orderItem!.id}
+                                        updateOrderItems={({orderItem}) => updateOrderItems({orderItem})}
+                                        deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
+                                    />
+                                ))}
+                            </List>) : (
+                                <div className={classes.emptyOrderItems}>
+                                    <Typography variant="h6" gutterBottom>
+                                        カートに商品がありません
+                                    </Typography>
+                                </div>
+                            )}
+                        </Grid>
+                        <Grid item xs={4}>
+                            <div className={classes.orderOperator}>
+                                <OrderOperator
+                                    orderItems={orderItems}
+                                    subTotalPrice={orderTotalPrice}
+                                    deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
+                                />
+                            </div>
+                        </Grid>
+                    </Grid>
+                </div>
+            )}
         </div>
     )
 }

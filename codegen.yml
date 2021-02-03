@@ -1,8 +1,8 @@
 overwrite: true
-schema: "http://34.84.118.239/django_ql/"
-documents: "src/gql/queries/query.ts"
+schema: "http://localhost:4000/"
+documents: "query.graphql.ts"
 generates:
-  src/gql/generated/graphql.tsx:
+  src/generated/graphql.ts:
     plugins:
       - "typescript"
       - "typescript-operations"

@@ -1,19 +1,25 @@
-import React, {FC, useEffect, useState} from 'react';
-import {createStyles, makeStyles} from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
+import React, {useEffect, useState} from 'react';
+import {
+    createStyles,
+    makeStyles,
+    AppBar,
+    Toolbar,
+    Typography,
+    IconButton,
+    MenuItem,
+    Menu,
+    Button,
+    Grid
+} from '@material-ui/core';
+
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import {Button, Grid} from "@material-ui/core";
 
 import {Link, RouteComponentProps, useHistory, withRouter} from 'react-router-dom'
 import {Path} from "~/router/routes";
-import {logout} from "~/store/slices/App/auth.slice";
+
 import {AppDispatch} from "~/store";
 import {useDispatch} from "react-redux";
+import {logout} from "~/store/slices/App/auth.slice";
 import {setError} from "~/store/slices/App/error.slice"
 
 interface Props {
@@ -30,8 +36,8 @@ const useStyles = makeStyles(() =>
             backgroundColor: "#ffa500",
             height: 80
         },
-        header_content:{
-          paddingTop:15
+        header_content: {
+            paddingTop: 15
         },
         headerItem: {
             textDecoration: 'none',
@@ -39,28 +45,29 @@ const useStyles = makeStyles(() =>
         },
         title: {
             fontWeight: 'bold',
-            fontFamily: 'Zapfino',
-            fontSize:25,
+            fontFamily:  'Gabriola',
+            fontSize: 45,
             flexGrow: 1,
             color: 'white',
+            cursor: 'pointer'
         },
         link: {
             textDecoration: 'none',
             color: 'black'
         },
-        login_btn:{
+        login_btn: {
             textDecoration: 'none',
             color: 'black'
         }
     }),
 );
 
-const Header: FC<Props & RouteComponentProps> = (props) => {
+const Header: React.FC<Props & RouteComponentProps> = (props) => {
 
-    const dispatch: AppDispatch = useDispatch()
+    const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
 
-    const isLogin = props.isLogin
+    const isLogin = props.isLogin;
     const [auth, setAuth] = useState(isLogin);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -68,11 +75,11 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
     //エラー画面表示後、別ページへ遷移が行われる時にエラーを非表示にする処理
     const history = useHistory();
     history.listen(() => {
-        dispatch(setError({isError: false, code: null}))
+        dispatch(setError({isError: false, code: null}));
     })
 
     useEffect(() => {
-        setAuth(isLogin)
+        setAuth(isLogin);
     }, [isLogin])
 
     /**
@@ -97,11 +104,11 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
      * @return void
      */
     const logoutInHeader = async () => {
-        await handleClose()
+        await handleClose();
         await dispatch(logout()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
+            dispatch(setError({isError: true, code: e.message}));
         });
-        props.history.push({pathname: '/login'})
+        props.history.push({pathname: '/login'});
     }
 
     /**
@@ -110,7 +117,15 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
      */
     const transitionOrderHistory = () => {
         handleClose();
-        props.history.push({pathname: '/history'})
+        props.history.push({pathname: '/history'});
+    }
+
+    /**
+     * 商品一覧画面へ遷移する関数
+     * @return void
+     */
+    const toItemList = () => {
+        props.history.push({pathname: Path.itemList, state: {judge: true}});
     }
 
     return (
@@ -119,30 +134,26 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
                 <Toolbar className={classes.header}>
                     <Grid container className={classes.header_content}>
                         <Grid item xs={6} container justify={"center"} alignItems={"center"}>
-                            <Link to={Path.itemList} className={classes.link}>
-                                <Typography align="center" className={classes.title}>
+                            <Typography align="center" className={classes.title} onClick={toItemList}>
                                     <span style={{color: "red"}}>
                                        R
                                     </span>
-                                    akuraku&nbsp;&nbsp;
-                                    <span style={{color: "red"}}>
+                                akuraku&nbsp;&nbsp;
+                                <span style={{color: "red"}}>
                                         P
                                     </span>
-                                    izza&nbsp;&nbsp;
-                                    <span style={{fontSize:40}}>
+                                izza&nbsp;&nbsp;
+                                <span style={{fontSize: 40}}>
                                         🍕
                                     </span>
-                                </Typography>
-                            </Link>
+                            </Typography>
                         </Grid>
                         <Grid item xs={2}/>
                         {auth ? (
                             <Grid item xs={3} container justify={"center"} alignItems={"center"}>
                                 <Grid item xs={1}/>
                                 <Grid item xs={5}>
-                                    <Link to={Path.itemList} style={{textDecoration: 'none'}}>
-                                        <Button style={{color: 'white'}}>商品一覧</Button>
-                                    </Link>
+                                    <Button style={{color: 'white'}} onClick={toItemList}>商品一覧</Button>
                                 </Grid>
                                 <Grid item xs={5}>
                                     <Link to={Path.cart} style={{textDecoration: 'none'}}>
@@ -204,6 +215,6 @@ const Header: FC<Props & RouteComponentProps> = (props) => {
             </AppBar>
         </div>
     );
-}
+};
 
-export default withRouter(Header)
+export default withRouter(Header);

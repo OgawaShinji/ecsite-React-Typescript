@@ -5,7 +5,7 @@ import {
     Button,
     createStyles,
     Grid,
-    IconButton,
+    IconButton, LinearProgress,
     makeStyles,
     Paper,
     TextField,
@@ -17,6 +17,8 @@ import {Path} from "~/router/routes";
 import {User} from "~/types/interfaces";
 import {AppDispatch} from "~/store";
 import {Visibility, VisibilityOff} from "@material-ui/icons";
+import { usePostRegisterMutation} from "~/gql/generated/user.graphql";
+
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -87,6 +89,8 @@ const Register: FC = () => {
     //ブラインドのステータス
     const [passType, setPassType] = useState("password");
     const [confirmPassType, setConfirmPassType] = useState("password");
+    //ローディング処理
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
     //-----------------------　バリデーション : ○○Validation　-------------------------------------------
@@ -104,14 +108,14 @@ const Register: FC = () => {
         if (!value || value === '') return '※郵便番号を入力してください'
         const regex = /^[0-9]+$/;
         if (!regex.test(value)) return '※半角数字を入力してください'
-        if (3 < value.length) return '※3字以内で入力してください'
+        if (3 !== value.length) return '※3桁で入力してください'
         return ''
     }
     const secondZipcodeValidation = (value: string): string => {
         if (!value || value === '') return '※郵便番号を入力してください'
         const regex = /^[0-9]+$/;
         if (!regex.test(value)) return '※半角数字を入力してください'
-        if (4 < value.length) return '※4字以内で入力してください'
+        if (4 !== value.length) return '※4桁で入力してください'
         return ''
     }
     const addressValidation = (value: string): string => {
@@ -152,7 +156,7 @@ const Register: FC = () => {
         if (value !== password.value) return '※パスワードと一致していません'
         const regex = /^[0-9]+$/;
         if (!regex.test(value)) return '※半角数字を入力してください'
-        if (value.length < 6　|| 16 < value.length) return '※6字以上6字以上16字以内で入力してください'
+        if (value.length < 6 || 16 < value.length) return '※6字以上6字以上16字以内で入力してください'
         return ''
     }
 
@@ -253,6 +257,7 @@ const Register: FC = () => {
      * [登録]ボタン押下時の処理　
      */
     const handleClickRegister = async () => {
+        setIsLoading(true);
         const zipcode = firstZipcode.value + secondZipcode.value;
         const telephone = firstTelNum.value + '-' + secondTelNum.value + '-' + thirdTelNum.value;
         let userInfo: User = {
@@ -265,19 +270,59 @@ const Register: FC = () => {
         }
         await dispatch(postRegisterUser(userInfo)).then((i) => {
             if (i.payload === '200') routeHistory.push(Path.login);
-        }).catch((e) => {
+        }).catch(async (e) => {
             if (e.message === '400') {
-                setEmailDuplicated(true);
+                const loading = async () => {
+                    setTimeout(() => {
+                        setIsLoading(false);
+                    }, 500)
+                }
+                loading().then(() => {
+                    setEmailDuplicated(true);
+                })
             }
         });
     }
 
-    return (
-        <>
+    //mockサーバーにデータを送る
+    const [postRegisterMutation, { data, loading, error }] = usePostRegisterMutation();
+    const handleClick = async () => {
+        setIsLoading(true);
+        const userInfo = {
+            name:name.value,
+            email:email.value,
+            zipcode:firstZipcode.value + secondZipcode.value,
+            address:address.value,
+            telephone:firstTelNum.value + '-' + secondTelNum.value + '-' + thirdTelNum.value,
+            password:password.value
+        }
+        console.log(userInfo)
+        //入力されたデータを引数にセット
+        await postRegisterMutation({variables:{userInfo:userInfo}}).then( () => {
+            routeHistory.push(Path.login);
+        }).catch(async (e) => {
+            if (e.message === '400') {
+                const loading = async () => {
+                    setTimeout(() => {
+                        setIsLoading(false);
+                    }, 500)
+                }
+                loading().then(() => {
+                    setEmailDuplicated(true);
+                })
+            }
+        });
+    }
+
+    if (loading) return (<div>loading</div>);
+    if (error) return (<div>error</div>);
+
+    return (isLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (
+        <div>
             <Grid container alignContent="center" justify="center" className={classes.pad}>
                 <Paper className={classes.root2}>
                     <Grid container alignContent="center" justify="center">
-                        <div className={classes.root} >
+                        <div className={classes.root}>
                             <Typography className={classes.pad} component="h5" variant="h5"
                                         align={"center"}>新規ユーザー登録</Typography>
                             <Grid item xs={11}>
@@ -363,7 +408,7 @@ const Register: FC = () => {
                                     fullWidth
                                 />
                             </Grid>
-                            <Grid container  alignItems={"center"}>
+                            <Grid container alignItems={"center"}>
                                 <Grid item xs={3}>
                                     <Typography style={{color: 'red', fontSize: "x-small"}}
                                                 align={"center"}>{firstTelNum.errorMessage}</Typography>
@@ -473,12 +518,12 @@ const Register: FC = () => {
                             </Grid>
                             {emailDuplicated &&
                             <Typography className={classes.pad} variant={"subtitle1"} align={"center"}
-                                        color={"secondary"}>メールアドレスが重複しています</Typography>}
+                                        color={"secondary"}>メールアドレスが有効でない、もしくは重複しています</Typography>}
                             <Grid className={classes.pad} container alignContent="center" justify="center">
                                 <Button
                                     variant="contained"
                                     className={classes.color}
-                                    onClick={handleClickRegister}
+                                    onClick={handleClick}
                                     disabled={
                                         name.errorMessage.length > 0 || name.value === '' ||
                                         email.errorMessage.length > 0 || email.value === '' ||
@@ -497,7 +542,7 @@ const Register: FC = () => {
                     </Grid>
                 </Paper>
             </Grid>
-        </>
-    )
+        </div>
+    ))
 }
 export default Register;

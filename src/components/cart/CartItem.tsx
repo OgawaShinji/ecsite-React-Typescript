@@ -1,8 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {OrderItem, OrderTopping, Topping} from "~/types/interfaces"
+import React, {useState} from "react";
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
-import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {
     Box,
@@ -19,11 +16,10 @@ import {
     Theme,
     Typography
 } from "@material-ui/core";
-import {AppDispatch} from "~/store";
-import {setError} from "~/store/slices/App/error.slice";
+import {OrderItem, OrderTopping, Topping} from "~/generated/graphql";
 
 interface Props {
-    orderItem: OrderItem
+    orderItem: OrderItem | null
     updateOrderItems: ({orderItem}: { orderItem: OrderItem }) => void
     deleteOrderItem: (orderItemId: number) => void
 }
@@ -53,7 +49,6 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         modal: {},
         dialog: {
-            backgroundColor: 'red',
             width: '40%',
             position: 'absolute',
             top: '50%',
@@ -65,28 +60,19 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
 
-    const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
     const {orderItem, updateOrderItems, deleteOrderItem} = props
 
-    const toppings: Topping[] = useSelector(selectToppings)
     const [modalIsOpen, setIsOpen] = useState<boolean>(false)
 
     // OrderItemEntryで受け渡す変数を定義
     const selectedTopping: Topping[] = []
-    orderItem.orderToppings?.forEach(orderTopping => selectedTopping.push(orderTopping.topping))
+    orderItem!.orderToppings?.forEach(orderTopping => selectedTopping.push(orderTopping!.topping!))
     const selectedState: itemEntryState = {
-        size: orderItem.size,
-        quantity: orderItem.quantity,
-        toppings: selectedTopping
+        size: orderItem!.size!,
+        quantity: orderItem!.quantity!,
+        toppings: selectedTopping!
     }
-
-    // 初期表示
-    useEffect(() => {
-        if (toppings.length === 0) dispatch(fetchToppings()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
-    })
 
     /**
      * OrderItemEntryのダイアログを非表示にする関数
@@ -118,7 +104,6 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
      * @Params toppings: Topping[]
      */
     const handleToppingChange = (toppings: Topping[]) => {
-        // setSelectToppings(toppings)
         const newOrderToppings: OrderTopping[] = []
         toppings.forEach(topping => {
             const changedOrderTopping: OrderTopping = {topping: topping}
@@ -129,7 +114,7 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
     }
 
     const toItemDetail = () => {
-        props.history.push({pathname: `/itemDetail/${props.orderItem.item.id}`})
+        props.history.push({pathname: `/itemDetail/${props?.orderItem?.item?.id}`})
     }
 
 
@@ -140,7 +125,7 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
                     {/*image*/}
                     <Grid item xs={3} container justify={"center"} alignItems={"center"}>
                         <ButtonBase className={classes.image} onClick={toItemDetail}>
-                            <img className={classes.img} alt="complex" src={orderItem.item.imagePath}/>
+                            <img className={classes.img} alt="complex" src={orderItem?.item?.imagePath!}/>
                         </ButtonBase>
                     </Grid>
                     <Grid item xs={6} sm container>
@@ -151,7 +136,7 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
                                     <ButtonBase onClick={toItemDetail}>
                                         <Typography gutterBottom variant="h6">
                                             <Box fontWeight="fontWeightBold">
-                                                {orderItem.item.name}
+                                                {orderItem?.item?.name}
                                             </Box>
                                         </Typography>
                                     </ButtonBase>
@@ -163,18 +148,18 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
                                 <Grid item xs={5}>
                                     <Typography gutterBottom>
                                         価格
-                                        ：{orderItem.size === 'M' ? orderItem.item.priceM.toLocaleString() : orderItem.item.priceL.toLocaleString()}円</Typography>
+                                        ：{orderItem?.size === 'M' ? orderItem?.item?.priceM!.toLocaleString() : orderItem?.item?.priceL!.toLocaleString()}円</Typography>
                                     <Typography gutterBottom>
-                                        サイズ： {orderItem.size}
+                                        サイズ： {orderItem?.size}
                                     </Typography>
                                     <Typography gutterBottom>
-                                        個数 ： {orderItem.quantity + '個'}
+                                        個数 ： {orderItem?.quantity + '個'}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <ul>
-                                        {orderItem.orderToppings?.map((orderTopping, index) => (
-                                            <li key={index}>{orderTopping.topping.name}</li>
+                                        {orderItem?.orderToppings?.map((orderTopping, index) => (
+                                            <li key={index}>{orderTopping?.topping?.name}</li>
                                         ))}
                                     </ul>
                                 </Grid>
@@ -187,7 +172,7 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
                                             variant="outlined"
                                             color="secondary"
                                             className={classes.btn}
-                                            onClick={() => deleteOrderItem(orderItem.id!)}
+                                            onClick={() => deleteOrderItem(orderItem?.id!)}
                                         >
                                             削除
                                         </Button>
@@ -209,7 +194,7 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
                         <Grid item xs={10}>
                             <Typography variant='h5'>
                                 <Box fontWeight="fontWeightBold">
-                                    小計：{orderItem.subTotalPrice!.toLocaleString() + '円'}
+                                    小計：{orderItem?.subTotalPrice!.toLocaleString() + '円'}
                                 </Box>
                             </Typography>
                         </Grid>

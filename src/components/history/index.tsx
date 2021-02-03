@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch} from "~/store";
 import {
     fetchOrderHistory,
     fetchOrderHistoryTotalCount,
@@ -8,14 +9,14 @@ import {
     selectOrderHistoryTotalCount
 } from "~/store/slices/Domain/history.slice";
 import {setError} from '~/store/slices/App/error.slice';
-import {AppDispatch} from "~/store";
-
-import {OrderItem} from "~/types/interfaces";
 
 import OrderInfo from "~/components/history/OrderInfo";
 import OrderHistoryDialog from "~/components/history/OrderHistoryDialog";
-import {makeStyles, Grid, List, ListItem, Divider, Typography} from "@material-ui/core";
+
+import {Divider, Grid, LinearProgress, List, ListItem, makeStyles, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
+
+import {OrderItem} from "~/types/interfaces";
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -40,13 +41,15 @@ const OrderConfirm: React.FC = () => {
     const orders = useSelector(selectOrderHistory);
     const ordersTotalCount = useSelector(selectOrderHistoryTotalCount);
 
+    // コンポ―ネント上で管理するstate
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(1);
-    const [isDisplay, setDisplay] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [orderItems, setOrderItems] = useState<Array<OrderItem>>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
+        setIsLoading(true);
         dispatch(fetchOrderHistory({displayCount: 5, pageNum: page}))
             .catch((e) => {
                 dispatch(setError({isError: true, code: e.message}));
@@ -59,26 +62,29 @@ const OrderConfirm: React.FC = () => {
     }, [page, dispatch]);
 
     useEffect(() => {
-        if (ordersTotalCount === 0) {
-            // 注文履歴が存在しない場合
-            setDisplay(true);
-        } else {
+        setIsLoading(true);
+        if (ordersTotalCount) {
             // 注文履歴が存在する場合
-            if (ordersTotalCount) {
-                let totalPageCount;
+            let totalPageCount;
 
-                // 総ページ数をセット
-                if (ordersTotalCount % 5 === 0) {
-                    totalPageCount = ordersTotalCount / 5;
-                } else {
-                    totalPageCount = Math.floor(ordersTotalCount / 5) + 1;
-                }
-                setCount(totalPageCount);
+            // 総ページ数をセット
+            if (ordersTotalCount % 5 === 0) {
+                totalPageCount = ordersTotalCount / 5;
+            } else {
+                totalPageCount = Math.floor(ordersTotalCount / 5) + 1;
             }
+            setCount(totalPageCount);
         }
     }, [ordersTotalCount]);
 
-    // orderInfoコンポーネント一覧のJSXを作成
+    useEffect(() => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 500)
+    }, [orders])
+
+    // 注文情報一覧のJSXを作成
     const orderInfoList = orders.map((order, index) => {
         const listItem = (
             <ListItem button onClick={() => {
@@ -119,17 +125,26 @@ const OrderConfirm: React.FC = () => {
                 </Grid>
             </Grid>
 
-            {/*注文履歴一覧*/}
-            <Grid container justify={"center"} alignItems={"center"}>
-                <Grid item xs={10}>
-                    <List>
-                        {orderInfoList}
-                    </List>
+            {isLoading ? (
+                // Loading
+                <Grid container justify={"center"} alignItems={"center"}>
+                    <Grid item xs={7}>
+                        <LinearProgress style={{margin: '10%'}}/>
+                    </Grid>
                 </Grid>
+            ) : (
+                // 注文履歴一覧
+                <Grid container justify={"center"} alignItems={"center"}>
+                    <Grid item xs={10}>
+                        <List>
+                            {orderInfoList}
+                        </List>
+                    </Grid>
+                </Grid>
+            )}
 
-            </Grid>
             {/*注文履歴が存在しない場合*/}
-            {isDisplay && (
+            {!isLoading && ordersTotalCount !== null && ordersTotalCount === 0 && (
                 <Grid container justify={"center"} alignItems={"center"}>
                     <Grid item>
                         <Typography className={classes.text}>
@@ -143,7 +158,7 @@ const OrderConfirm: React.FC = () => {
             {ordersTotalCount !== null && ordersTotalCount !== 0 && (
                 <Grid container justify={"center"} alignItems={"center"}>
                     <Pagination count={count} page={page} onChange={(e, val) => {
-                        setPage(val)
+                        setPage(val);
                     }} className={classes.pagination} size={"large"}/>
                 </Grid>
             )}
@@ -153,7 +168,7 @@ const OrderConfirm: React.FC = () => {
                 setIsOpen(false)
             }} isOpen={isOpen} orderItems={orderItems}/>
         </>
-    )
-}
+    );
+};
 
 export default OrderConfirm;

@@ -11,10 +11,7 @@ import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "~/store";
 import ScrollToTop from "~/components/elements/ScrollToTop";
-import {ApolloProvider, HttpLink} from "@apollo/react-hooks";
-import {ApolloClient, InMemoryCache} from "@apollo/client";
-import {REST_URL} from "~/store/api";
-
+import {ApolloClient, ApolloProvider, HttpLink, InMemoryCache} from "@apollo/client";
 
 const useStyles = makeStyles({
     App: {
@@ -55,13 +52,14 @@ const App: React.FC<RouteComponentProps> = () => {
 
     // 401error発生時、執行されているがAppに保持され続けているtokenを削除
     useEffect(() => {
-        if (errorInStore.code == 401) localStorage.removeItem('Authorization')
+        if (errorInStore.code === '401') localStorage.removeItem('Authorization')
     }, [errorInStore])
 
+    // apolloClientの環境設定
     const client = new ApolloClient({
         cache: new InMemoryCache(),
         link: new HttpLink({
-            uri: REST_URL + "/django_ql/",
+            uri: "http://localhost:4000/",
             headers: {
                 Authorization: localStorage.getItem("Authorization")
             },
@@ -73,7 +71,7 @@ const App: React.FC<RouteComponentProps> = () => {
             <ApolloProvider client={client}>
                 <ScrollToTop/>
                 <Header isLogin={isLogin}/>
-                {errorInStore.isError ? errorInStore.code == 401 ? <Redirect to="/login"/> :
+                {errorInStore.isError ? errorInStore.code === "401" ? <Redirect to="/login"/> :
                     <ErrorPage/> : routes}
                 <Footer/>
             </ApolloProvider>
