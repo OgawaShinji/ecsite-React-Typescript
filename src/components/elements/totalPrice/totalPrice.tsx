@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Box, Divider, makeStyles, Typography} from "@material-ui/core";
 
 interface Props {
-    subTotalPrice: number
+    subTotalPrice: number | null | undefined
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -23,11 +23,11 @@ const TotalPrice: React.FC<Props> = props => {
     const [consumptionTax, setConsumptionTax] = useState(0);
     const [billedAmount, setBilledAmount] = useState(0);
 
-    const tax = props.subTotalPrice * 0.1;
-    const totalPrice = props.subTotalPrice + tax;
+    const tax = props.subTotalPrice! * 0.1;
+    const totalPrice = props.subTotalPrice! + tax;
 
     useEffect(() => {
-        setSubTotalPrice(props.subTotalPrice);
+        setSubTotalPrice(props.subTotalPrice!);
         setConsumptionTax(consumptionTax => tax);
         setBilledAmount(billedAmount => totalPrice);
     }, [props.subTotalPrice, tax, totalPrice])

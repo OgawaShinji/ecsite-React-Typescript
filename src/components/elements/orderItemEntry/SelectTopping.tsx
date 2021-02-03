@@ -1,10 +1,8 @@
 import React, {useState} from "react";
 import {Button, ButtonBase, Card, Grid, Typography} from "@material-ui/core";
-import {useSelector} from "react-redux";
-import {selectToppings} from "~/store/slices/Domain/topping.slice";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {Topping} from "~/gql/generated/order.graphql";
-import {useFetchToppingsQuery} from "~/gql/generated/topping.graphql";
+import {useFetchToppingsQuery} from "~/generated/graphql";
 
 type selectToppingProps = {
     selectedSize: string;
