@@ -3,21 +3,19 @@ import React, {useEffect, useState} from "react";
 import CartItem from "./CartItem"
 import OrderOperator from "./OrderOperator"
 import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
-import {
-    FetchOrderItemsQuery, FetchOrderItemsQueryHookResult, FetchOrderItemsQueryResult,
-    FetchOrderItemsQueryVariables, FetchOrderQuery, OrderItem, useFetchOrderItemsQuery
-} from "~/gql/generated/order.graphql";
-import {
-    asyncFetchOrderItems,
-    asyncUpdateOrderItem,
-    orderItem,
-    OrderItemsToPost,
-    selectOrder,
-    selectOrderSubTotalPrice
-} from "~/store/slices/Domain/order.slice"
-import {setError} from "~/store/slices/App/error.slice";
-import {OrderItemFragFragmentDoc} from "~/gql/generated/order.graphql";
 import {filter} from "graphql-anywhere";
+import {
+    DeleteOrderItemId,
+    OrderItem,
+    OrderItemFragFragment,
+    OrderItemFragFragmentDoc,
+    OrderItemInput,
+    TotalPrice,
+    UpOrderItem,
+    useDeleteOrderItemMutation,
+    useFetchOrderItemsQuery,
+    useUpdateOrderItemMutation
+} from "~/generated/graphql";
 
 const useStyles = makeStyles({
     root: {
@@ -51,37 +49,33 @@ const useStyles = makeStyles({
 
 const CartList: React.FC = () => {
 
-    // const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
 
-    // let iniOrder = useSelector(selectOrder)
-    // let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
-
-    const [orderItems, setOrderItems] = useState<any>()
+    const [orderItems, setOrderItems] = useState<OrderItemFragFragment[] | undefined>()
+    const [orderTotalPrice, setOrderTotalPrice] = useState<number | null>()
     const [isLoading, setIsLoading] = useState(false); // loading
 
-    const { data } = useFetchOrderItemsQuery()
-
-    let orderItem;
-
-    if(data){
-        orderItem = filter(OrderItemFragFragmentDoc, data?.cart?.orderItems);
-        console.log(orderItem)
-    }
-
+    const {data: fetchOrderItemData} = useFetchOrderItemsQuery()
+    const [updateOrderItemMutation, {data: updateOrderItemData}] = useUpdateOrderItemMutation()
+    const [deleteOrderItemMutation, {data: deleteOrderItemData}] = useDeleteOrderItemMutation()
 
     // 初期表示
     useEffect(() => {
         setIsLoading(true);
-        const loading = async () => {
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 500)
-        }
-        loading().then(() => {
-            setOrderItems(data?.cart?.orderItems)
-        })
-    }, [data])
+            const loading = async () => {
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 500)
+            }
+            loading().then(() => {
+                // データ取得の際ネスト構造になっているgraphQLでは、各プロパティごとにデータ型を定義したフラグメントを作成し、セットする際にfilterを通す必要がある
+                if (fetchOrderItemData?.cart?.orderItems) {
+                    const orderItemFlag=filter(OrderItemFragFragmentDoc, fetchOrderItemData.cart.orderItems)
+                    setOrderItems(orderItemFlag)
+                    setOrderTotalPrice(fetchOrderItemData?.cart?.totalPrice)
+                }
+            })
+    }, [fetchOrderItemData])
 
 
     /**
@@ -94,18 +88,34 @@ const CartList: React.FC = () => {
         // サーバーに送るデータをorderItemsToPostに詰め替える処理
         let updatedOrderToppings: { topping: number }[] = []
         if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t!.topping!.id!}))
-        const updatedOrderItem: orderItem = {
+
+        // updateOrderItemMutationを定義
+        // 引数のデータ型はinput type
+        const updatedOrderItem: UpOrderItem = {
             id: orderItem.id!,
             item: orderItem.item?.id!,
             orderToppings: updatedOrderToppings,
             quantity: orderItem.quantity!,
             size: orderItem.size === 'M' ? 'M' : 'L'
         }
-        let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
+        const updatedOrderItems: OrderItemInput = {
+            orderItems: [updatedOrderItem]
+        }
+        const totalPrice: TotalPrice = {
+            totalPrice: orderTotalPrice
+        }
 
         // 更新mutation呼び出し
-
-
+        await updateOrderItemMutation({
+            variables: {
+                orderItemInput: updatedOrderItems,
+                totalPrice: totalPrice
+            }
+        }).then(() => {
+            // resolverで値が変わるように変更しておけば実際の値も更新されるかも？
+            console.log('update')
+            console.log(updateOrderItemData)
+        })
     }
 
     /**
@@ -114,12 +124,13 @@ const CartList: React.FC = () => {
      * @return
      */
     const deleteOrderItem = async (orderItemId: number) => {
-        // await dispatch(asyncDeleteOrderItem(orderItemId)).catch((e) => {
-        //     dispatch(setError({isError: true, code: e.message}))
-        // })
-        // dispatch(asyncFetchOrderItems()).catch((e) => {
-        //     dispatch(setError({isError: true, code: e.message}))
-        // })
+        const deleteOrderItemId: DeleteOrderItemId = {
+            orderItemId: orderItemId
+        }
+        await deleteOrderItemMutation({variables: {deleteOrderItemId: deleteOrderItemId}}).then(() => {
+            console.log('delete')
+            console.log(deleteOrderItemData)
+        })
     }
 
     // カートに商品があるかどうかでレイアウトを切り替えるため
@@ -147,7 +158,7 @@ const CartList: React.FC = () => {
                             </Typography>
                             {orderItems! && orderItems?.length > 0 ? (<List>
                                 {orderItems &&
-                                orderItems.map((orderItem:any) => (
+                                orderItems.map((orderItem: any) => (
                                     <CartItem
                                         orderItem={orderItem}
                                         key={orderItem!.id}
@@ -166,10 +177,8 @@ const CartList: React.FC = () => {
                         <Grid item xs={4}>
                             <div className={classes.orderOperator}>
                                 <OrderOperator
-
-                                    orderItems={orderItem}
-                                    subTotalPrice={0}
-                           
+                                    orderItems={orderItems}
+                                    subTotalPrice={orderTotalPrice}
                                     deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
                                 />
                             </div>
