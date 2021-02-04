@@ -234,7 +234,6 @@ describe('カート一覧画面', () => {
                     const emptyCartBtn = screen.getByRole('button', {name: 'カートを空にする'})
                     await userEvent.click(emptyCartBtn)
                 })
-                console.log(ranProgressUrlList)
                 const testUrls = ranProgressUrlList.filter(function (x, i, self) {
                     return self.indexOf(x) === i;
                 });
