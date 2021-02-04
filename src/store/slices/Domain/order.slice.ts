@@ -115,7 +115,7 @@ export const asyncUpdateOrderItem = createAsyncThunk(
 export const asyncDeleteOrderItem = createAsyncThunk(
     'order/deleteOrderItem',
     async (orderItemId: number) => {
-        await Axios.delete(`/django/delete_cart/${orderItemId}`, {
+        await Axios.delete(`/django/delete_cart/${orderItemId}/`, {
             method: 'DELETE',
             headers: {
                 Authorization: localStorage.getItem("Authorization")
