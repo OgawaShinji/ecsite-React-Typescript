@@ -421,6 +421,7 @@ const resolvers = {
         addCart(parent, args) {
             cart.orderItems.push(args.orderItem);
             cart.totalPrice+=args.totalPrice;
+            //throw new Error()
             return {order:cart}
         }
     }
