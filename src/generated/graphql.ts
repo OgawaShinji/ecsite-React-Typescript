@@ -132,13 +132,6 @@ export type OrderItemInput = {
   orderItems?: Maybe<Array<Maybe<UpOrderItem>>>;
 };
 
-export type OrderIInput = {
-  item?: Maybe<Scalars['Int']>;
-  orderToppings?: Maybe<Array<Maybe<UpTopping>>>;
-  size?: Maybe<Scalars['String']>;
-  quantity?: Maybe<Scalars['Int']>;
-};
-
 export type TotalPrice = {
   totalPrice?: Maybe<Scalars['Int']>;
 };
@@ -201,7 +194,7 @@ export type MutationDeleteOrderItemArgs = {
 
 
 export type MutationAddCartArgs = {
-  orderItem: OrderIInput;
+  orderItem: UpOrderItem;
   status?: Maybe<Scalars['Int']>;
   totalPrice: Scalars['Int'];
 };
@@ -354,7 +347,7 @@ export type FetchOrderQuery = (
 );
 
 export type AddCartMutationVariables = Exact<{
-  orderItem: OrderIInput;
+  orderItem: UpOrderItem;
   totalPrice: Scalars['Int'];
 }>;
 
@@ -728,7 +721,7 @@ export type FetchOrderQueryHookResult = ReturnType<typeof useFetchOrderQuery>;
 export type FetchOrderLazyQueryHookResult = ReturnType<typeof useFetchOrderLazyQuery>;
 export type FetchOrderQueryResult = Apollo.QueryResult<FetchOrderQuery, FetchOrderQueryVariables>;
 export const AddCartDocument = gql`
-    mutation addCart($orderItem: OrderIInput!, $totalPrice: Int!) {
+    mutation addCart($orderItem: UpOrderItem!, $totalPrice: Int!) {
   addCart(orderItem: $orderItem, status: 0, totalPrice: $totalPrice) {
     order {
       orderItems {

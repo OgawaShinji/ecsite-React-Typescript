@@ -128,16 +128,9 @@ input UpTopping{
       size: String
       quantity: Int
  }
- # その形で欲しいならOrderItemInputをUpOrderItemの型にしてOrderItemInputの配列を使えば良いのでは??（サーバーサイドがそうしてます）
+ 
  input OrderItemInput{
       orderItems: [UpOrderItem]
- }
- 
- input OrderIInput{
-    item: Int
-    orderToppings: [UpTopping]
-    size: String
-    quantity: Int
  }
  
  input TotalPrice{
@@ -172,7 +165,7 @@ input UpTopping{
     deleteOrderItem(
         deleteOrderItemId: DeleteOrderItemId!
     ):Order
-    addCart(orderItem:OrderIInput!,status:Int,totalPrice:Int!):ReturnOrder
+    addCart(orderItem:UpOrderItem!,status:Int,totalPrice:Int!):ReturnOrder
   }
 `;
 
