@@ -55,7 +55,7 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
     //変更ボタンの状態を切り替える
     const checkButtonDisabled = () => {
         if (
-            name.value.length === 0  || name.value === '' || name.errorMessage.length > 0 ||
+            name.value.length === 0 || name.value === '' || name.errorMessage.length > 0 ||
             email.value === '' || email.errorMessage.length > 0 ||
             zipcode1.value === '' || zipcode1.errorMessage.length > 0 ||
             zipcode2.value === '' || zipcode2.errorMessage.length > 0 ||
@@ -72,21 +72,29 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
 
     //デフォルト情報をセット
     const [name, setName] = useState<{ value: string, errorMessage: string }>({
-        value: '', errorMessage: ''})
+        value: '', errorMessage: ''
+    })
     const [email, setEmail] = useState<{ value: string, errorMessage: string }>({
-        value: '', errorMessage: ''})
+        value: '', errorMessage: ''
+    })
     const [zipcode1, setZipcode1] = useState<{ value: string, errorMessage: string }>({
-        value: '', errorMessage: ''})
+        value: '', errorMessage: ''
+    })
     const [zipcode2, setZipcode2] = useState<{ value: string, errorMessage: string }>({
-        value: '', errorMessage: ''})
+        value: '', errorMessage: ''
+    })
     const [address, setAddress] = useState<{ value: string, errorMessage: string }>({
-        value: '', errorMessage: ''})
+        value: '', errorMessage: ''
+    })
     const [firstTelephoneNum, setFirstTelephoneNum] = useState<{ value: string, errorMessage: string }>({
-        value: '', errorMessage: ''})
+        value: '', errorMessage: ''
+    })
     const [secondTelephoneNum, setSecondTelephoneNum] = useState<{ value: string, errorMessage: string }>({
-        value: '', errorMessage: ''})
+        value: '', errorMessage: ''
+    })
     const [thirdTelephoneNum, setThirdTelephoneNum] = useState<{ value: string, errorMessage: string }>({
-        value: '', errorMessage: ''})
+        value: '', errorMessage: ''
+    })
 
     useEffect(() => {
         if (userInfo) {
@@ -107,53 +115,53 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
 
     //---------------○○Validation-----------------------------------
     const nameValidation = (value: string): string => {
-        if (!value || value === '') return '※名前を入力してください'
+        if (!value || value === '') return '※名前を入力して下さい'
         return ''
     }
     const emailValidation = (value: string): string => {
-        if (!value) return '※メールアドレスを入力してください';
+        if (!value) return '※メールアドレスを入力して下さい';
         const regex = /^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-        if (!regex.test(value) || value.length > 100) return '※正しい形式でメールアドレスを入力してください';
+        if (!regex.test(value) || value.length > 100) return '※正しい形式でメールアドレスを入力して下さい';
         return ''
     }
     const zipcodeValidation1 = (value: string): string => {
-        if (!value || value === '') return '※郵便番号を入力してください'
+        if (!value || value === '') return '※郵便番号を入力して下さい'
         const regex = /^[0-9]+$/;
-        if (!regex.test(value)) return '※半角数字を入力してください'
-        if (3 !== value.length) return '※3桁で入力してください'
+        if (!regex.test(value)) return '※半角数字を入力して下さい'
+        if (3 !== value.length) return '※3桁で入力して下さい'
         return ''
     }
     const zipcodeValidation2 = (value: string): string => {
-        if (!value || value === '') return '※郵便番号を入力してください'
+        if (!value || value === '') return '※郵便番号を入力して下さい'
         const regex = /^[0-9]+$/;
-        if (!regex.test(value)) return '※半角数字を入力してください'
-        if (4 !== value.length) return '※4桁で入力してください'
+        if (!regex.test(value)) return '※半角数字を入力して下さい'
+        if (4 !== value.length) return '※4桁で入力して下さい'
         return ''
     }
     const addressValidation = (value: string): string => {
-        if (!value || value === '') return '※住所を入力してください'
-        if (200 < value.length) return '※200字以内で入力してください'
+        if (!value || value === '') return '※住所を入力して下さい'
+        if (200 < value.length) return '※200字以内で入力して下さい'
         return ''
     }
     const telephoneValidation1 = (value: string): string => {
-        if (!value || value === '') return '※電話番号を入力してください'
+        if (!value || value === '') return '※電話番号を入力して下さい'
         const regex = /^[0-9]+$/;
-        if (!regex.test(value)) return '※半角数字を入力してください'
-        if (4 < value.length || value.length < 2) return '※2桁以上4桁以内で入力してください'
+        if (!regex.test(value)) return '※半角数字を入力して下さい'
+        if (4 < value.length || value.length < 2) return '※2桁以上4桁以内で入力して下さい'
         return ''
     }
     const telephoneValidation2 = (value: string): string => {
-        if (!value || value === '') return '※電話番号を入力してください'
+        if (!value || value === '') return '※電話番号を入力して下さい'
         const regex = /^[0-9]+$/;
-        if (!regex.test(value)) return '※半角数字を入力してください'
-        if (4 !== value.length) return '※4桁で入力してください'
+        if (!regex.test(value)) return '※半角数字を入力して下さい'
+        if (4 !== value.length) return '※4桁で入力して下さい'
         return ''
     }
     const telephoneValidation3 = (value: string): string => {
-        if (!value || value === '') return '※電話番号を入力してください'
+        if (!value || value === '') return '※電話番号を入力して下さい'
         const regex = /^[0-9]+$/;
-        if (!regex.test(value)) return '※半角数字を入力してください'
-        if (4 !== value.length) return '※4桁で入力してください'
+        if (!regex.test(value)) return '※半角数字を入力して下さい'
+        if (4 !== value.length) return '※4桁で入力して下さい'
         return ''
     }
 
@@ -221,7 +229,7 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
 
     const updateUserInfo = async () => {
         const zipcode = zipcode1.value + zipcode2.value;
-        const telephone = firstTelephoneNum.value  + '-' + secondTelephoneNum.value + '-' + thirdTelephoneNum.value
+        const telephone = firstTelephoneNum.value + '-' + secondTelephoneNum.value + '-' + thirdTelephoneNum.value
         const userInfo = {
             name: name.value,
             email: email.value,
@@ -245,7 +253,8 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                             <Grid container alignContent="center" justify="center" className={classes.pad}>
                                 <div className={classes.root}>
                                     <Grid item xs={12}>
-                                        <Typography style={{color: 'red', fontSize: "small"}} align={"center"}>{name.errorMessage}</Typography>
+                                        <Typography style={{color: 'red', fontSize: "small"}} align={"center"}
+                                                    component={"h6"}>{name.errorMessage}</Typography>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
@@ -260,7 +269,8 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography style={{color: 'red', fontSize: "small"}} align={"center"}>{email.errorMessage}</Typography>
+                                        <Typography style={{color: 'red', fontSize: "small"}} align={"center"}
+                                                    component={"h6"}>{email.errorMessage}</Typography>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
@@ -276,10 +286,12 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                                     </Grid>
                                     <Grid container justify={"center"} alignItems={"center"}>
                                         <Grid item xs={6}>
-                                            <Typography style={{color: 'red', fontSize: 'small'}} align={"center"}>{zipcode1.errorMessage}</Typography>
+                                            <Typography style={{color: 'red', fontSize: 'small'}} align={"center"}
+                                                        component={"h6"}>{zipcode1.errorMessage}</Typography>
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <Typography style={{color: 'red', fontSize: 'small'}} align={"center"}>{zipcode2.errorMessage}</Typography>
+                                            <Typography style={{color: 'red', fontSize: 'small'}} align={"center"}
+                                                        component={"h6"}>{zipcode2.errorMessage}</Typography>
                                         </Grid>
                                     </Grid>
                                     <Grid container justify={"center"} alignItems={"center"}>
@@ -309,7 +321,8 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                                         </Grid>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography style={{color: 'red', fontSize: "small"}} align={"center"}>{address.errorMessage}</Typography>
+                                        <Typography style={{color: 'red', fontSize: "small"}} align={"center"}
+                                                    component={"h6"}>{address.errorMessage}</Typography>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
@@ -325,13 +338,16 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                                     </Grid>
                                     <Grid container justify={"center"} alignItems={"center"}>
                                         <Grid item xs={3}>
-                                            <Typography style={{color: 'red', fontSize: 'x-small'}} align={"center"}>{firstTelephoneNum.errorMessage}</Typography>
+                                            <Typography style={{color: 'red', fontSize: 'x-small'}} align={"center"}
+                                                        component={"h6"}>{firstTelephoneNum.errorMessage}</Typography>
                                         </Grid>
                                         <Grid item xs={4}>
-                                            <Typography style={{color: 'red', fontSize: 'x-small'}} align={"center"}>{secondTelephoneNum.errorMessage}</Typography>
+                                            <Typography style={{color: 'red', fontSize: 'x-small'}} align={"center"}
+                                                        component={"h6"}>{secondTelephoneNum.errorMessage}</Typography>
                                         </Grid>
                                         <Grid item xs={4}>
-                                            <Typography style={{color: 'red', fontSize: 'x-small'}} align={"center"}>{thirdTelephoneNum.errorMessage}</Typography>
+                                            <Typography style={{color: 'red', fontSize: 'x-small'}} align={"center"}
+                                                        component={"h6"}>{thirdTelephoneNum.errorMessage}</Typography>
                                         </Grid>
                                     </Grid>
                                     <Grid container alignItems={"center"}>
@@ -358,7 +374,7 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
                                                 onChange={handleChangeTelSecondNum}
                                             />
                                         </Grid>
-                                        <Grid item ><Typography align={"center"}>-</Typography></Grid>
+                                        <Grid item><Typography align={"center"}>-</Typography></Grid>
                                         <Grid item xs={4}>
                                             <TextField
                                                 id="telephone3"
