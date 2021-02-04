@@ -85,7 +85,6 @@ const typeDefs = gql`
     orderItems: [OrderItem]
 }
 
-# サーバーサイドが返却するOrderの形はなぜかネスト一つ深くしてんの意味わかんない
 type ReturnOrder{
     order:Order
 }
