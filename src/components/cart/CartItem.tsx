@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {OrderItem, OrderTopping, Topping} from "~/types/interfaces"
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
-import {RouteComponentProps, withRouter} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {
     Box,
     Button,
@@ -24,6 +24,7 @@ import {setError} from "~/store/slices/App/error.slice";
 
 interface Props {
     orderItem: OrderItem
+    index: number
     updateOrderItems: ({orderItem}: { orderItem: OrderItem }) => void
     deleteOrderItem: (orderItemId: number) => void
 }
@@ -62,9 +63,10 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
+const CartItem: React.FC<Props> = (props) => {
 
     const dispatch: AppDispatch = useDispatch()
+    const history = useHistory();
     const classes = useStyles();
     const {orderItem, updateOrderItems, deleteOrderItem} = props
 
@@ -85,7 +87,7 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
         if (toppings.length === 0) dispatch(fetchToppings()).catch((e) => {
             dispatch(setError({isError: true, code: e.message}))
         })
-    })
+    }, [dispatch, toppings])
 
     /**
      * OrderItemEntryのダイアログを非表示にする関数
@@ -128,7 +130,7 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
     }
 
     const toItemDetail = () => {
-        props.history.push({pathname: `/itemDetail/${props.orderItem.item.id}`})
+        history.push(`/itemDetail/${props.orderItem.item.id}`)
     }
 
 
@@ -139,7 +141,7 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
                     {/*image*/}
                     <Grid item xs={3} container justify={"center"} alignItems={"center"}>
                         <ButtonBase className={classes.image} onClick={toItemDetail}>
-                            <img className={classes.img} alt="complex" src={orderItem.item.imagePath}/>
+                            <img className={classes.img} alt={`image${props.index}`} src={orderItem.item.imagePath}/>
                         </ButtonBase>
                     </Grid>
                     <Grid item xs={6} sm container>
@@ -187,6 +189,8 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
                                             color="secondary"
                                             className={classes.btn}
                                             onClick={() => deleteOrderItem(orderItem.id!)}
+                                            data-testid={`deleteButton${props.index}`}
+
                                         >
                                             削除
                                         </Button>
@@ -195,6 +199,7 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
                                             color="primary"
                                             className={classes.btn}
                                             onClick={() => setIsOpen(true)}
+                                            data-testid={`updateButton${props.index}`}
                                         >
                                             注文内容を変更
                                         </Button>
@@ -234,4 +239,4 @@ const CartItem: React.FC<Props & RouteComponentProps> = (props) => {
         </ListItem>
     );
 }
-export default withRouter(CartItem);
+export default CartItem;

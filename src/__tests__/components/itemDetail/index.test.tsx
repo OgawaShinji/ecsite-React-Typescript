@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, cleanup, act} from "@testing-library/react";
+import {act, cleanup, render, screen} from "@testing-library/react";
 
 import {rest} from 'msw';
 import {setupServer} from 'msw/node';
@@ -172,10 +172,10 @@ describe('商品詳細画面', () => {
             //modal表示ボタン押下
             await userEvent.click(modalButton_open);
             //modal画面になっていること
-            expect(screen.queryByRole('button', {name: 'トッピング選択はこちら'})).toBeNull();
+            expect(screen.queryByRole('button', {name: 'トッピング選択はこちら'})).toBeNull()
             const modalButton_close = screen.getByRole('button', {name: 'close'})
             await expect(modalButton_close).toBeTruthy();
-
+            const r = screen.getByRole('', {hidden: true})
             //DBから取得したトッピングがボタン表示されていること
             toppingsFromDB.forEach((t, i) => {
                 const toppingButton = screen.getByRole('button', {name: `${t.name} L : ${t.priceL}円`})
