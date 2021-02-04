@@ -125,17 +125,21 @@ afterAll(() => {
     server.close();
 })
 
-describe('商品一覧画面', () => {
-    it('test', async () => {
-        render(
-            <Provider store={store}>
-                <BrowserRouter>
-                    <ItemList/>
-                </BrowserRouter>
-            </Provider>
-        );
+const rendering = () => {
+    render(
+        <Provider store={store}>
+            <BrowserRouter>
+                <ItemList/>
+            </BrowserRouter>
+        </Provider>
+    );
+}
 
-        // 検索ボックス　クリアボタン
+describe('商品一覧画面', () => {
+    it('初期表示', async () => {
+        await rendering();
+
+        // 検索フォーム　クリアボタン
         const clearButton = screen.getByRole('button', {name: 'Clear'});
 
         // 検索ボタン
@@ -148,7 +152,6 @@ describe('商品一覧画面', () => {
         const displayCntSelect = screen.getByText('9件');
 
 
-        //=============== 初期表示時 ===============
         // 表示
         // : loading, 検索ボックス、表示件数切り替え
         expect(screen.queryByRole('progressbar')).toBeTruthy();
@@ -171,9 +174,11 @@ describe('商品一覧画面', () => {
         expect(screen.queryByRole('navigation')).toBeNull();
         expect(screen.queryByRole('button', {name: '商品を全件表示する'})).toBeNull();
         expect(screen.queryByText('検索された商品は存在しません。')).toBeNull();
+    }, 1000000)
 
+    it('Loading終了時', async () => {
+        await rendering();
 
-        //=============== Loading終了時 ===============
         // 表示
         // item1~9
         expect(await screen.findByRole('item1')).toBeTruthy();
@@ -208,13 +213,23 @@ describe('商品一覧画面', () => {
         // 商品全件表示ボタン、「検索された商品は存在しません。」
         expect(screen.queryByRole('button', {name: '商品を全件表示する'})).toBeNull();
         expect(screen.queryByText('検索された商品は存在しません。')).toBeNull();
+    }, 1000000)
 
+    it('Paging', async () => {
+        await rendering();
 
-        //=============== Paging ===============
+        expect(screen.queryByRole('progressbar')).toBeTruthy();
+        expect(await screen.findByRole('navigation')).toBeTruthy();
+
+        const page2Button = await screen.findByRole('button', {name: 'Go to page 2'});
+        const pagePrevButton = await screen.findByRole('button', {name: 'Go to previous page'});
+        const pageNextButton = await screen.findByRole('button', {name: 'Go to next page'});
+
         ///// page2Buttonで2ページ目に移動 /////
+        userEvent.click(page2Button);
+
         // 表示
         // item10~18
-        userEvent.click(page2Button);
         expect(await screen.findByRole('item10')).toBeTruthy();
         expect(screen.getByRole('item11')).toBeTruthy();
         expect(screen.getByRole('item17')).toBeTruthy();
@@ -226,9 +241,10 @@ describe('商品一覧画面', () => {
         expect(screen.queryByRole('item9')).toBeNull();
 
         ///// pagePrevButtonで1ページ目に移動 /////
+        userEvent.click(pagePrevButton);
+
         // 表示
         // item1~9
-        userEvent.click(pagePrevButton);
         expect(await screen.findByRole('item1')).toBeTruthy();
         expect(screen.getByRole('item2')).toBeTruthy();
         expect(screen.getByRole('item8')).toBeTruthy();
@@ -240,9 +256,10 @@ describe('商品一覧画面', () => {
         expect(screen.queryByRole('item18')).toBeNull();
 
         ///// pageNextButtonで2ページ目に移動 /////
+        userEvent.click(pageNextButton);
+
         // 表示
         // item10~18
-        userEvent.click(pageNextButton);
         expect(await screen.findByRole('item10')).toBeTruthy();
         expect(screen.getByRole('item11')).toBeTruthy();
         expect(screen.getByRole('item15')).toBeTruthy();
@@ -252,9 +269,15 @@ describe('商品一覧画面', () => {
         expect(screen.queryByRole('item1')).toBeNull();
         expect(screen.queryByRole('item5')).toBeNull();
         expect(screen.queryByRole('item9')).toBeNull();
+    }, 1000000)
 
+    it('表示件数の変更', async () => {
 
-        //=============== 表示件数の変更 ===============
+        await rendering();
+
+        // 表示件数selectBox
+        const displayCntSelect = screen.getByText('9件');
+
         ///// 表示件数を18件に変更 /////
         await act(async () => {
             await userEvent.click(displayCntSelect);
@@ -265,13 +288,13 @@ describe('商品一覧画面', () => {
 
         // item1~18の表示
         expect(await screen.findByRole('item1')).toBeTruthy();
-        expect(screen.getByRole('item2')).toBeTruthy();
-        expect(screen.getByRole('item8')).toBeTruthy();
-        expect(screen.getByRole('item9')).toBeTruthy();
-        expect(screen.getByRole('item10')).toBeTruthy();
-        expect(screen.getByRole('item11')).toBeTruthy();
-        expect(screen.getByRole('item17')).toBeTruthy();
-        expect(screen.getByRole('item18')).toBeTruthy();
+        expect(await screen.findByRole('item2')).toBeTruthy();
+        expect(await screen.findByRole('item8')).toBeTruthy();
+        expect(await screen.findByRole('item9')).toBeTruthy();
+        expect(await screen.findByRole('item10')).toBeTruthy();
+        expect(await screen.findByRole('item11')).toBeTruthy();
+        expect(await screen.findByRole('item17')).toBeTruthy();
+        expect(await screen.findByRole('item18')).toBeTruthy();
         expect(screen.getAllByRole('img').length).toBe(18);
 
         // loadingの非表示
@@ -306,9 +329,17 @@ describe('商品一覧画面', () => {
 
         // pagination: button list -> prev, page1, page2, next
         expect(screen.getAllByRole('listitem').length).toBe(4);
+    }, 1000000)
 
+    it('並び順の変更', async () => {
+        await rendering();
 
-        //=============== 並び順の変更 ===============
+        // 検索ボタン
+        const searchButton = screen.getByRole('button', {name: '検索'});
+
+        // 並び順selectBox
+        const sortSelect = screen.getByText('安い順');
+
         ///// 安い順 -> 高い順表示に変更 /////
         await act(async () => {
             await userEvent.click(sortSelect);
@@ -337,9 +368,14 @@ describe('商品一覧画面', () => {
         // searchParamが受け渡せているか確認
         expect(methodStatus.searchParams.sortId).toBe(1);
         expect(methodStatus.searchParams.itemName).toBe('');
+    }, 1000000)
 
+    it('検索', async () => {
+        await rendering();
 
-        //=============== 検索 ===============
+        // 検索ボタン
+        const searchButton = screen.getByRole('button', {name: '検索'});
+
         const inputForm = screen.getByRole('textbox');
 
         ///// 検索フォームへの入力, 検索ボタンのクリック /////
@@ -356,9 +392,9 @@ describe('商品一覧画面', () => {
 
         // item1~4の表示(検索ワード入力時に４つ商品を返すようにserverで設定)
         expect(await screen.findByRole('item1')).toBeTruthy();
-        expect(screen.getByRole('item2')).toBeTruthy();
-        expect(screen.getByRole('item3')).toBeTruthy();
-        expect(screen.getByRole('item4')).toBeTruthy();
+        expect(await screen.findByRole('item2')).toBeTruthy();
+        expect(await screen.findByRole('item3')).toBeTruthy();
+        expect(await screen.findByRole('item4')).toBeTruthy();
         expect(screen.getAllByRole('img').length).toBe(4);
 
         // item5~9の表示
@@ -368,10 +404,36 @@ describe('商品一覧画面', () => {
 
         // loadingの非表示
         expect(screen.queryByRole('progressbar')).toBeNull();
+    }, 1000000)
 
+    it('商品全件表示', async () => {
+        await rendering();
 
-        //=============== 商品全件表示 ===============
-        const showAllItemButton = screen.getByRole('button', {name: '商品を全件表示する'});
+        // 検索ボタン
+        const searchButton = screen.getByRole('button', {name: '検索'});
+        // 検索フォーム
+        const inputForm = screen.getByRole('textbox');
+
+        ///// 検索フォームへの入力, 検索ボタンのクリック /////
+        await act(async () => {
+            await userEvent.type(await inputForm, 'item name');
+            await userEvent.click(searchButton);
+        })
+
+        // loadingの表示
+        expect(screen.queryByRole('progressbar')).toBeTruthy();
+        // item1~4の表示
+        expect(await screen.findByRole('item1')).toBeTruthy();
+        expect(await screen.findByRole('item2')).toBeTruthy();
+        expect(await screen.findByRole('item3')).toBeTruthy();
+        expect(await screen.findByRole('item4')).toBeTruthy();
+        expect(screen.getAllByRole('img').length).toBe(4);
+        // 各フォームの確認
+        expect(inputForm).toHaveValue('item name');
+        expect(methodStatus.searchParams.sortId).toBe(0);
+        expect(methodStatus.searchParams.itemName).toBe('item name');
+
+        const showAllItemButton = await screen.findByRole('button', {name: '商品を全件表示する'});
 
         // 商品全件表示ボタンの表示
         expect(showAllItemButton).toBeTruthy();
@@ -389,9 +451,9 @@ describe('商品一覧画面', () => {
 
         // item1~9の表示
         expect(await screen.findByRole('item1')).toBeTruthy();
-        expect(screen.getByRole('item2')).toBeTruthy();
-        expect(screen.getByRole('item8')).toBeTruthy();
-        expect(screen.getByRole('item9')).toBeTruthy();
+        expect(await screen.findByRole('item2')).toBeTruthy();
+        expect(await screen.findByRole('item8')).toBeTruthy();
+        expect(await screen.findByRole('item9')).toBeTruthy();
         expect(screen.getAllByRole('img').length).toBe(9);
 
         // item10~18の非表示
@@ -401,15 +463,23 @@ describe('商品一覧画面', () => {
 
         // loadingの非表示
         expect(screen.queryByRole('progressbar')).toBeNull();
+        // 商品全件表示ボタンの非表示
         expect(screen.queryByRole('button', {name: '商品を全件表示する'})).toBeNull();
 
         // 各フォームのリセットを確認
         expect(inputForm).toHaveValue('');
         expect(methodStatus.searchParams.sortId).toBe(0);
         expect(methodStatus.searchParams.itemName).toBe('');
+    }, 1000000)
 
+    it('Autocomplete', async () => {
+        await rendering();
 
-        //=============== Autocomplete ===============
+        // 検索フォーム
+        const inputForm = screen.getByRole('textbox');
+        // 検索ボタン
+        const searchButton = screen.getByRole('button', {name: '検索'});
+
         ///// 検索フォームの押下 /////
         await act(async () => {
             await userEvent.click(inputForm);
@@ -438,19 +508,36 @@ describe('商品一覧画面', () => {
         })
         // searchParamが受け渡せているか確認
         await expect(methodStatus.searchParams.itemName).toBe('name5');
+    }, 1000000)
 
+    it('検索フォームのクリア', async () => {
+        await rendering();
 
-        //=============== 検索フォームのクリア ===============
-        expect(inputForm).toHaveValue('name5');
+        // 検索フォーム
+        const inputForm = screen.getByRole('textbox');
+        // 検索フォーム　クリアボタン
+        const clearButton = screen.getByRole('button', {name: 'Clear'});
+
+        ///// 検索フォームへの入力, 検索ボタンのクリック /////
+        await act(async () => {
+            await userEvent.type(await inputForm, 'item name');
+        })
+
+        expect(inputForm).toHaveValue('item name');
         ///// 検索フォームのクリアボタンを押下 /////
         await act(async () => {
             await userEvent.click(clearButton);
         })
         // 空になったことを確認
         expect(inputForm).toHaveValue('');
+    }, 1000000)
 
+    it('検索された商品が存在しなかった場合', async () => {
+        await rendering();
 
-        //=============== 検索された商品が存在しなかった場合 ===============
+        // 検索フォーム
+        const inputForm = screen.getByRole('textbox');
+
         ///// 存在しない商品名の入力およびEnterキー押下での検索 /////
         await act(async () => {
             await userEvent.type(await inputForm, 'non exist{enter}',);
@@ -461,15 +548,11 @@ describe('商品一覧画面', () => {
         expect(await screen.findByText('検索された商品は存在しません。')).toBeTruthy();
         // 商品全件表示ボタンの表示
         expect(screen.getByRole('button', {name: '商品を全件表示する'})).toBeTruthy();
+    }, 1000000)
 
-        ///// 全件表示ボタンの押下 /////
-        await act(async () => {
-            await userEvent.click(screen.getByRole('button', {name: '商品を全件表示する'}));
-        })
-        expect(screen.queryByRole('progressbar')).toBeTruthy();
+    it('商品詳細ページへの遷移', async () => {
+        await rendering();
 
-
-        //=============== 商品詳細ページへの遷移 ===============
         expect(await screen.findByRole('item1')).toBeTruthy();
         const item1Card = await screen.findByRole('button', {name: 'pizza item name1 M 1,000円 L 2,000円'});
 
@@ -479,6 +562,5 @@ describe('商品一覧画面', () => {
         })
         // history.pushの内容を確認
         expect(methodStatus.history).toStrictEqual({pathname: '/itemDetail/1'});
-
     }, 1000000)
 })
