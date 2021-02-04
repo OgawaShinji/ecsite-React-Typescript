@@ -1,5 +1,5 @@
 import React from "react";
-import {withRouter, RouteComponentProps} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "~/store";
@@ -36,9 +36,10 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const ItemCard: React.FC<Props & RouteComponentProps> = props => {
+const ItemCard: React.FC<Props> = props => {
 
     const dispatch: AppDispatch = useDispatch();
+    const history = useHistory();
     const classes = useStyles();
 
     const dispatchItemDetail = async () => {
@@ -48,7 +49,7 @@ const ItemCard: React.FC<Props & RouteComponentProps> = props => {
     const toItemDetail = () => {
         dispatchItemDetail()
             .then(() => {
-                props.history.push({pathname: `/itemDetail/${props.item.id}`});
+                history.push({pathname: `/itemDetail/${props.item.id}`});
             })
             .catch((e) => {
                 dispatch(setError({isError: true, code: e.message}));
@@ -93,4 +94,4 @@ const ItemCard: React.FC<Props & RouteComponentProps> = props => {
     );
 };
 
-export default withRouter(ItemCard);
+export default ItemCard;
