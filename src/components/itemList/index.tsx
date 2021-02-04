@@ -1,20 +1,19 @@
 import React, {useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
 
 import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch} from "~/store";
 import {fetchItems, selectItemCount, selectItems} from "~/store/slices/Domain/item.slice";
 import {setError} from "~/store/slices/App/error.slice";
-import {AppDispatch} from "~/store";
-
-import {Button, Grid, LinearProgress, makeStyles, Paper, Typography} from "@material-ui/core";
-import {Pagination} from "@material-ui/lab";
 
 import SearchArea from "~/components/itemList/SearchArea";
 import OptionForm from "~/components/itemList/OptionForm";
 import ItemCard from "~/components/itemList/ItemCard";
 
-import {animateScroll as scroll} from 'react-scroll';
+import {Button, Grid, LinearProgress, makeStyles, Paper, Typography} from "@material-ui/core";
+import {Pagination} from "@material-ui/lab";
 
-import {useLocation} from "react-router-dom";
+import {animateScroll as scroll} from 'react-scroll';
 
 const useStyles = makeStyles((theme) => ({
     itemCard: {
@@ -45,7 +44,6 @@ const ItemList: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
     const location = useLocation<{ judge: boolean }>();
-
 
     // 表示件数
     const displayItems = [
@@ -111,20 +109,22 @@ const ItemList: React.FC = () => {
             .catch((e) => {
                 dispatch(setError({isError: true, code: e.message}));
             });
-    }
+    };
 
     /**
      * 商品一覧を全件表示に戻し、検索フォームをリセットする.
      **/
     const showAll = () => {
         setIsLoading(true);
-        setSortId(0);
-        setItemName('');
         dispatch(fetchItems({itemName: '', sortId: 0}))
+            .then(() => {
+                setSortId(0);
+                setItemName('');
+            })
             .catch((e) => {
                 dispatch(setError({isError: true, code: e.message}));
             });
-    }
+    };
 
     // Headerのロゴ、商品一覧ボタンを押した際に走る処理
     // 検索フォームをリセットし、全件表示に戻す

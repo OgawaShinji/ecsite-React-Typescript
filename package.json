@@ -22,6 +22,7 @@
     "axios": "^0.21.1",
     "camelcase-keys": "^6.2.2",
     "date-fns": "^2.16.1",
+    "msw": "^0.26.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-modal": "^3.12.1",
@@ -58,14 +59,16 @@
     ]
   },
   "devDependencies": {
-    "react-app-rewired": "^2.1.8"
+    "@testing-library/react-hooks": "^5.0.3",
+    "react-app-rewired": "^2.1.8",
+    "react-test-renderer": "^17.0.1"
   },
   "jest": {
     "moduleNameMapper": {
       "^~/(.*)$": "<rootDir>/src/$1"
     },
     "testMatch": [
-      "**/__tests__/**/*.js?(x)"
+      "**/__tests__/**/*.ts?(x)"
     ]
   }
 }
