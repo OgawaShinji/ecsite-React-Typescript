@@ -34,14 +34,14 @@ const TotalPrice: React.FC<Props> = props => {
 
     return (
         <>
-            <Typography variant={"subtitle2"} align={"center"}
+            <Typography variant={"subtitle2"} align={"center"} component={"h6"}
                         className={classes.control}>小計: {subTotalPrice.toLocaleString()} 円</Typography>
-            <Typography variant={"subtitle2"} align={"center"}
+            <Typography variant={"subtitle2"} align={"center"} component={"h6"}
                         className={classes.control}>消費税: {consumptionTax.toLocaleString()} 円</Typography>
             <Divider variant={"middle"}/>
             <Typography variant={"subtitle1"} align={"center"}
-                        className={classes.control}>
-                <Box fontWeight="fontWeightBold" >
+                        className={classes.control} component={"h6"}>
+                <Box fontWeight="fontWeightBold">
                     合計金額: {billedAmount.toLocaleString()} 円
                 </Box>
             </Typography>
