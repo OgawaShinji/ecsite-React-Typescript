@@ -188,7 +188,7 @@ const ItemList: React.FC = () => {
 
                             {items && items.slice(displayCount * (page - 1), displayCount * page).map((item) => (
                                 // 商品一覧を表示
-                                <Grid key={item.id} item xs={3} className={classes.itemCard}>
+                                <Grid key={item.id} item xs={3} className={classes.itemCard} role={`item${item.id}`}>
                                     <ItemCard item={item}/>
                                 </Grid>
                             ))}
