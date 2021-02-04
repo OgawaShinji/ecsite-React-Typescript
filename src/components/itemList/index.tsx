@@ -78,8 +78,9 @@ const ItemList: React.FC = () => {
 
     useEffect(() => {
         setIsLoading(true);
+        let timerId: NodeJS.Timeout;
         const loading = async () => {
-            setTimeout(() => {
+            timerId = setTimeout(() => {
                 setIsLoading(false);
             }, 500)
         }
@@ -97,6 +98,9 @@ const ItemList: React.FC = () => {
             }
         });
 
+        return () => {
+            clearTimeout(timerId);
+        }
     }, [items, displayCount]);
 
     // methods
