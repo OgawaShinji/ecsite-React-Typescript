@@ -1,179 +1,350 @@
-import React from "react";
-import {fireEvent, render,screen} from "@testing-library/react";
+import {act, cleanup, render, screen} from "@testing-library/react";
+import ShippingDialog from "~/components/orderConfirm/shippingDialog";
+import {User} from "~/types/interfaces";
+import userEvent from "@testing-library/user-event";
 import {Provider} from "react-redux";
 import store from "~/store";
-import ShippingDialog from "~/components/orderConfirm/shippingDialog";
+import {BrowserRouter} from "react-router-dom";
+import Register from "~/components/register";
+import React from "react";
 
-
-
-describe('shippingDialog test',() => {
-    const props = {
-        open: true,
-        close: jest.fn(),
-        changeUserInfo: jest.fn(),
-        userInfo: {
-            name: 'name',
-            email: 'email',
-            zipcode: 'zipcode',
-            address: 'address',
-            telephone: 'telephone',
-        }
-    }
-
-
-    it("コンポーネントの描画", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-        expect(screen.getByText("お届け先情報")).toBeInTheDocument();
-    })
-
-    it("存在している要素の確認", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-        expect(screen.getByText('お届け先情報')).toBeInTheDocument();
-    })
-
-    it("存在しない要素の確認", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-        //存在しない要素を確認されするときはquery?
-        expect(screen.queryByText('らくらくピザ')).toBeNull();
-    })
-
-    it("入力フォームに対する入力の検知 : 名前", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-        fireEvent.change(screen.getByDisplayValue("name"),{
-            target:{value: "あいうえお"}
-        })
-        expect(screen.getByDisplayValue("あいうえお")).toBeInTheDocument();
-        // 部分一致で検索
-        expect(screen.getByDisplayValue(/あいう/)).toBeInTheDocument();
-    })
-
-    it("入力フォームに対する入力の検知 : メールアドレス", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-        fireEvent.change(screen.getByDisplayValue("email"),{
-            target:{value: "demo@ryu.com"}
-        })
-        expect(screen.getByDisplayValue("demo@ryu.com")).toBeInTheDocument();
-        // 部分一致で検索
-        expect(screen.getByDisplayValue(/ryu/)).toBeInTheDocument();
-    })
-
-    it("入力フォームに対する入力の検知 : 郵便番号(3桁)", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-        fireEvent.change(screen.getByDisplayValue("zip"),{
-            target:{value: "123"}
-        })
-        expect(screen.getByDisplayValue("123")).toBeInTheDocument();
-        // 部分一致で検索
-        expect(screen.getByDisplayValue(/1/)).toBeInTheDocument();
-    })
-
-    it("入力フォームに対する入力の検知 : 郵便番号(4桁)", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-        fireEvent.change(screen.getByDisplayValue("code"),{
-            target:{value: "4567"}
-        })
-        expect(screen.getByDisplayValue("4567")).toBeInTheDocument();
-        // 部分一致で検索
-        expect(screen.getByDisplayValue(/56/)).toBeInTheDocument();
-    })
-
-    it("入力フォームに対する入力の検知 : 住所", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-        fireEvent.change(screen.getByDisplayValue("address"),{
-            target:{value: "東京都新宿区"}
-        })
-        expect(screen.getByDisplayValue("東京都新宿区")).toBeInTheDocument();
-        // 部分一致で検索
-        expect(screen.getByDisplayValue(/新宿/)).toBeInTheDocument();
-    })
-
-    it("入力フォームに対する入力の検知 : 電話番号（上4桁）", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-        fireEvent.change(screen.getByDisplayValue("telephone"),{
-            target:{value: "090"}
-        })
-        expect(screen.getByDisplayValue("090")).toBeInTheDocument();
-        // 部分一致で検索
-        expect(screen.getByDisplayValue(/9/)).toBeInTheDocument();
-    })
-
-    it("入力フォームに対する入力の検知 : 電話番号（中4桁）", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-        fireEvent.change(screen.getByTestId("tel2"),{
-            target:{value: "1234"}
-        })
-        expect(screen.getByDisplayValue("1234")).toBeInTheDocument();
-        // 部分一致で検索
-        expect(screen.getByDisplayValue(/23/)).toBeInTheDocument();
-    })
-
-    it("入力フォームに対する入力の検知 : 電話番号（下4桁）", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-
-        fireEvent.change(screen.getByTestId("tel3"),{
-            target:{value: "5678"}
-        })
-        expect(screen.getByDisplayValue("5678")).toBeInTheDocument();
-        // 部分一致で検索
-        expect(screen.getByDisplayValue(/5678/)).toBeInTheDocument();
-    })
-
-    it("【閉じる】ボタンが押下されているか", () => {
-        render(
-            <Provider store={store}>
-                <ShippingDialog {...props} ></ShippingDialog>
-            </Provider>
-        )
-        screen.getByRole('');
-        // screen.debug()
-
-        //getByRoleで名前を指定
-        fireEvent.click(screen.getByRole('button',{name:"閉じる"}));
-        //親で管理しているメソッドが子コンポーネントで発火されたかを確認
-        expect( props.close ).toHaveBeenCalled();
-    })
+afterEach(() => {
+    cleanup();
 })
+
+describe("ShippingDialog Component Test" , () => {
+
+    it("Rendering Test",  async () => {
+        //propsをセット
+        const userInfo: User | null = {
+            id: 1,
+            name: "らくらくたろう",
+            email: "test@test.com",
+            zipcode: "1234567",
+            address: "東京都新宿区",
+            telephone: "090-1234-5678",
+            status: 0,
+            password: "111111"
+        }
+        const open: boolean = true;
+        const handleClose:() => void = jest.fn();
+        const changeUserInfo:() => void = jest.fn();
+        render(
+            <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} userInfo={userInfo}/>
+        )
+        // await screen.getByRole("heading");
+        await expect(screen.getByRole("heading",{name: "お届け先情報"})).toBeTruthy();
+    });
+
+    it("Props (userInfo) Test",  async () => {
+        //propsをセット
+        const userInfo: User | null = {
+            id: 1,
+            name: "らくらくたろう",
+            email: "test@test.com",
+            zipcode: "1234567",
+            address: "東京都新宿区",
+            telephone: "090-1234-5678",
+            status: 0,
+            password: "111111"
+        }
+        const open: boolean = true;
+        const handleClose:() => void = jest.fn();
+        const changeUserInfo:() => void = jest.fn();
+        render(
+            <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} userInfo={userInfo}/>
+        )
+        // await screen.getByRole("heading");
+        await expect(screen.getAllByRole("textbox")[0]).toHaveValue("らくらくたろう")
+        await expect(screen.getAllByRole("textbox")[1]).toHaveValue("test@test.com")
+        await expect(screen.getAllByRole("textbox")[2]).toHaveValue("123")
+        await expect(screen.getAllByRole("textbox")[3]).toHaveValue("4567")
+        await expect(screen.getAllByRole("textbox")[4]).toHaveValue("東京都新宿区")
+        await expect(screen.getAllByRole("textbox")[5]).toHaveValue("090")
+        await expect(screen.getAllByRole("textbox")[6]).toHaveValue("1234")
+        await expect(screen.getAllByRole("textbox")[7]).toHaveValue("5678")
+    });
+
+    //--------------------登録画面のテストと同様に入力の反映を確認------------------------------------------
+
+    it("入力フォーム：入力されたデータが反映されているかの確認 ( 名前 )　",async () => {
+        //propsをセット
+        const userInfo: User | null = {
+            id: 1,
+            name: "らくらくたろう",
+            email: "test@test.com",
+            zipcode: "1234567",
+            address: "東京都新宿区",
+            telephone: "090-1234-5678",
+            status: 0,
+            password: "111111"
+        }
+        const open: boolean = true;
+        const handleClose:() => void = jest.fn();
+        const changeUserInfo:() => void = jest.fn();
+        render(
+            <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} userInfo={userInfo}/>
+        )
+        await act( async () => {
+            const nameInputForm = screen.getByRole("textbox",{name:"名前"});
+            //エラーが表示されているか(空文字)
+            await userEvent.clear(await nameInputForm);
+            expect(screen.getByRole("heading",{name:"※名前を入力して下さい"})).toBeTruthy();
+            await userEvent.type(await nameInputForm,"らくすはなこ");
+            expect(nameInputForm).toHaveValue("らくすはなこ");
+        })
+    })
+
+    it("入力フォーム：入力されたデータが反映されているかの確認 ( メールアドレス )　",async () => {
+        //propsをセット
+        const userInfo: User | null = {
+            id: 1,
+            name: "らくらくたろう",
+            email: "test@test.com",
+            zipcode: "1234567",
+            address: "東京都新宿区",
+            telephone: "090-1234-5678",
+            status: 0,
+            password: "111111"
+        }
+        const open: boolean = true;
+        const handleClose:() => void = jest.fn();
+        const changeUserInfo:() => void = jest.fn();
+        render(
+            <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} userInfo={userInfo}/>
+        )
+        await act( async () => {
+            const emailInputForm = screen.getByRole("textbox",{name:"メールアドレス"});
+            //エラーが表示されているか(空文字)
+            await userEvent.clear(await emailInputForm);
+            await expect(screen.getByRole("heading",{name:"※メールアドレスを入力して下さい"})).toBeTruthy()
+            await userEvent.type(await emailInputForm,"rakus@rakus.com");
+            await expect(emailInputForm).toHaveValue("rakus@rakus.com");
+            //エラーが表示されているか(メール形式ではないものを入力)
+            await userEvent.clear(await emailInputForm);
+            await userEvent.type(await emailInputForm,"a");
+            expect(emailInputForm).toHaveValue("a");
+            expect(screen.getByRole("heading",{name:"※正しい形式でメールアドレスを入力して下さい"})).toBeTruthy()
+        })
+    })
+
+    it("入力フォーム：入力されたデータが反映されているかの確認 ( 郵便番号 : 上3桁 )　",async () => {
+        //propsをセット
+        const userInfo: User | null = {
+            id: 1,
+            name: "らくらくたろう",
+            email: "test@test.com",
+            zipcode: "1234567",
+            address: "東京都新宿区",
+            telephone: "090-1234-5678",
+            status: 0,
+            password: "111111"
+        }
+        const open: boolean = true;
+        const handleClose:() => void = jest.fn();
+        const changeUserInfo:() => void = jest.fn();
+        render(
+            <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} userInfo={userInfo}/>
+        )
+        await act( async () => {
+            const zipcodeInputForm = screen.getByRole("textbox",{name:"郵便番号( ○○○ )"});
+            //エラーが表示されているか（空文字）
+            await userEvent.clear(await zipcodeInputForm);
+            expect(zipcodeInputForm).toHaveValue("");
+            expect(screen.getByRole("heading",{name:"※郵便番号を入力して下さい"})).toBeTruthy()
+            //エラーが表示されているか（1桁入力）
+            await userEvent.clear(await zipcodeInputForm);
+            await userEvent.type(await zipcodeInputForm,"1");
+            expect(zipcodeInputForm).toHaveValue("1");
+            expect(screen.getByRole("heading",{name:"※3桁で入力して下さい"})).toBeTruthy()
+            //エラーが表示されているか（文字入力）
+            await userEvent.clear(await zipcodeInputForm);
+            await userEvent.type(await zipcodeInputForm,"あ");
+            expect(zipcodeInputForm).toHaveValue("あ");
+            expect(screen.getByRole("heading",{name:"※半角数字を入力して下さい"})).toBeTruthy()
+        })
+    })
+
+    it("入力フォーム：入力されたデータが反映されているかの確認 ( 郵便番号 : 上4桁 )　",async () => {
+        //propsをセット
+        const userInfo: User | null = {
+            id: 1,
+            name: "らくらくたろう",
+            email: "test@test.com",
+            zipcode: "1234567",
+            address: "東京都新宿区",
+            telephone: "090-1234-5678",
+            status: 0,
+            password: "111111"
+        }
+        const open: boolean = true;
+        const handleClose:() => void = jest.fn();
+        const changeUserInfo:() => void = jest.fn();
+        render(
+            <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} userInfo={userInfo}/>
+        )
+        await act( async () => {
+            const zipcodeInputForm = screen.getByRole("textbox",{name:"郵便番号( ○○○○ )"});
+            //エラーが表示されているか（空文字）
+            await userEvent.clear(await zipcodeInputForm);
+            expect(zipcodeInputForm).toHaveValue("");
+            expect(screen.getByRole("heading",{name:"※郵便番号を入力して下さい"})).toBeTruthy()
+            //エラーが表示されているか（1桁入力）
+            await userEvent.clear(await zipcodeInputForm);
+            await userEvent.type(await zipcodeInputForm,"1");
+            expect(zipcodeInputForm).toHaveValue("1");
+            expect(screen.getByRole("heading",{name:"※4桁で入力して下さい"})).toBeTruthy()
+            //エラーが表示されているか（文字入力）
+            await userEvent.clear(await zipcodeInputForm);
+            await userEvent.type(await zipcodeInputForm,"あ");
+            expect(zipcodeInputForm).toHaveValue("あ");
+            expect(screen.getByRole("heading",{name:"※半角数字を入力して下さい"})).toBeTruthy()
+        })
+    })
+
+    it("入力フォーム：入力されたデータが反映されているかの確認 ( 住所 )　",async () => {
+        //propsをセット
+        const userInfo: User | null = {
+            id: 1,
+            name: "らくらくたろう",
+            email: "test@test.com",
+            zipcode: "1234567",
+            address: "東京都新宿区",
+            telephone: "090-1234-5678",
+            status: 0,
+            password: "111111"
+        }
+        const open: boolean = true;
+        const handleClose:() => void = jest.fn();
+        const changeUserInfo:() => void = jest.fn();
+        render(
+            <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} userInfo={userInfo}/>
+        )
+        await act( async () => {
+            const addressInputForm = screen.getByRole("textbox",{name:"住所"});
+            //エラーが表示されているか(空文字)
+            await userEvent.clear(await addressInputForm);
+            expect(addressInputForm).toHaveValue("");
+            expect(screen.getByRole("heading",{name:"※住所を入力して下さい"})).toBeTruthy()
+            await userEvent.clear(await addressInputForm);
+            expect(addressInputForm).toHaveValue("");
+            const text = "東京都新宿区"
+            await userEvent.type(await addressInputForm, text.repeat(34));//計204文字
+            expect(addressInputForm).toHaveValue(text.repeat(34));//計204文字
+            expect(screen.getByRole("heading",{name:"※200字以内で入力して下さい"})).toBeTruthy()
+        })
+    })
+
+    it("入力フォーム：入力されたデータが反映されているかの確認 ( 電話番号: 最初 )　",async () => {
+        //propsをセット
+        const userInfo: User | null = {
+            id: 1,
+            name: "らくらくたろう",
+            email: "test@test.com",
+            zipcode: "1234567",
+            address: "東京都新宿区",
+            telephone: "090-1234-5678",
+            status: 0,
+            password: "111111"
+        }
+        const open: boolean = true;
+        const handleClose:() => void = jest.fn();
+        const changeUserInfo:() => void = jest.fn();
+        render(
+            <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} userInfo={userInfo}/>
+        )
+        await act( async () => {
+            const telephoneInputForm = screen.getAllByRole("textbox",{name:"電話番号"})[0];
+            //エラーが表示されているか
+            await userEvent.clear(await telephoneInputForm);
+            expect(telephoneInputForm).toHaveValue("");
+            expect(screen.getByRole("heading",{name:"※電話番号を入力して下さい"})).toBeTruthy()
+            //エラーが表示されているか（文字入力）
+            await userEvent.clear(await telephoneInputForm);
+            await userEvent.type(await telephoneInputForm,"あ");
+            expect(telephoneInputForm).toHaveValue("あ");
+            expect(screen.getByRole("heading",{name:"※半角数字を入力して下さい"})).toBeTruthy()
+            //エラーが表示されているか（数字1桁入力）
+            await userEvent.clear(await telephoneInputForm);
+            await userEvent.type(await telephoneInputForm,"1");
+            expect(telephoneInputForm).toHaveValue("1");
+            expect(screen.getByRole("heading",{name:"※2桁以上4桁以内で入力して下さい"})).toBeTruthy()
+        })
+    })
+
+    it("入力フォーム：入力されたデータが反映されているかの確認 ( 電話番号: 中 )　",async () => {
+        //propsをセット
+        const userInfo: User | null = {
+            id: 1,
+            name: "らくらくたろう",
+            email: "test@test.com",
+            zipcode: "1234567",
+            address: "東京都新宿区",
+            telephone: "090-1234-5678",
+            status: 0,
+            password: "111111"
+        }
+        const open: boolean = true;
+        const handleClose:() => void = jest.fn();
+        const changeUserInfo:() => void = jest.fn();
+        render(
+            <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} userInfo={userInfo}/>
+        )
+        await act( async () => {
+            const telephoneInputForm = screen.getAllByRole("textbox",{name:"電話番号"})[1];
+            //エラーが表示されているか
+            await userEvent.clear(await telephoneInputForm);
+            expect(telephoneInputForm).toHaveValue("");
+            expect(screen.getAllByRole("heading",{name:"※電話番号を入力して下さい"})).toBeTruthy()
+            //エラーが表示されているか（文字入力）
+            await userEvent.clear(await telephoneInputForm);
+            await userEvent.type(await telephoneInputForm,"あ");
+            expect(telephoneInputForm).toHaveValue("あ");
+            expect(screen.getByRole("heading",{name:"※半角数字を入力して下さい"})).toBeTruthy()
+            //エラーが表示されているか（数字1桁入力）
+            await userEvent.clear(await telephoneInputForm);
+            await userEvent.type(await telephoneInputForm,"1");
+            expect(telephoneInputForm).toHaveValue("1");
+            expect(screen.getByRole("heading",{name:"※4桁で入力して下さい"})).toBeTruthy()
+        })
+    })
+
+    it("入力フォーム：入力されたデータが反映されているかの確認 ( 電話番号: 最後 )　",async () => {
+        //propsをセット
+        const userInfo: User | null = {
+            id: 1,
+            name: "らくらくたろう",
+            email: "test@test.com",
+            zipcode: "1234567",
+            address: "東京都新宿区",
+            telephone: "090-1234-5678",
+            status: 0,
+            password: "111111"
+        }
+        const open: boolean = true;
+        const handleClose:() => void = jest.fn();
+        const changeUserInfo:() => void = jest.fn();
+        render(
+            <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} userInfo={userInfo}/>
+        )
+        await act( async () => {
+            const telephoneInputForm = screen.getAllByRole("textbox",{name:"電話番号"})[2];
+            //エラーが表示されているか
+            await userEvent.clear(await telephoneInputForm);
+            expect(telephoneInputForm).toHaveValue("");
+            expect(screen.getAllByRole("heading",{name:"※電話番号を入力して下さい"})).toBeTruthy()
+            //エラーが表示されているか（文字入力）
+            await userEvent.clear(await telephoneInputForm);
+            await userEvent.type(await telephoneInputForm,"あ");
+            expect(telephoneInputForm).toHaveValue("あ");
+            expect(screen.getByRole("heading",{name:"※半角数字を入力して下さい"})).toBeTruthy()
+            //エラーが表示されているか（数字1桁入力）
+            await userEvent.clear(await telephoneInputForm);
+            await userEvent.type(await telephoneInputForm,"1");
+            expect(telephoneInputForm).toHaveValue("1");
+            expect(screen.getByRole("heading",{name:"※4桁で入力して下さい"})).toBeTruthy()
+        })
+    })
+
+})
+
