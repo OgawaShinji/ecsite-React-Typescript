@@ -160,7 +160,7 @@ const fetchOrder = gql(` query fetchOrder{
   }
 }
 `)
-gql(`mutation addCart($orderItem:OrderIInput!,$totalPrice:Int!){
+gql(`mutation addCart($orderItem:UpOrderItem!,$totalPrice:Int!){
   addCart(orderItem:$orderItem,status:0,totalPrice:$totalPrice){
     order{
       orderItems{
