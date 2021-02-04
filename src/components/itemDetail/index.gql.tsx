@@ -52,6 +52,8 @@ const ItemDetailGQL: React.FC = () => {
         }).then(async () => {
             if (moveTo === 'cart') await history.push(Path.cart)
             if (moveTo === 'confirm') await history.push(Path.orderConfirm)
+        }).catch(()=>{
+            //catch処理書かないとErrorPageコンポーネントを返せない
         });
 
     }
