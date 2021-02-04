@@ -154,6 +154,7 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                                 onClick={props.onClickCloseOrderItemEntity}
                                 variant={"contained"}
                                 color={"primary"}
+                                data-testid={"orderItemEntry-modalButton"}
                             >
                                 <Typography>close</Typography>
                             </Button>
