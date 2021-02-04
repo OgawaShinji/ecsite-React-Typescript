@@ -4,7 +4,7 @@ import GuardedRoute from "~/router/guardedRoute";
 import LoginGuardedRoute from "~/router/LoginGuardedRoute";
 
 import itemList from '../components/itemList';
-import cart from '../components/cart/index';
+import cart from '../components/cart';
 import history from '../components/history';
 import itemDetail from '../components/itemDetail';
 import login from '../components/login';
