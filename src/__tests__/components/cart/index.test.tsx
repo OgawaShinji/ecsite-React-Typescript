@@ -17,7 +17,6 @@ jest.mock("react-router-dom", () => ({
     // 画面遷移処理が働くと自動でmock化したpush処理が働き、擬似的に遷移したようにしてくれる
     useHistory: () => ({
         push: jest.fn().mockImplementation((to: string) => {
-            console.log(to)
             methodStatus.history = to;
         })
     })
@@ -76,20 +75,20 @@ const server = setupServer(
         methodStatus.requestBody = req.body
         return res(ctx.status(200), ctx.body('200'))
     })),
-    rest.delete(REST_URL + '/django/delete_cart/1', (async (req, res, ctx) => {
-        await isNotDuplicateUrl(`${req.url}`)
+    rest.delete(REST_URL + '/django/delete_cart/1', ((req, res, ctx) => {
+        isNotDuplicateUrl(`${req.url}`)
         methodStatus.url = `${req.url}`
         methodStatus.requestBody = req.body
         return res(ctx.status(200), ctx.body('200'))
     })),
-    rest.delete(REST_URL + '/django/delete_cart/2', (async (req, res, ctx) => {
-        await isNotDuplicateUrl(`${req.url}`)
+    rest.delete(REST_URL + '/django/delete_cart/2', ((req, res, ctx) => {
+        isNotDuplicateUrl(`${req.url}`)
         methodStatus.url = `${req.url}`
         methodStatus.requestBody = req.body
         return res(ctx.status(200), ctx.body('200'))
     })),
-    rest.delete(REST_URL + '/django/delete_cart/3', (async (req, res, ctx) => {
-        await isNotDuplicateUrl(`${req.url}`)
+    rest.delete(REST_URL + '/django/delete_cart/3', ((req, res, ctx) => {
+        isNotDuplicateUrl(`${req.url}`)
         methodStatus.url = `${req.url}`
         methodStatus.requestBody = req.body
         return res(ctx.status(200), ctx.body('200'))
@@ -173,11 +172,10 @@ describe('カート一覧画面', () => {
             expect(await screen.findByText(orderItemsFromDB[0].item.name)).toBeTruthy();
             //ローディング画面がレンダリングされていないこと
             expect(screen.queryByRole('progressbar')).toBeNull();
-            // TODO: 全てのコンポーネントの要素が取得できているか
             expect(screen.queryByText(orderItemsFromDB[1].item.name)).toBeTruthy();
             expect(screen.queryByText(orderItemsFromDB[2].item.name)).toBeTruthy();
 
-            // const r = screen.getByRole('', {hidden: true})
+             // const r = screen.getByRole('', {hidden: true})
         })
     })
     // type user action
@@ -236,9 +234,13 @@ describe('カート一覧画面', () => {
                     const emptyCartBtn = screen.getByRole('button', {name: 'カートを空にする'})
                     await userEvent.click(emptyCartBtn)
                 })
-                expect(ranProgressUrlList[0]).toBe(REST_URL + '/django/delete_cart/1/')
-                expect(ranProgressUrlList[1]).toBe(REST_URL + '/django/delete_cart/2/')
-                expect(ranProgressUrlList[2]).toBe(REST_URL + '/django/delete_cart/3/')
+                console.log(ranProgressUrlList)
+                const testUrls = ranProgressUrlList.filter(function (x, i, self) {
+                    return self.indexOf(x) === i;
+                });
+                await expect(testUrls[0]).toBe(REST_URL + '/django/delete_cart/1/')
+                await expect(testUrls[1]).toBe(REST_URL + '/django/delete_cart/2/')
+                await expect(testUrls[2]).toBe(REST_URL + '/django/delete_cart/3/')
             })
             it('「買い物を続ける」ボタン押下時', async () => {
                 await act(async () => {
@@ -305,15 +307,15 @@ describe('カート一覧画面', () => {
                 await userEvent.click(modalButton_open);
             })
             it('いずれかのトッピングを押下時', async () => {
+                expect(await screen.findByTestId('selectTopping-modalButton')).toBeTruthy();
                 await act(async () => {
-                    const r = screen.getByRole('', {hidden: true})
-                    // toppingsFromDB.forEach((t, i) => {
-                    //     const toppingButton = screen.getByRole('button', {name: `${t.name} L : ${t.priceL}円`})
-                    //     // expect(toppingButton).toBeTruthy();
-                    //
-                    //     //一つ目だけclickイベント発火
-                    //     if (i === 0) userEvent.click(toppingButton)
-                    // })
+                    toppingsFromDB.forEach((t, i) => {
+                        const toppingButton = screen.getByRole('button', {name: `${t.name} M : ${t.priceM}円`})
+                        expect(toppingButton).toBeTruthy();
+
+                        //一つ目だけclickイベント発火
+                        if (i === 0) userEvent.click(toppingButton)
+                    })
                 })
             })
             it('「closeボタンを押下', async () => {
