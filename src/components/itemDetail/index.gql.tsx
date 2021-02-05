@@ -8,7 +8,7 @@ import {
 import {useHistory, useParams} from "react-router-dom"
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {Path} from "~/router/routes";
-import OrderItemForm from "~/components/itemDetail/OrderItemForm";
+import OrderItemFormGQL from "~/components/itemDetail/OrderItemForm.gql";
 import {useAddCartMutation, useFetchItemQuery} from "~/generated/graphql";
 import ErrorPage from "~/components/error";
 import {itemEntryStateGQL} from "~/components/elements/orderItemEntry/OrderItemEntry.gql";
@@ -93,7 +93,7 @@ const ItemDetailGQL: React.FC = () => {
                     </Grid>
 
                     {/*注文入力部分*/}
-                    <OrderItemForm item={displayItem?.item!} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
+                    <OrderItemFormGQL item={displayItem?.item!} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
 
                 </div>
             </div>

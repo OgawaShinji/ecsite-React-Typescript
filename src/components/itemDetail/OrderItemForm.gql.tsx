@@ -1,16 +1,16 @@
 import {Button, CardActions, CardContent, createStyles, Grid, Typography} from "@material-ui/core";
 import React, {useState} from "react";
-import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
+import OrderItemEntryGQL, {itemEntryStateGQL} from "~/components/elements/orderItemEntry/OrderItemEntry.gql";
 import ItemPrice from "~/components/itemDetail/ItemPrice";
 import {makeStyles} from "@material-ui/core/styles";
 import {THEME_COLOR_2} from "~/assets/color";
-import {Item, Topping} from "~/types/interfaces";
+import {Item, Topping} from "~/generated/graphql";
 
 type propsType = {
     item: Item | null,
-    handleOrderClick: (moveTo: string, selectedState: itemEntryState) => void,
+    handleOrderClick: (moveTo: string, selectedState: itemEntryStateGQL) => void,
 }
-const OrderItemForm: React.FC<propsType> = (props) => {
+const OrderItemFormGQL: React.FC<propsType> = (props) => {
 
     const classes = style();
 
@@ -21,7 +21,7 @@ const OrderItemForm: React.FC<propsType> = (props) => {
     const [totalPrice, setTotalPrice] = useState<number>(item?.priceM ? item.priceM : 0)
 
     //OrderItemEntryにpropsで渡すためのデータ整形
-    const selectedState: itemEntryState = {
+    const selectedState: itemEntryStateGQL = {
         size: size,
         quantity: quantity,
         toppings: selectedToppings,
@@ -71,7 +71,7 @@ const OrderItemForm: React.FC<propsType> = (props) => {
 
             <Grid item xs={12}>
                 <CardContent style={{height: "auto", width: "90%"}}>
-                    <OrderItemEntry
+                    <OrderItemEntryGQL
                         selectedState={selectedState}
                         parentComponent={"itemDetail"}
                         onSizeChange={(s) => handleSizeChange(s)}
@@ -130,4 +130,4 @@ const style = makeStyles(() => createStyles({
         fontWeight: "bold"
     },
 }))
-export default OrderItemForm;
+export default OrderItemFormGQL;
