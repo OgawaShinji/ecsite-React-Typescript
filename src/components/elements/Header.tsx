@@ -1,20 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import {
-    createStyles,
-    makeStyles,
     AppBar,
-    Toolbar,
-    Typography,
-    IconButton,
-    MenuItem,
-    Menu,
     Button,
-    Grid
+    createStyles,
+    Grid,
+    IconButton,
+    makeStyles,
+    Menu,
+    MenuItem,
+    Toolbar,
+    Typography
 } from '@material-ui/core';
 
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
-import {Link, RouteComponentProps, useHistory, withRouter} from 'react-router-dom'
+import {useHistory, useLocation} from 'react-router-dom'
 import {Path} from "~/router/routes";
 
 import {AppDispatch} from "~/store";
@@ -45,7 +45,7 @@ const useStyles = makeStyles(() =>
         },
         title: {
             fontWeight: 'bold',
-            fontFamily:  'Gabriola',
+            fontFamily: 'Gabriola',
             fontSize: 45,
             flexGrow: 1,
             color: 'white',
@@ -62,9 +62,11 @@ const useStyles = makeStyles(() =>
     }),
 );
 
-const Header: React.FC<Props & RouteComponentProps> = (props) => {
+const Header: React.FC<Props> = (props) => {
 
     const dispatch: AppDispatch = useDispatch();
+    const history = useHistory()
+    const location = useLocation()
     const classes = useStyles();
 
     const isLogin = props.isLogin;
@@ -73,7 +75,6 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
     const open = Boolean(anchorEl);
 
     //エラー画面表示後、別ページへ遷移が行われる時にエラーを非表示にする処理
-    const history = useHistory();
     history.listen(() => {
         dispatch(setError({isError: false, code: null}));
     })
@@ -108,7 +109,7 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
         await dispatch(logout()).catch((e) => {
             dispatch(setError({isError: true, code: e.message}));
         });
-        props.history.push({pathname: '/login'});
+        history.push(Path.login);
     }
 
     /**
@@ -117,15 +118,31 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
      */
     const transitionOrderHistory = () => {
         handleClose();
-        props.history.push({pathname: '/history'});
+        history.push(Path.history);
     }
 
     /**
      * 商品一覧画面へ遷移する関数
      * @return void
      */
-    const toItemList = () => {
-        props.history.push({pathname: Path.itemList, state: {judge: true}});
+    const transitionItemList = () => {
+        history.push(Path.itemList)
+    }
+
+    /**
+     * カート一覧画面へ遷移する関数
+     * @return void
+     */
+    const transitionCartList = () => {
+        history.push(Path.cart)
+    }
+
+    /**
+     * ログイン画面へ遷移する関数
+     * @return void
+     */
+    const transitionLogin = () => {
+        history.push(Path.login)
     }
 
     return (
@@ -134,7 +151,12 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
                 <Toolbar className={classes.header}>
                     <Grid container className={classes.header_content}>
                         <Grid item xs={6} container justify={"center"} alignItems={"center"}>
-                            <Typography align="center" className={classes.title} onClick={toItemList}>
+                            <Typography
+                                align="center"
+                                className={classes.title}
+                                data-testid={'header-logo'}
+                                onClick={transitionItemList}
+                            >
                                     <span style={{color: "red"}}>
                                        R
                                     </span>
@@ -153,12 +175,10 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
                             <Grid item xs={3} container justify={"center"} alignItems={"center"}>
                                 <Grid item xs={1}/>
                                 <Grid item xs={5}>
-                                    <Button style={{color: 'white'}} onClick={toItemList}>商品一覧</Button>
+                                    <Button style={{color: 'white'}} onClick={transitionItemList}>商品一覧</Button>
                                 </Grid>
                                 <Grid item xs={5}>
-                                    <Link to={Path.cart} style={{textDecoration: 'none'}}>
-                                        <Button style={{color: 'white'}}>カート一覧</Button>
-                                    </Link>
+                                    <Button style={{color: 'white'}} onClick={transitionCartList}>カート一覧</Button>
                                 </Grid>
                                 <Grid item xs={1}/>
                             </Grid>
@@ -176,15 +196,14 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
                                 >
                                     <AccountCircle/>
                                 </IconButton>
-                            ) : history.location.pathname !== '/login' ? (
-                                <Link to={Path.login} className={classes.login_btn}>
-                                    <Button
-                                        variant="outlined"
-                                        color="inherit"
-                                    >
-                                        Login
-                                    </Button>
-                                </Link>
+                            ) : location.pathname !== '/login' ? (
+                                <Button
+                                    variant="outlined"
+                                    style={{color: 'white'}}
+                                    onClick={transitionLogin}
+                                >
+                                    Login
+                                </Button>
                             ) : (
                                 <div/>
                             )
@@ -217,4 +236,4 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
     );
 };
 
-export default withRouter(Header);
+export default Header;
