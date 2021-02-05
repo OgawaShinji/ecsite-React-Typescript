@@ -27,10 +27,6 @@ const ItemDetailGQL: React.FC = () => {
 
     const history = useHistory();
 
-    //isError~の判定はHooks内で行われる扱いだからHooks内でComponentを返すことはできない？
-    //if (isErrorFetchItem) return <ErrorPage/>;
-    //if (isErrorAddCart) return <ErrorPage/>
-
     /**
      * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
      */
@@ -52,7 +48,7 @@ const ItemDetailGQL: React.FC = () => {
         }).then(async () => {
             if (moveTo === 'cart') await history.push(Path.cart)
             if (moveTo === 'confirm') await history.push(Path.orderConfirm)
-        }).catch(()=>{
+        }).catch(() => {
             //catch処理書かないとErrorPageコンポーネントを返せない
         });
 
@@ -60,7 +56,9 @@ const ItemDetailGQL: React.FC = () => {
 
     const classes = entryIndexStyle();
 
-    return isErrorAddCart || isErrorFetchItem ? <ErrorPage/> : (isLoadItem || isLoadAddCart ?
+    if (isErrorFetchItem || isErrorAddCart) return <ErrorPage/>;
+
+    return (isLoadItem || isLoadAddCart ?
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
             : <div className={classes.align_child}>
                 <div style={{display: "flex"}}>
