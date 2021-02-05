@@ -28,7 +28,7 @@ const typeDefs = gql`
 
   # データ型の定義  
   type User{
-    id: Int
+    id: ID
     name: String
     email: String
     zipcode: String
@@ -39,7 +39,7 @@ const typeDefs = gql`
   }
   
   type Item{
-    id: Int
+    id: ID
     name: String
     description: String
     priceM: Int
@@ -49,14 +49,14 @@ const typeDefs = gql`
   }
   
   type Topping{
-    id: Int
+    id: ID
     name: String
     priceM: Int
     priceL: Int
   }
   
   type OrderItem{
-    id: Int
+    id: ID
     item: Item
     orderToppings: [OrderTopping]
     quantity: Int
@@ -65,12 +65,12 @@ const typeDefs = gql`
   }
   
   type OrderTopping{
-    id: Int
+    id: ID
     topping: Topping
   }
   
   type Order{
-    id: Int
+    id: ID
     user: User
     status: Int
     orderDate: String
@@ -85,9 +85,7 @@ const typeDefs = gql`
     orderItems: [OrderItem]
 }
 
-type ReturnOrder{
-    order:Order
-}
+
   type SearchForm {
     itemName: String
     sortId: Int
@@ -140,12 +138,71 @@ input UpTopping{
     orderItemId: Int
  }
  
+ # サーバーサイドの仕様上必要な型
+  type nodeItems{
+    node:Item
+    cursor:String
+  }
+  type ReturnItems{
+    pageInfo:PageInfo
+    edges:[nodeItems]
+  }
+  type nodeToppings{
+    node:Topping
+    cursor:String
+  }
+  type ReturnToppings{
+    pageInfo:PageInfo
+    edges:[nodeToppings]
+  }
+  type nodeHistory{
+    node:Order
+    cursor:String
+  }
+  type ReturnHistory{
+    pageInfo:PageInfo
+    edges:[nodeHistory]
+  }
+  type ReturnOrder{
+    order:Order
+    cursor:String
+  }
+  type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
+  }
+ 
   # ここに書いたオブジェクトたちをqueryで持ってくることができる
   type Query {
+    toppings(
+        offset: Int
+        before: String
+        after: String
+        first: Int
+        last: Int
+        name_Icontains: String
+    ): ReturnToppings
+    item(id: ID):Item
+    items(
+        offset: Int
+        before: String
+        after: String
+        first: Int
+        last: Int
+        name_Icontains: String
+        orderBy: String
+    ):ReturnItems
     cart: Order
-    users: [User]
-    toppings: [Topping]
-    item(id: Int):Item
+    orderHistory(
+        offset: Int
+        before: String
+        after: String
+        first: Int
+        last: Int
+        name_Icontains: String
+    ):ReturnHistory
   }
   
   type Mutation{
@@ -173,7 +230,7 @@ const items = [
     {
         deleted: 0,
         description: "ホクホクのポテトと旨味が凝縮されたベーコンを特製マヨソースで味わって頂く商品です。バター風味豊かなキューブチーズが食材の味を一層引き立てます。",
-        id: 1,
+        id: "SXRlbVR5cGU6MTQ=",
         imagePath: "http://34.84.118.239/static/img/item/1.jpg",
         name: "じゃがバターベーコン",
         priceL: 2570,
@@ -346,9 +403,12 @@ const cart = {
         }
     ]
 }
-
-const users = []
-
+const history=[
+    cart,
+    cart,
+    cart
+]
+const users=[]
 
 // GraphQL の operation（query や mutation や subscription）が、実際にどのような処理を行なってデータを返すのかという指示書
 const resolvers = {
@@ -356,12 +416,31 @@ const resolvers = {
     Query: {
         // この中で引数に設定した値をもとにfilterをかけることができる
         cart: () => cart,
-        toppings: () => toppings,
-        users: () => users,
+        toppings: () => {
+            let edges = []
+            toppings.forEach((i) => {
+                edges.push({'node': i})
+            })
+            return {'edges': edges}
+        },
         item: (p, args) => {
-            const item=items.filter((i) => i.id === args.id)[0]
-            if (item===undefined) throw new Error('no item')
+            const item = items.filter((i) => i.id === args.id)[0]
+            if (item === undefined) throw new Error('no item')
             return item
+        },
+        items: (p, args) => {
+            let edges = []
+            items.forEach((i) => {
+                edges.push({'node': i})
+            })
+            return {'edges': edges}
+        },
+        orderHistory:(p,args)=>{
+            let edges = []
+            history.forEach((i) => {
+                edges.push({'node': i})
+            })
+            return {'edges': edges}
         }
     },
     Mutation: {
@@ -412,9 +491,9 @@ const resolvers = {
         },
         addCart(parent, args) {
             cart.orderItems.push(args.orderItem);
-            cart.totalPrice+=args.totalPrice;
+            cart.totalPrice += args.totalPrice;
             //throw new Error()
-            return {order:cart}
+            return {order: cart}
         }
     }
 };
