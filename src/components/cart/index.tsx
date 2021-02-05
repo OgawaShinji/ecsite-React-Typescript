@@ -12,7 +12,7 @@ import {
     asyncUpdateOrderItem,
     orderItem,
     OrderItemsToPost,
-    selectOrder,
+    selectOrderItems,
     selectOrderSubTotalPrice
 } from "~/store/slices/Domain/order.slice"
 import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
@@ -53,17 +53,17 @@ const Index: React.FC = () => {
     const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
 
-    let iniOrder = useSelector(selectOrder)
+    let orderItems = useSelector(selectOrderItems)
     let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
 
-    const [orderItems, setOrderItems] = useState<OrderItem[] | undefined>()
     const [isLoading, setIsLoading] = useState(false); // loading
 
     // 初期表示
     useEffect(() => {
         setIsLoading(true);
+        let timerId: NodeJS.Timeout;
         const loading = async () => {
-            setTimeout(() => {
+            timerId = setTimeout(() => {
                 setIsLoading(false);
             }, 500)
         }
@@ -72,13 +72,11 @@ const Index: React.FC = () => {
                 dispatch(setError({isError: true, code: e.message}))
             })
         })
+
+        return () => {
+            clearTimeout(timerId);
+        }
     }, [dispatch])
-
-    // iniOrder
-    useEffect(() => {
-        setOrderItems(iniOrder.orderItems)
-    }, [iniOrder])
-
 
     /**
      * 注文商品の内容を更新する関数
@@ -152,7 +150,7 @@ const Index: React.FC = () => {
                             </Typography>
                             {orderItems && orderItems?.length > 0 ? (<List>
                                 {orderItems &&
-                                orderItems!.map((orderItem,index) => (
+                                orderItems!.map((orderItem, index) => (
                                     <CartItem
                                         orderItem={orderItem}
                                         key={orderItem.id}
