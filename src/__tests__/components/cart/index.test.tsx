@@ -61,6 +61,11 @@ const toppingsFromDB: Topping[] = [
 
 const server = setupServer(
     rest.get(REST_URL + '/django/cart/', ((req, res, ctx) => {
+        if (!isExistOrderItems) {
+            return res(ctx.status(200), ctx.json({
+                orderItems: []
+            }))
+        }
         return res(ctx.status(200), ctx.json({
             orderItems: orderItemsFromDB
         }))
@@ -108,6 +113,8 @@ let methodStatus: methodStatusType = {
     requestBody: null
 };
 
+let isExistOrderItems = true
+
 // RESTの処理が一度に複数走った場合にURLを取得
 let ranProgressUrlList: Array<string> = []
 
@@ -143,7 +150,7 @@ afterAll(() => {
     server.close();
 });
 
-describe('カート一覧画面', () => {
+describe('カート一覧画面（注文商品がある場合）', () => {
     beforeEach(() => {
         render(
             <Provider store={store}>
@@ -154,7 +161,7 @@ describe('カート一覧画面', () => {
         )
     })
     describe('初期表示', () => {
-        it('(index,CartItem,OrderOperator,OrderItemEntry, SelectTopping): components', async () => {
+        it('(index,CartItem,OrderOperator): components', async () => {
 
             /*Componentが呼び出されたタイミング*/
             //初期表示がローディング画面であること
@@ -175,7 +182,7 @@ describe('カート一覧画面', () => {
             expect(screen.queryByText(orderItemsFromDB[1].item.name)).toBeTruthy();
             expect(screen.queryByText(orderItemsFromDB[2].item.name)).toBeTruthy();
 
-             // const r = screen.getByRole('', {hidden: true})
+            // const r = screen.getByRole('', {hidden: true})
         })
     })
     // type user action
@@ -324,6 +331,33 @@ describe('カート一覧画面', () => {
                     userEvent.click(selectToppingModalButton_close)
                 })
                 expect(screen.queryByTestId('selectTopping-modalButton')).toBeNull();
+            })
+        })
+    })
+    describe('カート一覧画面（注文商品がない場合）', () => {
+        beforeEach(async () => {
+            isExistOrderItems = false
+            await render(
+                <Provider store={store}>
+                    <BrowserRouter>
+                        <CartList/>
+                    </BrowserRouter>
+                </Provider>
+            )
+            /*loading終了後*/
+            expect(await screen.findByText('ショッピングカート')).toBeTruthy();
+        })
+        describe('初期表示(更新バー表示終了後)', () => {
+            it('(index,CartItem,OrderOperator): components', () => {
+                expect(screen.queryByRole('heading', {name: 'カートに商品がありません'})).toBeTruthy();
+                expect(screen.queryByRole('heading', {name: '合計金額: 0 円'})).toBeTruthy();
+            })
+            it('「注文確認画面へ進む」がdisableになっている', () => {
+                // const r = screen.getByRole('', {hidden: true});
+                expect(screen.queryByRole('button', {name: '注文確認画面へ進む'})).toHaveAttribute('disabled')
+            })
+            it('「カートを空にする」がdisableになっている', () => {
+                expect(screen.queryByRole('button', {name: 'カートを空にする'})).toHaveAttribute('disabled')
             })
         })
     })
