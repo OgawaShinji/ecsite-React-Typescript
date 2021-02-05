@@ -167,7 +167,6 @@ input UpTopping{
     order:Order
     cursor:String
   }
-  
   type PageInfo {
     hasNextPage: Boolean!
     hasPreviousPage: Boolean!
