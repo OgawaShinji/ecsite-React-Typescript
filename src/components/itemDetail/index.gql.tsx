@@ -9,9 +9,9 @@ import {useHistory, useParams} from "react-router-dom"
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {Path} from "~/router/routes";
 import OrderItemForm from "~/components/itemDetail/OrderItemForm";
-import {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import {useAddCartMutation, useFetchItemQuery} from "~/generated/graphql";
 import ErrorPage from "~/components/error";
+import {itemEntryStateGQL} from "~/components/elements/orderItemEntry/OrderItemEntry.gql";
 
 const ItemDetailGQL: React.FC = () => {
     let {itemId}: any = useParams()
@@ -30,7 +30,7 @@ const ItemDetailGQL: React.FC = () => {
     /**
      * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
      */
-    const handleOrderClick = async (moveTo: string, selectedState: itemEntryState) => {
+    const handleOrderClick = async (moveTo: string, selectedState: itemEntryStateGQL) => {
         if (displayItem === null) throw new Error()
         let newOrderToppings: { topping: number }[] = []
         if (selectedState.toppings.length !== 0) selectedState.toppings.map((t) => newOrderToppings.push({topping: t!.id!}))

@@ -13,26 +13,26 @@ import {
     Select,
     Typography
 } from "@material-ui/core";
-import {WrappedSelectTopping} from "~/components/elements/orderItemEntry/SelectTopping";
+import {WrappedSelectToppingGQL} from "~/components/elements/orderItemEntry/SelectTopping.gql";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
-import {Topping} from "~/types/interfaces";
+import {Topping} from "~/generated/graphql";
 
-export type itemEntryState = {
+export type itemEntryStateGQL = {
     size: string;
     quantity: number;
     toppings: Topping[];
     totalPrice?: number;
 }
 export type entryProps = {
-    selectedState: itemEntryState;
+    selectedState: itemEntryStateGQL;
     parentComponent: string;
     onSizeChange?: (size: string) => void;
     onQuantityChange?: (quantity: number) => void;
     onToppingChange?: (toppings: Topping[]) => void;
     onClickCloseOrderItemEntity?: () => void;
 };
-const OrderItemEntry: React.FC<entryProps> = (props) => {
+const OrderItemEntryGQL: React.FC<entryProps> = (props) => {
 
 
     const [modalIsOpen, setIsOpen] = useState<boolean>(false)
@@ -167,7 +167,7 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                     open={modalIsOpen}
                     onClose={() => setIsOpen(false)}>
                     <div className={classes.dialog}>
-                        <WrappedSelectTopping selectedSize={props.selectedState.size}
+                        <WrappedSelectToppingGQL selectedSize={props.selectedState.size}
                                               onClickClose={() => setIsOpen(false)}
                                               customRef={selectToppingRef} propTopping={selectedToppings}
                                               onToppingChange={(t) => handleToppingChange(t)}/>
@@ -178,7 +178,7 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
         </Grid>
     )
 };
-export default OrderItemEntry;
+export default OrderItemEntryGQL;
 
 const orderItemEntryStyleInCart = makeStyles(() => createStyles({
 

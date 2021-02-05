@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchItemDetail, selectItemDetail, setItemDetail} from "~/store/slices/Domain/item.slice";
 import {AppDispatch} from "~/store";
 import {useHistory, useParams} from "react-router-dom"
+import {Item, Topping} from "~/types/interfaces";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.slice";
@@ -16,7 +17,6 @@ import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
 import OrderItemForm from "~/components/itemDetail/OrderItemForm";
 import {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
-import {Topping, Item} from "~/generated/graphql";
 
 const ItemDetail: React.FC = () => {
     const item: Item | null = useSelector(selectItemDetail)
@@ -68,13 +68,13 @@ const ItemDetail: React.FC = () => {
      * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
      */
     const handleOrderClick = async (moveTo: string, selectedState: itemEntryState) => {
-        if (displayItem === null) throw new Error()
+        /*if (displayItem === null) throw new Error()
         let newOrderToppings: { topping: number }[] = []
-        if (selectedState.toppings.length !== 0) selectedState.toppings.map((t) => newOrderToppings.push({topping: t!.id!}))
+        if (selectedState.toppings.length !== 0) selectedState.toppings.map((t) => newOrderToppings.push({topping: t.id}))
 
         const newOrder: OrderItemToPost = {
             newItem: {
-                item: displayItem.id!,
+                item: displayItem.id,
                 orderToppings: newOrderToppings,
                 quantity: selectedState.quantity,
                 size: selectedState.size === 'M' ? 'M' : 'L'
@@ -92,7 +92,7 @@ const ItemDetail: React.FC = () => {
             }
         }).catch((e) => {
             dispatch(setError({isError: true, code: e.message}))
-        })
+        })*/
     }
 
     const classes = entryIndexStyle();
@@ -132,7 +132,7 @@ const ItemDetail: React.FC = () => {
                     </Grid>
 
                     {/*注文入力部分*/}
-                    <OrderItemForm item={displayItem} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
+                    {/*<OrderItemForm item={displayItem} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>*/}
 
                 </div>
             </div>
