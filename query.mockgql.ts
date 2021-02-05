@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-//本番環境用query
+//mock環境用query
 // ============================ order  ====================================================================
 
 gql(`query fetchOrderItems {
