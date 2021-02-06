@@ -27,7 +27,7 @@ const typeDefs = gql`
   scalar Date
 
   # データ型の定義  
-  type User{
+  type UserType{
     id: ID
     name: String
     email: String
@@ -38,7 +38,7 @@ const typeDefs = gql`
     password: String
   }
   
-  type Item{
+  type ItemType{
     id: ID
     name: String
     description: String
@@ -48,30 +48,31 @@ const typeDefs = gql`
     deleted: Boolean
   }
   
-  type Topping{
+  type ToppingType{
     id: ID
     name: String
     priceM: Int
     priceL: Int
   }
   
-  type OrderItem{
+  type OrderItemType{
     id: ID
-    item: Item
-    orderToppings: [OrderTopping]
+    item: ItemType
+    orderToppings: OrderToppingTypeConnection
     quantity: Int
     size: String
     subTotalPrice: Int
   }
   
-  type OrderTopping{
+  type OrderToppingType{
     id: ID
-    topping: Topping
+    topping: ToppingType
+    orderItem:OrderItemType
   }
   
-  type Order{
+  type OrderType{
     id: ID
-    user: User
+    user: UserType
     status: Int
     orderDate: String
     deliveryTime: Date
@@ -82,9 +83,24 @@ const typeDefs = gql`
     destinationTel: String
     paymentMethod: String
     totalPrice: Int
-    orderItems: [OrderItem]
+    orderItems: OrderItemTypeConnection
 }
 
+type OrderHistoryType{
+    id: ID
+    user: UserType
+    status: Int
+    orderDate: String
+    deliveryTime: Date
+    destinationName: String
+    destinationEmail: String
+    destinationZipcode: String
+    destinationAddress: String
+    destinationTel: String
+    paymentMethod: String
+    totalPrice: Int
+    orderItems: OrderItemTypeConnection
+}
 
   type SearchForm {
     itemName: String
@@ -135,32 +151,44 @@ input OrderToppingInput{
  }
  
  # サーバーサイドの仕様上必要な型
-  type nodeItems{
-    node:Item
+  type ItemTypeConnection{
+    pageInfo:PageInfo
+    edges:[ItemTypeEdge]
+  }
+  type ItemTypeEdge{
+    node:ItemType
     cursor:String
   }
-  type ReturnItems{
+  type ToppingTypeConnection{
     pageInfo:PageInfo
-    edges:[nodeItems]
+    edges:[ToppingTypeEdge]
   }
-  type nodeToppings{
-    node:Topping
+  type ToppingTypeEdge{
+    node:ToppingType
     cursor:String
   }
-  type ReturnToppings{
+  type OrderHistoryTypeConnection{
     pageInfo:PageInfo
-    edges:[nodeToppings]
+    edges:[OrderHistoryTypeEdge]
   }
-  type nodeHistory{
-    node:Order
+  type OrderHistoryTypeEdge{
+    node:OrderHistoryType
     cursor:String
   }
-  type ReturnHistory{
+  type OrderItemTypeConnection{
     pageInfo:PageInfo
-    edges:[nodeHistory]
+    edges:[OrderItemTypeEdge]
   }
-  type ReturnOrder{
-    order:Order
+  type OrderItemTypeEdge{
+    node:OrderItemType
+    cursor:String
+  }
+  type OrderToppingTypeConnection{
+    pageInfo:PageInfo
+    edges:[OrderToppingTypeEdge]
+  }
+  type OrderToppingTypeEdge{
+    node:OrderToppingType
     cursor:String
   }
   type PageInfo {
@@ -168,6 +196,10 @@ input OrderToppingInput{
     hasPreviousPage: Boolean!
     startCursor: String
     endCursor: String
+  }
+  
+  type AddCart{
+    order:OrderType
   }
  
   # ここに書いたオブジェクトたちをqueryで持ってくることができる
@@ -179,8 +211,8 @@ input OrderToppingInput{
         first: Int
         last: Int
         name_Icontains: String
-    ): ReturnToppings
-    item(id: ID):Item
+    ): ToppingTypeConnection
+    item(id: ID):ItemType
     items(
         offset: Int
         before: String
@@ -189,8 +221,8 @@ input OrderToppingInput{
         last: Int
         name_Icontains: String
         orderBy: String
-    ):ReturnItems
-    cart: Order
+    ): ItemTypeConnection
+    cart: OrderType
     orderHistory(
         offset: Int
         before: String
@@ -198,11 +230,11 @@ input OrderToppingInput{
         first: Int
         last: Int
         name_Icontains: String
-    ):ReturnHistory
+    ): OrderHistoryTypeConnection
   }
   
   type Mutation{
-     addCart(orderItem:OrderItemInput!,status:Int,totalPrice:Int!):ReturnOrder
+     addCart(orderItem:OrderItemInput!,status:Int,totalPrice:Int!): AddCart
   }
 `;
 
@@ -384,12 +416,12 @@ const cart = {
         }
     ]
 }
-const history=[
+const history = [
     cart,
     cart,
     cart
 ]
-const users=[]
+const users = []
 
 // GraphQL の operation（query や mutation や subscription）が、実際にどのような処理を行なってデータを返すのかという指示書
 const resolvers = {
@@ -416,7 +448,7 @@ const resolvers = {
             })
             return {'edges': edges}
         },
-        orderHistory:(p,args)=>{
+        orderHistory: (p, args) => {
             let edges = []
             history.forEach((i) => {
                 edges.push({'node': i})

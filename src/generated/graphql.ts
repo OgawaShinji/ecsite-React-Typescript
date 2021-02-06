@@ -19,8 +19,8 @@ export type Scalars = {
 
 
 
-export type User = {
-  __typename?: 'User';
+export type UserType = {
+  __typename?: 'UserType';
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
@@ -31,8 +31,8 @@ export type User = {
   password?: Maybe<Scalars['String']>;
 };
 
-export type Item = {
-  __typename?: 'Item';
+export type ItemType = {
+  __typename?: 'ItemType';
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -42,34 +42,35 @@ export type Item = {
   deleted?: Maybe<Scalars['Boolean']>;
 };
 
-export type Topping = {
-  __typename?: 'Topping';
+export type ToppingType = {
+  __typename?: 'ToppingType';
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
   priceM?: Maybe<Scalars['Int']>;
   priceL?: Maybe<Scalars['Int']>;
 };
 
-export type OrderItem = {
-  __typename?: 'OrderItem';
+export type OrderItemType = {
+  __typename?: 'OrderItemType';
   id?: Maybe<Scalars['ID']>;
-  item?: Maybe<Item>;
-  orderToppings?: Maybe<Array<Maybe<OrderTopping>>>;
+  item?: Maybe<ItemType>;
+  orderToppings?: Maybe<OrderToppingTypeConnection>;
   quantity?: Maybe<Scalars['Int']>;
   size?: Maybe<Scalars['String']>;
   subTotalPrice?: Maybe<Scalars['Int']>;
 };
 
-export type OrderTopping = {
-  __typename?: 'OrderTopping';
+export type OrderToppingType = {
+  __typename?: 'OrderToppingType';
   id?: Maybe<Scalars['ID']>;
-  topping?: Maybe<Topping>;
+  topping?: Maybe<ToppingType>;
+  orderItem?: Maybe<OrderItemType>;
 };
 
-export type Order = {
-  __typename?: 'Order';
+export type OrderType = {
+  __typename?: 'OrderType';
   id?: Maybe<Scalars['ID']>;
-  user?: Maybe<User>;
+  user?: Maybe<UserType>;
   status?: Maybe<Scalars['Int']>;
   orderDate?: Maybe<Scalars['String']>;
   deliveryTime?: Maybe<Scalars['Date']>;
@@ -80,7 +81,24 @@ export type Order = {
   destinationTel?: Maybe<Scalars['String']>;
   paymentMethod?: Maybe<Scalars['String']>;
   totalPrice?: Maybe<Scalars['Int']>;
-  orderItems?: Maybe<Array<Maybe<OrderItem>>>;
+  orderItems?: Maybe<OrderItemTypeConnection>;
+};
+
+export type OrderHistoryType = {
+  __typename?: 'OrderHistoryType';
+  id?: Maybe<Scalars['ID']>;
+  user?: Maybe<UserType>;
+  status?: Maybe<Scalars['Int']>;
+  orderDate?: Maybe<Scalars['String']>;
+  deliveryTime?: Maybe<Scalars['Date']>;
+  destinationName?: Maybe<Scalars['String']>;
+  destinationEmail?: Maybe<Scalars['String']>;
+  destinationZipcode?: Maybe<Scalars['String']>;
+  destinationAddress?: Maybe<Scalars['String']>;
+  destinationTel?: Maybe<Scalars['String']>;
+  paymentMethod?: Maybe<Scalars['String']>;
+  totalPrice?: Maybe<Scalars['Int']>;
+  orderItems?: Maybe<OrderItemTypeConnection>;
 };
 
 export type SearchForm = {
@@ -131,45 +149,63 @@ export type DeleteOrderItemId = {
   orderItemId?: Maybe<Scalars['Int']>;
 };
 
-export type NodeItems = {
-  __typename?: 'nodeItems';
-  node?: Maybe<Item>;
+export type ItemTypeConnection = {
+  __typename?: 'ItemTypeConnection';
+  pageInfo?: Maybe<PageInfo>;
+  edges?: Maybe<Array<Maybe<ItemTypeEdge>>>;
+};
+
+export type ItemTypeEdge = {
+  __typename?: 'ItemTypeEdge';
+  node?: Maybe<ItemType>;
   cursor?: Maybe<Scalars['String']>;
 };
 
-export type ReturnItems = {
-  __typename?: 'ReturnItems';
+export type ToppingTypeConnection = {
+  __typename?: 'ToppingTypeConnection';
   pageInfo?: Maybe<PageInfo>;
-  edges?: Maybe<Array<Maybe<NodeItems>>>;
+  edges?: Maybe<Array<Maybe<ToppingTypeEdge>>>;
 };
 
-export type NodeToppings = {
-  __typename?: 'nodeToppings';
-  node?: Maybe<Topping>;
+export type ToppingTypeEdge = {
+  __typename?: 'ToppingTypeEdge';
+  node?: Maybe<ToppingType>;
   cursor?: Maybe<Scalars['String']>;
 };
 
-export type ReturnToppings = {
-  __typename?: 'ReturnToppings';
+export type OrderHistoryTypeConnection = {
+  __typename?: 'OrderHistoryTypeConnection';
   pageInfo?: Maybe<PageInfo>;
-  edges?: Maybe<Array<Maybe<NodeToppings>>>;
+  edges?: Maybe<Array<Maybe<OrderHistoryTypeEdge>>>;
 };
 
-export type NodeHistory = {
-  __typename?: 'nodeHistory';
-  node?: Maybe<Order>;
+export type OrderHistoryTypeEdge = {
+  __typename?: 'OrderHistoryTypeEdge';
+  node?: Maybe<OrderHistoryType>;
   cursor?: Maybe<Scalars['String']>;
 };
 
-export type ReturnHistory = {
-  __typename?: 'ReturnHistory';
+export type OrderItemTypeConnection = {
+  __typename?: 'OrderItemTypeConnection';
   pageInfo?: Maybe<PageInfo>;
-  edges?: Maybe<Array<Maybe<NodeHistory>>>;
+  edges?: Maybe<Array<Maybe<OrderItemTypeEdge>>>;
 };
 
-export type ReturnOrder = {
-  __typename?: 'ReturnOrder';
-  order?: Maybe<Order>;
+export type OrderItemTypeEdge = {
+  __typename?: 'OrderItemTypeEdge';
+  node?: Maybe<OrderItemType>;
+  cursor?: Maybe<Scalars['String']>;
+};
+
+export type OrderToppingTypeConnection = {
+  __typename?: 'OrderToppingTypeConnection';
+  pageInfo?: Maybe<PageInfo>;
+  edges?: Maybe<Array<Maybe<OrderToppingTypeEdge>>>;
+};
+
+export type OrderToppingTypeEdge = {
+  __typename?: 'OrderToppingTypeEdge';
+  node?: Maybe<OrderToppingType>;
   cursor?: Maybe<Scalars['String']>;
 };
 
@@ -181,13 +217,18 @@ export type PageInfo = {
   endCursor?: Maybe<Scalars['String']>;
 };
 
+export type AddCart = {
+  __typename?: 'AddCart';
+  order?: Maybe<OrderType>;
+};
+
 export type Query = {
   __typename?: 'Query';
-  toppings?: Maybe<ReturnToppings>;
-  item?: Maybe<Item>;
-  items?: Maybe<ReturnItems>;
-  cart?: Maybe<Order>;
-  orderHistory?: Maybe<ReturnHistory>;
+  toppings?: Maybe<ToppingTypeConnection>;
+  item?: Maybe<ItemType>;
+  items?: Maybe<ItemTypeConnection>;
+  cart?: Maybe<OrderType>;
+  orderHistory?: Maybe<OrderHistoryTypeConnection>;
 };
 
 
@@ -228,7 +269,7 @@ export type QueryOrderHistoryArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addCart?: Maybe<ReturnOrder>;
+  addCart?: Maybe<AddCart>;
 };
 
 
@@ -253,23 +294,36 @@ export type AddCartMutationVariables = Exact<{
 export type AddCartMutation = (
   { __typename?: 'Mutation' }
   & { addCart?: Maybe<(
-    { __typename?: 'ReturnOrder' }
+    { __typename?: 'AddCart' }
     & { order?: Maybe<(
-      { __typename?: 'Order' }
-      & Pick<Order, 'status' | 'totalPrice'>
-      & { orderItems?: Maybe<Array<Maybe<(
-        { __typename?: 'OrderItem' }
-        & { item?: Maybe<(
-          { __typename?: 'Item' }
-          & Pick<Item, 'name'>
-        )>, orderToppings?: Maybe<Array<Maybe<(
-          { __typename?: 'OrderTopping' }
-          & { topping?: Maybe<(
-            { __typename?: 'Topping' }
-            & Pick<Topping, 'name'>
+      { __typename?: 'OrderType' }
+      & Pick<OrderType, 'status' | 'totalPrice'>
+      & { orderItems?: Maybe<(
+        { __typename?: 'OrderItemTypeConnection' }
+        & { edges?: Maybe<Array<Maybe<(
+          { __typename?: 'OrderItemTypeEdge' }
+          & { node?: Maybe<(
+            { __typename?: 'OrderItemType' }
+            & Pick<OrderItemType, 'size' | 'quantity'>
+            & { item?: Maybe<(
+              { __typename?: 'ItemType' }
+              & Pick<ItemType, 'name'>
+            )>, orderToppings?: Maybe<(
+              { __typename?: 'OrderToppingTypeConnection' }
+              & { edges?: Maybe<Array<Maybe<(
+                { __typename?: 'OrderToppingTypeEdge' }
+                & { node?: Maybe<(
+                  { __typename?: 'OrderToppingType' }
+                  & { topping?: Maybe<(
+                    { __typename?: 'ToppingType' }
+                    & Pick<ToppingType, 'name'>
+                  )> }
+                )> }
+              )>>> }
+            )> }
           )> }
         )>>> }
-      )>>> }
+      )> }
     )> }
   )> }
 );
@@ -280,12 +334,12 @@ export type FetchToppingsQueryVariables = Exact<{ [key: string]: never; }>;
 export type FetchToppingsQuery = (
   { __typename?: 'Query' }
   & { toppings?: Maybe<(
-    { __typename?: 'ReturnToppings' }
+    { __typename?: 'ToppingTypeConnection' }
     & { edges?: Maybe<Array<Maybe<(
-      { __typename?: 'nodeToppings' }
+      { __typename?: 'ToppingTypeEdge' }
       & { node?: Maybe<(
-        { __typename?: 'Topping' }
-        & Pick<Topping, 'id' | 'name' | 'priceM' | 'priceL'>
+        { __typename?: 'ToppingType' }
+        & Pick<ToppingType, 'id' | 'name' | 'priceM' | 'priceL'>
       )> }
     )>>> }
   )> }
@@ -299,8 +353,8 @@ export type FetchItemQueryVariables = Exact<{
 export type FetchItemQuery = (
   { __typename?: 'Query' }
   & { item?: Maybe<(
-    { __typename?: 'Item' }
-    & Pick<Item, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
+    { __typename?: 'ItemType' }
+    & Pick<ItemType, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
   )> }
 );
 
@@ -310,12 +364,22 @@ export const AddCartDocument = gql`
   addCart(orderItem: $orderItem, status: 0, totalPrice: $totalPrice) {
     order {
       orderItems {
-        item {
-          name
-        }
-        orderToppings {
-          topping {
-            name
+        edges {
+          node {
+            item {
+              name
+            }
+            orderToppings {
+              edges {
+                node {
+                  topping {
+                    name
+                  }
+                }
+              }
+            }
+            size
+            quantity
           }
         }
       }

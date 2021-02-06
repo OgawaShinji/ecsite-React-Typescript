@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Button, ButtonBase, Card, Grid, LinearProgress, Typography} from "@material-ui/core";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
-import {Topping} from "~/generated/graphql";
+import {ToppingType as Topping} from "~/generated/graphql";
 import {useFetchToppingsQuery} from "~/generated/graphql";
 
 type selectToppingProps = {

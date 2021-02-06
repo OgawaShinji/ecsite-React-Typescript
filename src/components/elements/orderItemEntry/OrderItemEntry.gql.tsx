@@ -16,7 +16,7 @@ import {
 import {WrappedSelectToppingGQL} from "~/components/elements/orderItemEntry/SelectTopping.gql";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
-import {Topping} from "~/generated/graphql";
+import {ToppingType as Topping} from "~/generated/graphql";
 
 export type itemEntryStateGQL = {
     size: string;

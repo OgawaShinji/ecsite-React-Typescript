@@ -6,12 +6,22 @@ mutation addCart($orderItem:OrderItemInput!,$totalPrice:Int!){
   addCart(orderItem:$orderItem,status:0,totalPrice:$totalPrice){
     order{
       orderItems{
-        item{
-          name
-        }
-        orderToppings{
-          topping{
-            name
+        edges{
+          node{
+            item{
+              name
+            }
+            orderToppings{
+              edges{
+                node{
+                  topping{
+                    name
+                  }
+                }
+              }
+            }
+            size
+            quantity
           }
         }
       }
