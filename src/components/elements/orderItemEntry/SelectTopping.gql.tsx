@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import {Button, ButtonBase, Card, Grid, Typography} from "@material-ui/core";
+import {Button, ButtonBase, Card, Grid, LinearProgress, Typography} from "@material-ui/core";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
-import {Topping} from "~/gql/generated/order.graphql";
+import {ToppingType as Topping} from "~/generated/graphql";
 import {useFetchToppingsQuery} from "~/generated/graphql";
 
 type selectToppingProps = {
@@ -15,7 +15,7 @@ type selectToppingProps = {
 //だから、あくまでrefをpropsの一つとして渡し、後からrefに指定してexportする（それが WrappedSelectTopping）
 export const SelectToppingGQL: React.FC<selectToppingProps> = (props) => {
 
-    const {data} = useFetchToppingsQuery()
+    const {data: toppings, loading: isLoadToppings} = useFetchToppingsQuery()
     const [selectedToppings, setSelectedToppings] = useState<Topping[]>(props.propTopping)
 
     const handleToppingChange = (topping: Topping) => {
@@ -28,49 +28,50 @@ export const SelectToppingGQL: React.FC<selectToppingProps> = (props) => {
     };
     const classes = toppingStyles();
     return (
-        <Card className={classes.topping_modal}>
-            <Grid>
-                <Grid item container justify={"center"}>
-                    {data?.toppings?.map((t) => {
-                        return (<Grid item xs={4} className={classes.topping_card} key={`${t!.name}${t!.id}`}>
-                            <ButtonBase onClick={() => handleToppingChange(t!)}
-                                        style={{width: "70%", height: "95%", color: "red"}}>
-                                <Card style={{
-                                    width: "100%", height: "100%",
-                                    backgroundColor: `${selectedToppings.findIndex(topping => t!.id === topping.id) === -1 ? "white" : "#ff9800"}`
-                                }}>
-                                    <Typography variant={"body1"} color={"primary"}
-                                                component={"p"}>
-                                        {t!.name}<br/>{props.selectedSize === 'M' ? ` M : ${t!.priceM}円` : ` L : ${t!.priceL}円`}
-                                    </Typography>
-                                </Card>
-                            </ButtonBase>
-                        </Grid>)
-                    })}
-                </Grid>
-                <Grid item container>
-                    <Grid item xs={4}/>
-                    <Grid item sm={4} container justify={"center"}>
-                        <Button
-                            onClick={props.onClickClose}
-                            variant={"contained"}
-                            color={"primary"}
-                            data-testid={"selectTopping-modalButton"}
-                        >
-                            <Typography>close</Typography>
-                        </Button>
+        isLoadToppings ? <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/> :
+            <Card className={classes.topping_modal}>
+                <Grid>
+                    <Grid item container justify={"center"}>
+                        {toppings!.toppings!.edges!.map((t) => {
+                            return (<Grid item xs={4} className={classes.topping_card} key={`${t!.node?.id}`}>
+                                <ButtonBase onClick={() => handleToppingChange(t!.node!)}
+                                            style={{width: "70%", height: "95%", color: "red"}}>
+                                    <Card style={{
+                                        width: "100%", height: "100%",
+                                        backgroundColor: `${selectedToppings.findIndex(topping => t!.node!.id === topping.id) === -1 ? "white" : "#ff9800"}`
+                                    }}>
+                                        <Typography variant={"body1"} color={"primary"}
+                                                    component={"p"}>
+                                            {t!.node!.name}<br/>{props.selectedSize === 'M' ? ` M : ${t!.node!.priceM}円` : ` L : ${t!.node!.priceL}円`}
+                                        </Typography>
+                                    </Card>
+                                </ButtonBase>
+                            </Grid>)
+                        })}
                     </Grid>
-                    <Grid item xs={4}>
-                        ※トッピングは3つまで選択できます
+                    <Grid item container>
+                        <Grid item xs={4}/>
+                        <Grid item sm={4} container justify={"center"}>
+                            <Button
+                                onClick={props.onClickClose}
+                                variant={"contained"}
+                                color={"primary"}
+                                data-testid={"selectTopping-modalButton"}
+                            >
+                                <Typography>close</Typography>
+                            </Button>
+                        </Grid>
+                        <Grid item xs={4}>
+                            ※トッピングは3つまで選択できます
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
-        </Card>
+            </Card>
     )
 };
 export const WrappedSelectToppingGQL = React.forwardRef<HTMLDivElement, selectToppingProps>((props, ref) =>
     <SelectToppingGQL selectedSize={props.selectedSize} onClickClose={props.onClickClose} customRef={ref}
-                   propTopping={props.propTopping} onToppingChange={props.onToppingChange}/>)
+                      propTopping={props.propTopping} onToppingChange={props.onToppingChange}/>)
 
 const toppingStyles = makeStyles(() => createStyles({
     topping_modal: {

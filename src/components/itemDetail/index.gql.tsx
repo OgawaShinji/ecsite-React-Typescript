@@ -9,13 +9,12 @@ import {useHistory, useParams} from "react-router-dom"
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {Path} from "~/router/routes";
 import OrderItemFormGQL from "~/components/itemDetail/OrderItemForm.gql";
-import {useAddCartMutation, useFetchItemQuery} from "~/generated/graphql";
+import {useFetchItemQuery, useAddCartMutation} from "~/generated/graphql";
 import ErrorPage from "~/components/error";
 import {itemEntryStateGQL} from "~/components/elements/orderItemEntry/OrderItemEntry.gql";
 
 const ItemDetailGQL: React.FC = () => {
     let {itemId}: any = useParams()
-    itemId = Number(itemId)
 
     const {
         data: displayItem,
@@ -32,7 +31,7 @@ const ItemDetailGQL: React.FC = () => {
      */
     const handleOrderClick = async (moveTo: string, selectedState: itemEntryStateGQL) => {
         if (displayItem === null) throw new Error()
-        let newOrderToppings: { topping: number }[] = []
+        let newOrderToppings: { topping: string }[] = []
         if (selectedState.toppings.length !== 0) selectedState.toppings.map((t) => newOrderToppings.push({topping: t!.id!}))
 
         await addCart({
@@ -51,7 +50,6 @@ const ItemDetailGQL: React.FC = () => {
         }).catch(() => {
             //catch処理書かないとErrorPageコンポーネントを返せない
         });
-
     }
 
     const classes = entryIndexStyle();

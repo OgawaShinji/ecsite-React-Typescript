@@ -27,7 +27,7 @@ const typeDefs = gql`
   scalar Date
 
   # データ型の定義  
-  type User{
+  type UserType{
     id: ID
     name: String
     email: String
@@ -38,40 +38,41 @@ const typeDefs = gql`
     password: String
   }
   
-  type Item{
+  type ItemType{
     id: ID
     name: String
     description: String
     priceM: Int
     priceL: Int
     imagePath: String
-    deleted: Int
+    deleted: Boolean
   }
   
-  type Topping{
+  type ToppingType{
     id: ID
     name: String
     priceM: Int
     priceL: Int
   }
   
-  type OrderItem{
+  type OrderItemType{
     id: ID
-    item: Item
-    orderToppings: [OrderTopping]
+    item: ItemType
+    orderToppings: OrderToppingTypeConnection
     quantity: Int
     size: String
     subTotalPrice: Int
   }
   
-  type OrderTopping{
+  type OrderToppingType{
     id: ID
-    topping: Topping
+    topping: ToppingType
+    orderItem:OrderItemType
   }
   
-  type Order{
+  type OrderType{
     id: ID
-    user: User
+    user: UserType
     status: Int
     orderDate: String
     deliveryTime: Date
@@ -82,9 +83,24 @@ const typeDefs = gql`
     destinationTel: String
     paymentMethod: String
     totalPrice: Int
-    orderItems: [OrderItem]
+    orderItems: OrderItemTypeConnection
 }
 
+type OrderHistoryType{
+    id: ID
+    user: UserType
+    status: Int
+    orderDate: String
+    deliveryTime: Date
+    destinationName: String
+    destinationEmail: String
+    destinationZipcode: String
+    destinationAddress: String
+    destinationTel: String
+    paymentMethod: String
+    totalPrice: Int
+    orderItems: OrderItemTypeConnection
+}
 
   type SearchForm {
     itemName: String
@@ -114,20 +130,16 @@ const typeDefs = gql`
         totalPrice: Int
   }
 
-input UpTopping{
-    topping: Int
+input OrderToppingInput{
+    topping: ID
 }
  
- input UpOrderItem{
-      id: Int,
-      item: Int,
-      orderToppings: [UpTopping]
+ input OrderItemInput{
+      id: ID,
+      item: ID,
+      orderToppings: [OrderToppingInput]!
       size: String
       quantity: Int
- }
- 
- input OrderItemInput{
-      orderItems: [UpOrderItem]
  }
  
  input TotalPrice{
@@ -139,32 +151,44 @@ input UpTopping{
  }
  
  # サーバーサイドの仕様上必要な型
-  type nodeItems{
-    node:Item
+  type ItemTypeConnection{
+    pageInfo:PageInfo
+    edges:[ItemTypeEdge]
+  }
+  type ItemTypeEdge{
+    node:ItemType
     cursor:String
   }
-  type ReturnItems{
+  type ToppingTypeConnection{
     pageInfo:PageInfo
-    edges:[nodeItems]
+    edges:[ToppingTypeEdge]
   }
-  type nodeToppings{
-    node:Topping
+  type ToppingTypeEdge{
+    node:ToppingType
     cursor:String
   }
-  type ReturnToppings{
+  type OrderHistoryTypeConnection{
     pageInfo:PageInfo
-    edges:[nodeToppings]
+    edges:[OrderHistoryTypeEdge]
   }
-  type nodeHistory{
-    node:Order
+  type OrderHistoryTypeEdge{
+    node:OrderHistoryType
     cursor:String
   }
-  type ReturnHistory{
+  type OrderItemTypeConnection{
     pageInfo:PageInfo
-    edges:[nodeHistory]
+    edges:[OrderItemTypeEdge]
   }
-  type ReturnOrder{
-    order:Order
+  type OrderItemTypeEdge{
+    node:OrderItemType
+    cursor:String
+  }
+  type OrderToppingTypeConnection{
+    pageInfo:PageInfo
+    edges:[OrderToppingTypeEdge]
+  }
+  type OrderToppingTypeEdge{
+    node:OrderToppingType
     cursor:String
   }
   type PageInfo {
@@ -172,6 +196,10 @@ input UpTopping{
     hasPreviousPage: Boolean!
     startCursor: String
     endCursor: String
+  }
+  
+  type AddCart{
+    order:OrderType
   }
  
   # ここに書いたオブジェクトたちをqueryで持ってくることができる
@@ -183,8 +211,8 @@ input UpTopping{
         first: Int
         last: Int
         name_Icontains: String
-    ): ReturnToppings
-    item(id: ID):Item
+    ): ToppingTypeConnection
+    item(id: ID):ItemType
     items(
         offset: Int
         before: String
@@ -193,8 +221,8 @@ input UpTopping{
         last: Int
         name_Icontains: String
         orderBy: String
-    ):ReturnItems
-    cart: Order
+    ): ItemTypeConnection
+    cart: OrderType
     orderHistory(
         offset: Int
         before: String
@@ -202,33 +230,18 @@ input UpTopping{
         first: Int
         last: Int
         name_Icontains: String
-    ):ReturnHistory
+    ): OrderHistoryTypeConnection
   }
   
   type Mutation{
-     postUser(userInfo: UserInfo!): User
-     updateOrderInfo(orderInfo: OrderInfo!): Order
-     update(
-        id: Int!
-        name: String
-        email: String
-    ): [User]
-    updateOrderItem(
-        orderItemInput: OrderItemInput!
-        status: Int
-        totalPrice: TotalPrice
-    ):Order
-    deleteOrderItem(
-        deleteOrderItemId: DeleteOrderItemId!
-    ):Order
-    addCart(orderItem:UpOrderItem!,status:Int,totalPrice:Int!):ReturnOrder
+     addCart(orderItem:OrderItemInput!,status:Int,totalPrice:Int!): AddCart
   }
 `;
 
 // 初期値として入れておきたい値を設定してください
 const items = [
     {
-        deleted: 0,
+        deleted: false,
         description: "ホクホクのポテトと旨味が凝縮されたベーコンを特製マヨソースで味わって頂く商品です。バター風味豊かなキューブチーズが食材の味を一層引き立てます。",
         id: "SXRlbVR5cGU6MTQ=",
         imagePath: "http://34.84.118.239/static/img/item/1.jpg",
@@ -239,7 +252,7 @@ const items = [
     {
         deleted: 0,
         description: "グリーンアスパラと相性の良いベーコンにいろどりのフレッシュトマトをトッピングし特製マヨソースでまとめた商品です",
-        id: 2,
+        id: "SXRlbVR5cGU6Mg==",
         imagePath: "http://34.84.118.239/static/img/item/2.jpg",
         name: "アスパラ・ミート",
         priceL: 2570,
@@ -248,7 +261,7 @@ const items = [
     {
         deleted: 0,
         description: "マッシュルームと熟成ベーコンにブラックペッパーをトッピングしたシンプルなピザ！",
-        id: 3,
+        id: "SXRlbVR5cGU6Mw==",
         imagePath: "http://34.84.118.239/static/img/item/3.jpg",
         name: "熟成ベーコンとマッシュルーム",
         priceL: 2570,
@@ -257,7 +270,7 @@ const items = [
     {
         deleted: 0,
         description: "マイルドな味付けのカレーに大きくカットしたポテトをのせた、バターとチーズの風味が食欲をそそるお子様でも楽しめる商品です",
-        id: 4,
+        id: "SXRlbVR5cGU6NA==",
         imagePath: "http://34.84.118.239/static/img/item/4.jpg",
         name: "カレーじゃがバター",
         priceL: 2980,
@@ -266,7 +279,7 @@ const items = [
     {
         deleted: 0,
         description: "大きくカットしたポテトにコーンとベーコンをトッピングして、明太クリームソース、バター、チーズを合わせた、家族で楽しめるピザです",
-        id: 5,
+        id: "SXRlbVR5cGU6NQ==",
         imagePath: "http://34.84.118.239/static/img/item/5.jpg",
         name: "明太バターチーズ",
         priceL: 2980,
@@ -275,7 +288,7 @@ const items = [
     {
         deleted: 0,
         description: "「デラックス」、「ミート・シュプリーム」、「ツナマイルド」、「ガーリック・トマト」の組み合わせ。「チャリティー4」1枚のご注文につき、世界の飢餓救済に",
-        id: 8,
+        id: "SXRlbVR5cGU6OA==",
         imagePath: "http://34.84.118.239/static/img/item/8.jpg",
         name: "Charity4",
         priceL: 3380,
@@ -284,7 +297,7 @@ const items = [
     {
         deleted: 0,
         description: "あらびきスライスソーセージとイタリアンソーセージの2種類のソーセージを、トマトソースと特製マヨソースの2種類のソースで召し上がって頂く商品です",
-        id: 13,
+        id: "SXRlbVR5cGU6MTM=",
         imagePath: "http://34.84.118.239/static/img/item/13.jpg",
         name: "めちゃマヨミート",
         priceL: 3380,
@@ -293,7 +306,7 @@ const items = [
     {
         deleted: 0,
         description: "「めちゃマヨ・ミート」「ガーリック・トマト」「えびマヨコーン」、「フレッシュモッツァレラのマルゲリータ」が一つになった4種のピザ",
-        id: 12,
+        id: "SXRlbVR5cGU6MTI=",
         imagePath: "http://34.84.118.239/static/img/item/12.jpg",
         name: "バラエティー４",
         priceL: 3380,
@@ -302,7 +315,7 @@ const items = [
     {
         deleted: 0,
         description: "ピザの王道！トマトとフレッシュモッツァレラが絶妙です",
-        id: 10,
+        id: "SXRlbVR5cGU6MTA=",
         imagePath: "http://34.84.118.239/static/img/item/10.jpg",
         name: "フレッシュモッツァレラ",
         priceL: 3380,
@@ -403,12 +416,12 @@ const cart = {
         }
     ]
 }
-const history=[
+const history = [
     cart,
     cart,
     cart
 ]
-const users=[]
+const users = []
 
 // GraphQL の operation（query や mutation や subscription）が、実際にどのような処理を行なってデータを返すのかという指示書
 const resolvers = {
@@ -435,7 +448,7 @@ const resolvers = {
             })
             return {'edges': edges}
         },
-        orderHistory:(p,args)=>{
+        orderHistory: (p, args) => {
             let edges = []
             history.forEach((i) => {
                 edges.push({'node': i})
@@ -444,7 +457,7 @@ const resolvers = {
         }
     },
     Mutation: {
-        postUser(parent, args, context, info) {
+        /*postUser(parent, args, context, info) {
             //引数に渡されたデータを確認
             console.log(args)
             const user = {
@@ -488,10 +501,11 @@ const resolvers = {
             cart.destinationTel = args.orderInfo.destinationTel
             cart.totalPrice = args.orderInfo.totalPrice
             return cart
-        },
+        },*/
         addCart(parent, args) {
             cart.orderItems.push(args.orderItem);
             cart.totalPrice += args.totalPrice;
+            console.log(cart)
             //throw new Error()
             return {order: cart}
         }

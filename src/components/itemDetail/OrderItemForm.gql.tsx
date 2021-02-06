@@ -4,7 +4,7 @@ import OrderItemEntryGQL, {itemEntryStateGQL} from "~/components/elements/orderI
 import ItemPrice from "~/components/itemDetail/ItemPrice";
 import {makeStyles} from "@material-ui/core/styles";
 import {THEME_COLOR_2} from "~/assets/color";
-import {Item, Topping} from "~/generated/graphql";
+import {ItemType as Item, ToppingType as Topping} from "~/generated/graphql";
 
 type propsType = {
     item: Item | null,
