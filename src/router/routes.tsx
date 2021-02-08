@@ -3,10 +3,10 @@ import {Redirect, Switch} from 'react-router-dom';
 import GuardedRoute from "~/router/guardedRoute";
 import LoginGuardedRoute from "~/router/LoginGuardedRoute";
 
-import itemList from '../components/itemList';
+import ItemListGQL from "~/components/itemList/index.gql";
 import cart from '../components/cart';
-import history from '../components/history';
-import itemDetailGQL from '../components/itemDetail/index.gql';
+import HistoryGQL from "~/components/history/index.gql";
+import ItemDetail from "~/components/itemDetail";
 import login from '../components/login';
 import orderComplete from '../components/orderComplete';
 import orderConfirm from '../components/orderConfirm';
@@ -25,10 +25,10 @@ export const Path = {
 
 const routes = (
     <Switch>
-        <GuardedRoute exact path={Path.itemList} component={itemList}/>
+        <GuardedRoute exact path={Path.itemList} component={ItemListGQL}/>
         <GuardedRoute exact path={Path.cart} component={cart}/>
-        <GuardedRoute exact path={Path.history} component={history}/>
-        <GuardedRoute exact path={Path.itemDetail} component={itemDetailGQL}/>
+        <GuardedRoute exact path={Path.history} component={HistoryGQL}/>
+        <GuardedRoute exact path={Path.itemDetail} component={ItemDetail}/>
         <LoginGuardedRoute exact path={Path.login} component={login}/>
         <GuardedRoute exact path={Path.orderComplete} component={orderComplete}/>
         <GuardedRoute exact path={Path.orderConfirm} component={orderConfirm}/>
