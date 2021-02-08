@@ -1,19 +1,16 @@
 import React, {useEffect, useState} from "react";
 import {useLocation} from "react-router-dom";
 
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "~/store";
-import {fetchItems, selectItemCount, selectItems} from "~/store/slices/Domain/item.slice";
-import {setError} from "~/store/slices/App/error.slice";
-
-import SearchArea from "~/components/itemList/SearchArea";
-import OptionForm from "~/components/itemList/OptionForm";
-import ItemCard from "~/components/itemList/ItemCard";
+import ItemCardGQL from "~/components/itemList/ItemCard.gql";
+import SearchAreaGQL from "~/components/itemList/SearchArea.gql";
+import OptionFormGQL from "~/components/itemList/OptionForm.gql";
 
 import {Button, Grid, LinearProgress, makeStyles, Paper, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
 
 import {animateScroll as scroll} from 'react-scroll';
+
+import {useFetchItemsQuery, useFetchItemsTotalCountQuery} from '~/generated/graphql';
 
 const useStyles = makeStyles((theme) => ({
     itemCard: {
@@ -39,95 +36,80 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const ItemList: React.FC = () => {
+const ItemListGQL: React.FC = () => {
 
-    const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
     const location = useLocation<{ judge: boolean }>();
 
     // 表示件数
     const displayItems = [
         {
-            value: 9,
+            value: '9',
             label: '9件'
         },
         {
-            value: 18,
+            value: '18',
             label: '18件'
         }
     ];
 
-    // storeからstateの取得
-    const items = useSelector(selectItems);
-    const itemCount = useSelector(selectItemCount);
-
-    // コンポーネント上のstate
-    const [displayCount, setDisplayCount] = useState(displayItems[0].value);   // 表示件数
+    const [displayCount, setDisplayCount] = useState(Number(displayItems[0].value));   // 表示件数
     const [pageCount, setPageCount] = useState(0);   // 総ページ数
     const [page, setPage] = useState(1);   // 現在のページ
-    const [sortId, setSortId] = useState(0);   // 並び順
+    const [sort, setSort] = useState('price_m');   // 並び順
     const [itemName, setItemName] = useState('');   // 検索ワード
-    const [isLoading, setIsLoading] = useState(false); // loading
+    const [searchArg, setSearchArg] = useState<{ itemName: string, sort: string }>({
+        itemName: '',
+        sort: 'price_m'
+    })
 
-    useEffect(() => {
-        dispatch(fetchItems({itemName: '', sortId: 0}))
-            .catch((e) => {
-                dispatch(setError({isError: true, code: e.message}));
-            });
-    }, [dispatch]);
-
-    useEffect(() => {
-        setIsLoading(true);
-        let timerId: NodeJS.Timeout;
-        const loading = async () => {
-            timerId = setTimeout(() => {
-                setIsLoading(false);
-            }, 500)
+    const {data: itemsData, loading: isLoadItemsData} = useFetchItemsQuery({
+        variables: {
+            itemName: searchArg.itemName,
+            sort: searchArg.sort
         }
-        loading().then(() => {
-            // 総ページ数の算出
-            let totalPageCount;
-            if (items) {
-                if (items.length % displayCount === 0) {
-                    totalPageCount = items.length / displayCount;
-                } else {
-                    totalPageCount = Math.floor((items.length / displayCount) + 1);
-                }
-                setPageCount(totalPageCount);
-                setPage(1);
+    })
+    const {data: totalCountData} = useFetchItemsTotalCountQuery();
+
+
+    useEffect(() => {
+        // 総ページ数の算出
+        let totalPageCount;
+        let length: number | undefined;
+        length = itemsData?.items?.edges.length;
+
+        if (length) {
+            if (length % displayCount === 0) {
+                totalPageCount = length / displayCount;
+            } else {
+                totalPageCount = Math.floor((length / displayCount) + 1);
             }
-        });
-
-        return () => {
-            clearTimeout(timerId);
+            setPageCount(totalPageCount);
+            setPage(1);
         }
-    }, [items, displayCount]);
+    }, [itemsData, displayCount]);
 
     // methods
     /**
      * 商品検索を行う.
      **/
     const search = () => {
-        setIsLoading(true);
-        dispatch(fetchItems({itemName: itemName, sortId: sortId}))
-            .catch((e) => {
-                dispatch(setError({isError: true, code: e.message}));
-            });
+        setSearchArg({
+            itemName: itemName,
+            sort: sort
+        })
     };
 
     /**
      * 商品一覧を全件表示に戻し、検索フォームをリセットする.
      **/
     const showAll = () => {
-        setIsLoading(true);
-        dispatch(fetchItems({itemName: '', sortId: 0}))
-            .then(() => {
-                setSortId(0);
-                setItemName('');
-            })
-            .catch((e) => {
-                dispatch(setError({isError: true, code: e.message}));
-            });
+        setItemName('');
+        setSort('price_m');
+        setSearchArg({
+            itemName: '',
+            sort: 'price_m'
+        })
     };
 
     // Headerのロゴ、商品一覧ボタンを押した際に走る処理
@@ -148,10 +130,10 @@ const ItemList: React.FC = () => {
                     <Paper variant={"outlined"} elevation={0} color={'#FFFFFF'} className={classes.paper}>
                         <Grid container justify={"center"} alignItems={"center"}>
                             <Grid item xs={12}>
-                                <SearchArea itemName={itemName} sortId={sortId} handleItemNameChange={(itemName) => {
+                                <SearchAreaGQL itemName={itemName} sort={sort} handleItemNameChange={(itemName) => {
                                     setItemName(itemName)
-                                }} handleSortIdChange={(sortId) => {
-                                    setSortId(sortId)
+                                }} handleSortIdChange={(sort) => {
+                                    setSort(sort)
                                 }} handleSearch={search}/>
                             </Grid>
                         </Grid>
@@ -161,16 +143,16 @@ const ItemList: React.FC = () => {
                 {/*表示件数切り替え*/}
                 <Grid item xs={2}>
                     <Grid container justify={"center"} alignItems={"center"}>
-                        <OptionForm label={'表示件数'} value={displayCount} optionItems={displayItems}
-                                    handleChange={(val) => {
-                                        setDisplayCount(val);
-                                    }}/>
+                        <OptionFormGQL label={'表示件数'} value={String(displayCount)} optionItems={displayItems}
+                                       handleChange={(val) => {
+                                           setDisplayCount(Number(val));
+                                       }}/>
                     </Grid>
                 </Grid>
             </Grid>
 
             {/*商品一覧*/}
-            {isLoading ? (
+            {isLoadItemsData ? (
                 <Grid container justify={"center"} alignItems={"center"}>
                     <Grid item xs={7}>
                         <LinearProgress style={{margin: '10%'}}/>
@@ -180,7 +162,7 @@ const ItemList: React.FC = () => {
                 <Grid container justify={"center"} alignItems={"center"}>
                     <Grid item xs={10}>
                         <Grid container justify={"center"} alignItems={"center"}>
-                            {itemCount && itemCount !== items?.length && (
+                            {totalCountData && totalCountData.items && totalCountData.items.totalCount !== itemsData?.items?.edges.length && (
                                 // 一覧表示数と全商品数が一致しない場合に表示
                                 <Grid container justify={"center"} alignItems={"center"}>
                                     <Button color={"default"} variant={"outlined"} onClick={showAll}
@@ -190,14 +172,15 @@ const ItemList: React.FC = () => {
                                 </Grid>
                             )}
 
-                            {items && items.slice(displayCount * (page - 1), displayCount * page).map((item) => (
+                            {itemsData && itemsData.items!.edges.slice(displayCount * (page - 1), displayCount * page).map(item =>
                                 // 商品一覧を表示
-                                <Grid key={item.id} item xs={3} className={classes.itemCard} role={`item${item.id}`}>
-                                    <ItemCard item={item}/>
+                                <Grid key={item!.node!.id!} item xs={3} className={classes.itemCard}
+                                      role={`item${item!.node!.id}`}>
+                                    <ItemCardGQL item={item!.node!}/>
                                 </Grid>
-                            ))}
+                            )}
 
-                            {items && items.length === 0 && (
+                            {itemsData && itemsData.items!.edges.length === 0 && (
                                 // 検索結果が0件の場合に表示
                                 <Typography className={classes.search0}>
                                     検索された商品は存在しません。
@@ -209,7 +192,7 @@ const ItemList: React.FC = () => {
             )}
 
             {/*Pagination*/}
-            {!isLoading && items && items.length !== 0 && (
+            {!isLoadItemsData && itemsData && itemsData.items!.edges.length !== 0 && (
                 <div>
                     <Grid container justify={"center"} alignItems={"center"}>
                         <Pagination count={pageCount} page={page} onChange={(e, val) => {
@@ -222,8 +205,9 @@ const ItemList: React.FC = () => {
                     </Grid>
                 </div>
             )}
+
         </div>
     );
 };
 
-export default ItemList;
+export default ItemListGQL;

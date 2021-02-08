@@ -59,7 +59,7 @@ const App: React.FC<RouteComponentProps> = () => {
     const client = new ApolloClient({
         cache: new InMemoryCache(),
         link: new HttpLink({
-            uri: "http://localhost:4000/",
+            uri: "http://34.84.118.239/django_ql/",
             headers: {
                 Authorization: localStorage.getItem("Authorization")
             },

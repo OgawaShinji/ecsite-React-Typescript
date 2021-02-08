@@ -2,15 +2,15 @@ import React from "react";
 import {FormControl, Select, InputLabel, makeStyles, MenuItem} from "@material-ui/core";
 
 type OptionItem = {
-    value: number;
+    value: string;
     label: string;
 };
 
 type Props = {
     label: string;
-    value: number;
+    value: string;
     optionItems: Array<OptionItem>;
-    handleChange: (value: number) => void;
+    handleChange: (value: string) => void;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const OptionForm: React.FC<Props> = props => {
+const OptionFormGQL: React.FC<Props> = props => {
 
     const classes = useStyles();
 
@@ -37,7 +37,7 @@ const OptionForm: React.FC<Props> = props => {
                 id="select-form"
                 value={props.value}
                 onChange={(e) => {
-                    props.handleChange(Number(e.target.value))
+                    props.handleChange(String(e.target.value))
                 }}
                 label={props.label}
             >
@@ -47,4 +47,4 @@ const OptionForm: React.FC<Props> = props => {
     );
 };
 
-export default OptionForm;
+export default OptionFormGQL;

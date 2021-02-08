@@ -1,5 +1,5 @@
 overwrite: true
-schema: "http://localhost:4000/"
+schema: "http://34.84.118.239/django_ql/"
 documents: "query.graphql.ts"
 generates:
   src/generated/graphql.ts:

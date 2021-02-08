@@ -120,16 +120,13 @@ export const itemSlice = createSlice({
         })
 
         //fetchItemDetail
-        builder.addCase(fetchItemDetail.fulfilled, (state, action) => {
-            itemSlice.caseReducers.setItemDetail(state, itemSlice.actions.setItemDetail(action.payload))
-        })
         builder.addCase(fetchItemDetail.rejected, (state, action) => {
             throw new Error(action.error.message);
         })
     })
 })
 
-export const {setItemDetail} = itemSlice.actions;
+export const {setItems, setItemNamesAndItemCount, setItemDetail} = itemSlice.actions;
 
 export const selectItems = (state: RootState) => state.item.items;
 export const selectItemNames = (state: RootState) => state.item.itemNames;

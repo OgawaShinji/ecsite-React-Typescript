@@ -45,8 +45,8 @@ const useStyles = makeStyles(() =>
         },
         title: {
             fontWeight: 'bold',
-            fontFamily:  'Gabriola',
-            fontSize: 45,
+            fontFamily: 'Arial Black',
+            fontSize: 40,
             flexGrow: 1,
             color: 'white',
             cursor: 'pointer'

@@ -3,8 +3,8 @@ import React, {useState} from "react";
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import ItemPrice from "~/components/itemDetail/ItemPrice";
 import {makeStyles} from "@material-ui/core/styles";
+import {Item, Topping} from "~/types/interfaces";
 import {THEME_COLOR_2} from "~/assets/color";
-import {Item, Topping} from "~/generated/graphql";
 
 type propsType = {
     item: Item | null,
@@ -33,7 +33,7 @@ const OrderItemForm: React.FC<propsType> = (props) => {
         if ((newToppings ? newToppings : selectedToppings).length !== 0) (newToppings ? newToppings : selectedToppings).map(
             (t) => newTotalPrice += (selectedSize ? selectedSize : size) === 'M' ? t.priceM! : t.priceL!
         )
-        newTotalPrice += ((selectedSize ? selectedSize : size) === 'M' ? item!.priceM! : item!.priceL!)
+        newTotalPrice += ((selectedSize ? selectedSize : size) === 'M' ? item!.priceM : item!.priceL)
         setTotalPrice(newTotalPrice * (selectedQuantity ? selectedQuantity : quantity));
     }
     /**

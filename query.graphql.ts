@@ -1,63 +1,30 @@
 import gql from "graphql-tag";
-
+//本番環境用query
 // ============================ order  ====================================================================
 
-gql(`query fetchOrderItems {
-  cart {
-    orderItems {
-      ...OrderItemFrag
-      quantity
-      size
-      subTotalPrice
+
+// ============================= topping ====================================================================
+
+gql(`
+    query fetchToppings {
+      toppings {
+        edges {
+          node {
+            id
+            name
+            priceM
+            priceL
+          }
+        }
+      }
     }
-    totalPrice
-  }
-}
-fragment OrderItemFrag on OrderItem {     
-        id
-        item{
-          ...ItemFrag
-        }
-        orderToppings{
-          ...OrderToppingFrag
-        }
-        quantity
-        size
-        subTotalPrice 
-}
-fragment ItemFrag on Item {
-  id
-  name
-  description
-  priceM
-  priceL
-  imagePath
-  deleted
-}
-
-fragment OrderToppingFrag on OrderTopping {
-  id
-  topping{
-    ...ToppingFrag
-  }
-}
-
-fragment ToppingFrag on Topping {
-  id
-  name
-  priceM
-  priceL
-}
 `)
-gql(`mutation updateOrderItem($orderItemInput: OrderItemInput!,$totalPrice:TotalPrice) {
-   updateOrderItem(
-    orderItemInput: $orderItemInput
-    status: 0
-    totalPrice:$totalPrice
-  ){
-    orderItems {
-      id
-      item {
+
+// ============================= item ====================================================================
+
+gql(`
+    query fetchItem($id: ID!){
+      item(id: $id){
         id
         name
         description
@@ -66,170 +33,120 @@ gql(`mutation updateOrderItem($orderItemInput: OrderItemInput!,$totalPrice:Total
         imagePath
         deleted
       }
-      orderToppings {
-        id
-        topping {
-          id
-          name
-          priceM
-          priceL
-        }
-      }
-      quantity
-      size
-      subTotalPrice
     }
-  }
-}`)
-gql(`mutation deleteOrderItem($deleteOrderItemId: DeleteOrderItemId!) {
-   deleteOrderItem(
-    deleteOrderItemId:$deleteOrderItemId
-  ){
-    orderItems {
-      id
-      item {
-        id
-        name
-        description
-        priceM
-        priceL
-        imagePath
-        deleted
-      }
-      orderToppings {
-        id
-        topping {
-          id
-          name
-          priceM
-          priceL
-        }
-      }
-      quantity
-      size
-      subTotalPrice
-    }
-  }
-}`)
-const postOrder = gql(`mutation updateOrder($orderInfo: OrderInfo!) {
-    updateOrderInfo(orderInfo: $orderInfo ){
-    status
-    orderDate
-    destinationName
-    destinationEmail
-    destinationZipcode
-    destinationAddress
-    destinationTel
-    deliveryTime
-    totalPrice
-    paymentMethod
-  }
-}
 `)
-const fetchOrder = gql(` query fetchOrder{
-  cart{
-    id
-    status
-    orderDate
-    deliveryTime
-    destinationName
-    destinationEmail
-    destinationZipcode
-    destinationAddress
-    destinationTel
-    totalPrice
-    paymentMethod
-    orderItems{
-      id
-      item{
-        name
-        description
-        priceM
-      }
-      orderToppings{
-        id
-        topping{
-          id
-          name
-          priceM
+
+gql(`
+    query fetchItems($sort: String, $itemName: String) {
+      items(name_Icontains: $itemName, orderBy: $sort) {
+        edges {
+          node {
+            id
+            name
+            description
+            imagePath
+            priceM
+            priceL
+            deleted
+          }
         }
       }
-      quantity
-      size
     }
-  }
-}
 `)
-gql(`mutation addCart($orderItem:UpOrderItem!,$totalPrice:Int!){
-  addCart(orderItem:$orderItem,status:0,totalPrice:$totalPrice){
-    order{
-      orderItems{
-        item{
-          name
-        }
-        orderToppings{
-          topping{
+
+gql(`
+    query fetchItemNames {
+      items {
+        edges {
+          node {
             name
           }
         }
       }
-      status
-      totalPrice
-    }  
-  }
-}`)
+    }
+`)
 
-// ============================= topping ====================================================================
-
-gql(`query fetchToppings{
-  toppings{
-    id
-    name
-    priceM
-    priceL
-  }
-}`)
-
-// ============================= item ====================================================================
-
-gql(`query fetchItem($id:Int){
-  item(id:$id){
-    id
-    name
-    description
-    priceM
-    priceL
-    imagePath
-    deleted
-  }
-}`)
+gql(`
+    query fetchItemsTotalCount {
+      items {
+        totalCount
+      }
+    }
+`)
 
 // ============================ user ============================================================================
 
-const postRegister = gql(`mutation postRegister($userInfo: UserInfo!) {
-   postUser(userInfo: $userInfo){
-    id
-    name
-    email
-    zipcode
-    address
-    telephone
-    status
-    password
-  }
-}
-`)
-
-const fetchUser = gql(`query listUser {
-   users {
-    id
-    name
-    email
-    zipcode
-    address
-    telephone
-    status
-    password
-  }
-}
+gql(`
+    query fetchOrderHistory($limit: Int, $offset: Int) {
+      orderHistory(first: $limit, offset: $offset, orderBy: "-orderDate,-id") {
+        pageInfo{
+          hasPreviousPage
+          hasNextPage
+          startCursor
+          endCursor
+        }
+        edges {
+          node {
+            id
+            totalPrice
+            orderDate
+            destinationName
+            destinationEmail
+            destinationZipcode
+            destinationAddress
+            destinationTel
+            deliveryTime
+            paymentMethod
+            status
+            orderItems{
+              pageInfo{
+                hasPreviousPage
+                hasNextPage
+                startCursor
+                endCursor
+              }
+              edges{
+                node{
+                  id
+                  item{
+                    id
+                    name
+                    description
+                    imagePath
+                    priceM
+                    priceL
+                    deleted
+                  }
+                  orderToppings{
+                    pageInfo{
+                      hasPreviousPage
+                      hasNextPage
+                      startCursor
+                      endCursor
+                    }
+                    edges{
+                      node{
+                        id
+                        topping{
+                          id
+                          name
+                          priceM
+                          priceL
+                        }
+                      }
+                      cursor
+                    }
+                  }
+                  quantity
+                  size
+                  subTotalPrice
+                }
+                cursor
+              }
+            }
+          }
+          cursor
+        }
+      }
+    }
 `)

@@ -1,22 +1,25 @@
 import React, {useEffect, useState} from "react";
 
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "~/store";
-import {
-    fetchOrderHistory,
-    fetchOrderHistoryTotalCount,
-    selectOrderHistory,
-    selectOrderHistoryTotalCount
-} from "~/store/slices/Domain/history.slice";
-import {setError} from '~/store/slices/App/error.slice';
-
-import OrderInfo from "~/components/history/OrderInfo";
-import OrderHistoryDialog from "~/components/history/OrderHistoryDialog";
+import OrderInfoGQL from "~/components/history/OrderInfo.gql";
+import OrderHistoryDialogGQL from "~/components/history/OrderHistoryDialog.gql";
 
 import {Divider, Grid, LinearProgress, List, ListItem, makeStyles, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
 
-import {OrderItem} from "~/types/interfaces";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch} from "~/store";
+import {
+    fetchOrderHistoryTotalCount,
+    selectOrderHistoryTotalCount
+} from "~/store/slices/Domain/history.slice";
+import {setError} from '~/store/slices/App/error.slice';
+
+import {
+    OrderItemType,
+    OrderItemTypeEdge,
+    useFetchOrderHistoryQuery
+} from "~/generated/graphql";
+
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -32,37 +35,41 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const History: React.FC = () => {
+const HistoryGQL: React.FC = () => {
 
     const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
 
     // storeからstateを取得
-    const orders = useSelector(selectOrderHistory);
     const ordersTotalCount = useSelector(selectOrderHistoryTotalCount);
 
     // コンポ―ネント上で管理するstate
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(1);
     const [isOpen, setIsOpen] = useState(false);
-    const [orderItems, setOrderItems] = useState<Array<OrderItem>>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [orderItems, setOrderItems] = useState<Array<OrderItemType>>([]);
+    const [offset, setOffset] = useState(0);
+
+    const {data: orderHistoryData, loading: isLoadOrderHistoryData} = useFetchOrderHistoryQuery({
+        variables: {
+            limit: 5,
+            offset: offset
+        }
+    });
 
     useEffect(() => {
-        setIsLoading(true);
-        dispatch(fetchOrderHistory({displayCount: 5, pageNum: page}))
-            .catch((e) => {
-                dispatch(setError({isError: true, code: e.message}));
-            });
-
         dispatch(fetchOrderHistoryTotalCount())
             .catch((e) => {
                 dispatch(setError({isError: true, code: e.message}));
             });
-    }, [page, dispatch]);
+    }, [dispatch]);
 
     useEffect(() => {
-        setIsLoading(true);
+        setOffset((page - 1) * 5);
+    }, [page])
+
+    useEffect(() => {
+        //setIsLoading(true);
         if (ordersTotalCount) {
             // 注文履歴が存在する場合
             let totalPageCount;
@@ -77,28 +84,23 @@ const History: React.FC = () => {
         }
     }, [ordersTotalCount]);
 
-    useEffect(() => {
-        setIsLoading(true);
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 500)
-    }, [orders])
 
     // 注文情報一覧のJSXを作成
-    const orderInfoList = orders.map((order, index) => {
+    const orderInfoList = orderHistoryData?.orderHistory?.edges.map((order, index) => {
         const listItem = (
             <ListItem button onClick={() => {
                 setIsOpen(true);
-                if (order.orderItems) {
-                    setOrderItems(order.orderItems);
+                if (order!.node!.orderItems!.edges) {
+                    let orderItems: Array<OrderItemType> = order!.node!.orderItems.edges.map((orderItem: OrderItemTypeEdge | null) => orderItem!.node!)
+                    setOrderItems(orderItems);
                 }
             }}>
-                <OrderInfo order={order}/>
+                <OrderInfoGQL order={order!.node!}/>
             </ListItem>
         );
 
         //  最後のListItem以外には<Divider/>を表示する
-        if (index !== orders.length - 1) {
+        if (orderHistoryData.orderHistory && index !== orderHistoryData.orderHistory.edges!.length - 1) {
             return (
                 <div key={index}>
                     {listItem}
@@ -125,7 +127,7 @@ const History: React.FC = () => {
                 </Grid>
             </Grid>
 
-            {isLoading ? (
+            {isLoadOrderHistoryData ? (
                 // Loading
                 <Grid container justify={"center"} alignItems={"center"}>
                     <Grid item xs={7}>
@@ -144,7 +146,7 @@ const History: React.FC = () => {
             )}
 
             {/*注文履歴が存在しない場合*/}
-            {!isLoading && ordersTotalCount !== null && ordersTotalCount === 0 && (
+            {!isLoadOrderHistoryData && ordersTotalCount !== null && ordersTotalCount === 0 && (
                 <Grid container justify={"center"} alignItems={"center"}>
                     <Grid item>
                         <Typography className={classes.text}>
@@ -164,11 +166,11 @@ const History: React.FC = () => {
             )}
 
             {/*Dialog*/}
-            <OrderHistoryDialog handleClose={() => {
+            <OrderHistoryDialogGQL handleClose={() => {
                 setIsOpen(false)
             }} isOpen={isOpen} orderItems={orderItems}/>
         </>
     );
 };
 
-export default History;
+export default HistoryGQL;
