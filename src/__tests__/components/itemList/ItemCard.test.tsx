@@ -2,11 +2,12 @@ import React from "react";
 import {render, screen, cleanup, act} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import ItemCard from "~/components/itemList/ItemCard";
-import {Item} from "~/types/interfaces";
 import {configureStore} from "@reduxjs/toolkit";
 import {itemSlice} from "~/store/slices/Domain/item.slice";
 import {Provider} from "react-redux";
+
+import ItemCard from "~/components/itemList/ItemCard";
+import {Item} from "~/types/interfaces";
 
 
 type methodStatusType = {
