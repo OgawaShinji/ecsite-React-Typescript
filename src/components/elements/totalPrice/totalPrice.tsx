@@ -19,7 +19,7 @@ const TotalPrice: React.FC<Props> = props => {
 
     const classes = useStyles();
 
-    const [subTotalPrice, setSubTotalPrice] = useState(0)
+    const [subTotalPrice, setSubTotalPrice] = useState(props.subTotalPrice)
     const [consumptionTax, setConsumptionTax] = useState(0);
     const [billedAmount, setBilledAmount] = useState(0);
 
@@ -28,8 +28,8 @@ const TotalPrice: React.FC<Props> = props => {
 
     useEffect(() => {
         setSubTotalPrice(props.subTotalPrice);
-        setConsumptionTax(consumptionTax => tax);
-        setBilledAmount(billedAmount => totalPrice);
+        setConsumptionTax(tax);
+        setBilledAmount(totalPrice);
     }, [props.subTotalPrice, tax, totalPrice])
 
     return (
