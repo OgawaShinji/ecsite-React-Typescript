@@ -1,5 +1,5 @@
 import {act, cleanup, render, screen} from "@testing-library/react";
-import ShippingDialog from "~/components/orderConfirm/shippingDialog";
+import ShippingDialog from "~/components/orderConfirm/ShippingDialog";
 import {User} from "~/types/interfaces";
 import userEvent from "@testing-library/user-event";
 import React from "react";
