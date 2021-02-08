@@ -36,7 +36,7 @@ const OrderInfoGQL: React.FC<Props> = props => {
     const orderItemCount = props.order.orderItems?.edges.length;
 
     // 注文商品一枚目の画像URL
-    const imagePath1: string = props.order.orderItems?.edges && props.order.orderItems.edges[0]!.node!.item.imagePath!;
+    const imagePath1: string = props.order.orderItems?.edges && props.order.orderItems.edges[0]!.node!.item!.imagePath!;
 
     /**
      * [status]
