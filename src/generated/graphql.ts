@@ -79,7 +79,7 @@ export type OrderType = {
   destinationZipcode?: Maybe<Scalars['String']>;
   destinationAddress?: Maybe<Scalars['String']>;
   destinationTel?: Maybe<Scalars['String']>;
-  paymentMethod?: Maybe<Scalars['String']>;
+  paymentMethod?: Maybe<Scalars['Int']>;
   totalPrice?: Maybe<Scalars['Int']>;
   orderItems?: Maybe<OrderItemTypeConnection>;
 };
@@ -222,6 +222,16 @@ export type AddCart = {
   order?: Maybe<OrderType>;
 };
 
+export type UpdateCart = {
+  __typename?: 'UpdateCart';
+  order?: Maybe<OrderType>;
+};
+
+export type DeleteCart = {
+  __typename?: 'DeleteCart';
+  order?: Maybe<OrderType>;
+};
+
 export type Query = {
   __typename?: 'Query';
   toppings?: Maybe<ToppingTypeConnection>;
@@ -270,6 +280,8 @@ export type QueryOrderHistoryArgs = {
 export type Mutation = {
   __typename?: 'Mutation';
   addCart?: Maybe<AddCart>;
+  updateCart?: Maybe<UpdateCart>;
+  deleteCart?: Maybe<DeleteCart>;
 };
 
 
@@ -279,11 +291,60 @@ export type MutationAddCartArgs = {
   totalPrice: Scalars['Int'];
 };
 
+export type MutationUpdateCartArgs = {
+  orderItems: Array<Maybe<OrderItemInput>>;
+  status: Scalars['Int'];
+  totalPrice: Scalars['Int'];
+};
+
+
+export type MutationDeleteCartArgs = {
+  orderItemId: Scalars['ID'];
+};
+
 export enum CacheControlScope {
   Public = 'PUBLIC',
   Private = 'PRIVATE'
 }
 
+
+export type FetchOrderItemsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchOrderItemsQuery = (
+  { __typename?: 'Query' }
+  & { cart?: Maybe<(
+    { __typename?: 'OrderType' }
+    & Pick<OrderType, 'totalPrice'>
+    & { orderItems?: Maybe<(
+      { __typename?: 'OrderItemTypeConnection' }
+      & { edges?: Maybe<Array<Maybe<(
+        { __typename?: 'OrderItemTypeEdge' }
+        & { node?: Maybe<(
+          { __typename?: 'OrderItemType' }
+          & Pick<OrderItemType, 'id' | 'size' | 'quantity' | 'subTotalPrice'>
+          & { item?: Maybe<(
+            { __typename?: 'ItemType' }
+            & Pick<ItemType, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
+          )>, orderToppings?: Maybe<(
+            { __typename?: 'OrderToppingTypeConnection' }
+            & { edges?: Maybe<Array<Maybe<(
+              { __typename?: 'OrderToppingTypeEdge' }
+              & { node?: Maybe<(
+                { __typename?: 'OrderToppingType' }
+                & Pick<OrderToppingType, 'id'>
+                & { topping?: Maybe<(
+                  { __typename?: 'ToppingType' }
+                  & Pick<ToppingType, 'id' | 'name' | 'priceM' | 'priceL'>
+                )> }
+              )> }
+            )>>> }
+          )> }
+        )> }
+      )>>> }
+    )> }
+  )> }
+);
 
 export type AddCartMutationVariables = Exact<{
   orderItem: OrderItemInput;
@@ -328,6 +389,93 @@ export type AddCartMutation = (
   )> }
 );
 
+export type UpdateCartMutationVariables = Exact<{
+  orderItems: Array<Maybe<OrderItemInput>> | Maybe<OrderItemInput>;
+  totalPrice: Scalars['Int'];
+}>;
+
+
+export type UpdateCartMutation = (
+  { __typename?: 'Mutation' }
+  & { updateCart?: Maybe<(
+    { __typename?: 'UpdateCart' }
+    & { order?: Maybe<(
+      { __typename?: 'OrderType' }
+      & Pick<OrderType, 'totalPrice'>
+      & { orderItems?: Maybe<(
+        { __typename?: 'OrderItemTypeConnection' }
+        & { edges?: Maybe<Array<Maybe<(
+          { __typename?: 'OrderItemTypeEdge' }
+          & { node?: Maybe<(
+            { __typename?: 'OrderItemType' }
+            & Pick<OrderItemType, 'id' | 'size' | 'quantity' | 'subTotalPrice'>
+            & { item?: Maybe<(
+              { __typename?: 'ItemType' }
+              & Pick<ItemType, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
+            )>, orderToppings?: Maybe<(
+              { __typename?: 'OrderToppingTypeConnection' }
+              & { edges?: Maybe<Array<Maybe<(
+                { __typename?: 'OrderToppingTypeEdge' }
+                & { node?: Maybe<(
+                  { __typename?: 'OrderToppingType' }
+                  & Pick<OrderToppingType, 'id'>
+                  & { topping?: Maybe<(
+                    { __typename?: 'ToppingType' }
+                    & Pick<ToppingType, 'id' | 'name' | 'priceM' | 'priceL'>
+                  )> }
+                )> }
+              )>>> }
+            )> }
+          )> }
+        )>>> }
+      )> }
+    )> }
+  )> }
+);
+
+export type DeleteCartMutationVariables = Exact<{
+  orderItemId: Scalars['ID'];
+}>;
+
+
+export type DeleteCartMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteCart?: Maybe<(
+    { __typename?: 'DeleteCart' }
+    & { order?: Maybe<(
+      { __typename?: 'OrderType' }
+      & Pick<OrderType, 'totalPrice'>
+      & { orderItems?: Maybe<(
+        { __typename?: 'OrderItemTypeConnection' }
+        & { edges?: Maybe<Array<Maybe<(
+          { __typename?: 'OrderItemTypeEdge' }
+          & { node?: Maybe<(
+            { __typename?: 'OrderItemType' }
+            & Pick<OrderItemType, 'id' | 'size' | 'quantity' | 'subTotalPrice'>
+            & { item?: Maybe<(
+              { __typename?: 'ItemType' }
+              & Pick<ItemType, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
+            )>, orderToppings?: Maybe<(
+              { __typename?: 'OrderToppingTypeConnection' }
+              & { edges?: Maybe<Array<Maybe<(
+                { __typename?: 'OrderToppingTypeEdge' }
+                & { node?: Maybe<(
+                  { __typename?: 'OrderToppingType' }
+                  & Pick<OrderToppingType, 'id'>
+                  & { topping?: Maybe<(
+                    { __typename?: 'ToppingType' }
+                    & Pick<ToppingType, 'id' | 'name' | 'priceM' | 'priceL'>
+                  )> }
+                )> }
+              )>>> }
+            )> }
+          )> }
+        )>>> }
+      )> }
+    )> }
+  )> }
+);
+
 export type FetchToppingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -359,6 +507,70 @@ export type FetchItemQuery = (
 );
 
 
+export const FetchOrderItemsDocument = gql`
+    query fetchOrderItems {
+  cart {
+    totalPrice
+    orderItems {
+      edges {
+        node {
+          id
+          size
+          quantity
+          subTotalPrice
+          item {
+            id
+            name
+            description
+            priceM
+            priceL
+            imagePath
+            deleted
+          }
+          orderToppings {
+            edges {
+              node {
+                id
+                topping {
+                  id
+                  name
+                  priceM
+                  priceL
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useFetchOrderItemsQuery__
+ *
+ * To run a query within a React component, call `useFetchOrderItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchOrderItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchOrderItemsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFetchOrderItemsQuery(baseOptions?: Apollo.QueryHookOptions<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>) {
+        return Apollo.useQuery<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>(FetchOrderItemsDocument, baseOptions);
+      }
+export function useFetchOrderItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>) {
+          return Apollo.useLazyQuery<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>(FetchOrderItemsDocument, baseOptions);
+        }
+export type FetchOrderItemsQueryHookResult = ReturnType<typeof useFetchOrderItemsQuery>;
+export type FetchOrderItemsLazyQueryHookResult = ReturnType<typeof useFetchOrderItemsLazyQuery>;
+export type FetchOrderItemsQueryResult = Apollo.QueryResult<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>;
 export const AddCartDocument = gql`
     mutation addCart($orderItem: OrderItemInput!, $totalPrice: Int!) {
   addCart(orderItem: $orderItem, status: 0, totalPrice: $totalPrice) {
@@ -415,6 +627,139 @@ export function useAddCartMutation(baseOptions?: Apollo.MutationHookOptions<AddC
 export type AddCartMutationHookResult = ReturnType<typeof useAddCartMutation>;
 export type AddCartMutationResult = Apollo.MutationResult<AddCartMutation>;
 export type AddCartMutationOptions = Apollo.BaseMutationOptions<AddCartMutation, AddCartMutationVariables>;
+export const UpdateCartDocument = gql`
+    mutation updateCart($orderItems: [OrderItemInput]!, $totalPrice: Int!) {
+  updateCart(orderItems: $orderItems, status: 0, totalPrice: $totalPrice) {
+    order {
+      totalPrice
+      orderItems {
+        edges {
+          node {
+            id
+            size
+            quantity
+            subTotalPrice
+            item {
+              id
+              name
+              description
+              priceM
+              priceL
+              imagePath
+              deleted
+            }
+            orderToppings {
+              edges {
+                node {
+                  id
+                  topping {
+                    id
+                    name
+                    priceM
+                    priceL
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type UpdateCartMutationFn = Apollo.MutationFunction<UpdateCartMutation, UpdateCartMutationVariables>;
+
+/**
+ * __useUpdateCartMutation__
+ *
+ * To run a mutation, you first call `useUpdateCartMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCartMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCartMutation, { data, loading, error }] = useUpdateCartMutation({
+ *   variables: {
+ *      orderItems: // value for 'orderItems'
+ *      totalPrice: // value for 'totalPrice'
+ *   },
+ * });
+ */
+export function useUpdateCartMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCartMutation, UpdateCartMutationVariables>) {
+        return Apollo.useMutation<UpdateCartMutation, UpdateCartMutationVariables>(UpdateCartDocument, baseOptions);
+      }
+export type UpdateCartMutationHookResult = ReturnType<typeof useUpdateCartMutation>;
+export type UpdateCartMutationResult = Apollo.MutationResult<UpdateCartMutation>;
+export type UpdateCartMutationOptions = Apollo.BaseMutationOptions<UpdateCartMutation, UpdateCartMutationVariables>;
+export const DeleteCartDocument = gql`
+    mutation deleteCart($orderItemId: ID!) {
+  deleteCart(orderItemId: $orderItemId) {
+    order {
+      totalPrice
+      orderItems {
+        edges {
+          node {
+            id
+            size
+            quantity
+            subTotalPrice
+            item {
+              id
+              name
+              description
+              priceM
+              priceL
+              imagePath
+              deleted
+            }
+            orderToppings {
+              edges {
+                node {
+                  id
+                  topping {
+                    id
+                    name
+                    priceM
+                    priceL
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type DeleteCartMutationFn = Apollo.MutationFunction<DeleteCartMutation, DeleteCartMutationVariables>;
+
+/**
+ * __useDeleteCartMutation__
+ *
+ * To run a mutation, you first call `useDeleteCartMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCartMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCartMutation, { data, loading, error }] = useDeleteCartMutation({
+ *   variables: {
+ *      orderItemId: // value for 'orderItemId'
+ *   },
+ * });
+ */
+export function useDeleteCartMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCartMutation, DeleteCartMutationVariables>) {
+        return Apollo.useMutation<DeleteCartMutation, DeleteCartMutationVariables>(DeleteCartDocument, baseOptions);
+      }
+export type DeleteCartMutationHookResult = ReturnType<typeof useDeleteCartMutation>;
+export type DeleteCartMutationResult = Apollo.MutationResult<DeleteCartMutation>;
+export type DeleteCartMutationOptions = Apollo.BaseMutationOptions<DeleteCartMutation, DeleteCartMutationVariables>;
 export const FetchToppingsDocument = gql`
     query fetchToppings {
   toppings {
