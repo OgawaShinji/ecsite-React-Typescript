@@ -15,7 +15,7 @@ import TotalPrice from "~/components/elements/totalPrice/totalPrice";
 import {useDispatch, useSelector} from "react-redux";
 import {postOrder, selectOrderSubTotalPrice} from "~/store/slices/Domain/order.slice";
 import {User} from "~/types/interfaces";
-import ShippingDialog from "~/components/orderConfirm/shippingDialog";
+import ShippingDialog from "~/components/orderConfirm/ShippingDialog";
 import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
 import {Path} from "~/router/routes";
