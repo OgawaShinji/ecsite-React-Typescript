@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, createStyles, Grid, makeStyles, Theme, Typography} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
 import {Path} from "~/router/routes";
@@ -36,11 +36,24 @@ const OrderComplete: React.FC<RouteComponentProps> = props => {
 
     const classes = useStyles();
 
+    //ローディング処理
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
     useEffect(() => {
+        let timerId: NodeJS.Timeout;
+        const loading = async () => {
+            timerId = setTimeout( () => {
+                setIsLoading(false);
+            }, 500)
+        }
+        loading();
         if (!location.state) {
             props.history.push('/');
         }
-    }, [location.state, props.history])
+        return () => {
+            clearTimeout(timerId);
+        }
+    }, [location.state, props.history, isLoading])
 
     /**
      * [トップ画面に戻る]ボタン押下時の処理　トップ（商品一覧）画面に遷移　
