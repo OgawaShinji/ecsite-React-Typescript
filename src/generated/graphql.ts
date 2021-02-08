@@ -106,181 +106,20 @@ export type ItemTypeEdge = {
 
 export type ItemType = Node & {
   __typename?: 'ItemType';
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  priceM?: Maybe<Scalars['String']>;
+  priceL?: Maybe<Scalars['String']>;
+  imagePath?: Maybe<Scalars['String']>;
+  deleted?: Maybe<Scalars['Boolean']>;
   /** The ID of the object. */
   id: Scalars['ID'];
-  name: Scalars['String'];
-  description: Scalars['String'];
-  priceM: Scalars['Int'];
-  priceL: Scalars['Int'];
-  imagePath: Scalars['String'];
-  deleted: Scalars['Boolean'];
-  orderItems: OrderItemTypeConnection;
-};
-
-
-export type ItemTypeOrderItemsArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
 };
 
 /** An object with an ID */
 export type Node = {
   /** The ID of the object. */
   id: Scalars['ID'];
-};
-
-export type OrderItemTypeConnection = {
-  __typename?: 'OrderItemTypeConnection';
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** Contains the nodes in this connection. */
-  edges: Array<Maybe<OrderItemTypeEdge>>;
-};
-
-/** A Relay edge containing a `OrderItemType` and its cursor. */
-export type OrderItemTypeEdge = {
-  __typename?: 'OrderItemTypeEdge';
-  /** The item at the end of the edge */
-  node?: Maybe<OrderItemType>;
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
-};
-
-export type OrderItemType = Node & {
-  __typename?: 'OrderItemType';
-  /** The ID of the object. */
-  id: Scalars['ID'];
-  item: ItemType;
-  order: OrderType;
-  quantity: Scalars['Int'];
-  size: Scalars['String'];
-  orderToppings: OrderToppingTypeConnection;
-  subTotalPrice?: Maybe<Scalars['Int']>;
-};
-
-
-export type OrderItemTypeOrderToppingsArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-};
-
-export type OrderType = Node & {
-  __typename?: 'OrderType';
-  /** The ID of the object. */
-  id: Scalars['ID'];
-  user: UserType;
-  status: Scalars['Int'];
-  totalPrice: Scalars['Int'];
-  orderDate?: Maybe<Scalars['Date']>;
-  destinationName: Scalars['String'];
-  destinationEmail: Scalars['String'];
-  destinationZipcode: Scalars['String'];
-  destinationAddress: Scalars['String'];
-  destinationTel: Scalars['String'];
-  deliveryTime?: Maybe<Scalars['DateTime']>;
-  paymentMethod?: Maybe<Scalars['Int']>;
-  orderItems: OrderItemTypeConnection;
-};
-
-
-export type OrderTypeOrderItemsArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-};
-
-export type UserType = Node & {
-  __typename?: 'UserType';
-  /** The ID of the object. */
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  email: Scalars['String'];
-  password: Scalars['String'];
-  zipcode: Scalars['String'];
-  address: Scalars['String'];
-  telephone: Scalars['String'];
-  status: Scalars['String'];
-  orderSet: OrderTypeConnection;
-};
-
-
-export type UserTypeOrderSetArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-};
-
-export type OrderTypeConnection = {
-  __typename?: 'OrderTypeConnection';
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** Contains the nodes in this connection. */
-  edges: Array<Maybe<OrderTypeEdge>>;
-};
-
-/** A Relay edge containing a `OrderType` and its cursor. */
-export type OrderTypeEdge = {
-  __typename?: 'OrderTypeEdge';
-  /** The item at the end of the edge */
-  node?: Maybe<OrderType>;
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
-};
-
-
-
-export type OrderToppingTypeConnection = {
-  __typename?: 'OrderToppingTypeConnection';
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** Contains the nodes in this connection. */
-  edges: Array<Maybe<OrderToppingTypeEdge>>;
-};
-
-/** A Relay edge containing a `OrderToppingType` and its cursor. */
-export type OrderToppingTypeEdge = {
-  __typename?: 'OrderToppingTypeEdge';
-  /** The item at the end of the edge */
-  node?: Maybe<OrderToppingType>;
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
-};
-
-export type OrderToppingType = Node & {
-  __typename?: 'OrderToppingType';
-  /** The ID of the object. */
-  id: Scalars['ID'];
-  topping: ToppingType;
-  orderItem: OrderItemType;
-};
-
-export type ToppingType = Node & {
-  __typename?: 'ToppingType';
-  /** The ID of the object. */
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  priceM: Scalars['Int'];
-  priceL: Scalars['Int'];
-  orderToppings: OrderToppingTypeConnection;
-};
-
-
-export type ToppingTypeOrderToppingsArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
 };
 
 export type ToppingTypeConnection = {
@@ -298,6 +137,38 @@ export type ToppingTypeEdge = {
   node?: Maybe<ToppingType>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
+};
+
+export type ToppingType = Node & {
+  __typename?: 'ToppingType';
+  name?: Maybe<Scalars['String']>;
+  priceM?: Maybe<Scalars['Int']>;
+  priceL?: Maybe<Scalars['Int']>;
+  /** The ID of the object. */
+  id: Scalars['ID'];
+};
+
+export type UserType = Node & {
+  __typename?: 'UserType';
+  /** The ID of the object. */
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+  zipcode: Scalars['String'];
+  address: Scalars['String'];
+  telephone: Scalars['String'];
+  status: Scalars['String'];
+  orderSet: OrderHistoryTypeConnection;
+};
+
+
+export type UserTypeOrderSetArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type OrderHistoryTypeConnection = {
@@ -320,26 +191,113 @@ export type OrderHistoryTypeEdge = {
 /** ログイン中のユーザーの注文履歴を取得 */
 export type OrderHistoryType = Node & {
   __typename?: 'OrderHistoryType';
-  /** The ID of the object. */
-  id: Scalars['ID'];
-  user: UserType;
-  status: Scalars['Int'];
-  totalPrice: Scalars['Int'];
+  user?: Maybe<UserType>;
+  status?: Maybe<Scalars['Int']>;
+  totalPrice?: Maybe<Scalars['Int']>;
   orderDate?: Maybe<Scalars['Date']>;
-  destinationName: Scalars['String'];
-  destinationEmail: Scalars['String'];
-  destinationZipcode: Scalars['String'];
-  destinationAddress: Scalars['String'];
-  destinationTel: Scalars['String'];
+  destinationName?: Maybe<Scalars['String']>;
+  destinationEmail?: Maybe<Scalars['String']>;
+  destinationZipcode?: Maybe<Scalars['String']>;
+  destinationAddress?: Maybe<Scalars['String']>;
+  destinationTel?: Maybe<Scalars['String']>;
   deliveryTime?: Maybe<Scalars['DateTime']>;
   paymentMethod?: Maybe<Scalars['Int']>;
-  orderItems: OrderItemTypeConnection;
+  orderItems?: Maybe<OrderItemConnection>;
+  /** The ID of the object. */
+  id: Scalars['ID'];
 };
 
 
 /** ログイン中のユーザーの注文履歴を取得 */
 export type OrderHistoryTypeOrderItemsArgs = {
-  offset?: Maybe<Scalars['Int']>;
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+
+
+export type OrderItemConnection = {
+  __typename?: 'OrderItemConnection';
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<OrderItemEdge>>;
+};
+
+/** A Relay edge containing a `OrderItem` and its cursor. */
+export type OrderItemEdge = {
+  __typename?: 'OrderItemEdge';
+  /** The item at the end of the edge */
+  node?: Maybe<OrderItemType>;
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+};
+
+export type OrderItemType = Node & {
+  __typename?: 'OrderItemType';
+  item?: Maybe<ItemType>;
+  quantity?: Maybe<Scalars['Int']>;
+  size?: Maybe<Scalars['String']>;
+  orderToppings?: Maybe<OrderToppingConnection>;
+  /** The ID of the object. */
+  id: Scalars['ID'];
+  subTotalPrice?: Maybe<Scalars['Int']>;
+};
+
+
+export type OrderItemTypeOrderToppingsArgs = {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+export type OrderToppingConnection = {
+  __typename?: 'OrderToppingConnection';
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<OrderToppingEdge>>;
+};
+
+/** A Relay edge containing a `OrderTopping` and its cursor. */
+export type OrderToppingEdge = {
+  __typename?: 'OrderToppingEdge';
+  /** The item at the end of the edge */
+  node?: Maybe<OrderToppingType>;
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+};
+
+export type OrderToppingType = Node & {
+  __typename?: 'OrderToppingType';
+  topping?: Maybe<ToppingType>;
+  /** The ID of the object. */
+  id: Scalars['ID'];
+};
+
+export type OrderType = Node & {
+  __typename?: 'OrderType';
+  user?: Maybe<UserType>;
+  status?: Maybe<Scalars['Int']>;
+  totalPrice?: Maybe<Scalars['Int']>;
+  orderDate?: Maybe<Scalars['Date']>;
+  destinationName?: Maybe<Scalars['String']>;
+  destinationEmail?: Maybe<Scalars['String']>;
+  destinationZipcode?: Maybe<Scalars['String']>;
+  destinationAddress?: Maybe<Scalars['String']>;
+  destinationTel?: Maybe<Scalars['String']>;
+  deliveryTime?: Maybe<Scalars['DateTime']>;
+  paymentMethod?: Maybe<Scalars['Int']>;
+  orderItems?: Maybe<OrderItemConnection>;
+  /** The ID of the object. */
+  id: Scalars['ID'];
+};
+
+
+export type OrderTypeOrderItemsArgs = {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -473,33 +431,7 @@ export type AddCartMutation = (
     { __typename?: 'AddCart' }
     & { order?: Maybe<(
       { __typename?: 'OrderType' }
-      & Pick<OrderType, 'status' | 'totalPrice'>
-      & { orderItems: (
-        { __typename?: 'OrderItemTypeConnection' }
-        & { edges: Array<Maybe<(
-          { __typename?: 'OrderItemTypeEdge' }
-          & { node?: Maybe<(
-            { __typename?: 'OrderItemType' }
-            & Pick<OrderItemType, 'size' | 'quantity'>
-            & { item: (
-              { __typename?: 'ItemType' }
-              & Pick<ItemType, 'name'>
-            ), orderToppings: (
-              { __typename?: 'OrderToppingTypeConnection' }
-              & { edges: Array<Maybe<(
-                { __typename?: 'OrderToppingTypeEdge' }
-                & { node?: Maybe<(
-                  { __typename?: 'OrderToppingType' }
-                  & { topping: (
-                    { __typename?: 'ToppingType' }
-                    & Pick<ToppingType, 'name'>
-                  ) }
-                )> }
-              )>> }
-            ) }
-          )> }
-        )>> }
-      ) }
+      & Pick<OrderType, 'id'>
     )> }
   )> }
 );
@@ -601,41 +533,41 @@ export type FetchOrderHistoryQuery = (
       & { node?: Maybe<(
         { __typename?: 'OrderHistoryType' }
         & Pick<OrderHistoryType, 'id' | 'totalPrice' | 'orderDate' | 'destinationName' | 'destinationEmail' | 'destinationZipcode' | 'destinationAddress' | 'destinationTel' | 'deliveryTime' | 'paymentMethod' | 'status'>
-        & { orderItems: (
-          { __typename?: 'OrderItemTypeConnection' }
+        & { orderItems?: Maybe<(
+          { __typename?: 'OrderItemConnection' }
           & { pageInfo: (
             { __typename?: 'PageInfo' }
             & Pick<PageInfo, 'hasPreviousPage' | 'hasNextPage' | 'startCursor' | 'endCursor'>
           ), edges: Array<Maybe<(
-            { __typename?: 'OrderItemTypeEdge' }
-            & Pick<OrderItemTypeEdge, 'cursor'>
+            { __typename?: 'OrderItemEdge' }
+            & Pick<OrderItemEdge, 'cursor'>
             & { node?: Maybe<(
               { __typename?: 'OrderItemType' }
               & Pick<OrderItemType, 'id' | 'quantity' | 'size' | 'subTotalPrice'>
-              & { item: (
+              & { item?: Maybe<(
                 { __typename?: 'ItemType' }
                 & Pick<ItemType, 'id' | 'name' | 'description' | 'imagePath' | 'priceM' | 'priceL' | 'deleted'>
-              ), orderToppings: (
-                { __typename?: 'OrderToppingTypeConnection' }
+              )>, orderToppings?: Maybe<(
+                { __typename?: 'OrderToppingConnection' }
                 & { pageInfo: (
                   { __typename?: 'PageInfo' }
                   & Pick<PageInfo, 'hasPreviousPage' | 'hasNextPage' | 'startCursor' | 'endCursor'>
                 ), edges: Array<Maybe<(
-                  { __typename?: 'OrderToppingTypeEdge' }
-                  & Pick<OrderToppingTypeEdge, 'cursor'>
+                  { __typename?: 'OrderToppingEdge' }
+                  & Pick<OrderToppingEdge, 'cursor'>
                   & { node?: Maybe<(
                     { __typename?: 'OrderToppingType' }
                     & Pick<OrderToppingType, 'id'>
-                    & { topping: (
+                    & { topping?: Maybe<(
                       { __typename?: 'ToppingType' }
                       & Pick<ToppingType, 'id' | 'name' | 'priceM' | 'priceL'>
-                    ) }
+                    )> }
                   )> }
                 )>> }
-              ) }
+              )> }
             )> }
           )>> }
-        ) }
+        )> }
       )> }
     )>> }
   )> }
@@ -646,28 +578,7 @@ export const AddCartDocument = gql`
     mutation addCart($orderItem: OrderItemInput!, $totalPrice: Int!) {
   addCart(orderItem: $orderItem, status: 0, totalPrice: $totalPrice) {
     order {
-      orderItems {
-        edges {
-          node {
-            item {
-              name
-            }
-            orderToppings {
-              edges {
-                node {
-                  topping {
-                    name
-                  }
-                }
-              }
-            }
-            size
-            quantity
-          }
-        }
-      }
-      status
-      totalPrice
+      id
     }
   }
 }

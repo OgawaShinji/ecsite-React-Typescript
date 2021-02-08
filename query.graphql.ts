@@ -4,30 +4,9 @@ import gql from "graphql-tag";
 gql(`
 mutation addCart($orderItem:OrderItemInput!,$totalPrice:Int!){
   addCart(orderItem:$orderItem,status:0,totalPrice:$totalPrice){
-    order{
-      orderItems{
-        edges{
-          node{
-            item{
-              name
-            }
-            orderToppings{
-              edges{
-                node{
-                  topping{
-                    name
-                  }
-                }
-              }
-            }
-            size
-            quantity
-          }
-        }
-      }
-      status
-      totalPrice
-    }  
+     order{
+      id
+     }   
   }
 }
 `)

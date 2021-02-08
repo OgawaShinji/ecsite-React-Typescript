@@ -37,18 +37,21 @@ const ItemDetailGQL: React.FC = () => {
         await addCart({
             variables: {
                 orderItem: {
-                    item: displayItem?.item?.id!,
+                    id:"orderItem id",
+                    item: displayItem!.item!.id!,
                     orderToppings: newOrderToppings,
                     size: selectedState.size,
                     quantity: selectedState.quantity
                 },
                 totalPrice: selectedState.totalPrice!
             }
-        }).then(async () => {
+        }).then(async (i) => {
+            console.log(i)
             if (moveTo === 'cart') await history.push(Path.cart)
             if (moveTo === 'confirm') await history.push(Path.orderConfirm)
-        }).catch(() => {
+        }).catch((e) => {
             //catch処理書かないとErrorPageコンポーネントを返せない
+            console.log(e)
         });
     }
 

@@ -6,7 +6,7 @@ import LoginGuardedRoute from "~/router/LoginGuardedRoute";
 import ItemListGQL from "~/components/itemList/index.gql";
 import cart from '../components/cart';
 import HistoryGQL from "~/components/history/index.gql";
-import ItemDetail from "~/components/itemDetail";
+import ItemDetailGQL from "~/components/itemDetail/index.gql";
 import login from '../components/login';
 import orderComplete from '../components/orderComplete';
 import orderConfirm from '../components/orderConfirm';
@@ -28,7 +28,7 @@ const routes = (
         <GuardedRoute exact path={Path.itemList} component={ItemListGQL}/>
         <GuardedRoute exact path={Path.cart} component={cart}/>
         <GuardedRoute exact path={Path.history} component={HistoryGQL}/>
-        <GuardedRoute exact path={Path.itemDetail} component={ItemDetail}/>
+        <GuardedRoute exact path={Path.itemDetail} component={ItemDetailGQL}/>
         <LoginGuardedRoute exact path={Path.login} component={login}/>
         <GuardedRoute exact path={Path.orderComplete} component={orderComplete}/>
         <GuardedRoute exact path={Path.orderConfirm} component={orderConfirm}/>

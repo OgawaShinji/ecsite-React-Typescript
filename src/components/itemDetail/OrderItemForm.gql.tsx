@@ -18,7 +18,7 @@ const OrderItemFormGQL: React.FC<propsType> = (props) => {
     const [size, setSize] = useState<string>('M');
     const [quantity, setQuantity] = useState<number>(1);
     const [selectedToppings, setSelectToppings] = useState<Topping[]>([])
-    const [totalPrice, setTotalPrice] = useState<number>(item?.priceM ? item.priceM : 0)
+    const [totalPrice, setTotalPrice] = useState<number>(item?.priceM ? Number(item.priceM) : 0)
 
     //OrderItemEntryにpropsで渡すためのデータ整形
     const selectedState: itemEntryStateGQL = {
@@ -33,7 +33,7 @@ const OrderItemFormGQL: React.FC<propsType> = (props) => {
         if ((newToppings ? newToppings : selectedToppings).length !== 0) (newToppings ? newToppings : selectedToppings).map(
             (t) => newTotalPrice += (selectedSize ? selectedSize : size) === 'M' ? t.priceM! : t.priceL!
         )
-        newTotalPrice += ((selectedSize ? selectedSize : size) === 'M' ? item!.priceM! : item!.priceL!)
+        newTotalPrice += ((selectedSize ? selectedSize : size) === 'M' ? Number(item!.priceM!) : Number(item!.priceL!))
         setTotalPrice(newTotalPrice * (selectedQuantity ? selectedQuantity : quantity));
     }
     /**
