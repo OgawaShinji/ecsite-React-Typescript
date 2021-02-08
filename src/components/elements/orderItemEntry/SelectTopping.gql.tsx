@@ -21,7 +21,7 @@ export const SelectToppingGQL: React.FC<selectToppingProps> = (props) => {
 
     const handleToppingChange = (topping: Topping) => {
         const index = selectedToppings.findIndex(t => t.id === (topping.id))
-        const newSelected: Topping[] = [...selectedToppings]
+        let newSelected: Topping[] = [...selectedToppings]
         if (index === -1 && selectedToppings.length < 3) newSelected.push(topping);
         if (index !== -1) newSelected.splice(index, 1);
         setSelectedToppings(newSelected);
@@ -29,7 +29,7 @@ export const SelectToppingGQL: React.FC<selectToppingProps> = (props) => {
     };
     const classes = toppingStyles();
 
-    if (!toppings)return <ErrorPage code={500}/>
+    if (!toppings) return <ErrorPage code={500}/>
 
     return (
         isLoadToppings ? <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/> :
