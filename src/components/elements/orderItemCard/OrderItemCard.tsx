@@ -1,8 +1,6 @@
 import React from "react";
 import {RouteComponentProps, withRouter} from 'react-router-dom';
-
 import {Avatar, Paper, Grid, makeStyles, Typography, Box, Divider, Button} from "@material-ui/core";
-
 import {OrderItem} from "~/types/interfaces";
 
 type Props = {
@@ -61,24 +59,26 @@ const OrderItems: React.FC<Props & RouteComponentProps> = props => {
                         <Grid item container>
                             <Grid item xs={1}/>
                             <Grid item xs={5}>
-                                <Typography gutterBottom>
+                                <Typography gutterBottom component={"h6"} variant={"subtitle2"}>
                                     {/*>注文内容のサイズによって表示を変える*/}
                                     価格
                                     : {props.orderItem.size === 'M' ? props.orderItem.item.priceM.toLocaleString() : null}
                                     {props.orderItem.size === 'L' ? props.orderItem.item.priceL.toLocaleString() : null}
                                     円
                                 </Typography>
-                                <Typography gutterBottom>
+                                <Typography gutterBottom component={"h6"} variant={"subtitle2"}>
                                     サイズ : {props.orderItem.size}
                                 </Typography>
-                                <Typography variant="subtitle1">
+                                <Typography variant="subtitle1" component={"h6"} >
                                     数量 : {props.orderItem.quantity + '個'}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
                                 <ul style={{listStyleType: 'circle'}}>
                                     {props.orderItem.orderToppings?.map((orderTopping, index) => (
-                                        <li key={index}>{orderTopping.topping.name}</li>
+                                        <li key={index}>
+                                            <Typography variant={"subtitle2"} component={"h6"}>{orderTopping.topping.name}</Typography>
+                                        </li>
                                     ))}
                                 </ul>
                             </Grid>
@@ -93,7 +93,7 @@ const OrderItems: React.FC<Props & RouteComponentProps> = props => {
                                 小計 :
                             </Grid>
                             <Grid item>
-                                <Typography variant='h5'>
+                                <Typography component={"h6"} variant={"h5"} >
                                     <Box fontWeight="fontWeightBold">
                                         {props.orderItem.subTotalPrice!.toLocaleString() + '円'}
                                     </Box>
