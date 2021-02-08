@@ -68,7 +68,7 @@ const ItemDetail: React.FC = () => {
      * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
      */
     const handleOrderClick = async (moveTo: string, selectedState: itemEntryState) => {
-        /*if (displayItem === null) throw new Error()
+        if (displayItem === null) throw new Error()
         let newOrderToppings: { topping: number }[] = []
         if (selectedState.toppings.length !== 0) selectedState.toppings.map((t) => newOrderToppings.push({topping: t.id}))
 
@@ -92,7 +92,7 @@ const ItemDetail: React.FC = () => {
             }
         }).catch((e) => {
             dispatch(setError({isError: true, code: e.message}))
-        })*/
+        })
     }
 
     const classes = entryIndexStyle();
@@ -132,7 +132,7 @@ const ItemDetail: React.FC = () => {
                     </Grid>
 
                     {/*注文入力部分*/}
-                    {/*<OrderItemForm item={displayItem} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>*/}
+                    <OrderItemForm item={displayItem} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
 
                 </div>
             </div>
