@@ -71,7 +71,7 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
     }
 
     //デフォルト情報をセット
-    const [name, setName] = useState<{ value: string, errorMessage: string }>({
+    const [name, setName] = useState<{ value: string , errorMessage: string }>({
         value: '', errorMessage: ''
     })
     const [email, setEmail] = useState<{ value: string, errorMessage: string }>({
@@ -110,7 +110,7 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
             setSecondTelephoneNum({value: telephoneNumbers[1], errorMessage: ''})
             setThirdTelephoneNum({value: telephoneNumbers[2], errorMessage: ''})
         }
-    }, [userInfo])
+    },[userInfo])
 
 
     //---------------○○Validation-----------------------------------
