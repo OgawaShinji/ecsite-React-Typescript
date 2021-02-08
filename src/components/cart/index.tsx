@@ -1,22 +1,17 @@
-import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "~/store";
+import React from "react";
 
 import CartItem from "./CartItem"
 import OrderOperator from "./OrderOperator"
-import {OrderItem} from "~/types/interfaces";
-
-import {
-    asyncDeleteOrderItem,
-    asyncFetchOrderItems,
-    asyncUpdateOrderItem,
-    orderItem,
-    OrderItemsToPost,
-    selectOrder,
-    selectOrderSubTotalPrice
-} from "~/store/slices/Domain/order.slice"
 import {Grid, LinearProgress, List, makeStyles, Typography} from "@material-ui/core";
-import {setError} from "~/store/slices/App/error.slice";
+import {
+    OrderItemInput,
+    OrderItemType,
+    OrderToppingInput,
+    useDeleteCartMutation,
+    useFetchOrderItemsQuery,
+    useUpdateCartMutation
+} from "~/generated/graphql";
+import ErrorPage from "~/components/error";
 
 const useStyles = makeStyles({
     root: {
@@ -50,34 +45,32 @@ const useStyles = makeStyles({
 
 const Index: React.FC = () => {
 
-    const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
 
-    let iniOrder = useSelector(selectOrder)
-    let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
+    const {
+        data: displayFetchOrderItems,
+        loading: isLoadingFetchOrderItems,
+        error: isErrorFetchOrderItems,
+        refetch  // タイポの直し方わからず
+    } = useFetchOrderItemsQuery()
 
-    const [orderItems, setOrderItems] = useState<OrderItem[] | undefined>()
-    const [isLoading, setIsLoading] = useState(false); // loading
-
-    // 初期表示
-    useEffect(() => {
-        setIsLoading(true);
-        const loading = async () => {
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 500)
+    const [updateCart,
+        {
+            loading: isLoadingUpdateCart,
+            error: isErrorUpdateCart
         }
-        loading().then(() => {
-            dispatch(asyncFetchOrderItems()).catch((e) => {
-                dispatch(setError({isError: true, code: e.message}))
-            })
-        })
-    }, [dispatch])
+    ] = useUpdateCartMutation()
 
-    // iniOrder
-    useEffect(() => {
-        setOrderItems(iniOrder.orderItems)
-    }, [iniOrder])
+    const [deleteCart,
+        {
+            loading: isLoadingDeleteCart,
+            error: isErrorDeleteCart
+        }
+    ] = useDeleteCartMutation()
+
+    // orderOperatorにpropsで渡すorderItemsIdのList
+    const displayOrderItemIdList: Array<number> = []
+    displayFetchOrderItems?.cart?.orderItems?.edges?.forEach(o => displayOrderItemIdList.push(Number(o?.node?.id!)))
 
 
     /**
@@ -85,31 +78,27 @@ const Index: React.FC = () => {
      * @Params orderItem: OrderItem, index?: number
      * @return
      */
-    const updateOrderItems = async ({orderItem}: { orderItem: OrderItem }) => {
-
-        // サーバーに送るデータをorderItemsToPostに詰め替える処理
-        let updatedOrderToppings: { topping: number }[] = []
-        if (orderItem.orderToppings!) orderItem.orderToppings.map((t) => updatedOrderToppings.push({topping: t.topping.id}))
-        const updatedOrderItem: orderItem = {
+    const updateOrderItems = async ({orderItem}: { orderItem: OrderItemType }) => {
+        // updateCartの引数,orderItemInputの作成
+        let updateOrderToppingIdList: Array<OrderToppingInput> = []
+        orderItem.orderToppings?.edges?.forEach(ot => {
+            updateOrderToppingIdList.push({topping: ot!.node!.id!})
+        })
+        const orderItemInput: OrderItemInput = {
             id: orderItem.id,
-            item: orderItem.item.id,
-            orderToppings: updatedOrderToppings,
-            quantity: orderItem.quantity,
-            size: orderItem.size === 'M' ? 'M' : 'L'
-        }
-        let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
-        const orderItemsToPost: OrderItemsToPost = {
-            orderItems: updatedOrderItems,
-            status: 0,
-            newTotalPrice: orderSubTotalPrice
+            item: orderItem.item?.id,
+            orderToppings: updateOrderToppingIdList,
+            size: orderItem.size === 'M' ? 'M' : 'L',
+            quantity: orderItem.quantity
         }
 
-        await dispatch(asyncUpdateOrderItem(orderItemsToPost)).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
-        await dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
+        await updateCart(
+            {
+                variables: {
+                    orderItems: orderItemInput,
+                    totalPrice: displayFetchOrderItems?.cart?.totalPrice!
+                }
+            }).then(() => refetch({}))
     }
 
     /**
@@ -118,28 +107,29 @@ const Index: React.FC = () => {
      * @return
      */
     const deleteOrderItem = async (orderItemId: number) => {
-        await dispatch(asyncDeleteOrderItem(orderItemId)).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
-        dispatch(asyncFetchOrderItems()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
+        await deleteCart(
+            {
+                variables: {
+                    orderItemId: orderItemId.toLocaleString()
+                }
+            }).then(() => refetch({}))
     }
+
 
     // カートに商品があるかどうかでレイアウトを切り替えるため
     let styleCartList
-    if (orderItems && orderItems?.length > 0) {
+    if (displayFetchOrderItems && displayFetchOrderItems?.cart?.orderItems?.edges!.length! > 0) {
         styleCartList = classes.cartList
     } else {
         styleCartList = classes.emptyCartList
     }
 
+    // errorハンドリング
+    if (isErrorFetchOrderItems || isErrorUpdateCart || isErrorDeleteCart) return <ErrorPage/>;
 
-    return (
-        <div>
-            {isLoading ? (
-                <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
-            ) : (
+    return (isLoadingFetchOrderItems || isLoadingUpdateCart || isLoadingDeleteCart ?
+            <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
+            : <div>
                 <div className={classes.root}>
                     <Grid container style={{paddingLeft: 20}}>
                         <Grid item xs={8} className={styleCartList}>
@@ -150,18 +140,19 @@ const Index: React.FC = () => {
                             >
                                 ショッピングカート
                             </Typography>
-                            {orderItems && orderItems?.length > 0 ? (<List>
-                                {orderItems &&
-                                orderItems!.map((orderItem,index) => (
-                                    <CartItem
-                                        orderItem={orderItem}
-                                        key={orderItem.id}
-                                        index={index}
-                                        updateOrderItems={({orderItem}) => updateOrderItems({orderItem})}
-                                        deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
-                                    />
-                                ))}
-                            </List>) : (
+                            {displayFetchOrderItems?.cart?.orderItems && displayFetchOrderItems.cart.orderItems.edges?.length! > 0 ? (
+                                <List>
+                                    {displayFetchOrderItems?.cart?.orderItems &&
+                                    displayFetchOrderItems.cart.orderItems.edges!.map((orderItem, index) => (
+                                        <CartItem
+                                            orderItem={orderItem!.node!}
+                                            key={orderItem!.node!.id}
+                                            index={index}
+                                            updateOrderItems={({orderItem}) => updateOrderItems({orderItem})}
+                                            deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
+                                        />
+                                    ))}
+                                </List>) : (
                                 <div className={classes.emptyOrderItems}>
                                     <Typography variant="h6" gutterBottom>
                                         カートに商品がありません
@@ -172,16 +163,15 @@ const Index: React.FC = () => {
                         <Grid item xs={4}>
                             <div className={classes.orderOperator}>
                                 <OrderOperator
-                                    subTotalPrice={orderSubTotalPrice}
-                                    orderItems={orderItems}
+                                    subTotalPrice={displayFetchOrderItems?.cart?.totalPrice!}
+                                    orderItemIdList={displayOrderItemIdList!}
                                     deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
                                 />
                             </div>
                         </Grid>
                     </Grid>
                 </div>
-            )}
-        </div>
+            </div>
     )
 }
 export default Index;

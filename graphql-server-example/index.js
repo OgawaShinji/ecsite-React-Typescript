@@ -81,7 +81,7 @@ const typeDefs = gql`
     destinationZipcode: String
     destinationAddress: String
     destinationTel: String
-    paymentMethod: String
+    paymentMethod: Int
     totalPrice: Int
     orderItems: OrderItemTypeConnection
 }
@@ -201,6 +201,14 @@ input OrderToppingInput{
   type AddCart{
     order:OrderType
   }
+  
+  type UpdateCart{
+    order:OrderType
+  }
+  
+  type DeleteCart{
+    order:OrderType
+  }
  
   # ここに書いたオブジェクトたちをqueryで持ってくることができる
   type Query {
@@ -235,6 +243,8 @@ input OrderToppingInput{
   
   type Mutation{
      addCart(orderItem:OrderItemInput!,status:Int,totalPrice:Int!): AddCart
+     updateCart(orderItems:[OrderItemInput]!,status:Int!,totalPrice:Int!):UpdateCart
+     deleteCart(orderItemId:ID!):DeleteCart
   }
 `;
 
@@ -376,46 +386,58 @@ const cart = {
         telephone: "000-1111-2222",
         status: 0
     },
-    orderItems: [
-        {
-            id: 1,
-            item: {
-                id: 1,
-                name: "apple",
-                description: "good",
-                priceM: 300,
-                priceL: 400,
-                imagePath: "http://34.84.118.239/static/img/item/3.jpg",
-                deleted: 0
-            },
-            orderToppings: [
-                {
-                    id: 1,
-                    topping: {
+    orderItems: {
+        edges: [
+            {
+                node:
+                    {
                         id: 1,
-                        name: "topping 1",
-                        priceM: 25,
-                        priceL: 35
-                    },
-                    orderItem: 1
-                },
-                {
-                    id: 2,
-                    topping: {
-                        id: 2,
-                        name: "topping 2",
-                        priceM: 15,
-                        priceL: 30
-                    },
-                    orderItem: 1
-                }
-            ],
-            quantity: 3,
-            size: "M",
-            subTotalPrice: 600
-        }
-    ]
+                        item: {
+                            id: 1,
+                            name: "apple",
+                            description: "good",
+                            priceM: 300,
+                            priceL: 400,
+                            imagePath: "http://34.84.118.239/static/img/item/3.jpg",
+                            deleted: 0
+                        },
+                        orderToppings: {
+                            edges: [
+                                {
+                                    node:
+                                        {
+                                            id: 1,
+                                            topping: {
+                                                id: 1,
+                                                name: "topping 1",
+                                                priceM: 25,
+                                                priceL: 35
+                                            },
+                                            orderItem: 1
+                                        },
+                                    node: {
+                                        id: 2,
+                                        topping: {
+                                            id: 2,
+                                            name: "topping 2",
+                                            priceM: 15,
+                                            priceL: 30
+                                        },
+                                        orderItem: 1
+                                    }
+                                }
+                            ]
+                        },
+                        quantity: 3,
+                        size: "M",
+                        subTotalPrice: 600
+                    }
+            }
+        ]
+    }
 }
+
+
 const history = [
     cart,
     cart,
@@ -477,15 +499,6 @@ const resolvers = {
             users[index].email = args.email
             return users
         },
-        updateOrderItem(parent, args) {
-            console.log(args.orderItemInput.orderItems)
-            console.log(args.totalPrice.totalPrice)
-            return cart
-        },
-        deleteOrderItem(parent, args) {
-            console.log(args)
-            return cart
-        },
         //今回は初期値にセットしてある内容を更新する
         updateOrderInfo(parent, args, context, info) {
             //引数に渡されたデータを確認
@@ -503,10 +516,18 @@ const resolvers = {
             return cart
         },*/
         addCart(parent, args) {
-            cart.orderItems.push(args.orderItem);
-            cart.totalPrice += args.totalPrice;
-            console.log(cart)
+            // cart.orderItems.push(args.orderItem);
+            // cart.totalPrice += args.totalPrice;
+            console.log(args)
             //throw new Error()
+            return {order: cart}
+        },
+        updateCart(parent, args) {
+            console.log(args)
+            return {order: cart}
+        },
+        deleteCart(parent, args) {
+            console.log(args)
             return {order: cart}
         }
     }
