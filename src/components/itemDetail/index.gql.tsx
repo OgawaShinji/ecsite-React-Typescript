@@ -45,8 +45,7 @@ const ItemDetailGQL: React.FC = () => {
                 },
                 totalPrice: selectedState.totalPrice!
             }
-        }).then(async (i) => {
-            console.log(i)
+        }).then(async () => {
             if (moveTo === 'cart') await history.push(Path.cart)
             if (moveTo === 'confirm') await history.push(Path.orderConfirm)
         }).catch((e) => {
