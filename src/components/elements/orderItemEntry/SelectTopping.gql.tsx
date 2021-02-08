@@ -3,6 +3,7 @@ import {Button, ButtonBase, Card, Grid, LinearProgress, Typography} from "@mater
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {ToppingType as Topping} from "~/generated/graphql";
 import {useFetchToppingsQuery} from "~/generated/graphql";
+import ErrorPage from "~/components/error";
 
 type selectToppingProps = {
     selectedSize: string;
@@ -20,13 +21,16 @@ export const SelectToppingGQL: React.FC<selectToppingProps> = (props) => {
 
     const handleToppingChange = (topping: Topping) => {
         const index = selectedToppings.findIndex(t => t.id === (topping.id))
-        const newSelected: Topping[] = [...selectedToppings]
+        let newSelected: Topping[] = [...selectedToppings]
         if (index === -1 && selectedToppings.length < 3) newSelected.push(topping);
         if (index !== -1) newSelected.splice(index, 1);
         setSelectedToppings(newSelected);
         if (typeof props.onToppingChange !== "undefined") props.onToppingChange(newSelected)
     };
     const classes = toppingStyles();
+
+    if (!toppings) return <ErrorPage code={500}/>
+
     return (
         isLoadToppings ? <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/> :
             <Card className={classes.topping_modal}>
