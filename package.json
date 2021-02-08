@@ -30,6 +30,7 @@
     "graphql": "^15.5.0",
     "graphql-anywhere": "^4.2.7",
     "graphql-tag": "^2.11.0",
+    "msw": "^0.26.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-modal": "^3.12.1",

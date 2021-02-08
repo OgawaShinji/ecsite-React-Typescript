@@ -1,17 +1,12 @@
 import React from "react";
 import {useHistory} from 'react-router-dom';
 
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "~/store";
-import {setItemDetail} from '~/store/slices/Domain/item.slice';
-
 import {Paper, makeStyles, Grid, Avatar, CardActionArea, Typography} from '@material-ui/core';
 
-import {Item} from '~/types/interfaces';
-import {setError} from "~/store/slices/App/error.slice";
+import {ItemType} from "~/generated/graphql";
 
 type Props = {
-    item: Item;
+    item: ItemType;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -36,24 +31,14 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const ItemCard: React.FC<Props> = props => {
+const ItemCardGQL: React.FC<Props> = props => {
 
-    const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
     const classes = useStyles();
 
-    const dispatchItemDetail = async () => {
-        dispatch(setItemDetail(props.item));
-    };
-
     const toItemDetail = () => {
-        dispatchItemDetail()
-            .then(() => {
-                history.push({pathname: `/itemDetail/${props.item.id}`});
-            })
-            .catch((e) => {
-                dispatch(setError({isError: true, code: e.message}));
-            });
+        console.log(props.item.id)
+        history.push({pathname: `/itemDetail/${props.item.id}`});
     };
 
     return (
@@ -94,4 +79,4 @@ const ItemCard: React.FC<Props> = props => {
     );
 };
 
-export default ItemCard;
+export default ItemCardGQL;

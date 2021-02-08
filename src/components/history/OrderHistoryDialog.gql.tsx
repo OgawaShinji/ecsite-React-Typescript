@@ -1,6 +1,6 @@
 import React from "react";
 
-import OrderItemCard from '~/components/elements/orderItemCard/OrderItemCard';
+import OrderItemCardGQL from "~/components/elements/orderItemCard/OrderItemCard.gql";
 
 import {
     Dialog,
@@ -12,12 +12,13 @@ import {
 } from '@material-ui/core';
 import {Cancel} from "@material-ui/icons";
 
-import {OrderItem} from "~/types/interfaces";
+import {OrderItemType} from "~/generated/graphql";
+
 
 type Props = {
     handleClose: () => void;
     isOpen: boolean;
-    orderItems: Array<OrderItem>;
+    orderItems: Array<OrderItemType>;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -26,14 +27,14 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const OrderHistoryDialog: React.FC<Props> = props => {
+const OrderHistoryDialogGQL: React.FC<Props> = props => {
 
     const classes = useStyles();
 
     // 注文商品一覧JSXの作成
-    const orderItemCardList = props.orderItems.map((orderItem) => (
+    const orderItemCardList = props.orderItems.map((orderItem: OrderItemType) => (
         <div key={orderItem.id} className={classes.control}>
-            <OrderItemCard orderItem={orderItem}/>
+            <OrderItemCardGQL orderItem={orderItem}/>
         </div>
     ));
 
@@ -66,4 +67,4 @@ const OrderHistoryDialog: React.FC<Props> = props => {
     );
 };
 
-export default OrderHistoryDialog;
+export default OrderHistoryDialogGQL;

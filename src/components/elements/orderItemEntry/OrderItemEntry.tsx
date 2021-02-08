@@ -16,7 +16,7 @@ import {
 import {WrappedSelectTopping} from "~/components/elements/orderItemEntry/SelectTopping";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
-import {Topping} from "~/generated/graphql";
+import {Topping} from "~/types/interfaces";
 
 export type itemEntryState = {
     size: string;

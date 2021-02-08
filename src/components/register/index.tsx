@@ -87,8 +87,8 @@ const Register: FC = () => {
     //登録処理でエラーをキャッチしたかどうか
     const [emailDuplicated, setEmailDuplicated] = useState(false);
     //ブラインドのステータス
-    const [passType, setPassType] = useState("password");
-    const [confirmPassType, setConfirmPassType] = useState("password");
+    const [passType, setPassType] = useState("");
+    const [confirmPassType, setConfirmPassType] = useState("");
     //ローディング処理
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -156,7 +156,7 @@ const Register: FC = () => {
         if (value !== password.value) return '※パスワードと一致していません'
         const regex = /^[0-9]+$/;
         if (!regex.test(value)) return '※半角数字を入力してください'
-        if (value.length < 6 || 16 < value.length) return '※6字以上6字以上16字以内で入力してください'
+        if (value.length < 6 || 16 < value.length) return '※6字以上16字以内で入力してください'
         return ''
     }
 
@@ -326,7 +326,7 @@ const Register: FC = () => {
                             <Typography className={classes.pad} component="h5" variant="h5"
                                         align={"center"}>新規ユーザー登録</Typography>
                             <Grid item xs={11}>
-                                <Typography style={{color: 'red', fontSize: "small"}}
+                                <Typography style={{color: 'red', fontSize: "small"}} component={"h6"}
                                             align={"center"}>{name.errorMessage}</Typography>
                                 <TextField
                                     size={"small"}
@@ -341,7 +341,7 @@ const Register: FC = () => {
                                 />
                             </Grid>
                             <Grid item xs={11}>
-                                <Typography style={{color: 'red', fontSize: "small"}}
+                                <Typography style={{color: 'red', fontSize: "small"}} component={"h6"}
                                             align={"center"}>{email.errorMessage}</Typography>
                                 <TextField
                                     size={"small"}
@@ -357,11 +357,11 @@ const Register: FC = () => {
                             </Grid>
                             <Grid container alignItems={"center"}>
                                 <Grid item xs={5}>
-                                    <Typography style={{color: 'red', fontSize: "small"}}
+                                    <Typography style={{color: 'red', fontSize: "small"}} component={"h6"}
                                                 align={"center"}>{firstZipcode.errorMessage}</Typography>
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <Typography style={{color: 'red', fontSize: "small"}}
+                                    <Typography style={{color: 'red', fontSize: "small"}} component={"h6"}
                                                 align={"center"}>{secondZipcode.errorMessage}</Typography>
                                 </Grid>
                             </Grid>
@@ -394,7 +394,7 @@ const Register: FC = () => {
                                 </Grid>
                             </Grid>
                             <Grid item xs={11}>
-                                <Typography style={{color: 'red', fontSize: "small"}}
+                                <Typography style={{color: 'red', fontSize: "small"}} component={"h6"}
                                             align={"center"}>{address.errorMessage}</Typography>
                                 <TextField
                                     size={"small"}
@@ -410,15 +410,15 @@ const Register: FC = () => {
                             </Grid>
                             <Grid container alignItems={"center"}>
                                 <Grid item xs={3}>
-                                    <Typography style={{color: 'red', fontSize: "x-small"}}
+                                    <Typography style={{color: 'red', fontSize: "x-small"}} component={"h6"}
                                                 align={"center"}>{firstTelNum.errorMessage}</Typography>
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <Typography style={{color: 'red', fontSize: "x-small"}}
+                                    <Typography style={{color: 'red', fontSize: "x-small"}} component={"h6"}
                                                 align={"center"}>{secondTelNum.errorMessage}</Typography>
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <Typography style={{color: 'red', fontSize: "x-small"}}
+                                    <Typography style={{color: 'red', fontSize: "x-small"}} component={"h6"}
                                                 align={"center"}>{thirdTelNum.errorMessage}</Typography>
                                 </Grid>
                             </Grid>
@@ -437,7 +437,6 @@ const Register: FC = () => {
                                 </Grid>
                                 <Grid item><Typography align={"center"}>-</Typography></Grid>
                                 <Grid item xs={4}>
-
                                     <TextField
                                         size={"small"}
                                         id="telephone2"
@@ -465,20 +464,24 @@ const Register: FC = () => {
                                 </Grid>
                             </Grid>
                             <Grid item xs={12}>
-                                <Typography style={{color: 'red', fontSize: "small"}}
+                                <Typography style={{color: 'red', fontSize: "small"}} component={"h6"}
                                             align={"center"}>{password.errorMessage}</Typography>
                             </Grid>
                             <Grid container alignItems={"center"}>
                                 <Grid item xs={1}>
                                     <Typography></Typography>
-                                    <IconButton onClick={switchBlindPass}>
+                                    <IconButton
+                                        id={"passIconButton"}
+                                        type={"button"}
+                                        name={"passIconButton"}
+                                        onClick={switchBlindPass}>
                                         {passBlindIcon()}
                                     </IconButton>
                                 </Grid>
                                 <Grid item xs={10}>
                                     <TextField
-                                        size={"small"}
                                         id="password"
+                                        size={"small"}
                                         type={passType}
                                         label="password"
                                         variant="outlined"
@@ -491,13 +494,16 @@ const Register: FC = () => {
                                 </Grid>
                             </Grid>
                             <Grid item xs={12}>
-                                <Typography style={{color: 'red', fontSize: "small"}}
+                                <Typography style={{color: 'red', fontSize: "small"}} component={"h6"}
                                             align={"center"}>{confirmationPassword.errorMessage}</Typography>
                             </Grid>
                             <Grid container alignItems={"center"}>
                                 <Grid item xs={1}>
                                     <Typography></Typography>
-                                    <IconButton onClick={switchBlindConfirmPass}>
+                                    <IconButton
+                                        id={"confirmPassIconButton"}
+                                        name={"passIconButton"}
+                                        onClick={switchBlindConfirmPass}>
                                         {confirmPassBlindIcon()}
                                     </IconButton>
                                 </Grid>

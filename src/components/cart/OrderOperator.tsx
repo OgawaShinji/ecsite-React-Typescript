@@ -1,14 +1,15 @@
 import React from "react";
 import {Button, Card, CardActions, CardContent, makeStyles} from "@material-ui/core";
+import {OrderItem} from "~/types/interfaces";
 import TotalPrice from "~/components/elements/totalPrice/totalPrice"
-import {RouteComponentProps, withRouter} from 'react-router-dom';
-import {OrderItemFragFragment} from "~/generated/graphql";
+import {useHistory} from 'react-router-dom';
 
 interface Props {
-    subTotalPrice: number | null | undefined
-    orderItems: OrderItemFragFragment[] | undefined
+    subTotalPrice: number
+    orderItems: Array<OrderItem> | undefined
     deleteOrderItem: (orderItemId: number) => void
 }
+
 
 const useStyles = makeStyles({
     root: {
@@ -29,19 +30,22 @@ const useStyles = makeStyles({
     }
 });
 
-const OrderOperator: React.FC<Props & RouteComponentProps> = (props) => {
+
+const OrderOperator: React.FC<Props> = (props) => {
 
     const classes = useStyles();
+    const history = useHistory();
 
     /**
      * OrderItemEntryのダイアログを非表示にする関数
      * @Params orderItems: OrderItem[]
      */
-    const allDeleteOrderItems = (orderItems: OrderItemFragFragment[]) => {
+    const allDeleteOrderItems = (orderItems: OrderItem[]) => {
         orderItems.forEach((orderItem => {
-            props.deleteOrderItem(Number(orderItem.id!))
+            props.deleteOrderItem(orderItem.id!)
         }))
     }
+
 
     return (
         <Card className={classes.root}>
@@ -52,7 +56,7 @@ const OrderOperator: React.FC<Props & RouteComponentProps> = (props) => {
                 <Button
                     variant="outlined"
                     className={classes.orderBtn}
-                    onClick={() => props.history.push({pathname: `/orderConfirm`})}
+                    onClick={() => history.push( `/orderConfirm`)}
                     disabled={props.orderItems && props.orderItems.length === 0}
                 >
                     注文確認画面へ進む
@@ -72,14 +76,12 @@ const OrderOperator: React.FC<Props & RouteComponentProps> = (props) => {
                     variant="outlined"
                     color="primary"
                     className={classes.btn}
-                    onClick={() => props.history.push({pathname: `/itemList`})}
+                    onClick={() => history.push(`/itemList`)}
                 >
                     買い物を続ける
                 </Button>
-
             </CardActions>
         </Card>
     )
 }
-export default withRouter(OrderOperator);
-
+export default OrderOperator;
