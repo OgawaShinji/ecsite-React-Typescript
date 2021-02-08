@@ -1,8 +1,11 @@
 import React from "react";
 import {Card} from "@material-ui/core";
 
-const ErrorPage: React.FC = () => {
-    let errorMessage = "現在メンテナンス中です。"
+type ErrorProps = {
+    code?: number
+}
+const ErrorPage: React.FC<ErrorProps> = (props) => {
+    let errorMessage = props === 500 ? "現在メンテナンス中です。" : "お探しのページが見つかりません。"
     return (<div style={{
         textAlign: "center",
         width: "80%",
