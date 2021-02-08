@@ -8,11 +8,15 @@ import reportWebVitals from './reportWebVitals';
 import {Provider} from "react-redux";
 import store from './store';
 import {BrowserRouter} from "react-router-dom";
+import {ErrorBoundary} from "react-error-boundary";
+import ErrorPage from "~/components/error";
 
 ReactDOM.render(
     <Provider store={store}>
         <BrowserRouter>
-            <App/>
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <App/>
+            </ErrorBoundary>
         </BrowserRouter>
     </Provider>,
     document.getElementById('root')
