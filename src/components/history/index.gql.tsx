@@ -16,7 +16,6 @@ import {setError} from '~/store/slices/App/error.slice';
 
 import {
     OrderItemType,
-    OrderItemTypeEdge,
     useFetchOrderHistoryQuery
 } from "~/generated/graphql";
 
@@ -91,7 +90,7 @@ const HistoryGQL: React.FC = () => {
             <ListItem button onClick={() => {
                 setIsOpen(true);
                 if (order!.node!.orderItems!.edges) {
-                    let orderItems: Array<OrderItemType> = order!.node!.orderItems.edges.map((orderItem: OrderItemTypeEdge | null) => orderItem!.node!)
+                    let orderItems: Array<OrderItemType> = order!.node!.orderItems!.edges.map((orderItem) => orderItem!.node!)
                     setOrderItems(orderItems);
                 }
             }}>
