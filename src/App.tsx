@@ -38,6 +38,7 @@ const App: React.FC<RouteComponentProps> = () => {
     const errorInStore = useSelector(selectError);
 
     useEffect(() => {
+        // TODO: fetchLoginUserが出来次第描き直す
         if (!loginUser && token) {
             dispatch(fetchLoginUser()).catch((e) => {
                 dispatch(setError({isError: true, code: e.message}))
