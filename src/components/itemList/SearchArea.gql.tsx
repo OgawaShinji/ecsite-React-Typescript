@@ -40,7 +40,7 @@ const SearchAreaGQL: React.FC<Props> = props => {
 
     useEffect(() => {
         if (!isLoadItemsData) {
-            const itemNames = itemsData!.items!.edges.map((item) => item!.node!.name)
+            const itemNames = itemsData!.items!.edges.map((item) => item!.node!.name!)
             setItemNames(itemNames);
         }
     }, [isLoadItemsData, itemsData]);
