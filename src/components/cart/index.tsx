@@ -48,7 +48,7 @@ const useStyles = makeStyles({
 });
 
 
-const Index: React.FC = () => {
+const Cart: React.FC = () => {
 
     const dispatch: AppDispatch = useDispatch()
     const classes = useStyles();
@@ -182,4 +182,4 @@ const Index: React.FC = () => {
         </div>
     )
 }
-export default Index;
+export default Cart;

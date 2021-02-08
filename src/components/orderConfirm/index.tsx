@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {asyncFetchOrderItems, selectOrderItems} from "~/store/slices/Domain/order.slice";
 import {useDispatch, useSelector} from "react-redux";
-import OrderForm from "~/components/orderConfirm/orderForm";
+import OrderForm from "~/components/orderConfirm/OrderForm";
 import OrderItemCard from "~/components/elements/orderItemCard/OrderItemCard";
 import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {Grid, LinearProgress, makeStyles} from "@material-ui/core";

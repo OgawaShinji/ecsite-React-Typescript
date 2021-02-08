@@ -59,7 +59,7 @@ const ItemCard: React.FC<Props> = props => {
     return (
         <div>
             <Paper elevation={0}>
-                <CardActionArea onClick={toItemDetail}>
+                <CardActionArea onClick={toItemDetail} role={'cardActionArea'}>
                     <Grid container justify={"center"} alignItems={"center"}>
                         <Grid item xs={12}>
                             <Avatar variant={"rounded"} alt={'pizza'}
@@ -68,22 +68,22 @@ const ItemCard: React.FC<Props> = props => {
                         </Grid>
                     </Grid>
                     <Grid container justify={"center"} alignItems={"center"}>
-                        <Typography className={classes.title}>
+                        <Typography className={classes.title} role={'typoItemName'}>
                             {props.item.name}
                         </Typography>
                     </Grid>
                     <Grid container justify={"center"} alignContent={"center"}>
                         <Grid item className={classes.control}>
-                            <Avatar className={classes.size}>M</Avatar>&nbsp;
-                            <Typography>
+                            <Avatar className={classes.size} role={'avatarM'}>M</Avatar>&nbsp;
+                            <Typography role={'typoPriceM'}>
                                 {props.item.priceM.toLocaleString()}円
                             </Typography>
                         </Grid>
                     </Grid>
                     <Grid container justify={"center"} alignContent={"center"}>
                         <Grid item className={classes.control}>
-                            <Avatar className={classes.size}>L</Avatar>&nbsp;
-                            <Typography>
+                            <Avatar className={classes.size} role={'avatarL'}>L</Avatar>&nbsp;
+                            <Typography role={'typoPriceL'}>
                                 {props.item.priceL.toLocaleString()}円
                             </Typography>
                         </Grid>
