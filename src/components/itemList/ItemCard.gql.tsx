@@ -48,7 +48,7 @@ const ItemCardGQL: React.FC<Props> = props => {
                     <Grid container justify={"center"} alignItems={"center"}>
                         <Grid item xs={12}>
                             <Avatar variant={"rounded"} alt={'pizza'}
-                                    src={props.item.imagePath}
+                                    src={props.item!.imagePath!}
                                     className={classes.avatar}/>
                         </Grid>
                     </Grid>
@@ -61,7 +61,7 @@ const ItemCardGQL: React.FC<Props> = props => {
                         <Grid item className={classes.control}>
                             <Avatar className={classes.size}>M</Avatar>&nbsp;
                             <Typography>
-                                {props.item.priceM.toLocaleString()}円
+                                {props.item!.priceM!.toLocaleString()}円
                             </Typography>
                         </Grid>
                     </Grid>
@@ -69,7 +69,7 @@ const ItemCardGQL: React.FC<Props> = props => {
                         <Grid item className={classes.control}>
                             <Avatar className={classes.size}>L</Avatar>&nbsp;
                             <Typography>
-                                {props.item.priceL.toLocaleString()}円
+                                {props.item!.priceL!.toLocaleString()}円
                             </Typography>
                         </Grid>
                     </Grid>
