@@ -159,7 +159,7 @@ export type UserType = Node & {
   address: Scalars['String'];
   telephone: Scalars['String'];
   status: Scalars['String'];
-  orderSet: OrderTypeConnection;
+  orderSet: OrderHistoryTypeConnection;
 };
 
 
@@ -171,25 +171,26 @@ export type UserTypeOrderSetArgs = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type OrderTypeConnection = {
-  __typename?: 'OrderTypeConnection';
+export type OrderHistoryTypeConnection = {
+  __typename?: 'OrderHistoryTypeConnection';
   /** Pagination data for this connection. */
   pageInfo: PageInfo;
   /** Contains the nodes in this connection. */
-  edges: Array<Maybe<OrderTypeEdge>>;
+  edges: Array<Maybe<OrderHistoryTypeEdge>>;
 };
 
-/** A Relay edge containing a `OrderType` and its cursor. */
-export type OrderTypeEdge = {
-  __typename?: 'OrderTypeEdge';
+/** A Relay edge containing a `OrderHistoryType` and its cursor. */
+export type OrderHistoryTypeEdge = {
+  __typename?: 'OrderHistoryTypeEdge';
   /** The item at the end of the edge */
-  node?: Maybe<OrderType>;
+  node?: Maybe<OrderHistoryType>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
 };
 
-export type OrderType = Node & {
-  __typename?: 'OrderType';
+/** ログイン中のユーザーの注文履歴を取得 */
+export type OrderHistoryType = Node & {
+  __typename?: 'OrderHistoryType';
   user?: Maybe<UserType>;
   status?: Maybe<Scalars['Int']>;
   totalPrice?: Maybe<Scalars['Int']>;
@@ -207,7 +208,8 @@ export type OrderType = Node & {
 };
 
 
-export type OrderTypeOrderItemsArgs = {
+/** ログイン中のユーザーの注文履歴を取得 */
+export type OrderHistoryTypeOrderItemsArgs = {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -276,28 +278,8 @@ export type OrderToppingType = Node & {
   id: Scalars['ID'];
 };
 
-export type OrderHistoryTypeConnection = {
-  __typename?: 'OrderHistoryTypeConnection';
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** Contains the nodes in this connection. */
-  edges: Array<Maybe<OrderHistoryTypeEdge>>;
-};
-
-/** A Relay edge containing a `OrderHistoryType` and its cursor. */
-export type OrderHistoryTypeEdge = {
-  __typename?: 'OrderHistoryTypeEdge';
-  /** The item at the end of the edge */
-  node?: Maybe<OrderHistoryType>;
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
-};
-
-/** ログイン中のユーザーの注文履歴を取得 */
-export type OrderHistoryType = Node & {
-  __typename?: 'OrderHistoryType';
-  /** The ID of the object. */
-  id: Scalars['ID'];
+export type OrderType = Node & {
+  __typename?: 'OrderType';
   user?: Maybe<UserType>;
   status?: Maybe<Scalars['Int']>;
   totalPrice?: Maybe<Scalars['Int']>;
@@ -309,34 +291,17 @@ export type OrderHistoryType = Node & {
   destinationTel?: Maybe<Scalars['String']>;
   deliveryTime?: Maybe<Scalars['DateTime']>;
   paymentMethod?: Maybe<Scalars['Int']>;
-  orderItems: OrderItemTypeConnection;
+  orderItems?: Maybe<OrderItemConnection>;
+  /** The ID of the object. */
+  id: Scalars['ID'];
 };
 
 
-/** ログイン中のユーザーの注文履歴を取得 */
-export type OrderHistoryTypeOrderItemsArgs = {
-  offset?: Maybe<Scalars['Int']>;
+export type OrderTypeOrderItemsArgs = {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-};
-
-export type OrderItemTypeConnection = {
-  __typename?: 'OrderItemTypeConnection';
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** Contains the nodes in this connection. */
-  edges: Array<Maybe<OrderItemTypeEdge>>;
-};
-
-/** A Relay edge containing a `OrderItemType` and its cursor. */
-export type OrderItemTypeEdge = {
-  __typename?: 'OrderItemTypeEdge';
-  /** The item at the end of the edge */
-  node?: Maybe<OrderItemType>;
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
 };
 
 export type Mutation = {
@@ -551,14 +516,14 @@ export type FetchOrderHistoryQuery = (
       & { node?: Maybe<(
         { __typename?: 'OrderHistoryType' }
         & Pick<OrderHistoryType, 'id' | 'totalPrice' | 'orderDate' | 'destinationName' | 'destinationEmail' | 'destinationZipcode' | 'destinationAddress' | 'destinationTel' | 'deliveryTime' | 'paymentMethod' | 'status'>
-        & { orderItems: (
-          { __typename?: 'OrderItemTypeConnection' }
+        & { orderItems?: Maybe<(
+          { __typename?: 'OrderItemConnection' }
           & { pageInfo: (
             { __typename?: 'PageInfo' }
             & Pick<PageInfo, 'hasPreviousPage' | 'hasNextPage' | 'startCursor' | 'endCursor'>
           ), edges: Array<Maybe<(
-            { __typename?: 'OrderItemTypeEdge' }
-            & Pick<OrderItemTypeEdge, 'cursor'>
+            { __typename?: 'OrderItemEdge' }
+            & Pick<OrderItemEdge, 'cursor'>
             & { node?: Maybe<(
               { __typename?: 'OrderItemType' }
               & Pick<OrderItemType, 'id' | 'quantity' | 'size' | 'subTotalPrice'>
@@ -585,7 +550,7 @@ export type FetchOrderHistoryQuery = (
               )> }
             )> }
           )>> }
-        ) }
+        )> }
       )> }
     )>> }
   )> }
