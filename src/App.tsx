@@ -66,17 +66,23 @@ const App: React.FC<RouteComponentProps> = () => {
         })
     });
 
-    return (
-        <div className={classes.App}>
-            <ApolloProvider client={client}>
-                <ScrollToTop/>
-                <Header isLogin={isLogin}/>
-                {errorInStore.isError ? errorInStore.code === "401" ? <Redirect to="/login"/> :
-                    <ErrorPage/> : routes}
-                <Footer/>
-            </ApolloProvider>
-        </div>
-    );
+    try {
+        return (
+            <div className={classes.App}>
+                <ApolloProvider client={client}>
+                    <ScrollToTop/>
+                    <Header isLogin={isLogin}/>
+                    {errorInStore.isError ? errorInStore.code === "401" ? <Redirect to="/login"/> :
+                        <ErrorPage/> : routes}
+                    <Footer/>
+                </ApolloProvider>
+            </div>
+        );
+    } catch (e) {
+        console.log(e)
+        return <ErrorPage/>
+    }
+
 };
 
 export default withRouter(App);

@@ -419,6 +419,23 @@ export type OrderInput = {
   paymentMethod: Scalars['Int'];
 };
 
+export type AddCartMutationVariables = Exact<{
+  orderItem: OrderItemInput;
+  totalPrice: Scalars['Int'];
+}>;
+
+
+export type AddCartMutation = (
+  { __typename?: 'Mutation' }
+  & { addCart?: Maybe<(
+    { __typename?: 'AddCart' }
+    & { order?: Maybe<(
+      { __typename?: 'OrderType' }
+      & Pick<OrderType, 'id'>
+    )> }
+  )> }
+);
+
 export type FetchToppingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -557,6 +574,41 @@ export type FetchOrderHistoryQuery = (
 );
 
 
+export const AddCartDocument = gql`
+    mutation addCart($orderItem: OrderItemInput!, $totalPrice: Int!) {
+  addCart(orderItem: $orderItem, status: 0, totalPrice: $totalPrice) {
+    order {
+      id
+    }
+  }
+}
+    `;
+export type AddCartMutationFn = Apollo.MutationFunction<AddCartMutation, AddCartMutationVariables>;
+
+/**
+ * __useAddCartMutation__
+ *
+ * To run a mutation, you first call `useAddCartMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddCartMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addCartMutation, { data, loading, error }] = useAddCartMutation({
+ *   variables: {
+ *      orderItem: // value for 'orderItem'
+ *      totalPrice: // value for 'totalPrice'
+ *   },
+ * });
+ */
+export function useAddCartMutation(baseOptions?: Apollo.MutationHookOptions<AddCartMutation, AddCartMutationVariables>) {
+        return Apollo.useMutation<AddCartMutation, AddCartMutationVariables>(AddCartDocument, baseOptions);
+      }
+export type AddCartMutationHookResult = ReturnType<typeof useAddCartMutation>;
+export type AddCartMutationResult = Apollo.MutationResult<AddCartMutation>;
+export type AddCartMutationOptions = Apollo.BaseMutationOptions<AddCartMutation, AddCartMutationVariables>;
 export const FetchToppingsDocument = gql`
     query fetchToppings {
   toppings {

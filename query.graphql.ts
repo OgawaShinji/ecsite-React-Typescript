@@ -1,7 +1,15 @@
 import gql from "graphql-tag";
 //本番環境用query
 // ============================ order  ====================================================================
-
+gql(`
+mutation addCart($orderItem:OrderItemInput!,$totalPrice:Int!){
+  addCart(orderItem:$orderItem,status:0,totalPrice:$totalPrice){
+     order{
+      id
+     }   
+  }
+}
+`)
 
 // ============================= topping ====================================================================
 
