@@ -19,10 +19,10 @@ const ItemDetailGQL: React.FC = () => {
     const {
         data: displayItem,
         loading: isLoadItem,
-        error: isErrorFetchItem
+        error: fetchItemError
     } = useFetchItemQuery({variables: {id: itemId}});
 
-    const [addCart, {loading: isLoadAddCart, error: isErrorAddCart}] = useAddCartMutation();
+    const [addCart, {loading: isLoadAddCart, error: addCartError}] = useAddCartMutation();
 
     const history = useHistory();
 
@@ -56,7 +56,12 @@ const ItemDetailGQL: React.FC = () => {
 
     const classes = entryIndexStyle();
 
-    if (isErrorFetchItem || isErrorAddCart) return <ErrorPage code={500}/>;
+    //BadRequest時のエラーハンドリング
+    if (addCartError?.graphQLErrors[0] && addCartError?.graphQLErrors[0].extensions?.code === "BAD_REQUEST") return <ErrorPage
+        code={404}/>
+    //BadRequest以外はメンテナンス表示
+    if (fetchItemError || addCartError) return <ErrorPage code={500}/>;
+    //Pathに存在しないIDを渡された場合BADREQUESTでは無くnullが返ってくる仕様なので404とみなす
     if (!(displayItem?.item?.name) && !(isLoadAddCart || isLoadItem)) return <ErrorPage code={404}/>;
 
     return (isLoadItem || isLoadAddCart ?
