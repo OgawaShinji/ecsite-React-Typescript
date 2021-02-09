@@ -57,7 +57,7 @@ const ItemDetailGQL: React.FC = () => {
     const classes = entryIndexStyle();
 
     //BadRequest時のエラーハンドリング
-    if (addCartError?.graphQLErrors[0] && addCartError?.graphQLErrors[0].extensions?.code === "BAD_REQUEST") return <ErrorPage
+    if (fetchItemError?.graphQLErrors[0] && fetchItemError?.graphQLErrors[0].extensions?.code === "BAD_REQUEST") return <ErrorPage
         code={404}/>
     //BadRequest以外はメンテナンス表示
     if (fetchItemError || addCartError) return <ErrorPage code={500}/>;
