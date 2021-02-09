@@ -518,8 +518,10 @@ export type FetchItemsTotalCountQuery = (
 );
 
 export type FetchOrderHistoryQueryVariables = Exact<{
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['String']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -767,8 +769,14 @@ export type FetchItemsTotalCountQueryHookResult = ReturnType<typeof useFetchItem
 export type FetchItemsTotalCountLazyQueryHookResult = ReturnType<typeof useFetchItemsTotalCountLazyQuery>;
 export type FetchItemsTotalCountQueryResult = Apollo.QueryResult<FetchItemsTotalCountQuery, FetchItemsTotalCountQueryVariables>;
 export const FetchOrderHistoryDocument = gql`
-    query fetchOrderHistory($limit: Int, $offset: Int) {
-  orderHistory(first: $limit, offset: $offset, orderBy: "-orderDate,-id") {
+    query fetchOrderHistory($first: Int, $after: String, $last: Int, $before: String) {
+  orderHistory(
+    first: $first
+    after: $after
+    last: $last
+    before: $before
+    orderBy: "-orderDate,-id"
+  ) {
     pageInfo {
       hasPreviousPage
       hasNextPage
@@ -853,8 +861,10 @@ export const FetchOrderHistoryDocument = gql`
  * @example
  * const { data, loading, error } = useFetchOrderHistoryQuery({
  *   variables: {
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *      last: // value for 'last'
+ *      before: // value for 'before'
  *   },
  * });
  */
