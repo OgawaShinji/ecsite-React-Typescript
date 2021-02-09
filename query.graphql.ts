@@ -1,6 +1,57 @@
 import gql from "graphql-tag";
 //本番環境用query
 // ============================ order  ====================================================================
+
+gql(`query fetchOrderItems {
+  cart {
+    id
+    totalPrice
+    orderItems{
+      pageInfo{
+        hasNextPage
+        hasPreviousPage
+      }
+      edges{
+        cursor
+        node{
+          id
+          size
+          quantity
+          subTotalPrice
+          item{
+            id
+            name
+            description
+            priceM
+            priceL
+            imagePath
+            deleted
+          }
+          orderToppings{
+            pageInfo{
+            hasNextPage
+            hasPreviousPage
+            }
+            edges{
+              cursor
+              node{
+                id
+                topping{
+                  id
+                  name
+                  priceM
+                  priceL
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`)
+
 gql(`
 mutation addCart($orderItem:OrderItemInput!,$totalPrice:Int!){
   addCart(orderItem:$orderItem,status:0,totalPrice:$totalPrice){
@@ -10,6 +61,30 @@ mutation addCart($orderItem:OrderItemInput!,$totalPrice:Int!){
   }
 }
 `)
+
+gql(`
+mutation updateCart($orderItems: [OrderItemInput]!,$totalPrice:Int!) {
+   updateCart(
+    orderItems: $orderItems
+    status: 0
+    totalPrice:$totalPrice
+  ){
+    order {
+        id
+    }
+  }
+}`)
+
+gql(`
+mutation deleteCart($orderItemId:ID!) {
+   deleteCart(
+   orderItemId:$orderItemId
+  ){
+    order {
+        id
+    }
+  }
+}`)
 
 // ============================= topping ====================================================================
 
@@ -71,6 +146,30 @@ gql(`
 `)
 
 // ============================ user ============================================================================
+
+gql(`
+query fetchUser {
+  user{
+    id
+    name
+    email
+    zipcode
+    address
+    telephone
+    status
+    password
+    orderSet{
+      pageInfo{
+        hasNextPage
+        hasPreviousPage
+      }
+      edges{
+        cursor
+      }
+    }
+  }
+}
+`)
 
 // ============================ history ============================================================================
 
