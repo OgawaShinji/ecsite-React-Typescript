@@ -29,6 +29,7 @@ export type UserType = {
   telephone?: Maybe<Scalars['String']>;
   status?: Maybe<Scalars['Int']>;
   password?: Maybe<Scalars['String']>;
+  orderSet?: Maybe<OrderHistoryTypeConnection>;
 };
 
 export type ItemType = {
@@ -234,6 +235,7 @@ export type DeleteCart = {
 
 export type Query = {
   __typename?: 'Query';
+  user?: Maybe<UserType>;
   toppings?: Maybe<ToppingTypeConnection>;
   item?: Maybe<ItemType>;
   items?: Maybe<ItemTypeConnection>;
@@ -290,6 +292,7 @@ export type MutationAddCartArgs = {
   status?: Maybe<Scalars['Int']>;
   totalPrice: Scalars['Int'];
 };
+
 
 export type MutationUpdateCartArgs = {
   orderItems: Array<Maybe<OrderItemInput>>;
@@ -503,6 +506,27 @@ export type FetchItemQuery = (
   & { item?: Maybe<(
     { __typename?: 'ItemType' }
     & Pick<ItemType, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
+  )> }
+);
+
+export type FetchUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchUserQuery = (
+  { __typename?: 'Query' }
+  & { user?: Maybe<(
+    { __typename?: 'UserType' }
+    & Pick<UserType, 'id' | 'name' | 'email' | 'zipcode' | 'address' | 'telephone' | 'status' | 'password'>
+    & { orderSet?: Maybe<(
+      { __typename?: 'OrderHistoryTypeConnection' }
+      & { pageInfo?: Maybe<(
+        { __typename?: 'PageInfo' }
+        & Pick<PageInfo, 'hasNextPage' | 'hasPreviousPage'>
+      )>, edges?: Maybe<Array<Maybe<(
+        { __typename?: 'OrderHistoryTypeEdge' }
+        & Pick<OrderHistoryTypeEdge, 'cursor'>
+      )>>> }
+    )> }
   )> }
 );
 
@@ -838,3 +862,51 @@ export function useFetchItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type FetchItemQueryHookResult = ReturnType<typeof useFetchItemQuery>;
 export type FetchItemLazyQueryHookResult = ReturnType<typeof useFetchItemLazyQuery>;
 export type FetchItemQueryResult = Apollo.QueryResult<FetchItemQuery, FetchItemQueryVariables>;
+export const FetchUserDocument = gql`
+    query fetchUser {
+  user {
+    id
+    name
+    email
+    zipcode
+    address
+    telephone
+    status
+    password
+    orderSet {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+      }
+      edges {
+        cursor
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useFetchUserQuery__
+ *
+ * To run a query within a React component, call `useFetchUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFetchUserQuery(baseOptions?: Apollo.QueryHookOptions<FetchUserQuery, FetchUserQueryVariables>) {
+        return Apollo.useQuery<FetchUserQuery, FetchUserQueryVariables>(FetchUserDocument, baseOptions);
+      }
+export function useFetchUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchUserQuery, FetchUserQueryVariables>) {
+          return Apollo.useLazyQuery<FetchUserQuery, FetchUserQueryVariables>(FetchUserDocument, baseOptions);
+        }
+export type FetchUserQueryHookResult = ReturnType<typeof useFetchUserQuery>;
+export type FetchUserLazyQueryHookResult = ReturnType<typeof useFetchUserLazyQuery>;
+export type FetchUserQueryResult = Apollo.QueryResult<FetchUserQuery, FetchUserQueryVariables>;

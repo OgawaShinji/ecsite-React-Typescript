@@ -8,11 +8,25 @@ import reportWebVitals from './reportWebVitals';
 import {Provider} from "react-redux";
 import store from './store';
 import {BrowserRouter} from "react-router-dom";
+import {ApolloClient, ApolloProvider, HttpLink, InMemoryCache} from "@apollo/client";
+
+// apolloClientの環境設定
+const client = new ApolloClient({
+    cache: new InMemoryCache(),
+    link: new HttpLink({
+        uri: "http://localhost:4000/",
+        headers: {
+            Authorization: localStorage.getItem("Authorization")
+        },
+    })
+});
 
 ReactDOM.render(
     <Provider store={store}>
         <BrowserRouter>
-            <App/>
+            <ApolloProvider client={client}>
+                <App/>
+            </ApolloProvider>
         </BrowserRouter>
     </Provider>,
     document.getElementById('root')
