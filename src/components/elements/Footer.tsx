@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
     },
     title: {
         fontWeight: 'bold',
-        fontFamily: "'Zapfino', 'Gabriola'",
+        fontFamily: 'Gabriola',
         fontSize: 45,
         flexGrow: 1,
         color: 'white'

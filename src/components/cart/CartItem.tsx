@@ -1,8 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {OrderItem, OrderTopping, Topping} from "~/types/interfaces"
-import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
-import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
+import React, {useState} from "react";
+import OrderItemEntry, {itemEntryStateGQL} from "~/components/elements/orderItemEntry/OrderItemEntry.gql";
 import {useHistory} from "react-router-dom";
 import {
     Box,
@@ -19,13 +16,12 @@ import {
     Theme,
     Typography
 } from "@material-ui/core";
-import {AppDispatch} from "~/store";
-import {setError} from "~/store/slices/App/error.slice";
+import {OrderItemType, OrderToppingTypeConnection, OrderToppingTypeEdge, ToppingType} from "~/generated/graphql";
 
 interface Props {
-    orderItem: OrderItem
+    orderItem: OrderItemType
     index: number
-    updateOrderItems: ({orderItem}: { orderItem: OrderItem }) => void
+    updateOrderItems: ({orderItem}: { orderItem: OrderItemType }) => void
     deleteOrderItem: (orderItemId: number) => void
 }
 
@@ -65,29 +61,21 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const CartItem: React.FC<Props> = (props) => {
 
-    const dispatch: AppDispatch = useDispatch()
     const history = useHistory();
     const classes = useStyles();
     const {orderItem, updateOrderItems, deleteOrderItem} = props
 
-    const toppings: Topping[] = useSelector(selectToppings)
     const [modalIsOpen, setIsOpen] = useState<boolean>(false)
 
     // OrderItemEntryで受け渡す変数を定義
-    const selectedTopping: Topping[] = []
-    orderItem.orderToppings?.forEach(orderTopping => selectedTopping.push(orderTopping.topping))
-    const selectedState: itemEntryState = {
-        size: orderItem.size,
-        quantity: orderItem.quantity,
+    const selectedTopping: ToppingType[] = []
+    orderItem?.orderToppings?.edges?.forEach(orderTopping => selectedTopping.push(orderTopping!.node!.topping!))
+    const selectedState: itemEntryStateGQL = {
+        size: orderItem!.size!,
+        quantity: orderItem!.quantity!,
         toppings: selectedTopping
     }
 
-    // 初期表示
-    useEffect(() => {
-        if (toppings.length === 0) dispatch(fetchToppings()).catch((e) => {
-            dispatch(setError({isError: true, code: e.message}))
-        })
-    }, [dispatch, toppings])
 
     /**
      * OrderItemEntryのダイアログを非表示にする関数
@@ -118,19 +106,21 @@ const CartItem: React.FC<Props> = (props) => {
      * 商品のトッピングを変更する関数
      * @Params toppings: Topping[]
      */
-    const handleToppingChange = (toppings: Topping[]) => {
+    const handleToppingChange = (toppings: ToppingType[]) => {
         // setSelectToppings(toppings)
-        const newOrderToppings: OrderTopping[] = []
+        let newOrderToppings: OrderToppingTypeEdge[] = []
         toppings.forEach(topping => {
-            const changedOrderTopping: OrderTopping = {topping: topping}
+            const changedOrderTopping: OrderToppingTypeEdge = {node: {topping: topping}}
             newOrderToppings.push(changedOrderTopping)
         })
-        const changedOrderItem = {...orderItem, orderToppings: newOrderToppings}
+        let orderToppings: OrderToppingTypeConnection = {}
+        orderToppings.edges = newOrderToppings
+        const changedOrderItem = {...orderItem, orderToppings: orderToppings}
         updateOrderItems({orderItem: changedOrderItem})
     }
 
     const toItemDetail = () => {
-        history.push(`/itemDetail/${props.orderItem.item.id}`)
+        history.push(`/itemDetail/${props.orderItem?.item?.id}`)
     }
 
 
@@ -141,7 +131,7 @@ const CartItem: React.FC<Props> = (props) => {
                     {/*image*/}
                     <Grid item xs={3} container justify={"center"} alignItems={"center"}>
                         <ButtonBase className={classes.image} onClick={toItemDetail}>
-                            <img className={classes.img} alt={`image${props.index}`} src={orderItem.item.imagePath}/>
+                            <img className={classes.img} alt={`image${props.index}`} src={orderItem.item?.imagePath!}/>
                         </ButtonBase>
                     </Grid>
                     <Grid item xs={6} sm container>
@@ -152,7 +142,7 @@ const CartItem: React.FC<Props> = (props) => {
                                     <ButtonBase onClick={toItemDetail}>
                                         <Typography gutterBottom variant="h6">
                                             <Box fontWeight="fontWeightBold">
-                                                {orderItem.item.name}
+                                                {orderItem.item?.name}
                                             </Box>
                                         </Typography>
                                     </ButtonBase>
@@ -164,7 +154,7 @@ const CartItem: React.FC<Props> = (props) => {
                                 <Grid item xs={5}>
                                     <Typography gutterBottom>
                                         価格
-                                        ：{orderItem.size === 'M' ? orderItem.item.priceM.toLocaleString() : orderItem.item.priceL.toLocaleString()}円</Typography>
+                                        ：{orderItem.size === 'M' ? orderItem.item?.priceM?.toLocaleString() : orderItem.item?.priceL?.toLocaleString()}円</Typography>
                                     <Typography gutterBottom>
                                         サイズ： {orderItem.size}
                                     </Typography>
@@ -174,8 +164,8 @@ const CartItem: React.FC<Props> = (props) => {
                                 </Grid>
                                 <Grid item xs={6}>
                                     <ul>
-                                        {orderItem.orderToppings?.map((orderTopping, index) => (
-                                            <li key={index}>{orderTopping.topping.name}</li>
+                                        {orderItem.orderToppings?.edges!.map((orderTopping, index) => (
+                                            <li key={index}>{orderTopping!.node?.topping?.name}</li>
                                         ))}
                                     </ul>
                                 </Grid>
@@ -188,7 +178,7 @@ const CartItem: React.FC<Props> = (props) => {
                                             variant="outlined"
                                             color="secondary"
                                             className={classes.btn}
-                                            onClick={() => deleteOrderItem(orderItem.id!)}
+                                            onClick={() => deleteOrderItem(Number(orderItem!.id!))}
                                             data-testid={`deleteButton${props.index}`}
 
                                         >

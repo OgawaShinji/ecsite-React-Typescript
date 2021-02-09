@@ -1,12 +1,11 @@
 import React from "react";
 import {Button, Card, CardActions, CardContent, makeStyles} from "@material-ui/core";
-import {OrderItem} from "~/types/interfaces";
 import TotalPrice from "~/components/elements/totalPrice/totalPrice"
 import {useHistory} from 'react-router-dom';
 
 interface Props {
-    subTotalPrice: number
-    orderItems: Array<OrderItem> | undefined
+    subTotalPrice: number|null
+    orderItemIdList: Array<number>
     deleteOrderItem: (orderItemId: number) => void
 }
 
@@ -40,9 +39,9 @@ const OrderOperator: React.FC<Props> = (props) => {
      * OrderItemEntryのダイアログを非表示にする関数
      * @Params orderItems: OrderItem[]
      */
-    const allDeleteOrderItems = (orderItems: OrderItem[]) => {
-        orderItems.forEach((orderItem => {
-            props.deleteOrderItem(orderItem.id!)
+    const allDeleteOrderItems = (orderItemIdList: Array<number>) => {
+        orderItemIdList.forEach((orderItemId => {
+            props.deleteOrderItem(orderItemId)
         }))
     }
 
@@ -57,7 +56,7 @@ const OrderOperator: React.FC<Props> = (props) => {
                     variant="outlined"
                     className={classes.orderBtn}
                     onClick={() => history.push( `/orderConfirm`)}
-                    disabled={props.orderItems && props.orderItems.length === 0}
+                    disabled={props.orderItemIdList && props.orderItemIdList.length === 0}
                 >
                     注文確認画面へ進む
                 </Button>
@@ -67,8 +66,8 @@ const OrderOperator: React.FC<Props> = (props) => {
                     variant="outlined"
                     color="secondary"
                     className={classes.btn}
-                    onClick={() => allDeleteOrderItems(props.orderItems!)}
-                    disabled={props.orderItems && props.orderItems.length === 0}
+                    onClick={() => allDeleteOrderItems(props.orderItemIdList)}
+                    disabled={props.orderItemIdList && props.orderItemIdList.length === 0}
                 >
                     カートを空にする
                 </Button>
