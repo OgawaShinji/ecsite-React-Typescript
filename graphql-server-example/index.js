@@ -519,7 +519,6 @@ const users = [{
     }
 }]
 
-const users=[]
 
 // GraphQL の operation（query や mutation や subscription）が、実際にどのような処理を行なってデータを返すのかという指示書
 const resolvers = {
