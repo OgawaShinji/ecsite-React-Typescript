@@ -57,7 +57,7 @@ const ItemDetailGQL: React.FC = () => {
     const classes = entryIndexStyle();
 
     if (isErrorFetchItem || isErrorAddCart) return <ErrorPage code={500}/>;
-    if (!(displayItem?.item?.name)) return <ErrorPage code={404}/>;
+    if (!(displayItem?.item?.name) && !(isLoadAddCart || isLoadItem)) return <ErrorPage code={404}/>;
 
     return (isLoadItem || isLoadAddCart ?
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
