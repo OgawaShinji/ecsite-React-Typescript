@@ -2,10 +2,10 @@ import React from "react";
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 
 import {Avatar, Paper, Grid, makeStyles, Typography, Box, Divider, Button} from "@material-ui/core";
-import { OrderItem } from "~/gql/generated/order.graphql";
+import {OrderItemType} from "~/generated/graphql";
 
 type Props = {
-    orderItem: OrderItem | null
+    orderItem: OrderItemType
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -79,8 +79,8 @@ const OrderItems: React.FC<Props & RouteComponentProps> = props => {
                             </Grid>
                             <Grid item xs={6}>
                                 <ul style={{listStyleType: 'circle'}}>
-                                    {props.orderItem?.orderToppings && props.orderItem.orderToppings?.map(( orderTopping, index) => (
-                                        <li key={index && index}>{ orderTopping && orderTopping.topping?.name }</li>
+                                    {props.orderItem?.orderToppings && props.orderItem.orderToppings.edges?.map(( orderTopping, index) => (
+                                        <li key={index && index}>{ orderTopping && orderTopping.node!.topping?.name }</li>
                                     ))}
                                 </ul>
                             </Grid>
