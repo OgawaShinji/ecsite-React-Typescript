@@ -21,11 +21,11 @@ import {Path} from "~/router/routes";
 import {useHistory} from "react-router-dom";
 import {AppDispatch} from "~/store";
 import {THEME_COLOR_2} from "~/assets/color";
-import {useOrderMutation} from "~/generated/graphql";
+import {FetchUserQuery, useOrderMutation} from "~/generated/graphql";
 import ErrorPage from "~/components/error";
 
 type Props = {
-    user: null | User,
+    user: FetchUserQuery,
     totalPrice: number
 }
 
@@ -82,7 +82,7 @@ const OrderForm: React.FC<Props> = (props) => {
     //お届け先住所の変更フォームを非表示にセット
     const [open, setOpen] = React.useState(false);
     //デフォルトのユーザー情報をセット
-    const [userInfo, setUserInfo] = React.useState<User | null>(props.user)
+    const [userInfo, setUserInfo] = React.useState<FetchUserQuery>(props.user)
     //デフォルトの配達日時をセット
     const [selectedDate, setSelectedDate] = React.useState<{ date: Date | null, errorMessage: string }>({
         date: new Date(),
@@ -116,7 +116,7 @@ const OrderForm: React.FC<Props> = (props) => {
         setOpen(false);
     };
     //[変更する]ボタン押下時の処理 お届け先情報を変更用フォームに入力された内容に変更
-    const changeUserInfo = (changeUserInfo: User | null) => {
+    const changeUserInfo = (changeUserInfo: FetchUserQuery) => {
         setUserInfo(changeUserInfo);
     }
     //[クレジットカード決済]チェック時の処理 お支払方法をクレジットカード決済に変更
@@ -206,11 +206,11 @@ const OrderForm: React.FC<Props> = (props) => {
         const orderInfo = {
             status: status,
             orderDate: formatDate(new Date()),
-            destinationName: userInfo!.name,
-            destinationEmail: userInfo!.email,
-            destinationZipcode: userInfo!.zipcode,
-            destinationAddress: userInfo!.address,
-            destinationTel: userInfo!.telephone,
+            destinationName: userInfo!.user?.name!,
+            destinationEmail: userInfo!.user?.email!,
+            destinationZipcode: userInfo!.user?.zipcode!,
+            destinationAddress: userInfo!.user?.address!,
+            destinationTel: userInfo!.user?.telephone!,
             deliveryTime: selectedDate!.date,
             paymentMethod: paymentMethod!
         }
@@ -266,14 +266,14 @@ const OrderForm: React.FC<Props> = (props) => {
                                     <Grid item xs={6} sm={7}>
                                         <br/>
                                         <Typography align="left" variant={"subtitle2"}
-                                                    style={{color: "black"}}>お名前: {userInfo?.name} </Typography>
+                                                    style={{color: "black"}}>お名前: {userInfo?.user?.name} </Typography>
                                         <Typography align="left" variant={"subtitle2"} style={{color: "black"}}>
-                                            郵便番号: {userInfo?.zipcode.substr(0, 3)}-{userInfo?.zipcode.substr(3, 4)}
+                                            郵便番号: {userInfo?.user?.zipcode!.substr(0, 3)}-{userInfo?.user?.zipcode!.substr(3, 4)}
                                         </Typography>
                                         <Typography align="left" variant={"subtitle2"}
-                                                    style={{color: "black"}}>住所: {userInfo?.address} </Typography>
+                                                    style={{color: "black"}}>住所: {userInfo?.user?.address} </Typography>
                                         <Typography align="left" variant={"subtitle2"}
-                                                    style={{color: "black"}}>電話番号: {userInfo?.telephone} </Typography>
+                                                    style={{color: "black"}}>電話番号: {userInfo?.user?.telephone} </Typography>
                                     </Grid>
                                     <Grid item xs={6} sm={5}>
                                         <Grid container alignItems={"center"}>
