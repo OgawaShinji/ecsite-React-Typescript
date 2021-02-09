@@ -73,6 +73,26 @@ mutation addCart($orderItem:OrderItemInput!,$totalPrice:Int!){
 `)
 
 gql(`
+mutation order($order: OrderInput!){
+  executeOrder(order:$order){
+    order{
+      id
+      status
+      orderDate
+      deliveryTime
+      destinationName
+      destinationEmail
+      destinationZipcode
+      destinationAddress
+      destinationTel
+      totalPrice
+      paymentMethod
+    }
+  }
+}
+`)
+
+gql(`
 mutation updateCart($orderItems: [OrderItemInput]!,$totalPrice:Int!) {
    updateCart(
     orderItems: $orderItems
@@ -160,7 +180,6 @@ mutation deleteCart($orderItemId:ID!) {
   }
 }`)
 
-
 // ============================= topping ====================================================================
 gql(`
 query fetchToppings{
@@ -194,3 +213,22 @@ query fetchItem($id:ID!){
 `)
 // ============================ user ============================================================================
 
+gql(`
+mutation register($input: UserSerializerMutationInput!){
+  registerUser(input: $input){
+    id
+    name
+    email
+    password
+    zipcode
+    address
+    telephone
+    status
+    errors{
+      field
+      messages
+    }
+    clientMutationId
+  }
+}
+`)

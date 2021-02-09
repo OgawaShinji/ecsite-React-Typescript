@@ -13,9 +13,12 @@ export type Scalars = {
   Float: number;
   /** Date custom scalar type */
   Date: any;
+  /** DateTime custom scalar type */
+  DateTime: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: any;
 };
+
 
 
 
@@ -72,15 +75,15 @@ export type OrderType = {
   id?: Maybe<Scalars['ID']>;
   user?: Maybe<UserType>;
   status?: Maybe<Scalars['Int']>;
-  orderDate?: Maybe<Scalars['String']>;
-  deliveryTime?: Maybe<Scalars['Date']>;
+  totalPrice?: Maybe<Scalars['Int']>;
+  orderDate?: Maybe<Scalars['Date']>;
   destinationName?: Maybe<Scalars['String']>;
   destinationEmail?: Maybe<Scalars['String']>;
   destinationZipcode?: Maybe<Scalars['String']>;
   destinationAddress?: Maybe<Scalars['String']>;
   destinationTel?: Maybe<Scalars['String']>;
+  deliveryTime?: Maybe<Scalars['DateTime']>;
   paymentMethod?: Maybe<Scalars['Int']>;
-  totalPrice?: Maybe<Scalars['Int']>;
   orderItems?: Maybe<OrderItemTypeConnection>;
 };
 
@@ -107,26 +110,28 @@ export type SearchForm = {
   sortId?: Maybe<Scalars['Int']>;
 };
 
-export type UserInfo = {
+export type UserSerializerMutationInput = {
+  id?: Maybe<Scalars['Int']>;
   name: Scalars['String'];
   email: Scalars['String'];
+  password: Scalars['String'];
   zipcode: Scalars['String'];
   address: Scalars['String'];
   telephone: Scalars['String'];
-  password: Scalars['String'];
+  status?: Maybe<Scalars['String']>;
+  clientMutationId?: Maybe<Scalars['String']>;
 };
 
-export type OrderInfo = {
-  status?: Maybe<Scalars['Int']>;
-  orderDate?: Maybe<Scalars['String']>;
-  deliveryTime?: Maybe<Scalars['Date']>;
-  destinationName?: Maybe<Scalars['String']>;
-  destinationEmail?: Maybe<Scalars['String']>;
-  destinationZipcode?: Maybe<Scalars['String']>;
-  destinationAddress?: Maybe<Scalars['String']>;
-  destinationTel?: Maybe<Scalars['String']>;
-  paymentMethod?: Maybe<Scalars['String']>;
-  totalPrice?: Maybe<Scalars['Int']>;
+export type OrderInput = {
+  status: Scalars['Int'];
+  orderDate: Scalars['Date'];
+  destinationName: Scalars['String'];
+  destinationEmail: Scalars['String'];
+  destinationZipcode: Scalars['String'];
+  destinationAddress: Scalars['String'];
+  destinationTel: Scalars['String'];
+  deliveryTime: Scalars['DateTime'];
+  paymentMethod: Scalars['Int'];
 };
 
 export type OrderToppingInput = {
@@ -222,6 +227,32 @@ export type AddCart = {
   order?: Maybe<OrderType>;
 };
 
+
+export type UserSerializerMutationPayload = {
+  __typename?: 'UserSerializerMutationPayload';
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  password?: Maybe<Scalars['String']>;
+  zipcode?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+  telephone?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
+  errors?: Maybe<Array<Maybe<ErrorType>>>;
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
+export type ExecuteOrder = {
+  __typename?: 'ExecuteOrder';
+  order?: Maybe<OrderType>;
+};
+
+export type ErrorType = {
+  __typename?: 'ErrorType';
+  field: Scalars['String'];
+  messages: Array<Scalars['String']>;
+};
+
 export type UpdateCart = {
   __typename?: 'UpdateCart';
   order?: Maybe<OrderType>;
@@ -279,7 +310,14 @@ export type QueryOrderHistoryArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  registerUser?: Maybe<UserSerializerMutationPayload>;
   addCart?: Maybe<AddCart>;
+  executeOrder?: Maybe<ExecuteOrder>;
+};
+
+
+export type MutationRegisterUserArgs = {
+  input: UserSerializerMutationInput;
   updateCart?: Maybe<UpdateCart>;
   deleteCart?: Maybe<DeleteCart>;
 };
@@ -291,12 +329,15 @@ export type MutationAddCartArgs = {
   totalPrice: Scalars['Int'];
 };
 
+export type MutationExecuteOrderArgs = {
+  order: OrderInput;
+};
+
 export type MutationUpdateCartArgs = {
   orderItems: Array<Maybe<OrderItemInput>>;
   status: Scalars['Int'];
   totalPrice: Scalars['Int'];
 };
-
 
 export type MutationDeleteCartArgs = {
   orderItemId: Scalars['ID'];
@@ -306,7 +347,6 @@ export enum CacheControlScope {
   Public = 'PUBLIC',
   Private = 'PRIVATE'
 }
-
 
 export type FetchOrderItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -388,6 +428,20 @@ export type AddCartMutation = (
     )> }
   )> }
 );
+
+
+export type OrderMutationVariables = Exact<{
+  order: OrderInput;
+}>;
+
+
+export type OrderMutation = (
+  { __typename?: 'Mutation' }
+  & { executeOrder?: Maybe<(
+    { __typename?: 'ExecuteOrder' }
+    & { order?: Maybe<(
+      { __typename?: 'OrderType' }
+      & Pick<OrderType, 'id' | 'status' | 'orderDate' | 'deliveryTime' | 'destinationName' | 'destinationEmail' | 'destinationZipcode' | 'destinationAddress' | 'destinationTel' | 'totalPrice' | 'paymentMethod'>
 
 export type UpdateCartMutationVariables = Exact<{
   orderItems: Array<Maybe<OrderItemInput>> | Maybe<OrderItemInput>;
@@ -505,6 +559,64 @@ export type FetchItemQuery = (
     & Pick<ItemType, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
   )> }
 );
+
+export type RegisterMutationVariables = Exact<{
+  input: UserSerializerMutationInput;
+}>;
+
+
+export type RegisterMutation = (
+  { __typename?: 'Mutation' }
+  & { registerUser?: Maybe<(
+    { __typename?: 'UserSerializerMutationPayload' }
+    & Pick<UserSerializerMutationPayload, 'id' | 'name' | 'email' | 'password' | 'zipcode' | 'address' | 'telephone' | 'status' | 'clientMutationId'>
+    & { errors?: Maybe<Array<Maybe<(
+      { __typename?: 'ErrorType' }
+      & Pick<ErrorType, 'field' | 'messages'>
+    )>>> }
+  )> }
+);
+
+
+export const FetchOrderItemsDocument = gql`
+    query fetchOrderItems {
+  cart {
+    totalPrice
+    orderItems {
+      edges {
+        node {
+          id
+          size
+          quantity
+          subTotalPrice
+          item {
+            id
+            name
+            description
+            priceM
+            priceL
+            imagePath
+            deleted
+          }
+          orderToppings {
+            edges {
+              node {
+                id
+                topping {
+                  id
+                  name
+                  priceM
+                  priceL
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
 
 
 export const FetchOrderItemsDocument = gql`
@@ -627,6 +739,27 @@ export function useAddCartMutation(baseOptions?: Apollo.MutationHookOptions<AddC
 export type AddCartMutationHookResult = ReturnType<typeof useAddCartMutation>;
 export type AddCartMutationResult = Apollo.MutationResult<AddCartMutation>;
 export type AddCartMutationOptions = Apollo.BaseMutationOptions<AddCartMutation, AddCartMutationVariables>;
+
+export const OrderDocument = gql`
+    mutation order($order: OrderInput!) {
+  executeOrder(order: $order) {
+    order {
+      id
+      status
+      orderDate
+      deliveryTime
+      destinationName
+      destinationEmail
+      destinationZipcode
+      destinationAddress
+      destinationTel
+      totalPrice
+      paymentMethod
+    }
+  }
+}
+`;
+=======
 export const UpdateCartDocument = gql`
     mutation updateCart($orderItems: [OrderItemInput]!, $totalPrice: Int!) {
   updateCart(orderItems: $orderItems, status: 0, totalPrice: $totalPrice) {
@@ -735,6 +868,15 @@ export const DeleteCartDocument = gql`
   }
 }
     `;
+
+export type OrderMutationFn = Apollo.MutationFunction<OrderMutation, OrderMutationVariables>;
+
+/**
+ * __useOrderMutation__
+ *
+ * To run a mutation, you first call `useOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrderMutation` returns a tuple that includes:
+
 export type DeleteCartMutationFn = Apollo.MutationFunction<DeleteCartMutation, DeleteCartMutationVariables>;
 
 /**
@@ -742,12 +884,27 @@ export type DeleteCartMutationFn = Apollo.MutationFunction<DeleteCartMutation, D
  *
  * To run a mutation, you first call `useDeleteCartMutation` within a React component and pass it any options that fit your needs.
  * When your component renders, `useDeleteCartMutation` returns a tuple that includes:
+
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
+
+ * const [orderMutation, { data, loading, error }] = useOrderMutation({
+ *   variables: {
+ *      order: // value for 'order'
+ *   },
+ * });
+ */
+export function useOrderMutation(baseOptions?: Apollo.MutationHookOptions<OrderMutation, OrderMutationVariables>) {
+        return Apollo.useMutation<OrderMutation, OrderMutationVariables>(OrderDocument, baseOptions);
+      }
+export type OrderMutationHookResult = ReturnType<typeof useOrderMutation>;
+export type OrderMutationResult = Apollo.MutationResult<OrderMutation>;
+export type OrderMutationOptions = Apollo.BaseMutationOptions<OrderMutation, OrderMutationVariables>;
+
  * const [deleteCartMutation, { data, loading, error }] = useDeleteCartMutation({
  *   variables: {
  *      orderItemId: // value for 'orderItemId'
@@ -760,6 +917,7 @@ export function useDeleteCartMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteCartMutationHookResult = ReturnType<typeof useDeleteCartMutation>;
 export type DeleteCartMutationResult = Apollo.MutationResult<DeleteCartMutation>;
 export type DeleteCartMutationOptions = Apollo.BaseMutationOptions<DeleteCartMutation, DeleteCartMutationVariables>;
+
 export const FetchToppingsDocument = gql`
     query fetchToppings {
   toppings {
@@ -838,3 +996,47 @@ export function useFetchItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type FetchItemQueryHookResult = ReturnType<typeof useFetchItemQuery>;
 export type FetchItemLazyQueryHookResult = ReturnType<typeof useFetchItemLazyQuery>;
 export type FetchItemQueryResult = Apollo.QueryResult<FetchItemQuery, FetchItemQueryVariables>;
+export const RegisterDocument = gql`
+    mutation register($input: UserSerializerMutationInput!) {
+  registerUser(input: $input) {
+    id
+    name
+    email
+    password
+    zipcode
+    address
+    telephone
+    status
+    errors {
+      field
+      messages
+    }
+    clientMutationId
+  }
+}
+    `;
+export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
+
+/**
+ * __useRegisterMutation__
+ *
+ * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerMutation, { data, loading, error }] = useRegisterMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
+        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, baseOptions);
+      }
+export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
+export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;

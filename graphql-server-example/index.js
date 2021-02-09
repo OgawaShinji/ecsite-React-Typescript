@@ -21,10 +21,32 @@ const dateScalar = new GraphQLScalarType({
 });
 
 
+// DateTime型を作成
+//文字列（YYYY-MM-DD）を参照してDate型を作成するメソッド
+let parseDate = (str) => {
+    let d = new Date(str);
+    return Number.isNaN(d.getTime()) ? null : d;
+};
+let dateTimeScalar = new GraphQLScalarType({
+    name: 'DateTime',
+    description: 'DateTime custom scalar type',
+    serialize: value => {
+        return value.toJSON();
+    },
+    parseValue: value => {
+        return parseDate(value);
+    },
+    parseLiteral: ast => {
+        return ast.kind === Kind.STRING ? parseDate(ast.value) : null;
+    },
+});
+
+
 // graphQLで管理するデータ型とクエリを管理
 const typeDefs = gql`
   # カスタムスカラーの定義
   scalar Date
+  scalar DateTime
 
   # データ型の定義  
   type UserType{
@@ -74,15 +96,15 @@ const typeDefs = gql`
     id: ID
     user: UserType
     status: Int
-    orderDate: String
-    deliveryTime: Date
+    totalPrice: Int
+    orderDate: Date
     destinationName: String
     destinationEmail: String
     destinationZipcode: String
     destinationAddress: String
     destinationTel: String
-    paymentMethod: Int
-    totalPrice: Int
+    deliveryTime: DateTime
+    paymentMethod: Int 
     orderItems: OrderItemTypeConnection
 }
 
@@ -108,26 +130,28 @@ type OrderHistoryType{
 }
   
   # 引数に入れるオブジェクトの型を定義
-  input UserInfo {
+  input UserSerializerMutationInput {
+        id: Int
         name: String!
         email: String!
+        password: String!
         zipcode: String!
         address: String!
         telephone: String!
-        password: String!
+        status: String
+        clientMutationId: String
   }
   
-  input OrderInfo {
-        status: Int
-        orderDate: String
-        deliveryTime: Date
-        destinationName: String
-        destinationEmail: String
-        destinationZipcode: String
-        destinationAddress: String
-        destinationTel: String
-        paymentMethod: String
-        totalPrice: Int
+  input OrderInput {
+        status: Int!
+        orderDate: Date!
+        destinationName: String!
+        destinationEmail: String!
+        destinationZipcode: String!
+        destinationAddress: String!
+        destinationTel: String!
+        deliveryTime: DateTime!
+        paymentMethod: Int!
   }
 
 input OrderToppingInput{
@@ -191,6 +215,7 @@ input OrderToppingInput{
     node:OrderToppingType
     cursor:String
   }
+  
   type PageInfo {
     hasNextPage: Boolean!
     hasPreviousPage: Boolean!
@@ -202,6 +227,29 @@ input OrderToppingInput{
     order:OrderType
   }
   
+
+  type UserSerializerMutationPayload{
+    id: Int
+    name: String
+    email: String
+    password: String
+    zipcode: String
+    address: String
+    telephone: String
+    status: String
+    errors: [ErrorType]
+    clientMutationId: String
+  }
+  
+  type ExecuteOrder{
+    order:OrderType
+  } 
+  
+  type ErrorType{
+    field: String!
+    messages: [String!]!
+  } 
+
   type UpdateCart{
     order:OrderType
   }
@@ -209,6 +257,7 @@ input OrderToppingInput{
   type DeleteCart{
     order:OrderType
   }
+
  
   # ここに書いたオブジェクトたちをqueryで持ってくることができる
   type Query {
@@ -242,9 +291,12 @@ input OrderToppingInput{
   }
   
   type Mutation{
+     registerUser(input:UserSerializerMutationInput!): UserSerializerMutationPayload
      addCart(orderItem:OrderItemInput!,status:Int,totalPrice:Int!): AddCart
+     executeOrder(order:OrderInput!): ExecuteOrder
      updateCart(orderItems:[OrderItemInput]!,status:Int!,totalPrice:Int!):UpdateCart
      deleteCart(orderItemId:ID!):DeleteCart
+
   }
 `;
 
@@ -437,7 +489,6 @@ const cart = {
     }
 }
 
-
 const history = [
     cart,
     cart,
@@ -448,6 +499,7 @@ const users = []
 // GraphQL の operation（query や mutation や subscription）が、実際にどのような処理を行なってデータを返すのかという指示書
 const resolvers = {
     Date: dateScalar,
+    DateTime: dateTimeScalar,
     Query: {
         // この中で引数に設定した値をもとにfilterをかけることができる
         cart: () => cart,
@@ -479,42 +531,43 @@ const resolvers = {
         }
     },
     Mutation: {
-        /*postUser(parent, args, context, info) {
+        registerUser(parent, args) {
             //引数に渡されたデータを確認
             console.log(args)
             const user = {
-                id: Math.floor(Math.random() * 100),
-                status: 1,
-                ...args.userInfo
+                ...args,
+                errors:[null]
             }
             users.push(user)
             //登録したユーザー情報が返ってくる
-            return user
+            return {
+                id: 1,
+                name: args.input.name,
+                email: args.input.email,
+                password: args.input.password,
+                zipcode: args.input.zipcode,
+                address: args.input.address,
+                telephone: args.input.telephone,
+                status: args.input.status,
+                errors: [],
+                clientMutationId: args.input.clientMutationId
+            }
         },
-        update(parent, args) {
-            //ユーザーリストから対象ユーザーをidで特定する
-            const index = users.findIndex(({id}) => id === Number(args.id));
-            //対象ユーザーの情報を更新
-            users[index].name = args.name
-            users[index].email = args.email
-            return users
-        },
-        //今回は初期値にセットしてある内容を更新する
-        updateOrderInfo(parent, args, context, info) {
+       
+        executeOrder(parent, args) {
             //引数に渡されたデータを確認
             console.log(args)
-            cart.status = args.orderInfo.status
-            cart.paymentMethod = args.orderInfo.paymentMethod
-            cart.orderDate = args.orderInfo.orderDate
-            cart.deliveryTime = args.orderInfo.deliveryTime
-            cart.destinationName = args.orderInfo.destinationName
-            cart.destinationEmail = args.orderInfo.destinationEmail
-            cart.destinationZipcode = args.orderInfo.destinationZipcode
-            cart.destinationAddress = args.orderInfo.destinationAddress
-            cart.destinationTel = args.orderInfo.destinationTel
-            cart.totalPrice = args.orderInfo.totalPrice
-            return cart
-        },*/
+            cart.status = args.order.status
+            cart.orderDate = args.order.orderDate
+            cart.destinationName = args.order.destinationName
+            cart.destinationEmail = args.order.destinationEmail
+            cart.destinationZipcode = args.order.destinationZipcode
+            cart.destinationAddress = args.order.destinationAddress
+            cart.destinationTel = args.order.destinationTel
+            cart.deliveryTime = args.order.deliveryTime
+            cart.paymentMethod = args.order.paymentMethod
+            return {order: cart}
+        },
         addCart(parent, args) {
             // cart.orderItems.push(args.orderItem);
             // cart.totalPrice += args.totalPrice;
