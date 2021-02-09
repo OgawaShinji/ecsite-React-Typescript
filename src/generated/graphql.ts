@@ -401,7 +401,7 @@ export type AddCart = {
 };
 
 export type OrderItemInput = {
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
   item: Scalars['ID'];
   quantity: Scalars['Int'];
   size: Scalars['String'];
@@ -501,23 +501,6 @@ export type FetchItemsQuery = (
       & { node?: Maybe<(
         { __typename?: 'ItemType' }
         & Pick<ItemType, 'id' | 'name' | 'description' | 'imagePath' | 'priceM' | 'priceL' | 'deleted'>
-      )> }
-    )>> }
-  )> }
-);
-
-export type FetchItemNamesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FetchItemNamesQuery = (
-  { __typename?: 'Query' }
-  & { items?: Maybe<(
-    { __typename?: 'ItemTypeConnection' }
-    & { edges: Array<Maybe<(
-      { __typename?: 'ItemTypeEdge' }
-      & { node?: Maybe<(
-        { __typename?: 'ItemType' }
-        & Pick<ItemType, 'name'>
       )> }
     )>> }
   )> }
@@ -751,42 +734,6 @@ export function useFetchItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type FetchItemsQueryHookResult = ReturnType<typeof useFetchItemsQuery>;
 export type FetchItemsLazyQueryHookResult = ReturnType<typeof useFetchItemsLazyQuery>;
 export type FetchItemsQueryResult = Apollo.QueryResult<FetchItemsQuery, FetchItemsQueryVariables>;
-export const FetchItemNamesDocument = gql`
-    query fetchItemNames {
-  items {
-    edges {
-      node {
-        name
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useFetchItemNamesQuery__
- *
- * To run a query within a React component, call `useFetchItemNamesQuery` and pass it any options that fit your needs.
- * When your component renders, `useFetchItemNamesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFetchItemNamesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useFetchItemNamesQuery(baseOptions?: Apollo.QueryHookOptions<FetchItemNamesQuery, FetchItemNamesQueryVariables>) {
-        return Apollo.useQuery<FetchItemNamesQuery, FetchItemNamesQueryVariables>(FetchItemNamesDocument, baseOptions);
-      }
-export function useFetchItemNamesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchItemNamesQuery, FetchItemNamesQueryVariables>) {
-          return Apollo.useLazyQuery<FetchItemNamesQuery, FetchItemNamesQueryVariables>(FetchItemNamesDocument, baseOptions);
-        }
-export type FetchItemNamesQueryHookResult = ReturnType<typeof useFetchItemNamesQuery>;
-export type FetchItemNamesLazyQueryHookResult = ReturnType<typeof useFetchItemNamesLazyQuery>;
-export type FetchItemNamesQueryResult = Apollo.QueryResult<FetchItemNamesQuery, FetchItemNamesQueryVariables>;
 export const FetchItemsTotalCountDocument = gql`
     query fetchItemsTotalCount {
   items {

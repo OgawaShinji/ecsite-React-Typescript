@@ -11,6 +11,7 @@ import {Pagination} from "@material-ui/lab";
 import {animateScroll as scroll} from 'react-scroll';
 
 import {useFetchItemsQuery, useFetchItemsTotalCountQuery} from '~/generated/graphql';
+import ErrorPage from "~/components/error";
 
 const useStyles = makeStyles((theme) => ({
     itemCard: {
@@ -63,13 +64,13 @@ const ItemListGQL: React.FC = () => {
         sort: 'price_m'
     })
 
-    const {data: itemsData, loading: isLoadItemsData} = useFetchItemsQuery({
+    const {data: itemsData, loading: isLoadItemsData, error: fetchItemsError} = useFetchItemsQuery({
         variables: {
             itemName: searchArg.itemName,
             sort: searchArg.sort
         }
     })
-    const {data: totalCountData} = useFetchItemsTotalCountQuery();
+    const {data: totalCountData, error: fetchItemsTotalCountError} = useFetchItemsTotalCountQuery();
 
 
     useEffect(() => {
@@ -120,6 +121,13 @@ const ItemListGQL: React.FC = () => {
             location.state.judge = false;
         }
     }
+
+    // Error画面の表示
+    // BadRequest
+    if (fetchItemsError?.graphQLErrors[0] && fetchItemsError?.graphQLErrors[0].extensions?.code === "BAD_REQUEST") return <ErrorPage
+        code={404}/>
+    // BadRequest以外
+    if (fetchItemsError || fetchItemsTotalCountError) return <ErrorPage code={500}/>
 
     return (
         <div>

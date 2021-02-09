@@ -63,18 +63,6 @@ gql(`
 `)
 
 gql(`
-    query fetchItemNames {
-      items {
-        edges {
-          node {
-            name
-          }
-        }
-      }
-    }
-`)
-
-gql(`
     query fetchItemsTotalCount {
       items {
         totalCount
