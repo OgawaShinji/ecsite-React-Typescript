@@ -497,11 +497,11 @@ const history = [
     cart
 ]
 
-const user = {
+const users = [{
     id: "1",
     name: "test",
     email: "test@test.com",
-    zipcode: "111-2222",
+    zipcode: "1112222",
     address: "tokyo",
     telephone: "000-2222-4444",
     status: 0,
@@ -517,7 +517,7 @@ const user = {
             }
         ]
     }
-}
+}]
 
 const users=[]
 
@@ -528,7 +528,7 @@ const resolvers = {
     Query: {
         // この中で引数に設定した値をもとにfilterをかけることができる
         cart: () => cart,
-        user: () => user,
+        user: () => users[0],
         toppings: () => {
             let edges = []
             toppings.forEach((i) => {
