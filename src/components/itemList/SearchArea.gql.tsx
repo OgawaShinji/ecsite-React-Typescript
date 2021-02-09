@@ -8,6 +8,7 @@ import {Search} from "@material-ui/icons";
 
 import {useFetchItemsQuery} from "~/generated/graphql";
 
+
 type Props = {
     itemName: string;
     sort: string;
@@ -29,7 +30,7 @@ const SearchAreaGQL: React.FC<Props> = props => {
         }
     ];
 
-    const {data: itemsData, loading: isLoadItemsData} = useFetchItemsQuery({
+    const {data: itemsData, loading: isLoadItemsData, error: fetchItemsError} = useFetchItemsQuery({
         variables: {
             itemName: '',
             sort: 'price_m'
@@ -39,11 +40,11 @@ const SearchAreaGQL: React.FC<Props> = props => {
     const [itemNames, setItemNames] = useState<Array<string>>([])
 
     useEffect(() => {
-        if (!isLoadItemsData) {
+        if (!isLoadItemsData && !fetchItemsError) {
             const itemNames = itemsData!.items!.edges.map((item) => item!.node!.name!)
             setItemNames(itemNames);
         }
-    }, [isLoadItemsData, itemsData]);
+    }, [isLoadItemsData, fetchItemsError, itemsData]);
 
     // methods
     /**
@@ -60,6 +61,13 @@ const SearchAreaGQL: React.FC<Props> = props => {
     const handleKeyPress = (key: string) => {
         if (key === 'Enter') search();
     }
+
+    // // Error画面の表示
+    // // BadRequest
+    // if (fetchItemsError?.graphQLErrors[0] && fetchItemsError?.graphQLErrors[0].extensions?.code === "BAD_REQUEST") return <ErrorPage
+    //     code={404}/>
+    // // BadRequest以外
+    // if (fetchItemsError) return <ErrorPage code={500}/>
 
     return (
         <div>
