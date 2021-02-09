@@ -73,13 +73,13 @@ const ItemDetailGQL: React.FC = () => {
                         {/*商品画像*/}
                         <Grid item xs={12}>
                             <CardContent className={classes.align_child}>
-                                <Avatar src={`${displayItem?.item!.imagePath}`} style={{width: "50%", height: "auto"}}
+                                <Avatar src={`${displayItem!.item!.imagePath}`} style={{width: "50%", height: "auto"}}
                                         variant={"rounded"} alt={'🍕'}/>
                             </CardContent>
 
                             {/*商品名*/}
                             <CardContent className={classes.align_child}>
-                                <Typography variant={"h4"} component={"u"}>{displayItem?.item!.name}</Typography>
+                                <Typography variant={"h4"} component={"u"}>{displayItem!.item!.name}</Typography>
                             </CardContent>
                         </Grid>
 
@@ -87,19 +87,19 @@ const ItemDetailGQL: React.FC = () => {
                         <Grid item xs={12} className={classes.description_content}>
                             <CardContent style={{width: "70%", textAlign: "center"}}>
                                 <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
-                                    {displayItem?.item!.description}
+                                    {displayItem!.item!.description}
                                     <br/>＊写真はイメージです＊
                                 </Typography>
                                 <br/>
                                 <Typography variant={"h6"} color={"textPrimary"} component={"p"}>
-                                    {`Mサイズ：` + displayItem?.item!.priceM + `円　🍕　Lサイズ：` + displayItem?.item!.priceL + `円`}
+                                    {`Mサイズ：` + displayItem!.item!.priceM!.toLocaleString() + `円　🍕　Lサイズ：` + displayItem!.item!.priceL!.toLocaleString() + `円`}
                                 </Typography>
                             </CardContent>
                         </Grid>
                     </Grid>
 
                     {/*注文入力部分*/}
-                    <OrderItemFormGQL item={displayItem?.item!} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
+                    <OrderItemFormGQL item={displayItem!.item!} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
 
                 </div>
             </div>
