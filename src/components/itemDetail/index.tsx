@@ -133,7 +133,7 @@ const ItemDetail: React.FC = () => {
 
                     {/*注文入力部分*/}
                     <OrderItemForm item={displayItem}
-                                   handleOrderClick={(m, s) => handleOrderClick(m, s).then().catch((e) => dispatch(setError({
+                                   handleOrderClick={(m, s) => handleOrderClick(m, s).then().catch(() => dispatch(setError({
                                        isError: true,
                                        code: 500
                                    })))}/>
