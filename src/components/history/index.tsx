@@ -37,6 +37,9 @@ const History: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
 
+    // 表示件数
+    const DISPLAY_COUNT = 5;
+
     // storeからstateを取得
     const orders = useSelector(selectOrderHistory);
     const ordersTotalCount = useSelector(selectOrderHistoryTotalCount);
@@ -50,7 +53,7 @@ const History: React.FC = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        dispatch(fetchOrderHistory({displayCount: 5, pageNum: page}))
+        dispatch(fetchOrderHistory({displayCount: DISPLAY_COUNT, pageNum: page}))
             .catch((e) => {
                 dispatch(setError({isError: true, code: e.message}));
             });
@@ -68,10 +71,10 @@ const History: React.FC = () => {
             let totalPageCount;
 
             // 総ページ数をセット
-            if (ordersTotalCount % 5 === 0) {
-                totalPageCount = ordersTotalCount / 5;
+            if (ordersTotalCount % DISPLAY_COUNT === 0) {
+                totalPageCount = ordersTotalCount / DISPLAY_COUNT;
             } else {
-                totalPageCount = Math.floor(ordersTotalCount / 5) + 1;
+                totalPageCount = Math.floor(ordersTotalCount / DISPLAY_COUNT) + 1;
             }
             setCount(totalPageCount);
         }
@@ -79,9 +82,14 @@ const History: React.FC = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        setTimeout(() => {
+        let timerId: NodeJS.Timeout;
+        timerId = setTimeout(() => {
             setIsLoading(false);
         }, 500)
+
+        return () => {
+            clearTimeout(timerId);
+        }
     }, [orders])
 
     // 注文情報一覧のJSXを作成
