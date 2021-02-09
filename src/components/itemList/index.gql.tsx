@@ -4,6 +4,7 @@ import {useLocation} from "react-router-dom";
 import ItemCardGQL from "~/components/itemList/ItemCard.gql";
 import SearchAreaGQL from "~/components/itemList/SearchArea.gql";
 import OptionFormGQL from "~/components/itemList/OptionForm.gql";
+import ErrorPage from "~/components/error";
 
 import {Button, Grid, LinearProgress, makeStyles, Paper, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
@@ -11,7 +12,7 @@ import {Pagination} from "@material-ui/lab";
 import {animateScroll as scroll} from 'react-scroll';
 
 import {useFetchItemsQuery, useFetchItemsTotalCountQuery} from '~/generated/graphql';
-import ErrorPage from "~/components/error";
+
 
 const useStyles = makeStyles((theme) => ({
     itemCard: {
