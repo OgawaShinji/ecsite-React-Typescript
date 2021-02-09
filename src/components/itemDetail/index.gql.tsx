@@ -8,37 +8,37 @@ import {
 import {useHistory, useParams} from "react-router-dom"
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {Path} from "~/router/routes";
-import OrderItemForm from "~/components/itemDetail/OrderItemForm";
-import {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
-import {useAddCartMutation, useFetchItemQuery} from "~/generated/graphql";
+import OrderItemFormGQL from "~/components/itemDetail/OrderItemForm.gql";
+import {useFetchItemQuery, useAddCartMutation} from "~/generated/graphql";
 import ErrorPage from "~/components/error";
+import {itemEntryStateGQL} from "~/components/elements/orderItemEntry/OrderItemEntry.gql";
 
 const ItemDetailGQL: React.FC = () => {
     let {itemId}: any = useParams()
-    itemId = Number(itemId)
 
     const {
         data: displayItem,
         loading: isLoadItem,
-        error: isErrorFetchItem
+        error: fetchItemError
     } = useFetchItemQuery({variables: {id: itemId}});
 
-    const [addCart, {loading: isLoadAddCart, error: isErrorAddCart}] = useAddCartMutation();
+    const [addCart, {loading: isLoadAddCart, error: addCartError}] = useAddCartMutation();
 
     const history = useHistory();
 
     /**
      * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
      */
-    const handleOrderClick = async (moveTo: string, selectedState: itemEntryState) => {
+    const handleOrderClick = async (moveTo: string, selectedState: itemEntryStateGQL) => {
         if (displayItem === null) throw new Error()
-        let newOrderToppings: { topping: number }[] = []
+        let newOrderToppings: { topping: string }[] = []
         if (selectedState.toppings.length !== 0) selectedState.toppings.map((t) => newOrderToppings.push({topping: t!.id!}))
 
         await addCart({
             variables: {
                 orderItem: {
-                    item: displayItem?.item?.id!,
+                    id: "orderItem id",
+                    item: displayItem!.item!.id!,
                     orderToppings: newOrderToppings,
                     size: selectedState.size,
                     quantity: selectedState.quantity
@@ -48,15 +48,21 @@ const ItemDetailGQL: React.FC = () => {
         }).then(async () => {
             if (moveTo === 'cart') await history.push(Path.cart)
             if (moveTo === 'confirm') await history.push(Path.orderConfirm)
-        }).catch(() => {
+        }).catch((e) => {
             //catch処理書かないとErrorPageコンポーネントを返せない
+            console.log(e)
         });
-
     }
 
     const classes = entryIndexStyle();
 
-    if (isErrorFetchItem || isErrorAddCart) return <ErrorPage/>;
+    //BadRequest時のエラーハンドリング
+    if (fetchItemError?.graphQLErrors[0] && fetchItemError?.graphQLErrors[0].extensions?.code === "BAD_REQUEST") return <ErrorPage
+        code={404}/>
+    //BadRequest以外はメンテナンス表示
+    if (fetchItemError || addCartError) return <ErrorPage code={500}/>;
+    //Pathに存在しないIDを渡された場合BADREQUESTでは無くnullが返ってくる仕様なので404とみなす
+    if (!(displayItem?.item?.name) && !(isLoadAddCart || isLoadItem)) return <ErrorPage code={404}/>;
 
     return (isLoadItem || isLoadAddCart ?
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
@@ -67,13 +73,13 @@ const ItemDetailGQL: React.FC = () => {
                         {/*商品画像*/}
                         <Grid item xs={12}>
                             <CardContent className={classes.align_child}>
-                                <Avatar src={`${displayItem?.item!.imagePath}`} style={{width: "50%", height: "auto"}}
+                                <Avatar src={`${displayItem!.item!.imagePath}`} style={{width: "50%", height: "auto"}}
                                         variant={"rounded"} alt={'🍕'}/>
                             </CardContent>
 
                             {/*商品名*/}
                             <CardContent className={classes.align_child}>
-                                <Typography variant={"h4"} component={"u"}>{displayItem?.item!.name}</Typography>
+                                <Typography variant={"h4"} component={"u"}>{displayItem!.item!.name}</Typography>
                             </CardContent>
                         </Grid>
 
@@ -81,19 +87,19 @@ const ItemDetailGQL: React.FC = () => {
                         <Grid item xs={12} className={classes.description_content}>
                             <CardContent style={{width: "70%", textAlign: "center"}}>
                                 <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
-                                    {displayItem?.item!.description}
+                                    {displayItem!.item!.description}
                                     <br/>＊写真はイメージです＊
                                 </Typography>
                                 <br/>
                                 <Typography variant={"h6"} color={"textPrimary"} component={"p"}>
-                                    {`Mサイズ：` + displayItem?.item!.priceM + `円　🍕　Lサイズ：` + displayItem?.item!.priceL + `円`}
+                                    {`Mサイズ：` + displayItem!.item!.priceM!.toLocaleString() + `円　🍕　Lサイズ：` + displayItem!.item!.priceL!.toLocaleString() + `円`}
                                 </Typography>
                             </CardContent>
                         </Grid>
                     </Grid>
 
                     {/*注文入力部分*/}
-                    <OrderItemForm item={displayItem?.item!} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
+                    <OrderItemFormGQL item={displayItem!.item!} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
 
                 </div>
             </div>

@@ -1,16 +1,16 @@
 import {Button, CardActions, CardContent, createStyles, Grid, Typography} from "@material-ui/core";
 import React, {useState} from "react";
-import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
+import OrderItemEntryGQL, {itemEntryStateGQL} from "~/components/elements/orderItemEntry/OrderItemEntry.gql";
 import ItemPrice from "~/components/itemDetail/ItemPrice";
 import {makeStyles} from "@material-ui/core/styles";
 import {THEME_COLOR_2} from "~/assets/color";
-import {Item, Topping} from "~/generated/graphql";
+import {ItemType as Item, ToppingType as Topping} from "~/generated/graphql";
 
 type propsType = {
-    item: Item | null,
-    handleOrderClick: (moveTo: string, selectedState: itemEntryState) => void,
+    item: Item,
+    handleOrderClick: (moveTo: string, selectedState: itemEntryStateGQL) => void,
 }
-const OrderItemForm: React.FC<propsType> = (props) => {
+const OrderItemFormGQL: React.FC<propsType> = (props) => {
 
     const classes = style();
 
@@ -18,10 +18,10 @@ const OrderItemForm: React.FC<propsType> = (props) => {
     const [size, setSize] = useState<string>('M');
     const [quantity, setQuantity] = useState<number>(1);
     const [selectedToppings, setSelectToppings] = useState<Topping[]>([])
-    const [totalPrice, setTotalPrice] = useState<number>(item?.priceM ? item.priceM : 0)
+    const [totalPrice, setTotalPrice] = useState<number>(item?.priceM ? Number(item.priceM) : 0)
 
     //OrderItemEntryにpropsで渡すためのデータ整形
-    const selectedState: itemEntryState = {
+    const selectedState: itemEntryStateGQL = {
         size: size,
         quantity: quantity,
         toppings: selectedToppings,
@@ -33,7 +33,7 @@ const OrderItemForm: React.FC<propsType> = (props) => {
         if ((newToppings ? newToppings : selectedToppings).length !== 0) (newToppings ? newToppings : selectedToppings).map(
             (t) => newTotalPrice += (selectedSize ? selectedSize : size) === 'M' ? t.priceM! : t.priceL!
         )
-        newTotalPrice += ((selectedSize ? selectedSize : size) === 'M' ? item!.priceM! : item!.priceL!)
+        newTotalPrice += ((selectedSize ? selectedSize : size) === 'M' ? Number(item!.priceM!) : Number(item!.priceL!))
         setTotalPrice(newTotalPrice * (selectedQuantity ? selectedQuantity : quantity));
     }
     /**
@@ -71,7 +71,7 @@ const OrderItemForm: React.FC<propsType> = (props) => {
 
             <Grid item xs={12}>
                 <CardContent style={{height: "auto", width: "90%"}}>
-                    <OrderItemEntry
+                    <OrderItemEntryGQL
                         selectedState={selectedState}
                         parentComponent={"itemDetail"}
                         onSizeChange={(s) => handleSizeChange(s)}
@@ -130,4 +130,4 @@ const style = makeStyles(() => createStyles({
         fontWeight: "bold"
     },
 }))
-export default OrderItemForm;
+export default OrderItemFormGQL;

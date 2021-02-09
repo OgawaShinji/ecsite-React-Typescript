@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const OrderConfirm: React.FC = () => {
+const History: React.FC = () => {
 
     const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
@@ -171,4 +171,4 @@ const OrderConfirm: React.FC = () => {
     );
 };
 
-export default OrderConfirm;
+export default History;

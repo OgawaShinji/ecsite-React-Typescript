@@ -59,24 +59,30 @@ const App: React.FC<RouteComponentProps> = () => {
     const client = new ApolloClient({
         cache: new InMemoryCache(),
         link: new HttpLink({
-            uri: "http://localhost:4000/",
+            uri: "http://34.84.118.239/django_ql/",
             headers: {
                 Authorization: localStorage.getItem("Authorization")
             },
         })
     });
 
-    return (
-        <div className={classes.App}>
-            <ApolloProvider client={client}>
-                <ScrollToTop/>
-                <Header isLogin={isLogin}/>
-                {errorInStore.isError ? errorInStore.code === "401" ? <Redirect to="/login"/> :
-                    <ErrorPage/> : routes}
-                <Footer/>
-            </ApolloProvider>
-        </div>
-    );
+    try {
+        return (
+            <div className={classes.App}>
+                <ApolloProvider client={client}>
+                    <ScrollToTop/>
+                    <Header isLogin={isLogin}/>
+                    {errorInStore.isError ? errorInStore.code === "401" ? <Redirect to="/login"/> :
+                        <ErrorPage/> : routes}
+                    <Footer/>
+                </ApolloProvider>
+            </div>
+        );
+    } catch (e) {
+        console.log(e)
+        return <ErrorPage/>
+    }
+
 };
 
 export default withRouter(App);

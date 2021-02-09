@@ -45,8 +45,8 @@ const useStyles = makeStyles(() =>
         },
         title: {
             fontWeight: 'bold',
-            fontFamily:  'Gabriola',
-            fontSize: 45,
+            fontFamily: 'Arial Black',
+            fontSize: 40,
             flexGrow: 1,
             color: 'white',
             cursor: 'pointer'
@@ -138,11 +138,11 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
                                     <span style={{color: "red"}}>
                                        R
                                     </span>
-                                akuraku&nbsp;&nbsp;
+                                akuraku&nbsp;
                                 <span style={{color: "red"}}>
                                         P
                                     </span>
-                                izza&nbsp;&nbsp;
+                                izza&nbsp;
                                 <span style={{fontSize: 40}}>
                                         🍕
                                     </span>
