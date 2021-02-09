@@ -37,7 +37,7 @@ export const SelectToppingGQL: React.FC<selectToppingProps> = (props) => {
                 <Grid>
                     <Grid item container justify={"center"}>
                         {toppings!.toppings!.edges!.map((t) => {
-                            return (<Grid item xs={4} className={classes.topping_card} key={`${t!.node?.id}`}>
+                            return (<Grid item xs={4} className={classes.topping_card} key={`${t!.node!.id}`}>
                                 <ButtonBase onClick={() => handleToppingChange(t!.node!)}
                                             style={{width: "70%", height: "95%", color: "red"}}>
                                     <Card style={{
