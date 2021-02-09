@@ -75,8 +75,8 @@ gql(`
 // ============================ history ============================================================================
 
 gql(`
-    query fetchOrderHistory($limit: Int, $offset: Int) {
-      orderHistory(first: $limit, offset: $offset, orderBy: "-orderDate,-id") {
+    query fetchOrderHistory($first: Int, $after: String, $last: Int, $before: String) {
+      orderHistory(first: $first, after: $after, last: $last, before: $before, orderBy: "-orderDate,-id") {
         pageInfo{
           hasPreviousPage
           hasNextPage
