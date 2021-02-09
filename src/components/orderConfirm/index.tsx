@@ -6,7 +6,7 @@ import {selectLoginUser} from "~/store/slices/App/auth.slice";
 
 import {Grid, LinearProgress, makeStyles} from "@material-ui/core";
 import {RouteComponentProps, withRouter} from "react-router-dom";
-import {useFetchOrderItemsQuery} from "~/generated/graphql";
+import {useFetchOrderItemsQuery, useFetchUserQuery} from "~/generated/graphql";
 import ErrorPage from "~/components/error";
 
 
@@ -22,12 +22,9 @@ const useStyles = makeStyles((theme) => ({
 const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
 
     const classes = useStyles();
-
-    //storeのstateにあるloginUserの取得
-    let loginUser = useSelector(selectLoginUser);
-
+    //mockデータの取得
+    const {data: fetchUserData} = useFetchUserQuery()
     const {data: fetchOrderItemData ,loading: fetchOrderItemLoading ,error: fetchOrderItemError } = useFetchOrderItemsQuery( )
-    console.log(fetchOrderItemData);
 
     useEffect(() => {
         if (fetchOrderItemData?.cart?.orderItems && fetchOrderItemData.cart.orderItems.edges!.length === 0) {
@@ -49,7 +46,7 @@ const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
                 </Grid>
             </Grid>
             <div className={classes.pad}>
-                <OrderForm user={loginUser} totalPrice={fetchOrderItemData?.cart?.totalPrice!} />
+                <OrderForm user={fetchUserData!} totalPrice={fetchOrderItemData?.cart?.totalPrice!} />
             </div>
         </div>
     ))
