@@ -214,6 +214,30 @@ query fetchItem($id:ID!){
 // ============================ user ============================================================================
 
 gql(`
+query fetchUser {
+  user{
+    id
+    name
+    email
+    zipcode
+    address
+    telephone
+    status
+    password
+    orderSet{
+      pageInfo{
+        hasNextPage
+        hasPreviousPage
+      }
+      edges{
+        cursor
+      }
+    }
+  }
+}
+`)
+
+gql(`
 mutation register($input: UserSerializerMutationInput!){
   registerUser(input: $input){
     id

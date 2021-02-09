@@ -4,14 +4,13 @@ import {Redirect, RouteComponentProps, withRouter} from "react-router-dom";
 import routes from '~/router/routes';
 import Header from "~/components/elements/Header"
 import Footer from "~/components/elements/Footer"
-import {selectError, setError} from "~/store/slices/App/error.slice";
+import {selectError} from "~/store/slices/App/error.slice";
 import ErrorPage from "~/components/error";
 import {makeStyles} from "@material-ui/core";
-import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "~/store";
 import ScrollToTop from "~/components/elements/ScrollToTop";
-import {ApolloClient, ApolloProvider, HttpLink, InMemoryCache} from "@apollo/client";
+import {useFetchUserQuery} from "~/generated/graphql";
 
 const useStyles = makeStyles({
     App: {
@@ -26,56 +25,59 @@ const useStyles = makeStyles({
     }
 });
 
+// loginuserがいなかったらどのようなエラーを返すのか
+// userがいなかった場合と認証時にエラーが出た時、401エラーを返す
+
 const App: React.FC<RouteComponentProps> = () => {
     const classes = useStyles();
     const dispatch: AppDispatch = useDispatch()
 
     const [isLogin, setIsLogin] = useState(false)
     // login処理が走ったかを一時的に監視するために用意
-    const loginUser = useSelector(selectLoginUser)
-    const token = localStorage.getItem('Authorization')
+    const {data, error} = useFetchUserQuery()
+    // const loginUser = useSelector(selectLoginUser)
+    // const token = localStorage.getItem('Authorization')
 
     const errorInStore = useSelector(selectError);
+    // useEffect(() => {
+    //     console.log(11)
+    //     if (!loginUser && token) {
+    //         dispatch(fetchLoginUser()).catch((e) => {
+    //             dispatch(setError({isError: true, code: e.message}))
+    //         })
+    //     }
+    //     if (token) {
+    //         setIsLogin(true)
+    //     } else {
+    //         setIsLogin(false)
+    //     }
+    // }, [dispatch, loginUser, token])
+
+    console.log(data)
+    console.log(error?.graphQLErrors[0].extensions)
 
     useEffect(() => {
-        // TODO: fetchLoginUserが出来次第描き直す
-        if (!loginUser && token) {
-            dispatch(fetchLoginUser()).catch((e) => {
-                dispatch(setError({isError: true, code: e.message}))
-            })
-        }
-        if (token) {
+        if (data?.user) {
             setIsLogin(true)
         } else {
             setIsLogin(false)
         }
-    }, [dispatch, loginUser, token])
+    }, [data])
+
+    if (error?.graphQLErrors[0]?.extensions?.code === "UNAUTHORIZED") localStorage.removeItem('Authorization')
 
     // 401error発生時、執行されているがAppに保持され続けているtokenを削除
-    useEffect(() => {
-        if (errorInStore.code === '401') localStorage.removeItem('Authorization')
-    }, [errorInStore])
-
-    // apolloClientの環境設定
-    const client = new ApolloClient({
-        cache: new InMemoryCache(),
-        link: new HttpLink({
-            uri: "http://localhost:4000/",
-            headers: {
-                Authorization: localStorage.getItem("Authorization")
-            },
-        })
-    });
+    // useEffect(() => {
+    //     if (errorInStore.code === '401') localStorage.removeItem('Authorization')
+    // }, [errorInStore])
 
     return (
         <div className={classes.App}>
-            <ApolloProvider client={client}>
-                <ScrollToTop/>
-                <Header isLogin={isLogin}/>
-                {errorInStore.isError ? errorInStore.code === "401" ? <Redirect to="/login"/> :
-                    <ErrorPage/> : routes}
-                <Footer/>
-            </ApolloProvider>
+            <ScrollToTop/>
+            <Header isLogin={isLogin}/>
+            {errorInStore.isError ? errorInStore.code === "401" ? <Redirect to="/login"/> :
+                <ErrorPage/> : routes}
+            <Footer/>
         </div>
     );
 };

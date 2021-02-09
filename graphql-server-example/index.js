@@ -58,6 +58,7 @@ const typeDefs = gql`
     telephone: String
     status: Int
     password: String
+    orderSet: OrderHistoryTypeConnection
   }
   
   type ItemType{
@@ -261,6 +262,7 @@ input OrderToppingInput{
  
   # ここに書いたオブジェクトたちをqueryで持ってくることができる
   type Query {
+    user: UserType
     toppings(
         offset: Int
         before: String
@@ -494,7 +496,28 @@ const history = [
     cart,
     cart
 ]
-const users = []
+
+const user = {
+    id: "1",
+    name: "test",
+    email: "test@test.com",
+    zipcode: "111-2222",
+    address: "tokyo",
+    telephone: "000-2222-4444",
+    status: 0,
+    password: "123456",
+    orderSet: {
+        pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+        },
+        edges: [
+            {
+                cursor: "1"
+            }
+        ]
+    }
+}
 
 // GraphQL の operation（query や mutation や subscription）が、実際にどのような処理を行なってデータを返すのかという指示書
 const resolvers = {
@@ -503,6 +526,7 @@ const resolvers = {
     Query: {
         // この中で引数に設定した値をもとにfilterをかけることができる
         cart: () => cart,
+        user: () => user,
         toppings: () => {
             let edges = []
             toppings.forEach((i) => {
