@@ -126,7 +126,7 @@ const Header: React.FC<Props> = (props) => {
      * @return void
      */
     const transitionItemList = () => {
-        history.push(Path.itemList)
+        history.push({pathname: Path.itemList, state: {judge: true}});
     }
 
     /**
