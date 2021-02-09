@@ -17,7 +17,7 @@ const GuardedRoute = (props: RouteProps) => {
         }
     }
 
-    return <ErrorBoundary FallbackComponent={ErrorPage}><Route {...props} /></ErrorBoundary>;
+    return (<ErrorBoundary FallbackComponent={ErrorPage}><Route {...props}/></ErrorBoundary>)
 }
 
 export default GuardedRoute;
