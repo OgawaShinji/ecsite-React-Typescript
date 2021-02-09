@@ -6,8 +6,8 @@ import {
     DialogTitle, Grid,
     makeStyles, Paper, TextField, Theme, Typography,
 } from "@material-ui/core";
-import {User} from "~/types/interfaces";
 import {THEME_COLOR_2} from "~/assets/color";
+import {FetchUserQuery} from "~/generated/graphql";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -43,8 +43,8 @@ const useStyles = makeStyles((theme: Theme) =>
 export interface SimpleDialogProps {
     open: boolean;
     close: () => void;
-    changeUserInfo: (userInfo: User) => void;
-    userInfo: User | null
+    changeUserInfo: (userInfo: FetchUserQuery) => void;
+    userInfo: FetchUserQuery
 }
 
 const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
@@ -90,14 +90,14 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
 
     useEffect(() => {
         if (userInfo) {
-            setName({value: userInfo.name, errorMessage: ''})
-            setEmail({value: userInfo.email, errorMessage: ''})
+            setName({value: userInfo.user?.name!, errorMessage: ''})
+            setEmail({value: userInfo.user?.email!, errorMessage: ''})
             //郵便番号を3桁と4桁で区切る
-            setZipcode1({value: userInfo.zipcode.substr(0, 3), errorMessage: ''});
-            setZipcode2({value: userInfo.zipcode.substr(3, 4), errorMessage: ''});
-            setAddress({value: userInfo.address, errorMessage: ''})
+            setZipcode1({value: userInfo.user!.zipcode!.substr(0, 3), errorMessage: ''});
+            setZipcode2({value: userInfo.user!.zipcode!.substr(3, 4), errorMessage: ''});
+            setAddress({value: userInfo.user!.address!, errorMessage: ''})
             //電話番号をハイフンを基準にして分割する
-            const telephoneNumbers: string[] = userInfo.telephone.split('-')
+            const telephoneNumbers: string[] = userInfo.user!.telephone!.split('-')
             setFirstTelephoneNum({value: telephoneNumbers[0], errorMessage: ''})
             setSecondTelephoneNum({value: telephoneNumbers[1], errorMessage: ''})
             setThirdTelephoneNum({value: telephoneNumbers[2], errorMessage: ''})
@@ -223,11 +223,13 @@ const ShippingDialog: React.FC<SimpleDialogProps> = (props) => {
         const zipcode = zipcode1.value + zipcode2.value;
         const telephone = firstTelephoneNum.value  + '-' + secondTelephoneNum.value + '-' + thirdTelephoneNum.value
         const userInfo = {
-            name: name.value,
-            email: email.value,
-            zipcode: zipcode,
-            address: address.value,
-            telephone: telephone,
+            user:{
+                name: name.value,
+                email: email.value,
+                zipcode: zipcode,
+                address: address.value,
+                telephone: telephone,
+            }
         }
         if (userInfo) {
             props.changeUserInfo(userInfo);
