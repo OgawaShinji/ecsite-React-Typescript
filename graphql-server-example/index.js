@@ -227,6 +227,7 @@ input OrderToppingInput{
     order:OrderType
   }
   
+
   type UserSerializerMutationPayload{
     id: Int
     name: String
@@ -248,6 +249,15 @@ input OrderToppingInput{
     field: String!
     messages: [String!]!
   } 
+
+  type UpdateCart{
+    order:OrderType
+  }
+  
+  type DeleteCart{
+    order:OrderType
+  }
+
  
   # ここに書いたオブジェクトたちをqueryで持ってくることができる
   type Query {
@@ -284,6 +294,9 @@ input OrderToppingInput{
      registerUser(input:UserSerializerMutationInput!): UserSerializerMutationPayload
      addCart(orderItem:OrderItemInput!,status:Int,totalPrice:Int!): AddCart
      executeOrder(order:OrderInput!): ExecuteOrder
+     updateCart(orderItems:[OrderItemInput]!,status:Int!,totalPrice:Int!):UpdateCart
+     deleteCart(orderItemId:ID!):DeleteCart
+
   }
 `;
 
@@ -540,23 +553,7 @@ const resolvers = {
                 clientMutationId: args.input.clientMutationId
             }
         },
-        /*updateOrderItem(parent, args) {
-            console.log(args.orderItemInput.orderItems)
-            console.log(args.totalPrice.totalPrice)
-            return cart
-        },
-        deleteOrderItem(parent, args) {
-            console.log(args)
-            return cart
-        },
-        */
-        addCart(parent, args) {
-            // cart.orderItems.push(args.orderItem);
-            // cart.totalPrice += args.totalPrice;
-            console.log(cart)
-            //throw new Error()
-            return {order: cart}
-        },
+       
         executeOrder(parent, args) {
             //引数に渡されたデータを確認
             console.log(args)
@@ -571,6 +568,21 @@ const resolvers = {
             cart.paymentMethod = args.order.paymentMethod
             return {order: cart}
         },
+        addCart(parent, args) {
+            // cart.orderItems.push(args.orderItem);
+            // cart.totalPrice += args.totalPrice;
+            console.log(args)
+            //throw new Error()
+            return {order: cart}
+        },
+        updateCart(parent, args) {
+            console.log(args)
+            return {order: cart}
+        },
+        deleteCart(parent, args) {
+            console.log(args)
+            return {order: cart}
+        }
     }
 };
 
