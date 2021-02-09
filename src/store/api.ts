@@ -4,7 +4,8 @@ import camelcaseKeys from "camelcase-keys";
 
 
 export const API_URL = "http://localhost:3000"
-export const REST_URL = "http://34.84.118.239"
+//export const REST_URL = "http://34.84.118.239"
+export const REST_URL="https://reacthon-pizza.tk"
 
 const Axios: AxiosInstance = axios.create();
 Axios.interceptors.request.use((request) => {
