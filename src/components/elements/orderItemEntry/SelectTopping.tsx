@@ -52,7 +52,12 @@ export const SelectTopping: React.FC<selectToppingProps> = (props) => {
                 <Grid item container>
                     <Grid item xs={4}/>
                     <Grid item sm={4} container justify={"center"}>
-                        <Button onClick={props.onClickClose} variant={"contained"} color={"primary"}>
+                        <Button
+                            onClick={props.onClickClose}
+                            variant={"contained"}
+                            color={"primary"}
+                            data-testid={"selectTopping-modalButton"}
+                        >
                             <Typography>close</Typography>
                         </Button>
                     </Grid>

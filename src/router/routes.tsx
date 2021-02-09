@@ -3,14 +3,14 @@ import {Redirect, Switch} from 'react-router-dom';
 import GuardedRoute from "~/router/guardedRoute";
 import LoginGuardedRoute from "~/router/LoginGuardedRoute";
 
-import itemList from '../components/itemList';
-import cart from '../components/cart/index';
-import history from '../components/history';
-import itemDetail from '../components/itemDetail';
-import login from '../components/login';
-import orderComplete from '../components/orderComplete';
-import orderConfirm from '../components/orderConfirm';
-import register from '../components/register';
+import ItemList from "~/components/itemList";
+import Cart from "~/components/cart";
+import History from "~/components/history";
+import ItemDetail from "~/components/itemDetail";
+import Login from "~/components/login";
+import OrderComplete from "~/components/orderComplete";
+import OrderConfirm from "~/components/orderConfirm";
+import Register from "~/components/register";
 
 export const Path = {
     itemList: '/',
@@ -25,14 +25,14 @@ export const Path = {
 
 const routes = (
     <Switch>
-        <GuardedRoute exact path={Path.itemList} component={itemList}/>
-        <GuardedRoute exact path={Path.cart} component={cart}/>
-        <GuardedRoute exact path={Path.history} component={history}/>
-        <GuardedRoute exact path={Path.itemDetail} component={itemDetail}/>
-        <LoginGuardedRoute exact path={Path.login} component={login}/>
-        <GuardedRoute exact path={Path.orderComplete} component={orderComplete}/>
-        <GuardedRoute exact path={Path.orderConfirm} component={orderConfirm}/>
-        <GuardedRoute exact path={Path.register} component={register}/>
+        <GuardedRoute exact path={Path.itemList} component={ItemList}/>
+        <GuardedRoute exact path={Path.cart} component={Cart}/>
+        <GuardedRoute exact path={Path.history} component={History}/>
+        <GuardedRoute exact path={Path.itemDetail} component={ItemDetail}/>
+        <LoginGuardedRoute exact path={Path.login} component={Login}/>
+        <GuardedRoute exact path={Path.orderComplete} component={OrderComplete}/>
+        <GuardedRoute exact path={Path.orderConfirm} component={OrderConfirm}/>
+        <GuardedRoute exact path={Path.register} component={Register}/>
         <Redirect to={Path.itemList}/>
     </Switch>
 );

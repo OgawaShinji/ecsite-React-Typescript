@@ -78,8 +78,9 @@ const ItemList: React.FC = () => {
 
     useEffect(() => {
         setIsLoading(true);
+        let timerId: NodeJS.Timeout;
         const loading = async () => {
-            setTimeout(() => {
+            timerId = setTimeout(() => {
                 setIsLoading(false);
             }, 500)
         }
@@ -97,6 +98,9 @@ const ItemList: React.FC = () => {
             }
         });
 
+        return () => {
+            clearTimeout(timerId);
+        }
     }, [items, displayCount]);
 
     // methods
@@ -188,7 +192,7 @@ const ItemList: React.FC = () => {
 
                             {items && items.slice(displayCount * (page - 1), displayCount * page).map((item) => (
                                 // 商品一覧を表示
-                                <Grid key={item.id} item xs={3} className={classes.itemCard}>
+                                <Grid key={item.id} item xs={3} className={classes.itemCard} role={`item${item.id}`}>
                                     <ItemCard item={item}/>
                                 </Grid>
                             ))}

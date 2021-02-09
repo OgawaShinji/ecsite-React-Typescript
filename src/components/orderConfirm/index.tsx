@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {asyncFetchOrderItems, selectOrderItems} from "~/store/slices/Domain/order.slice";
 import {useDispatch, useSelector} from "react-redux";
-import OrderForm from "~/components/orderConfirm/orderForm";
+import OrderForm from "~/components/orderConfirm/OrderForm";
 import OrderItemCard from "~/components/elements/orderItemCard/OrderItemCard";
-import {selectLoginUser} from "~/store/slices/App/auth.slice";
-
+import {fetchLoginUser, selectLoginUser} from "~/store/slices/App/auth.slice";
 import {Grid, LinearProgress, makeStyles} from "@material-ui/core";
 import {setError} from "~/store/slices/App/error.slice";
 import {AppDispatch} from "~/store";
@@ -27,7 +26,7 @@ const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
     //storeのstateにあるorderItemの取得
     let orderItems = useSelector(selectOrderItems);
     //storeのstateにあるloginUserの取得
-    let loginUser = useSelector(selectLoginUser);
+    let user = useSelector(selectLoginUser);
 
     //ローディング処理
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -38,16 +37,23 @@ const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
     }
 
     useEffect(() => {
+        let timerId: NodeJS.Timeout;
         const loading = async () => {
-            setTimeout( () => {
+            timerId = setTimeout( () => {
                 setIsLoading(false);
             }, 500)
         }
         loading().then( () => {
             dispatch(asyncFetchOrderItems()).catch((e) => {
                 dispatch(setError({isError: true, code: e.message}))
-            })
+            });
+            dispatch(fetchLoginUser()).catch((e) => {
+                dispatch(setError({isError: true, code: e.message}))
+            });
         })
+        return () => {
+            clearTimeout(timerId);
+        }
     }, [dispatch])
 
     useEffect(() => {
@@ -68,7 +74,7 @@ const OrderConfirm: React.FC<RouteComponentProps> = (props) => {
                 </Grid>
             </Grid>
             <div className={classes.pad}>
-                <OrderForm user={loginUser} setLoading={setLoading}/>
+                <OrderForm user={user} setLoading={setLoading}/>
             </div>
         </div>
     ))

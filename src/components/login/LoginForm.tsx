@@ -17,9 +17,11 @@ import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice";
 import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
 import {makeStyles} from "@material-ui/core/styles";
-import {setIsLoading} from "~/store/slices/App/displayUI.slice"
 
-const LoginForm: React.FC = () => {
+type loginFormProps = {
+    setIsLoading: (is: boolean) => Promise<string>
+}
+const LoginForm: React.FC<loginFormProps> = (props) => {
     const dispatch: AppDispatch = useDispatch();
     const [email, setEmail] = useState<{ value: string, errorMessage: string }>({
         value: '',
@@ -64,8 +66,7 @@ const LoginForm: React.FC = () => {
                     })
 
                     //loading画面表示可能にした後画面遷移
-                    await dispatch(setIsLoading(true))
-                    await routeHistory.push(Path.itemList)
+                    await props.setIsLoading(true).then(() => routeHistory.push(Path.itemList))
                 } else {
                     setIsIncorrectEntry(true);
                     setPassword({value: "", errorMessage: ""})

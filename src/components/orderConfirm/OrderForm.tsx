@@ -15,7 +15,7 @@ import TotalPrice from "~/components/elements/totalPrice/totalPrice";
 import {useDispatch, useSelector} from "react-redux";
 import {postOrder, selectOrderSubTotalPrice} from "~/store/slices/Domain/order.slice";
 import {User} from "~/types/interfaces";
-import ShippingDialog from "~/components/orderConfirm/shippingDialog";
+import ShippingDialog from "~/components/orderConfirm/ShippingDialog";
 import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
 import {Path} from "~/router/routes";
@@ -97,17 +97,16 @@ const OrderForm: React.FC<Props> = (props) => {
     const [deliveryHour, setDeliveryHour] = React.useState<string>(String(new Date().getHours() + 2));
     const [deliveryMinutes, setDeliveryMinutes] = React.useState<string>("00");
 
-
     useEffect(() => {
-        setUserInfo(props.user)
         if (selectedDate.date) {
             selectedDate.date?.setDate(selectedDate.date.getDate());
             selectedDate.date?.setHours(Number(deliveryHour))
             selectedDate.date?.setMinutes(Number(deliveryMinutes))
+            selectedDate.date?.setSeconds(Number("00"))
+            selectedDate.date?.setMilliseconds(Number("00"))
             selectedDate.errorMessage = deliveryDateValidation(selectedDate.date);
         }
-    }, [dispatch, props.user, selectedDate, deliveryHour, deliveryMinutes])
-
+    }, [dispatch, selectedDate, deliveryHour, deliveryMinutes])
 
     //[変更]ボタン押下時の処理 お届け先情報変更用フォームダイアログを表示
     const handleDialogOpen = () => {
@@ -119,7 +118,7 @@ const OrderForm: React.FC<Props> = (props) => {
     };
     //[変更する]ボタン押下時の処理 お届け先情報を変更用フォームに入力された内容に変更
     const changeUserInfo = (changeUserInfo: User | null) => {
-        setUserInfo(changeUserInfo)
+        setUserInfo(changeUserInfo);
     }
     //[クレジットカード決済]チェック時の処理 お支払方法をクレジットカード決済に変更
     const handleChangePaymentCash = () => {
@@ -207,8 +206,9 @@ const OrderForm: React.FC<Props> = (props) => {
                     deliveryTime: selectedDate.date,
                     paymentMethod: paymentMethod
                 }
-                await dispatch(postOrder(order)).then((i) => {
-                    if (i.payload) routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
+                await dispatch(postOrder(order)).then(async (i) => {
+                    props.setLoading(true)
+                    if (i.payload) await routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
                 }).catch(async (e) => {
                     await props.setLoading(false);
                     dispatch(setError({isError: true, code: e.message}));
@@ -291,17 +291,18 @@ const OrderForm: React.FC<Props> = (props) => {
 
                                         </Grid>
                                         <Grid item xs={10}>
-                                            <Typography style={{color: "black"}}>代金引換</Typography>
+                                            <Typography style={{color: "black"}} component={"h6"}>代金引換</Typography>
                                         </Grid>
                                         <Grid item xs={2}>
                                             <Checkbox
                                                 color="default"
                                                 checked={checkedCredit}
                                                 onChange={handleChangePaymentCredit}
+                                                data-testid={"checkedCredit"}
                                             />
                                         </Grid>
                                         <Grid item xs={10}>
-                                            <Typography style={{color: "black"}}>クレジットカード決済</Typography>
+                                            <Typography style={{color: "black"}} component={"h6"}>クレジットカード決済</Typography>
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -358,7 +359,7 @@ const OrderForm: React.FC<Props> = (props) => {
                                             </Select>
                                         </Grid>
                                         <Grid item>
-                                            <Typography variant={"subtitle2"} align={"center"}
+                                            <Typography variant={"subtitle2"} align={"center"} component={"h6"}
                                                         style={{color: 'red'}}>{selectedDate.errorMessage}</Typography>
                                         </Grid>
                                     </MuiPickersUtilsProvider>
