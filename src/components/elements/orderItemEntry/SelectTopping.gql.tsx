@@ -16,7 +16,7 @@ type selectToppingProps = {
 //だから、あくまでrefをpropsの一つとして渡し、後からrefに指定してexportする（それが WrappedSelectTopping）
 export const SelectToppingGQL: React.FC<selectToppingProps> = (props) => {
 
-    const {data: toppings, loading: isLoadToppings} = useFetchToppingsQuery()
+    const {data: toppings, loading: isLoadToppings} = useFetchToppingsQuery({fetchPolicy: "cache-only"})
     const [selectedToppings, setSelectedToppings] = useState<Topping[]>(props.propTopping)
 
     const handleToppingChange = (topping: Topping) => {

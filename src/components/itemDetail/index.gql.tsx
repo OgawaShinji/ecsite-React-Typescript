@@ -9,7 +9,7 @@ import {useHistory, useParams} from "react-router-dom"
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {Path} from "~/router/routes";
 import OrderItemFormGQL from "~/components/itemDetail/OrderItemForm.gql";
-import {useFetchItemQuery, useAddCartMutation} from "~/generated/graphql";
+import {useFetchItemQuery, useAddCartMutation, useFetchToppingsQuery} from "~/generated/graphql";
 import ErrorPage from "~/components/error";
 import {itemEntryStateGQL} from "~/components/elements/orderItemEntry/OrderItemEntry.gql";
 
@@ -21,6 +21,7 @@ const ItemDetailGQL: React.FC = () => {
         loading: isLoadItem,
         error: fetchItemError
     } = useFetchItemQuery({variables: {id: itemId}});
+    const {error: fetchToppingError} = useFetchToppingsQuery();
 
     const [addCart, {loading: isLoadAddCart, error: addCartError}] = useAddCartMutation();
 
@@ -56,12 +57,14 @@ const ItemDetailGQL: React.FC = () => {
     const classes = entryIndexStyle();
 
     ///// ErrorHandling
-    if (fetchItemError || addCartError) {
+    if (fetchItemError || fetchToppingError || addCartError) {
         let code: string = '';
         if (fetchItemError) {
             code = fetchItemError.graphQLErrors[0].extensions?.code;
         } else if (addCartError) {
             code = addCartError.graphQLErrors[0].extensions?.code;
+        } else if (fetchToppingError) {
+            code = fetchToppingError.graphQLErrors[0].extensions?.code;
         }
         return <ErrorPage code={code}/>;
     }
