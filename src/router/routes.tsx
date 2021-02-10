@@ -4,13 +4,11 @@ import GuardedRoute from "~/router/guardedRoute";
 import LoginGuardedRoute from "~/router/LoginGuardedRoute";
 
 import ItemListGQL from "~/components/itemList/index.gql";
-import cart from '../components/cart';
+import cart from '../components/cart/index.gql';
 import HistoryGQL from "~/components/history/index.gql";
 import ItemDetailGQL from "~/components/itemDetail/index.gql";
 import login from '../components/login';
 import orderComplete from '../components/orderComplete';
-import orderConfirm from '../components/orderConfirm';
-import register from '../components/register';
 import RegisterGQL from "~/components/register/index.gql";
 import OrderConfirmGQL from "~/components/orderConfirm/index.gql";
 
