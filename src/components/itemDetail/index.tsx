@@ -125,7 +125,7 @@ const ItemDetail: React.FC = () => {
                                 </Typography>
                                 <br/>
                                 <Typography variant={"h6"} color={"textPrimary"} component={"p"}>
-                                    {`Mサイズ：` + displayItem?.priceM + `円　🍕　Lサイズ：` + displayItem?.priceL + `円`}
+                                    {`Mサイズ：` + displayItem?.priceM.toLocaleString() + `円　🍕　Lサイズ：` + displayItem?.priceL.toLocaleString() + `円`}
                                 </Typography>
                             </CardContent>
                         </Grid>
