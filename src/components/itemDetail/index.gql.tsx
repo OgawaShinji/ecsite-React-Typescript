@@ -21,6 +21,7 @@ const ItemDetailGQL: React.FC = () => {
         loading: isLoadItem,
         error: fetchItemError
     } = useFetchItemQuery({variables: {id: itemId}});
+
     const {error: fetchToppingError} = useFetchToppingsQuery();
 
     const [addCart, {loading: isLoadAddCart, error: addCartError}] = useAddCartMutation();
@@ -28,7 +29,9 @@ const ItemDetailGQL: React.FC = () => {
     const history = useHistory();
 
     /**
-     * 注文確定された際にAPIに投げるために必要なデータを形成しstoreの処理を呼び出す
+     * 注文確定された際にAPIに投げるために必要なデータを形成しmutation処理を呼び出す
+     * @param moveTo:遷移したいページ
+     * @param selectedState:フォームに入力されている注文商品状態
      */
     const handleOrderClick = async (moveTo: string, selectedState: itemEntryStateGQL) => {
         if (displayItem === null) throw new Error()
@@ -57,62 +60,50 @@ const ItemDetailGQL: React.FC = () => {
     const classes = entryIndexStyle();
 
     ///// ErrorHandling
-    if (fetchItemError || fetchToppingError || addCartError) {
-        let code: string = '';
-        if (fetchItemError) {
-            code = fetchItemError.graphQLErrors[0].extensions?.code;
-        } else if (addCartError) {
-            code = addCartError.graphQLErrors[0].extensions?.code;
-        } else if (fetchToppingError) {
-            code = fetchToppingError.graphQLErrors[0].extensions?.code;
-        }
-        return <ErrorPage code={code}/>;
-    }
+    if (fetchItemError) return <ErrorPage code={fetchItemError.graphQLErrors[0]!.extensions!.code}/>
+    if (fetchToppingError) return <ErrorPage code={fetchToppingError.graphQLErrors[0]!.extensions!.code}/>
+    if (addCartError) return <ErrorPage code={addCartError.graphQLErrors[0]!.extensions!.code}/>
+
     //Pathに存在しないIDを渡された場合BADREQUESTでは無くnullが返ってくる仕様なので404とみなす
     if (!(displayItem?.item?.name) && !(isLoadAddCart || isLoadItem)) return <ErrorPage code={'NOT_FOUND'}/>;
 
-    if (isLoadItem || isLoadAddCart) return <LinearProgress
-        style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>;
+    if (isLoadItem || isLoadAddCart) return <LinearProgress className={classes.loading_progress}/>;
 
-    return (isLoadItem || isLoadAddCart ?
-            <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
-            : <div className={classes.align_child}>
-                <div style={{display: "flex"}}>
-                    <Grid container justify={"center"} alignContent={"center"}>
+    return (<div className={classes.align_child}>
+            <Grid container justify={"center"} alignContent={"center"}>
 
-                        {/*商品画像*/}
-                        <Grid item xs={12}>
-                            <CardContent className={classes.align_child}>
-                                <Avatar src={`${displayItem!.item!.imagePath}`} style={{width: "50%", height: "auto"}}
-                                        variant={"rounded"} alt={'🍕'}/>
-                            </CardContent>
+                {/*商品画像*/}
+                <Grid item xs={12}>
+                    <CardContent className={classes.align_child}>
+                        <Avatar src={`${displayItem!.item!.imagePath}`} style={{width: "50%", height: "auto"}}
+                                variant={"rounded"} alt={'🍕'}/>
+                    </CardContent>
 
-                            {/*商品名*/}
-                            <CardContent className={classes.align_child}>
-                                <Typography variant={"h4"} component={"u"}>{displayItem!.item!.name}</Typography>
-                            </CardContent>
-                        </Grid>
+                    {/*商品名*/}
+                    <CardContent className={classes.align_child}>
+                        <Typography variant={"h4"} component={"u"}>{displayItem!.item!.name}</Typography>
+                    </CardContent>
+                </Grid>
 
-                        {/*説明文*/}
-                        <Grid item xs={12} className={classes.description_content}>
-                            <CardContent style={{width: "70%", textAlign: "center"}}>
-                                <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
-                                    {displayItem!.item!.description}
-                                    <br/>＊写真はイメージです＊
-                                </Typography>
-                                <br/>
-                                <Typography variant={"h6"} color={"textPrimary"} component={"p"}>
-                                    {`Mサイズ：` + displayItem!.item!.priceM!.toLocaleString() + `円　🍕　Lサイズ：` + displayItem!.item!.priceL!.toLocaleString() + `円`}
-                                </Typography>
-                            </CardContent>
-                        </Grid>
-                    </Grid>
+                {/*説明文*/}
+                <Grid item xs={12} className={classes.description_content}>
+                    <CardContent style={{width: "70%", textAlign: "center"}}>
+                        <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
+                            {displayItem!.item!.description}
+                            <br/>＊写真はイメージです＊
+                        </Typography>
+                        <br/>
+                        <Typography variant={"h6"} color={"textPrimary"} component={"p"}>
+                            {`Mサイズ：` + displayItem!.item!.priceM!.toLocaleString() + `円　🍕　Lサイズ：` + displayItem!.item!.priceL!.toLocaleString() + `円`}
+                        </Typography>
+                    </CardContent>
+                </Grid>
+            </Grid>
 
-                    {/*注文入力部分*/}
-                    <OrderItemFormGQL item={displayItem!.item!} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
+            {/*注文入力部分*/}
+            <OrderItemFormGQL item={displayItem!.item!} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
 
-                </div>
-            </div>
+        </div>
     )
 };
 export default ItemDetailGQL;
@@ -131,5 +122,10 @@ const entryIndexStyle = makeStyles(() => createStyles({
         display: "flex",
         justifyContent: "center",
     },
+    loading_progress: {
+        width: "60%",
+        marginTop: "20%",
+        marginLeft: "20%"
+    }
 
 }));
