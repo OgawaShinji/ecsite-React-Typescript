@@ -554,11 +554,12 @@ describe('商品一覧画面', () => {
         await rendering();
 
         expect(await screen.findByRole('item1')).toBeTruthy();
-        const item1Card = await screen.findByRole('button', {name: 'pizza item name1 M 1,000円 L 2,000円'});
+
+        const itemCard = await screen.findAllByRole('cardActionArea');
 
         ///// 商品（ItemCardコンポ―ネント）を押下 /////
         await act(async () => {
-            await userEvent.click(item1Card);
+            await userEvent.click(itemCard[0]);
         })
         // history.pushの内容を確認
         expect(methodStatus.history).toStrictEqual({pathname: '/itemDetail/1'});
