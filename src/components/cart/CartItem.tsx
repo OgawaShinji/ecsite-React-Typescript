@@ -141,7 +141,8 @@ const CartItem: React.FC<Props> = (props) => {
                     {/*image*/}
                     <Grid item xs={3} container justify={"center"} alignItems={"center"}>
                         <ButtonBase className={classes.image} onClick={toItemDetail}>
-                            <img className={classes.img} alt={`image${props.index}`} src={orderItem.item.imagePath}/>
+                            <img className={classes.img} alt={`pic${props.index}`}
+                                 src={orderItem.item.imagePath}/>
                         </ButtonBase>
                     </Grid>
                     <Grid item xs={6} sm container>
