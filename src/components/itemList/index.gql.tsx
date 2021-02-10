@@ -123,12 +123,16 @@ const ItemListGQL: React.FC = () => {
         }
     }
 
-    // Error画面の表示
-    // BadRequest
-    if (fetchItemsError?.graphQLErrors[0] && fetchItemsError?.graphQLErrors[0].extensions?.code === "BAD_REQUEST") return <ErrorPage
-        code={404}/>
-    // BadRequest以外
-    if (fetchItemsError || fetchItemsTotalCountError) return <ErrorPage code={500}/>
+    ///// ErrorHandling
+    if (fetchItemsError || fetchItemsTotalCountError) {
+        let code: string = '';
+        if (fetchItemsError) {
+            code = fetchItemsError.graphQLErrors[0].extensions?.code;
+        } else if (fetchItemsTotalCountError) {
+            code = fetchItemsTotalCountError.graphQLErrors[0].extensions?.code;
+        }
+        return <ErrorPage code={code}/>;
+    }
 
     return (
         <div>

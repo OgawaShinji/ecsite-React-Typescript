@@ -142,12 +142,11 @@ const HistoryGQL: React.FC = () => {
         }
     });
 
-    // Error画面の表示
-    // BadRequest
-    if (fetchOrderHistoryError?.graphQLErrors[0] && fetchOrderHistoryError?.graphQLErrors[0].extensions?.code === "BAD_REQUEST") return <ErrorPage
-        code={404}/>
-    // BadRequest以外
-    if (fetchOrderHistoryError) return <ErrorPage code={500}/>
+    ///// ErrorHandling
+    if (fetchOrderHistoryError) {
+        const code = fetchOrderHistoryError.graphQLErrors[0].extensions?.code;
+        return <ErrorPage code={code}/>
+    }
 
     return (
         <>
