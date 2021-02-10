@@ -9,9 +9,9 @@ import {
     OrderToppingInput,
     useDeleteCartMutation,
     useFetchOrderItemsQuery,
+    useFetchToppingsQuery,
     useUpdateCartMutation
 } from "~/generated/graphql";
-import ErrorPage from "~/components/error";
 
 const useStyles = makeStyles({
     root: {
@@ -42,37 +42,18 @@ const useStyles = makeStyles({
     }
 });
 
-
 const Index: React.FC = () => {
-
     const classes = useStyles();
 
-    const {
-        data: displayFetchOrderItems,
-        loading: isLoadingFetchOrderItems,
-        error: isErrorFetchOrderItems,
-        refetch  // タイポの直し方わからず
-    } = useFetchOrderItemsQuery()
-
-    const [updateCart,
-        {
-            loading: isLoadingUpdateCart,
-            error: isErrorUpdateCart
-        }
-    ] = useUpdateCartMutation()
-
-    const [deleteCart,
-        {
-            loading: isLoadingDeleteCart,
-            error: isErrorDeleteCart
-        }
-    ] = useDeleteCartMutation()
-
+    // TODO：　エラーハンドリング実装追加
+    const {data: displayFetchOrderItems, loading: isLoadingFetchOrderItems, refetch} = useFetchOrderItemsQuery({fetchPolicy: "cache-and-network"})
+    useFetchToppingsQuery()
+    const [updateCart] = useUpdateCartMutation()
+    const [deleteCart] = useDeleteCartMutation()
 
     // orderOperatorにpropsで渡すorderItemsIdのList
     const displayOrderItemIdList: Array<string> = []
     displayFetchOrderItems?.cart?.orderItems?.edges?.forEach(o => displayOrderItemIdList.push(o?.node?.id!))
-
 
     /**
      * 注文商品の内容を更新する関数
@@ -80,11 +61,10 @@ const Index: React.FC = () => {
      * @return
      */
     const updateOrderItems = async ({orderItem}: { orderItem: OrderItemType }) => {
-        console.log(orderItem)
         // updateCartの引数,orderItemInputの作成
         let updateOrderToppingIdList: Array<OrderToppingInput> = []
         orderItem.orderToppings?.edges?.forEach(ot => {
-            updateOrderToppingIdList.push({topping: ot!.node!.id!})
+            updateOrderToppingIdList.push({topping: ot!.node!.topping!.id})
         })
         const orderItemInput: OrderItemInput = {
             id: orderItem.id,
@@ -94,15 +74,12 @@ const Index: React.FC = () => {
             quantity: orderItem.quantity!
         }
 
-        console.log(orderItemInput)
-
         await updateCart(
             {
                 variables: {
-                    orderItems: [orderItemInput],
-                    totalPrice: displayFetchOrderItems?.cart?.totalPrice!
+                    orderItems: [orderItemInput]
                 }
-            }).then(() => refetch({}))
+            }).then(() => refetch())
     }
 
     /**
@@ -111,15 +88,14 @@ const Index: React.FC = () => {
      * @return
      */
     const deleteOrderItem = async (orderItemId: string) => {
-        console.log(orderItemId)
         await deleteCart(
             {
                 variables: {
-                    orderItemId: orderItemId.toLocaleString()
+                    orderItemId: orderItemId
                 }
-            }).then(() => refetch({}))
+                // 最後の一個を削除しようとすると、自動フェッチが削除したはずの商品もとってきてしまうので、手動でフェッチ処理
+            }).then(() => refetch())
     }
-
 
     // カートに商品があるかどうかでレイアウトを切り替えるため
     let styleCartList
@@ -129,10 +105,7 @@ const Index: React.FC = () => {
         styleCartList = classes.emptyCartList
     }
 
-    // errorハンドリング
-    if (isErrorFetchOrderItems || isErrorUpdateCart || isErrorDeleteCart) return <ErrorPage/>;
-
-    return (isLoadingFetchOrderItems  ?
+    return (isLoadingFetchOrderItems ?
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
             : <div>
                 <div className={classes.root}>

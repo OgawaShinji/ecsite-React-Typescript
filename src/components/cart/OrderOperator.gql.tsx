@@ -9,7 +9,6 @@ interface Props {
     deleteOrderItem: (orderItemId: string) => void
 }
 
-
 const useStyles = makeStyles({
     root: {
         maxWidth: 345,
@@ -29,7 +28,6 @@ const useStyles = makeStyles({
     }
 });
 
-
 const OrderOperator: React.FC<Props> = (props) => {
 
     const classes = useStyles();
@@ -44,7 +42,6 @@ const OrderOperator: React.FC<Props> = (props) => {
             props.deleteOrderItem(orderItemId)
         }))
     }
-
 
     return (
         <Card className={classes.root}>

@@ -4,6 +4,7 @@ import {useLocation} from "react-router-dom";
 import ItemCardGQL from "~/components/itemList/ItemCard.gql";
 import SearchAreaGQL from "~/components/itemList/SearchArea.gql";
 import OptionFormGQL from "~/components/itemList/OptionForm.gql";
+import ErrorPage from "~/components/error";
 
 import {Button, Grid, LinearProgress, makeStyles, Paper, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
@@ -11,7 +12,7 @@ import {Pagination} from "@material-ui/lab";
 import {animateScroll as scroll} from 'react-scroll';
 
 import {useFetchItemsQuery, useFetchItemsTotalCountQuery} from '~/generated/graphql';
-import ErrorPage from "~/components/error";
+
 
 const useStyles = makeStyles((theme) => ({
     itemCard: {
@@ -122,12 +123,16 @@ const ItemListGQL: React.FC = () => {
         }
     }
 
-    // Error画面の表示
-    // BadRequest
-    if (fetchItemsError?.graphQLErrors[0] && fetchItemsError?.graphQLErrors[0].extensions?.code === "BAD_REQUEST") return <ErrorPage
-        code={404}/>
-    // BadRequest以外
-    if (fetchItemsError || fetchItemsTotalCountError) return <ErrorPage code={500}/>
+    ///// ErrorHandling
+    if (fetchItemsError || fetchItemsTotalCountError) {
+        let code: string = '';
+        if (fetchItemsError) {
+            code = fetchItemsError.graphQLErrors[0].extensions?.code;
+        } else if (fetchItemsTotalCountError) {
+            code = fetchItemsTotalCountError.graphQLErrors[0].extensions?.code;
+        }
+        return <ErrorPage code={code}/>;
+    }
 
     return (
         <div>

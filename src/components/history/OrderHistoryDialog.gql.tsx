@@ -8,7 +8,7 @@ import {
     DialogContent,
     DialogActions,
     IconButton,
-    Grid, makeStyles
+    Grid, makeStyles, Typography
 } from '@material-ui/core';
 import {Cancel} from "@material-ui/icons";
 
@@ -22,6 +22,11 @@ type Props = {
 };
 
 const useStyles = makeStyles((theme) => ({
+    title: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        color: '#777777'
+    },
     control: {
         padding: theme.spacing(1)
     }
@@ -43,7 +48,11 @@ const OrderHistoryDialogGQL: React.FC<Props> = props => {
             <Dialog open={props.isOpen} onClose={props.handleClose} fullWidth={true} maxWidth={"md"}>
                 <Grid container justify={"center"} alignItems={"center"} direction={"column"}>
                     <Grid item>
-                        <DialogTitle>&lt; 注文内容 &gt;</DialogTitle>
+                        <DialogTitle>
+                            <Typography className={classes.title}>
+                                &lt; 注文内容 &gt;
+                            </Typography>
+                        </DialogTitle>
                     </Grid>
                 </Grid>
                 <DialogContent>

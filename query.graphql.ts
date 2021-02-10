@@ -53,8 +53,8 @@ gql(`query fetchOrderItems {
 `)
 
 gql(`
-mutation addCart($orderItem:OrderItemInput!,$totalPrice:Int!){
-  addCart(orderItem:$orderItem,status:0,totalPrice:$totalPrice){
+mutation addCart($orderItem:OrderItemInput!){
+  addCart(orderItem:$orderItem,status:0){
      order{
       id
      }   
@@ -63,28 +63,111 @@ mutation addCart($orderItem:OrderItemInput!,$totalPrice:Int!){
 `)
 
 gql(`
-mutation updateCart($orderItems: [OrderItemInput]!,$totalPrice:Int!) {
+mutation updateCart($orderItems: [OrderItemInput]!) {
    updateCart(
     orderItems: $orderItems
     status: 0
-    totalPrice:$totalPrice
   ){
     order {
-        id
+    totalPrice
+    orderItems{
+      edges{
+        node{
+          id
+          size
+          quantity
+          subTotalPrice
+          item{
+            id
+            name
+            description
+            priceM
+            priceL
+            imagePath
+            deleted
+          }
+          orderToppings{
+            edges{
+              node{
+                id
+                topping{
+                  id
+                  name
+                  priceM
+                  priceL
+                }
+              }
+            }
+          }
+        }
+      }
     }
+  }
   }
 }`)
 
 gql(`
 mutation deleteCart($orderItemId:ID!) {
    deleteCart(
-   orderItemId:$orderItemId
+    orderItemId:$orderItemId
   ){
     order {
-        id
+    totalPrice
+    orderItems{
+      edges{
+        node{
+          id
+          size
+          quantity
+          subTotalPrice
+          item{
+            id
+            name
+            description
+            priceM
+            priceL
+            imagePath
+            deleted
+          }
+          orderToppings{
+            edges{
+              node{
+                id
+                topping{
+                  id
+                  name
+                  priceM
+                  priceL
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
+  }
 }`)
+
+gql(`
+mutation order($order: OrderInput!){
+  executeOrder(order:$order){
+    order{
+      id
+      status
+      orderDate
+      deliveryTime
+      destinationName
+      destinationEmail
+      destinationZipcode
+      destinationAddress
+      destinationTel
+      totalPrice
+      paymentMethod
+    }
+  }
+}
+`)
 
 // ============================= topping ====================================================================
 
@@ -148,24 +231,28 @@ gql(`
 // ============================ user ============================================================================
 
 gql(`
-query fetchUser {
-  user{
-    id
-    name
-    email
-    zipcode
-    address
-    telephone
-    status
-    password
-    orderSet{
-      pageInfo{
-        hasNextPage
-        hasPreviousPage
+    query fetchUser{
+      user{
+        name
+        email
+        zipcode
+        address
+        telephone
+        id
       }
-      edges{
-        cursor
-      }
+    }
+`)
+
+gql(`
+mutation register($userData: UserRegisterInput!){
+  registerUser(userData: $userData){
+    user{
+        name
+        email
+        zipcode
+        address
+        telephone
+        id
     }
   }
 }
@@ -174,8 +261,8 @@ query fetchUser {
 // ============================ history ============================================================================
 
 gql(`
-    query fetchOrderHistory($limit: Int, $offset: Int) {
-      orderHistory(first: $limit, offset: $offset, orderBy: "-orderDate,-id") {
+    query fetchOrderHistory($first: Int, $after: String, $last: Int, $before: String) {
+      orderHistory(first: $first, after: $after, last: $last, before: $before, orderBy: "-orderDate,-id") {
         pageInfo{
           hasPreviousPage
           hasNextPage
