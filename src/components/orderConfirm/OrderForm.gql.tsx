@@ -97,7 +97,7 @@ const OrderFormGQL: React.FC<Props> = (props) => {
 
 
     useEffect(() => {
-        setUserInfo(props.user)
+        setUserInfo(userInfo)
         if (selectedDate.date) {
             selectedDate.date?.setDate(selectedDate.date.getDate());
             selectedDate.date?.setHours(Number(deliveryHour));
