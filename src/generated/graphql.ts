@@ -32,7 +32,6 @@ export type Query = {
   item?: Maybe<ItemType>;
   toppings?: Maybe<ToppingTypeConnection>;
   user?: Maybe<UserType>;
-  registerUser?: Maybe<UserType>;
   orderHistory?: Maybe<OrderHistoryTypeConnection>;
   cart?: Maybe<OrderType>;
 };
@@ -150,46 +149,35 @@ export type ToppingType = Node & {
 
 export type UserType = Node & {
   __typename?: 'UserType';
+  name?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  zipcode?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+  telephone?: Maybe<Scalars['String']>;
   /** The ID of the object. */
   id: Scalars['ID'];
-  name: Scalars['String'];
-  email: Scalars['String'];
-  password: Scalars['String'];
-  zipcode: Scalars['String'];
-  address: Scalars['String'];
-  telephone: Scalars['String'];
-  status: Scalars['String'];
-  orderSet: OrderTypeConnection;
 };
 
-
-export type UserTypeOrderSetArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-};
-
-export type OrderTypeConnection = {
-  __typename?: 'OrderTypeConnection';
+export type OrderHistoryTypeConnection = {
+  __typename?: 'OrderHistoryTypeConnection';
   /** Pagination data for this connection. */
   pageInfo: PageInfo;
   /** Contains the nodes in this connection. */
-  edges: Array<Maybe<OrderTypeEdge>>;
+  edges: Array<Maybe<OrderHistoryTypeEdge>>;
 };
 
-/** A Relay edge containing a `OrderType` and its cursor. */
-export type OrderTypeEdge = {
-  __typename?: 'OrderTypeEdge';
+/** A Relay edge containing a `OrderHistoryType` and its cursor. */
+export type OrderHistoryTypeEdge = {
+  __typename?: 'OrderHistoryTypeEdge';
   /** The item at the end of the edge */
-  node?: Maybe<OrderType>;
+  node?: Maybe<OrderHistoryType>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
 };
 
-export type OrderType = Node & {
-  __typename?: 'OrderType';
+/** ログイン中のユーザーの注文履歴を取得 */
+export type OrderHistoryType = Node & {
+  __typename?: 'OrderHistoryType';
   user?: Maybe<UserType>;
   status?: Maybe<Scalars['Int']>;
   totalPrice?: Maybe<Scalars['Int']>;
@@ -207,7 +195,8 @@ export type OrderType = Node & {
 };
 
 
-export type OrderTypeOrderItemsArgs = {
+/** ログイン中のユーザーの注文履歴を取得 */
+export type OrderHistoryTypeOrderItemsArgs = {
   offset?: Maybe<Scalars['Int']>;
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
@@ -278,26 +267,8 @@ export type OrderToppingType = Node & {
   id: Scalars['ID'];
 };
 
-export type OrderHistoryTypeConnection = {
-  __typename?: 'OrderHistoryTypeConnection';
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** Contains the nodes in this connection. */
-  edges: Array<Maybe<OrderHistoryTypeEdge>>;
-};
-
-/** A Relay edge containing a `OrderHistoryType` and its cursor. */
-export type OrderHistoryTypeEdge = {
-  __typename?: 'OrderHistoryTypeEdge';
-  /** The item at the end of the edge */
-  node?: Maybe<OrderHistoryType>;
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
-};
-
-/** ログイン中のユーザーの注文履歴を取得 */
-export type OrderHistoryType = Node & {
-  __typename?: 'OrderHistoryType';
+export type OrderType = Node & {
+  __typename?: 'OrderType';
   user?: Maybe<UserType>;
   status?: Maybe<Scalars['Int']>;
   totalPrice?: Maybe<Scalars['Int']>;
@@ -315,8 +286,7 @@ export type OrderHistoryType = Node & {
 };
 
 
-/** ログイン中のユーザーの注文履歴を取得 */
-export type OrderHistoryTypeOrderItemsArgs = {
+export type OrderTypeOrderItemsArgs = {
   offset?: Maybe<Scalars['Int']>;
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
@@ -326,7 +296,7 @@ export type OrderHistoryTypeOrderItemsArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  registerUser?: Maybe<UserSerializerMutationPayload>;
+  registerUser?: Maybe<UserMutation>;
   addCart?: Maybe<AddCart>;
   updateCart?: Maybe<UpdateCart>;
   deleteCart?: Maybe<DeleteCart>;
@@ -335,21 +305,19 @@ export type Mutation = {
 
 
 export type MutationRegisterUserArgs = {
-  input: UserSerializerMutationInput;
+  userData: UserRegisterInput;
 };
 
 
 export type MutationAddCartArgs = {
   orderItem: OrderItemInput;
   status: Scalars['Int'];
-  totalPrice: Scalars['Int'];
 };
 
 
 export type MutationUpdateCartArgs = {
   orderItems: Array<Maybe<OrderItemInput>>;
   status: Scalars['Int'];
-  totalPrice: Scalars['Int'];
 };
 
 
@@ -362,37 +330,18 @@ export type MutationExecuteOrderArgs = {
   order: OrderInput;
 };
 
-export type UserSerializerMutationPayload = {
-  __typename?: 'UserSerializerMutationPayload';
-  id?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  password?: Maybe<Scalars['String']>;
-  zipcode?: Maybe<Scalars['String']>;
-  address?: Maybe<Scalars['String']>;
-  telephone?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
-  /** May contain more than one error for same field. */
-  errors?: Maybe<Array<Maybe<ErrorType>>>;
-  clientMutationId?: Maybe<Scalars['String']>;
+export type UserMutation = {
+  __typename?: 'UserMutation';
+  user?: Maybe<UserType>;
 };
 
-export type ErrorType = {
-  __typename?: 'ErrorType';
-  field: Scalars['String'];
-  messages: Array<Scalars['String']>;
-};
-
-export type UserSerializerMutationInput = {
-  id?: Maybe<Scalars['Int']>;
+export type UserRegisterInput = {
   name: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
   zipcode: Scalars['String'];
   address: Scalars['String'];
   telephone: Scalars['String'];
-  status?: Maybe<Scalars['String']>;
-  clientMutationId?: Maybe<Scalars['String']>;
 };
 
 export type AddCart = {
@@ -401,7 +350,7 @@ export type AddCart = {
 };
 
 export type OrderItemInput = {
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
   item: Scalars['ID'];
   quantity: Scalars['Int'];
   size: Scalars['String'];
@@ -487,7 +436,6 @@ export type FetchOrderItemsQuery = (
 
 export type AddCartMutationVariables = Exact<{
   orderItem: OrderItemInput;
-  totalPrice: Scalars['Int'];
 }>;
 
 
@@ -504,7 +452,6 @@ export type AddCartMutation = (
 
 export type UpdateCartMutationVariables = Exact<{
   orderItems: Array<Maybe<OrderItemInput>> | Maybe<OrderItemInput>;
-  totalPrice: Scalars['Int'];
 }>;
 
 
@@ -514,7 +461,34 @@ export type UpdateCartMutation = (
     { __typename?: 'UpdateCart' }
     & { order?: Maybe<(
       { __typename?: 'OrderType' }
-      & Pick<OrderType, 'id'>
+      & Pick<OrderType, 'totalPrice'>
+      & { orderItems: (
+        { __typename?: 'OrderItemTypeConnection' }
+        & { edges: Array<Maybe<(
+          { __typename?: 'OrderItemTypeEdge' }
+          & { node?: Maybe<(
+            { __typename?: 'OrderItemType' }
+            & Pick<OrderItemType, 'id' | 'size' | 'quantity' | 'subTotalPrice'>
+            & { item?: Maybe<(
+              { __typename?: 'ItemType' }
+              & Pick<ItemType, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
+            )>, orderToppings: (
+              { __typename?: 'OrderToppingTypeConnection' }
+              & { edges: Array<Maybe<(
+                { __typename?: 'OrderToppingTypeEdge' }
+                & { node?: Maybe<(
+                  { __typename?: 'OrderToppingType' }
+                  & Pick<OrderToppingType, 'id'>
+                  & { topping?: Maybe<(
+                    { __typename?: 'ToppingType' }
+                    & Pick<ToppingType, 'id' | 'name' | 'priceM' | 'priceL'>
+                  )> }
+                )> }
+              )>> }
+            ) }
+          )> }
+        )>> }
+      ) }
     )> }
   )> }
 );
@@ -530,7 +504,34 @@ export type DeleteCartMutation = (
     { __typename?: 'DeleteCart' }
     & { order?: Maybe<(
       { __typename?: 'OrderType' }
-      & Pick<OrderType, 'id'>
+      & Pick<OrderType, 'totalPrice'>
+      & { orderItems: (
+        { __typename?: 'OrderItemTypeConnection' }
+        & { edges: Array<Maybe<(
+          { __typename?: 'OrderItemTypeEdge' }
+          & { node?: Maybe<(
+            { __typename?: 'OrderItemType' }
+            & Pick<OrderItemType, 'id' | 'size' | 'quantity' | 'subTotalPrice'>
+            & { item?: Maybe<(
+              { __typename?: 'ItemType' }
+              & Pick<ItemType, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
+            )>, orderToppings: (
+              { __typename?: 'OrderToppingTypeConnection' }
+              & { edges: Array<Maybe<(
+                { __typename?: 'OrderToppingTypeEdge' }
+                & { node?: Maybe<(
+                  { __typename?: 'OrderToppingType' }
+                  & Pick<OrderToppingType, 'id'>
+                  & { topping?: Maybe<(
+                    { __typename?: 'ToppingType' }
+                    & Pick<ToppingType, 'id' | 'name' | 'priceM' | 'priceL'>
+                  )> }
+                )> }
+              )>> }
+            ) }
+          )> }
+        )>> }
+      ) }
     )> }
   )> }
 );
@@ -620,17 +621,7 @@ export type FetchUserQuery = (
   { __typename?: 'Query' }
   & { user?: Maybe<(
     { __typename?: 'UserType' }
-    & Pick<UserType, 'id' | 'name' | 'email' | 'zipcode' | 'address' | 'telephone' | 'status' | 'password'>
-    & { orderSet: (
-      { __typename?: 'OrderTypeConnection' }
-      & { pageInfo: (
-        { __typename?: 'PageInfo' }
-        & Pick<PageInfo, 'hasNextPage' | 'hasPreviousPage'>
-      ), edges: Array<Maybe<(
-        { __typename?: 'OrderTypeEdge' }
-        & Pick<OrderTypeEdge, 'cursor'>
-      )>> }
-    ) }
+    & Pick<UserType, 'id' | 'name' | 'email' | 'zipcode' | 'address' | 'telephone'>
   )> }
 );
 
@@ -770,8 +761,8 @@ export type FetchOrderItemsQueryHookResult = ReturnType<typeof useFetchOrderItem
 export type FetchOrderItemsLazyQueryHookResult = ReturnType<typeof useFetchOrderItemsLazyQuery>;
 export type FetchOrderItemsQueryResult = Apollo.QueryResult<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>;
 export const AddCartDocument = gql`
-    mutation addCart($orderItem: OrderItemInput!, $totalPrice: Int!) {
-  addCart(orderItem: $orderItem, status: 0, totalPrice: $totalPrice) {
+    mutation addCart($orderItem: OrderItemInput!) {
+  addCart(orderItem: $orderItem, status: 0) {
     order {
       id
     }
@@ -794,7 +785,6 @@ export type AddCartMutationFn = Apollo.MutationFunction<AddCartMutation, AddCart
  * const [addCartMutation, { data, loading, error }] = useAddCartMutation({
  *   variables: {
  *      orderItem: // value for 'orderItem'
- *      totalPrice: // value for 'totalPrice'
  *   },
  * });
  */
@@ -805,10 +795,42 @@ export type AddCartMutationHookResult = ReturnType<typeof useAddCartMutation>;
 export type AddCartMutationResult = Apollo.MutationResult<AddCartMutation>;
 export type AddCartMutationOptions = Apollo.BaseMutationOptions<AddCartMutation, AddCartMutationVariables>;
 export const UpdateCartDocument = gql`
-    mutation updateCart($orderItems: [OrderItemInput]!, $totalPrice: Int!) {
-  updateCart(orderItems: $orderItems, status: 0, totalPrice: $totalPrice) {
+    mutation updateCart($orderItems: [OrderItemInput]!) {
+  updateCart(orderItems: $orderItems, status: 0) {
     order {
-      id
+      totalPrice
+      orderItems {
+        edges {
+          node {
+            id
+            size
+            quantity
+            subTotalPrice
+            item {
+              id
+              name
+              description
+              priceM
+              priceL
+              imagePath
+              deleted
+            }
+            orderToppings {
+              edges {
+                node {
+                  id
+                  topping {
+                    id
+                    name
+                    priceM
+                    priceL
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -829,7 +851,6 @@ export type UpdateCartMutationFn = Apollo.MutationFunction<UpdateCartMutation, U
  * const [updateCartMutation, { data, loading, error }] = useUpdateCartMutation({
  *   variables: {
  *      orderItems: // value for 'orderItems'
- *      totalPrice: // value for 'totalPrice'
  *   },
  * });
  */
@@ -843,7 +864,39 @@ export const DeleteCartDocument = gql`
     mutation deleteCart($orderItemId: ID!) {
   deleteCart(orderItemId: $orderItemId) {
     order {
-      id
+      totalPrice
+      orderItems {
+        edges {
+          node {
+            id
+            size
+            quantity
+            subTotalPrice
+            item {
+              id
+              name
+              description
+              priceM
+              priceL
+              imagePath
+              deleted
+            }
+            orderToppings {
+              edges {
+                node {
+                  id
+                  topping {
+                    id
+                    name
+                    priceM
+                    priceL
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -1072,17 +1125,6 @@ export const FetchUserDocument = gql`
     zipcode
     address
     telephone
-    status
-    password
-    orderSet {
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-      }
-      edges {
-        cursor
-      }
-    }
   }
 }
     `;

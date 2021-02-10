@@ -42,8 +42,7 @@ const ItemDetailGQL: React.FC = () => {
                     orderToppings: newOrderToppings,
                     size: selectedState.size,
                     quantity: selectedState.quantity
-                },
-                totalPrice: selectedState.totalPrice!
+                }
             }
         }).then(async () => {
             if (moveTo === 'cart') await history.push(Path.cart)

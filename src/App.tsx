@@ -1,12 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import '~/assets/css/App.css';
-import {RouteComponentProps, withRouter} from "react-router-dom";
+import {Redirect, RouteComponentProps, withRouter} from "react-router-dom";
 import routes from '~/router/routes';
 import Header from "~/components/elements/Header"
 import Footer from "~/components/elements/Footer"
 import {makeStyles} from "@material-ui/core";
 import ScrollToTop from "~/components/elements/ScrollToTop";
 import {useFetchUserQuery} from "~/generated/graphql";
+import {useDispatch, useSelector} from "react-redux";
+import {selectIsLogin, setIsLogin as _setIsLogin} from "~/store/slices/App/auth.slice";
+import {AppDispatch} from "~/store";
 
 const useStyles = makeStyles({
     App: {
@@ -23,37 +26,28 @@ const useStyles = makeStyles({
 
 const App: React.FC<RouteComponentProps> = () => {
     const classes = useStyles();
-    // const dispatch: AppDispatch = useDispatch()
+    const dispatch: AppDispatch = useDispatch()
 
-    const [isLogin, setIsLogin] = useState(false)
-    // login処理が走ったかを一時的に監視するために用意
-    // const loginUser = useSelector(selectLoginUser)
-    // const token = localStorage.getItem('Authorization')
+    const _isLogin = useSelector(selectIsLogin)
+    const [isLogin, setIsLogin] = useState(_isLogin)
 
-    // useEffect(() => {
-    //     if (!loginUser && token) {
-    //         dispatch(fetchLoginUser()).catch((e) => {
-    //             dispatch(setError({isError: true, code: e.message}))
-    //         })
-    //     }
-    //     if (token) {
-    //         setIsLogin(true)
-    //     } else {
-    //         setIsLogin(false)
-    //     }
-    // }, [dispatch, loginUser, token])
+    const {data, loading, error} = useFetchUserQuery()
 
-    const {data, error} = useFetchUserQuery()
-    console.log(data?.user)
-
-    // useEffect(() => {
-        console.log(data?.user)
+    useEffect(() => {
         if (data?.user) {
-            setIsLogin(true)
+            dispatch(_setIsLogin(true))
         } else {
-            setIsLogin(false)
+            dispatch(_setIsLogin(false))
         }
-    // },[data])
+    }, [dispatch, data])
+
+    useEffect(() => {
+        setIsLogin(_isLogin)
+    }, [_isLogin])
+
+    // if(error?.graphQLErrors[0]?.extensions?.code==='UNAUTHORIZED'){
+    //     localStorage.removeItem('Authorization')
+    // }
 
 
     // 401error発生時、執行されているがAppに保持され続けているtokenを削除

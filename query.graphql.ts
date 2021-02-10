@@ -53,8 +53,8 @@ gql(`query fetchOrderItems {
 `)
 
 gql(`
-mutation addCart($orderItem:OrderItemInput!,$totalPrice:Int!){
-  addCart(orderItem:$orderItem,status:0,totalPrice:$totalPrice){
+mutation addCart($orderItem:OrderItemInput!){
+  addCart(orderItem:$orderItem,status:0){
      order{
       id
      }   
@@ -63,15 +63,46 @@ mutation addCart($orderItem:OrderItemInput!,$totalPrice:Int!){
 `)
 
 gql(`
-mutation updateCart($orderItems: [OrderItemInput]!,$totalPrice:Int!) {
+mutation updateCart($orderItems: [OrderItemInput]!) {
    updateCart(
     orderItems: $orderItems
     status: 0
-    totalPrice:$totalPrice
   ){
     order {
-        id
+    totalPrice
+    orderItems{
+      edges{
+        node{
+          id
+          size
+          quantity
+          subTotalPrice
+          item{
+            id
+            name
+            description
+            priceM
+            priceL
+            imagePath
+            deleted
+          }
+          orderToppings{
+            edges{
+              node{
+                id
+                topping{
+                  id
+                  name
+                  priceM
+                  priceL
+                }
+              }
+            }
+          }
+        }
+      }
     }
+  }
   }
 }`)
 
@@ -81,8 +112,40 @@ mutation deleteCart($orderItemId:ID!) {
    orderItemId:$orderItemId
   ){
     order {
-        id
+    totalPrice
+    orderItems{
+      edges{
+        node{
+          id
+          size
+          quantity
+          subTotalPrice
+          item{
+            id
+            name
+            description
+            priceM
+            priceL
+            imagePath
+            deleted
+          }
+          orderToppings{
+            edges{
+              node{
+                id
+                topping{
+                  id
+                  name
+                  priceM
+                  priceL
+                }
+              }
+            }
+          }
+        }
+      }
     }
+  }
   }
 }`)
 
@@ -168,17 +231,6 @@ query fetchUser {
     zipcode
     address
     telephone
-    status
-    password
-    orderSet{
-      pageInfo{
-        hasNextPage
-        hasPreviousPage
-      }
-      edges{
-        cursor
-      }
-    }
   }
 }
 `)
