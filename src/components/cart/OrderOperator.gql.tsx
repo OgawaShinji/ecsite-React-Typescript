@@ -2,9 +2,10 @@ import React from "react";
 import {Button, Card, CardActions, CardContent, makeStyles} from "@material-ui/core";
 import TotalPrice from "~/components/elements/totalPrice/totalPrice"
 import {useHistory} from 'react-router-dom';
+import {Path} from "~/router/routes";
 
 interface Props {
-    subTotalPrice: number|null
+    subTotalPrice: number | null
     orderItemIdList: Array<string>
     deleteOrderItem: (orderItemId: string) => void
 }
@@ -52,7 +53,7 @@ const OrderOperator: React.FC<Props> = (props) => {
                 <Button
                     variant="outlined"
                     className={classes.orderBtn}
-                    onClick={() => history.push( `/orderConfirm`)}
+                    onClick={() => history.push(Path.orderConfirm)}
                     disabled={props.orderItemIdList && props.orderItemIdList.length === 0}
                 >
                     注文確認画面へ進む
@@ -72,7 +73,7 @@ const OrderOperator: React.FC<Props> = (props) => {
                     variant="outlined"
                     color="primary"
                     className={classes.btn}
-                    onClick={() => history.push(`/itemList`)}
+                    onClick={() => history.push(Path.itemList)}
                 >
                     買い物を続ける
                 </Button>

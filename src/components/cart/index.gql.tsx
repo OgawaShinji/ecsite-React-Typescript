@@ -12,6 +12,7 @@ import {
     useFetchToppingsQuery,
     useUpdateCartMutation
 } from "~/generated/graphql";
+import ErrorPage from "~/components/error";
 
 const useStyles = makeStyles({
     root: {
@@ -45,15 +46,15 @@ const useStyles = makeStyles({
 const Index: React.FC = () => {
     const classes = useStyles();
 
-    // TODO：　エラーハンドリング実装追加
-    const {data: displayFetchOrderItems, loading: isLoadingFetchOrderItems, refetch} = useFetchOrderItemsQuery({fetchPolicy: "cache-and-network"})
-    useFetchToppingsQuery()
-    const [updateCart] = useUpdateCartMutation()
-    const [deleteCart] = useDeleteCartMutation()
+    const {data: displayFetchOrderItems, loading: isLoadingFetchOrderItems, error: fetchOrderItemsError, refetch} = useFetchOrderItemsQuery({fetchPolicy: "cache-and-network"})
+    const {error: fetchToppingsError} = useFetchToppingsQuery()
+    const [updateCart, {error: updateCartError}] = useUpdateCartMutation()
+    const [deleteCart, {error: deleteCartError}] = useDeleteCartMutation()
 
     // orderOperatorにpropsで渡すorderItemsIdのList
     const displayOrderItemIdList: Array<string> = []
     displayFetchOrderItems?.cart?.orderItems?.edges?.forEach(o => displayOrderItemIdList.push(o?.node?.id!))
+
 
     /**
      * 注文商品の内容を更新する関数
@@ -61,11 +62,11 @@ const Index: React.FC = () => {
      * @return
      */
     const updateOrderItems = async ({orderItem}: { orderItem: OrderItemType }) => {
+
         // updateCartの引数,orderItemInputの作成
         let updateOrderToppingIdList: Array<OrderToppingInput> = []
-        orderItem.orderToppings?.edges?.forEach(ot => {
-            updateOrderToppingIdList.push({topping: ot!.node!.topping!.id})
-        })
+        orderItem.orderToppings?.edges?.forEach(ot => updateOrderToppingIdList.push({topping: ot!.node!.topping!.id}))
+
         const orderItemInput: OrderItemInput = {
             id: orderItem.id,
             item: orderItem.item?.id!,
@@ -97,13 +98,21 @@ const Index: React.FC = () => {
             }).then(() => refetch())
     }
 
-    // カートに商品があるかどうかでレイアウトを切り替えるため
+    // カートに商品があるかどうかでCSSを変更
     let styleCartList
     if (displayFetchOrderItems && displayFetchOrderItems?.cart?.orderItems?.edges!.length! > 0) {
         styleCartList = classes.cartList
     } else {
         styleCartList = classes.emptyCartList
     }
+
+
+    ///// ErrorHandling
+    if (fetchOrderItemsError) return <ErrorPage code={fetchOrderItemsError.graphQLErrors[0]!.extensions!.code}/>
+    if (fetchToppingsError) return <ErrorPage code={fetchToppingsError.graphQLErrors[0]!.extensions!.code}/>
+    if (updateCartError) return <ErrorPage code={updateCartError.graphQLErrors[0]!.extensions!.code}/>
+    if (deleteCartError) return <ErrorPage code={deleteCartError.graphQLErrors[0]!.extensions!.code}/>
+
 
     return (isLoadingFetchOrderItems ?
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>

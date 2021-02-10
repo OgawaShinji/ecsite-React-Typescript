@@ -113,24 +113,24 @@ const CartItem: React.FC<Props> = (props) => {
             const changedOrderTopping: OrderToppingTypeEdge = {
                 cursor: "",
                 node: {
-                    id:"",
+                    id: "",
                     topping: topping
                 }
             }
             newOrderToppings.push(changedOrderTopping)
         })
         const orderToppings: OrderToppingTypeConnection = {
-            pageInfo:{
+            pageInfo: {
                 hasNextPage: false,
                 hasPreviousPage: false
             },
-            edges:newOrderToppings
+            edges: newOrderToppings
         }
         const changedOrderItem = {...orderItem, orderToppings: orderToppings}
         updateOrderItems({orderItem: changedOrderItem})
     }
 
-    const toItemDetail = () => {
+    const transitionItemList = () => {
         history.push(`/itemDetail/${props.orderItem?.item?.id}`)
     }
 
@@ -141,7 +141,7 @@ const CartItem: React.FC<Props> = (props) => {
                 <Grid container spacing={2}>
                     {/*image*/}
                     <Grid item xs={3} container justify={"center"} alignItems={"center"}>
-                        <ButtonBase className={classes.image} onClick={toItemDetail}>
+                        <ButtonBase className={classes.image} onClick={transitionItemList}>
                             <img className={classes.img} alt={`pic${props.index}`} src={orderItem.item?.imagePath!}/>
                         </ButtonBase>
                     </Grid>
@@ -150,7 +150,7 @@ const CartItem: React.FC<Props> = (props) => {
                             <Grid item container>
                                 <Grid item xs={1}/>
                                 <Grid item xs={11}>
-                                    <ButtonBase onClick={toItemDetail}>
+                                    <ButtonBase onClick={transitionItemList}>
                                         <Typography gutterBottom variant="h6">
                                             <Box fontWeight="fontWeightBold">
                                                 {orderItem.item?.name}
