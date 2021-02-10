@@ -1,12 +1,86 @@
 import gql from "graphql-tag";
 //本番環境用query
 // ============================ order  ====================================================================
+
+gql(`query fetchOrderItems {
+  cart {
+    totalPrice
+    orderItems{
+      pageInfo{
+           hasPreviousPage
+           hasNextPage
+           startCursor
+           endCursor
+        }
+      edges{
+        node{
+          id
+          size
+          quantity
+          subTotalPrice
+          item{
+            id
+            name
+            description
+            priceM
+            priceL
+            imagePath
+            deleted
+          }
+          orderToppings{
+            pageInfo{
+                hasPreviousPage
+                hasNextPage
+                startCursor
+                endCursor
+                  }
+            edges{
+              node{
+                id
+                topping{
+                  id
+                  name
+                  priceM
+                  priceL
+                }
+              }
+              cursor
+            }
+          }
+        }
+        cursor
+      }
+    }
+  }
+}
+`)
+
 gql(`
-mutation addCart($orderItem:OrderItemInput!,$totalPrice:Int!){
-  addCart(orderItem:$orderItem,status:0,totalPrice:$totalPrice){
+mutation addCart($orderItem:OrderItemInput!){
+  addCart(orderItem:$orderItem,status:0){
      order{
       id
      }   
+  }
+}
+`)
+
+gql(`
+mutation order($order: OrderInput!){
+  executeOrder(order:$order){
+    order{
+      id
+      status
+      orderDate
+      deliveryTime
+      destinationName
+      destinationEmail
+      destinationZipcode
+      destinationAddress
+      destinationTel
+      totalPrice
+      paymentMethod
+    }
   }
 }
 `)
@@ -83,6 +157,34 @@ gql(`
 `)
 
 // ============================ user ============================================================================
+
+gql(`
+    query fetchUser{
+      user{
+        name
+        email
+        zipcode
+        address
+        telephone
+        id
+      }
+    }
+`)
+
+gql(`
+mutation register($userData: UserRegisterInput!){
+  registerUser(userData: $userData){
+    user{
+        name
+        email
+        zipcode
+        address
+        telephone
+        id
+    }
+  }
+}
+`)
 
 // ============================ history ============================================================================
 
