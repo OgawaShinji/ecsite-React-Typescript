@@ -12,7 +12,7 @@ import {useHistory, useParams} from "react-router-dom"
 import {Item, Topping} from "~/types/interfaces";
 import {fetchToppings, selectToppings} from "~/store/slices/Domain/topping.slice";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
-import {asyncPostOrderItem, OrderItemToPost} from "~/store/slices/Domain/order.slice";
+import {asyncPostOrderItem, OrderItemType} from "~/store/slices/Domain/order.slice";
 import {Path} from "~/router/routes";
 import {setError} from "~/store/slices/App/error.slice"
 import OrderItemForm from "~/components/itemDetail/OrderItemForm";
@@ -72,15 +72,11 @@ const ItemDetail: React.FC = () => {
         let newOrderToppings: { topping: number }[] = []
         if (selectedState.toppings.length !== 0) selectedState.toppings.map((t) => newOrderToppings.push({topping: t.id}))
 
-        const newOrder: OrderItemToPost = {
-            newItem: {
-                item: displayItem.id,
-                orderToppings: newOrderToppings,
-                quantity: selectedState.quantity,
-                size: selectedState.size === 'M' ? 'M' : 'L'
-            },
-            status: 0,
-            newTotalPrice: selectedState.totalPrice!
+        const newOrder: OrderItemType = {
+            item: displayItem.id,
+            orderToppings: newOrderToppings,
+            quantity: selectedState.quantity,
+            size: selectedState.size === 'M' ? 'M' : 'L'
         }
         await dispatch(asyncPostOrderItem(newOrder)).then(async (i) => {
             await setIsLoading(true)

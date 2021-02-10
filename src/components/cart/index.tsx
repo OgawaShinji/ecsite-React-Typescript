@@ -10,7 +10,7 @@ import {
     asyncDeleteOrderItem,
     asyncFetchOrderItems,
     asyncUpdateOrderItem,
-    orderItem,
+    OrderItemType as orderItem,
     OrderItemsToPost,
     selectOrderItems,
     selectOrderSubTotalPrice

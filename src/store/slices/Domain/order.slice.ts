@@ -35,7 +35,7 @@ export const asyncFetchOrderItems = createAsyncThunk(
     }
 )
 
-export type orderItem = {
+export type OrderItemType = {
     id?: number,
     item: number,
     orderToppings: { topping: number }[],
@@ -44,13 +44,7 @@ export type orderItem = {
 }
 
 export type OrderItemsToPost = {
-    orderItems: Array<orderItem>,
-    status: 0,
-    newTotalPrice: number
-}
-
-export type OrderItemToPost = {
-    newItem: orderItem,
+    orderItems: Array<OrderItemType>,
     status: 0,
     newTotalPrice: number
 }
@@ -62,16 +56,15 @@ export type OrderItemToPost = {
  */
 export const asyncPostOrderItem = createAsyncThunk(
     'order/postOrderItem',
-    async (order: OrderItemToPost) => {
+    async (order: OrderItemType) => {
         const {data} = await Axios.post(`/django/cart/`, {
             order_item: {
-                item: order.newItem.item,
-                orderToppings: order.newItem.orderToppings,
-                quantity: order.newItem.quantity,
-                size: order.newItem.size
+                item: order.item,
+                orderToppings: order.orderToppings,
+                quantity: order.quantity,
+                size: order.size
             },
             status: 0,
-            total_price: order.newTotalPrice
         }, {
             method: 'POST',
             headers: {
