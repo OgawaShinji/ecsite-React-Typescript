@@ -62,46 +62,46 @@ const ItemDetailGQL: React.FC = () => {
     if (fetchItemError || addCartError) return <ErrorPage code={500}/>;
     //Pathに存在しないIDを渡された場合BADREQUESTでは無くnullが返ってくる仕様なので404とみなす
     if (!(displayItem?.item?.name) && !(isLoadAddCart || isLoadItem)) return <ErrorPage code={404}/>;
+    if (isLoadItem || isLoadAddCart) return <LinearProgress
+        style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>;
 
-    return (isLoadItem || isLoadAddCart ?
-            <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
-            : <div className={classes.align_child}>
-                <div style={{display: "flex"}}>
-                    <Grid container justify={"center"} alignContent={"center"}>
+    return (<div className={classes.align_child}>
+            <div style={{display: "flex"}}>
+                <Grid container justify={"center"} alignContent={"center"}>
 
-                        {/*商品画像*/}
-                        <Grid item xs={12}>
-                            <CardContent className={classes.align_child}>
-                                <Avatar src={`${displayItem!.item!.imagePath}`} style={{width: "50%", height: "auto"}}
-                                        variant={"rounded"} alt={'🍕'}/>
-                            </CardContent>
+                    {/*商品画像*/}
+                    <Grid item xs={12}>
+                        <CardContent className={classes.align_child}>
+                            <Avatar src={`${displayItem!.item!.imagePath}`} style={{width: "50%", height: "auto"}}
+                                    variant={"rounded"} alt={'🍕'}/>
+                        </CardContent>
 
-                            {/*商品名*/}
-                            <CardContent className={classes.align_child}>
-                                <Typography variant={"h4"} component={"u"}>{displayItem!.item!.name}</Typography>
-                            </CardContent>
-                        </Grid>
-
-                        {/*説明文*/}
-                        <Grid item xs={12} className={classes.description_content}>
-                            <CardContent style={{width: "70%", textAlign: "center"}}>
-                                <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
-                                    {displayItem!.item!.description}
-                                    <br/>＊写真はイメージです＊
-                                </Typography>
-                                <br/>
-                                <Typography variant={"h6"} color={"textPrimary"} component={"p"}>
-                                    {`Mサイズ：` + displayItem!.item!.priceM!.toLocaleString() + `円　🍕　Lサイズ：` + displayItem!.item!.priceL!.toLocaleString() + `円`}
-                                </Typography>
-                            </CardContent>
-                        </Grid>
+                        {/*商品名*/}
+                        <CardContent className={classes.align_child}>
+                            <Typography variant={"h4"} component={"u"}>{displayItem!.item!.name}</Typography>
+                        </CardContent>
                     </Grid>
 
-                    {/*注文入力部分*/}
-                    <OrderItemFormGQL item={displayItem!.item!} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
+                    {/*説明文*/}
+                    <Grid item xs={12} className={classes.description_content}>
+                        <CardContent style={{width: "70%", textAlign: "center"}}>
+                            <Typography variant={"body1"} color={"textSecondary"} component={"p"}>
+                                {displayItem!.item!.description}
+                                <br/>＊写真はイメージです＊
+                            </Typography>
+                            <br/>
+                            <Typography variant={"h6"} color={"textPrimary"} component={"p"}>
+                                {`Mサイズ：` + displayItem!.item!.priceM!.toLocaleString() + `円　🍕　Lサイズ：` + displayItem!.item!.priceL!.toLocaleString() + `円`}
+                            </Typography>
+                        </CardContent>
+                    </Grid>
+                </Grid>
 
-                </div>
+                {/*注文入力部分*/}
+                <OrderItemFormGQL item={displayItem!.item!} handleOrderClick={(m, s) => handleOrderClick(m, s)}/>
+
             </div>
+        </div>
     )
 };
 export default ItemDetailGQL;
