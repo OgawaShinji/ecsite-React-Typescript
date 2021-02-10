@@ -318,7 +318,6 @@ export type MutationAddCartArgs = {
 export type MutationUpdateCartArgs = {
   orderItems: Array<Maybe<OrderItemInput>>;
   status: Scalars['Int'];
-  totalPrice: Scalars['Int'];
 };
 
 
@@ -389,6 +388,52 @@ export type OrderInput = {
   paymentMethod: Scalars['Int'];
 };
 
+export type FetchOrderItemsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchOrderItemsQuery = (
+  { __typename?: 'Query' }
+  & { cart?: Maybe<(
+    { __typename?: 'OrderType' }
+    & Pick<OrderType, 'id' | 'totalPrice'>
+    & { orderItems: (
+      { __typename?: 'OrderItemTypeConnection' }
+      & { pageInfo: (
+        { __typename?: 'PageInfo' }
+        & Pick<PageInfo, 'hasPreviousPage' | 'hasNextPage' | 'startCursor' | 'endCursor'>
+      ), edges: Array<Maybe<(
+        { __typename?: 'OrderItemTypeEdge' }
+        & Pick<OrderItemTypeEdge, 'cursor'>
+        & { node?: Maybe<(
+          { __typename?: 'OrderItemType' }
+          & Pick<OrderItemType, 'id' | 'size' | 'quantity' | 'subTotalPrice'>
+          & { item?: Maybe<(
+            { __typename?: 'ItemType' }
+            & Pick<ItemType, 'id' | 'name' | 'description' | 'priceM' | 'priceL' | 'imagePath' | 'deleted'>
+          )>, orderToppings: (
+            { __typename?: 'OrderToppingTypeConnection' }
+            & { pageInfo: (
+              { __typename?: 'PageInfo' }
+              & Pick<PageInfo, 'hasPreviousPage' | 'hasNextPage' | 'startCursor' | 'endCursor'>
+            ), edges: Array<Maybe<(
+              { __typename?: 'OrderToppingTypeEdge' }
+              & Pick<OrderToppingTypeEdge, 'cursor'>
+              & { node?: Maybe<(
+                { __typename?: 'OrderToppingType' }
+                & Pick<OrderToppingType, 'id'>
+                & { topping?: Maybe<(
+                  { __typename?: 'ToppingType' }
+                  & Pick<ToppingType, 'id' | 'name' | 'priceM' | 'priceL'>
+                )> }
+              )> }
+            )>> }
+          ) }
+        )> }
+      )>> }
+    ) }
+  )> }
+);
+
 export type AddCartMutationVariables = Exact<{
   orderItem: OrderItemInput;
 }>;
@@ -401,6 +446,22 @@ export type AddCartMutation = (
     & { order?: Maybe<(
       { __typename?: 'OrderType' }
       & Pick<OrderType, 'id'>
+    )> }
+  )> }
+);
+
+export type OrderMutationVariables = Exact<{
+  order: OrderInput;
+}>;
+
+
+export type OrderMutation = (
+  { __typename?: 'Mutation' }
+  & { executeOrder?: Maybe<(
+    { __typename?: 'ExecuteOrder' }
+    & { order?: Maybe<(
+      { __typename?: 'OrderType' }
+      & Pick<OrderType, 'id' | 'status' | 'orderDate' | 'deliveryTime' | 'destinationName' | 'destinationEmail' | 'destinationZipcode' | 'destinationAddress' | 'destinationTel' | 'totalPrice' | 'paymentMethod'>
     )> }
   )> }
 );
@@ -466,6 +527,33 @@ export type FetchItemsTotalCountQuery = (
   )> }
 );
 
+export type FetchUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchUserQuery = (
+  { __typename?: 'Query' }
+  & { user?: Maybe<(
+    { __typename?: 'UserType' }
+    & Pick<UserType, 'name' | 'email' | 'zipcode' | 'address' | 'telephone' | 'id'>
+  )> }
+);
+
+export type RegisterMutationVariables = Exact<{
+  userData: UserRegisterInput;
+}>;
+
+
+export type RegisterMutation = (
+  { __typename?: 'Mutation' }
+  & { registerUser?: Maybe<(
+    { __typename?: 'UserMutation' }
+    & { user?: Maybe<(
+      { __typename?: 'UserType' }
+      & Pick<UserType, 'name' | 'email' | 'zipcode' | 'address' | 'telephone' | 'id'>
+    )> }
+  )> }
+);
+
 export type FetchOrderHistoryQueryVariables = Exact<{
   first?: Maybe<Scalars['Int']>;
   after?: Maybe<Scalars['String']>;
@@ -528,6 +616,85 @@ export type FetchOrderHistoryQuery = (
 );
 
 
+export const FetchOrderItemsDocument = gql`
+    query fetchOrderItems {
+  cart {
+    id
+    totalPrice
+    orderItems {
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
+      edges {
+        node {
+          id
+          size
+          quantity
+          subTotalPrice
+          item {
+            id
+            name
+            description
+            priceM
+            priceL
+            imagePath
+            deleted
+          }
+          orderToppings {
+            pageInfo {
+              hasPreviousPage
+              hasNextPage
+              startCursor
+              endCursor
+            }
+            edges {
+              node {
+                id
+                topping {
+                  id
+                  name
+                  priceM
+                  priceL
+                }
+              }
+              cursor
+            }
+          }
+        }
+        cursor
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useFetchOrderItemsQuery__
+ *
+ * To run a query within a React component, call `useFetchOrderItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchOrderItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchOrderItemsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFetchOrderItemsQuery(baseOptions?: Apollo.QueryHookOptions<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>) {
+        return Apollo.useQuery<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>(FetchOrderItemsDocument, baseOptions);
+      }
+export function useFetchOrderItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>) {
+          return Apollo.useLazyQuery<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>(FetchOrderItemsDocument, baseOptions);
+        }
+export type FetchOrderItemsQueryHookResult = ReturnType<typeof useFetchOrderItemsQuery>;
+export type FetchOrderItemsLazyQueryHookResult = ReturnType<typeof useFetchOrderItemsLazyQuery>;
+export type FetchOrderItemsQueryResult = Apollo.QueryResult<FetchOrderItemsQuery, FetchOrderItemsQueryVariables>;
 export const AddCartDocument = gql`
     mutation addCart($orderItem: OrderItemInput!) {
   addCart(orderItem: $orderItem, status: 0) {
@@ -562,6 +729,50 @@ export function useAddCartMutation(baseOptions?: Apollo.MutationHookOptions<AddC
 export type AddCartMutationHookResult = ReturnType<typeof useAddCartMutation>;
 export type AddCartMutationResult = Apollo.MutationResult<AddCartMutation>;
 export type AddCartMutationOptions = Apollo.BaseMutationOptions<AddCartMutation, AddCartMutationVariables>;
+export const OrderDocument = gql`
+    mutation order($order: OrderInput!) {
+  executeOrder(order: $order) {
+    order {
+      id
+      status
+      orderDate
+      deliveryTime
+      destinationName
+      destinationEmail
+      destinationZipcode
+      destinationAddress
+      destinationTel
+      totalPrice
+      paymentMethod
+    }
+  }
+}
+    `;
+export type OrderMutationFn = Apollo.MutationFunction<OrderMutation, OrderMutationVariables>;
+
+/**
+ * __useOrderMutation__
+ *
+ * To run a mutation, you first call `useOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [orderMutation, { data, loading, error }] = useOrderMutation({
+ *   variables: {
+ *      order: // value for 'order'
+ *   },
+ * });
+ */
+export function useOrderMutation(baseOptions?: Apollo.MutationHookOptions<OrderMutation, OrderMutationVariables>) {
+        return Apollo.useMutation<OrderMutation, OrderMutationVariables>(OrderDocument, baseOptions);
+      }
+export type OrderMutationHookResult = ReturnType<typeof useOrderMutation>;
+export type OrderMutationResult = Apollo.MutationResult<OrderMutation>;
+export type OrderMutationOptions = Apollo.BaseMutationOptions<OrderMutation, OrderMutationVariables>;
 export const FetchToppingsDocument = gql`
     query fetchToppings {
   toppings {
@@ -716,6 +927,82 @@ export function useFetchItemsTotalCountLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type FetchItemsTotalCountQueryHookResult = ReturnType<typeof useFetchItemsTotalCountQuery>;
 export type FetchItemsTotalCountLazyQueryHookResult = ReturnType<typeof useFetchItemsTotalCountLazyQuery>;
 export type FetchItemsTotalCountQueryResult = Apollo.QueryResult<FetchItemsTotalCountQuery, FetchItemsTotalCountQueryVariables>;
+export const FetchUserDocument = gql`
+    query fetchUser {
+  user {
+    name
+    email
+    zipcode
+    address
+    telephone
+    id
+  }
+}
+    `;
+
+/**
+ * __useFetchUserQuery__
+ *
+ * To run a query within a React component, call `useFetchUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFetchUserQuery(baseOptions?: Apollo.QueryHookOptions<FetchUserQuery, FetchUserQueryVariables>) {
+        return Apollo.useQuery<FetchUserQuery, FetchUserQueryVariables>(FetchUserDocument, baseOptions);
+      }
+export function useFetchUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchUserQuery, FetchUserQueryVariables>) {
+          return Apollo.useLazyQuery<FetchUserQuery, FetchUserQueryVariables>(FetchUserDocument, baseOptions);
+        }
+export type FetchUserQueryHookResult = ReturnType<typeof useFetchUserQuery>;
+export type FetchUserLazyQueryHookResult = ReturnType<typeof useFetchUserLazyQuery>;
+export type FetchUserQueryResult = Apollo.QueryResult<FetchUserQuery, FetchUserQueryVariables>;
+export const RegisterDocument = gql`
+    mutation register($userData: UserRegisterInput!) {
+  registerUser(userData: $userData) {
+    user {
+      name
+      email
+      zipcode
+      address
+      telephone
+      id
+    }
+  }
+}
+    `;
+export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
+
+/**
+ * __useRegisterMutation__
+ *
+ * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerMutation, { data, loading, error }] = useRegisterMutation({
+ *   variables: {
+ *      userData: // value for 'userData'
+ *   },
+ * });
+ */
+export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
+        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, baseOptions);
+      }
+export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
+export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const FetchOrderHistoryDocument = gql`
     query fetchOrderHistory($first: Int, $after: String, $last: Int, $before: String) {
   orderHistory(
