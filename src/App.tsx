@@ -1,15 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import '~/assets/css/App.css';
-import {Redirect, RouteComponentProps, withRouter} from "react-router-dom";
+import {RouteComponentProps, withRouter} from "react-router-dom";
 import routes from '~/router/routes';
 import Header from "~/components/elements/Header"
 import Footer from "~/components/elements/Footer"
 import {makeStyles} from "@material-ui/core";
 import ScrollToTop from "~/components/elements/ScrollToTop";
-import {useFetchUserQuery} from "~/generated/graphql";
-import {useDispatch, useSelector} from "react-redux";
-import {selectIsLogin, setIsLogin as _setIsLogin} from "~/store/slices/App/auth.slice";
-import {AppDispatch} from "~/store";
+import {ApolloClient, ApolloProvider, HttpLink, InMemoryCache} from "@apollo/client";
 
 const useStyles = makeStyles({
     App: {
@@ -26,24 +23,27 @@ const useStyles = makeStyles({
 
 const App: React.FC<RouteComponentProps> = () => {
     const classes = useStyles();
-    const dispatch: AppDispatch = useDispatch()
-
-    const _isLogin = useSelector(selectIsLogin)
-    const [isLogin, setIsLogin] = useState(_isLogin)
-
-    const {data, loading, error} = useFetchUserQuery()
-
-    useEffect(() => {
-        if (data?.user) {
-            dispatch(_setIsLogin(true))
-        } else {
-            dispatch(_setIsLogin(false))
-        }
-    }, [dispatch, data])
-
-    useEffect(() => {
-        setIsLogin(_isLogin)
-    }, [_isLogin])
+    // const dispatch: AppDispatch = useDispatch()
+    //
+    // const _isLogin = useSelector(selectIsLogin)
+    // const [isLogin, setIsLogin] = useState(_isLogin)
+    //
+    // const {data, loading, error} = useFetchUserQuery()
+    //
+    //
+    // useEffect(() => {
+    //     if (data?.user) {
+    //         console.log('true')
+    //         dispatch(_setIsLogin(true))
+    //     } else {
+    //         console.log('false')
+    //         dispatch(_setIsLogin(false))
+    //     }
+    // }, [dispatch, data])
+    //
+    // useEffect(() => {
+    //     setIsLogin(_isLogin)
+    // }, [_isLogin])
 
     // if(error?.graphQLErrors[0]?.extensions?.code==='UNAUTHORIZED'){
     //     localStorage.removeItem('Authorization')
@@ -55,14 +55,27 @@ const App: React.FC<RouteComponentProps> = () => {
     //     if (errorInStore.code === '401') localStorage.removeItem('Authorization')
     // }, [errorInStore])
 
+    // apolloClientの環境設定
+    const client = new ApolloClient({
+        cache: new InMemoryCache(),
+        link: new HttpLink({
+            uri: "http://34.84.118.239/django_ql/",
+            headers: {
+                Authorization: localStorage.getItem("Authorization")
+            },
+        })
+    });
+
 
     return (
-        <div className={classes.App}>
-            <ScrollToTop/>
-            <Header isLogin={isLogin}/>
-            {routes}
-            <Footer/>
-        </div>
+        <ApolloProvider client={client}>
+            <div className={classes.App}>
+                <ScrollToTop/>
+                <Header isLogin={true}/>
+                {routes}
+                <Footer/>
+            </div>
+        </ApolloProvider>
     );
 
 
