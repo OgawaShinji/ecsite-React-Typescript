@@ -139,30 +139,35 @@ describe('login画面:(index, LoginFrom)コンポーネントと' +
         await act(async () => {
             //正常入力
             await userEvent.type(await screen.findByRole('textbox', {name: 'e-mail'}), inputEmail);
+            expect(screen.getByRole('textbox', {name: 'e-mail'})).toHaveValue(inputEmail)
             expect(screen.queryByText(EMAIL_ERROR_MESSAGE_1)).toBeNull();
             expect(screen.queryByText(EMAIL_ERROR_MESSAGE_2)).toBeNull();
             await userEvent.type(await screen.findByLabelText('password'), inputPass);
+            expect(screen.getByLabelText('password')).toHaveValue(inputPass)
             expect(screen.queryByText(PASS_ERROR_MESSAGE_1)).toBeNull();
             expect(screen.queryByText(PASS_ERROR_MESSAGE_2)).toBeNull();
-
-            expect(screen.getByRole('button', {name: 'login'})).not.toHaveAttribute('disabled')
+            expect(screen.getByRole('button', {name: 'Login'})).not.toHaveAttribute('disabled')
 
             //異常入力(1字削除: e-mail=a@a. pass=12345)
             await userEvent.type(await screen.findByRole('textbox', {name: 'e-mail'}), '{backspace}')
+            expect(screen.getByRole('textbox', {name: 'e-mail'})).toHaveValue('a@a.')
             expect(screen.queryByText(EMAIL_ERROR_MESSAGE_2)).toBeTruthy();
             await userEvent.type(await screen.findByLabelText('password'), '{backspace}');
+            expect(screen.getByLabelText('password')).toHaveValue('12345')
             expect(screen.queryByText(PASS_ERROR_MESSAGE_2)).toBeTruthy();
-            expect(screen.getByRole('button', {name: 'login'})).toHaveAttribute('disabled')
+            expect(screen.getByRole('button', {name: 'Login'})).toHaveAttribute('disabled')
 
             //e-mail入力時にEnter Key押下しても画面が変わらないこと
             await userEvent.type(await screen.findByRole('textbox', {name: 'e-mail'}), '{enter}')
             expect(methodStatus.history).toBe('');
-            expect(screen.getByLabelText('password').textContent).toBe('12345')
+            expect(screen.getByRole('textbox', {name: 'e-mail'})).toHaveValue('a@a.')
+            expect(screen.getByLabelText('password')).toHaveValue('12345')
 
             //password入力時にEnter Key押下しても画面が変わらないこと
             await userEvent.type(await screen.findByLabelText('password'), '{enter}')
             expect(methodStatus.history).toBe('');
-            expect(screen.getByLabelText('password').textContent).toBe('12345')
+            expect(screen.getByRole('textbox', {name: 'e-mail'})).toHaveValue('a@a.')
+            expect(screen.getByLabelText('password')).toHaveValue('12345')
 
 
             //異常入力(全字削除)
@@ -170,7 +175,7 @@ describe('login画面:(index, LoginFrom)コンポーネントと' +
             expect(screen.queryByText(EMAIL_ERROR_MESSAGE_1)).toBeTruthy();
             await userEvent.type(await screen.findByLabelText('password'), '{backspace}{backspace}{backspace}{backspace}{backspace}');
             expect(screen.queryByText(PASS_ERROR_MESSAGE_1)).toBeTruthy();
-            expect(screen.getByRole('button', {name: 'login'})).toHaveAttribute('disabled')
+            expect(screen.getByRole('button', {name: 'Login'})).toHaveAttribute('disabled')
 
             //以下Enter Key押下
             await userEvent.type(await screen.findByRole('textbox', {name: 'e-mail'}), '{enter}')
