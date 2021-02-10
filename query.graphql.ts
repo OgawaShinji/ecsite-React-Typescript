@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 
 gql(`query fetchOrderItems {
   cart {
+    id
     totalPrice
     orderItems{
       pageInfo{
