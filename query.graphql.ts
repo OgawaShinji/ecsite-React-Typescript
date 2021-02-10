@@ -57,7 +57,7 @@ mutation addCart($orderItem:OrderItemInput!){
   addCart(orderItem:$orderItem,status:0){
      order{
       id
-     }   
+     }
   }
 }
 `)
@@ -109,7 +109,7 @@ mutation updateCart($orderItems: [OrderItemInput]!) {
 gql(`
 mutation deleteCart($orderItemId:ID!) {
    deleteCart(
-   orderItemId:$orderItemId
+    orderItemId:$orderItemId
   ){
     order {
     totalPrice
@@ -149,6 +149,25 @@ mutation deleteCart($orderItemId:ID!) {
   }
 }`)
 
+gql(`
+mutation order($order: OrderInput!){
+  executeOrder(order:$order){
+    order{
+      id
+      status
+      orderDate
+      deliveryTime
+      destinationName
+      destinationEmail
+      destinationZipcode
+      destinationAddress
+      destinationTel
+      totalPrice
+      paymentMethod
+    }
+  }
+}
+`)
 // ============================= topping ====================================================================
 
 gql(`
@@ -201,18 +220,6 @@ gql(`
 `)
 
 gql(`
-    query fetchItemNames {
-      items {
-        edges {
-          node {
-            name
-          }
-        }
-      }
-    }
-`)
-
-gql(`
     query fetchItemsTotalCount {
       items {
         totalCount
@@ -223,14 +230,29 @@ gql(`
 // ============================ user ============================================================================
 
 gql(`
-query fetchUser {
-  user{
-    id
-    name
-    email
-    zipcode
-    address
-    telephone
+    query fetchUser{
+      user{
+        name
+        email
+        zipcode
+        address
+        telephone
+        id
+      }
+    }
+`)
+
+gql(`
+mutation register($userData: UserRegisterInput!){
+  registerUser(userData: $userData){
+    user{
+        name
+        email
+        zipcode
+        address
+        telephone
+        id
+    }
   }
 }
 `)
@@ -238,8 +260,8 @@ query fetchUser {
 // ============================ history ============================================================================
 
 gql(`
-    query fetchOrderHistory($limit: Int, $offset: Int) {
-      orderHistory(first: $limit, offset: $offset, orderBy: "-orderDate,-id") {
+    query fetchOrderHistory($first: Int, $after: String, $last: Int, $before: String) {
+      orderHistory(first: $first, after: $after, last: $last, before: $before, orderBy: "-orderDate,-id") {
         pageInfo{
           hasPreviousPage
           hasNextPage
