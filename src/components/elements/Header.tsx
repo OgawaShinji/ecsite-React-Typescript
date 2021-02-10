@@ -138,11 +138,11 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
                                     <span style={{color: "red"}}>
                                        R
                                     </span>
-                                akuraku&nbsp;&nbsp;
+                                akuraku&nbsp;
                                 <span style={{color: "red"}}>
                                         P
                                     </span>
-                                izza&nbsp;&nbsp;
+                                izza&nbsp;
                                 <span style={{fontSize: 40}}>
                                         🍕
                                     </span>
