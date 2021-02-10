@@ -434,7 +434,7 @@ const Register: FC = () => {
                             </Grid>
                             <Grid container alignItems={"center"}>
                                 <Grid item xs={1}>
-                                    <Typography></Typography>
+                                    <Typography/>
                                     <IconButton
                                         id={"passIconButton"}
                                         type={"button"}
@@ -464,7 +464,7 @@ const Register: FC = () => {
                             </Grid>
                             <Grid container alignItems={"center"}>
                                 <Grid item xs={1}>
-                                    <Typography></Typography>
+                                    <Typography> </Typography>
                                     <IconButton
                                         id={"confirmPassIconButton"}
                                         name={"passIconButton"}

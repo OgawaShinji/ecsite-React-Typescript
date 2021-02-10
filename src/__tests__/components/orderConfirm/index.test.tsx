@@ -8,7 +8,7 @@ import {Provider} from "react-redux";
 import {BrowserRouter} from "react-router-dom";
 import OrderConfirm from "~/components/orderConfirm";
 import {authSlice} from "~/store/slices/App/auth.slice";
-import {Item, OrderItem} from "~/types/interfaces";
+import {OrderItem} from "~/types/interfaces";
 import {toppingSlice} from "~/store/slices/Domain/topping.slice";
 import React from "react";
 import userEvent from "@testing-library/user-event";
@@ -48,16 +48,16 @@ let createOrderItems = (start: number, end: number) => {
                 priceM: i * 1000,
                 priceL: i * 2000
             },
-            orderToppings:[
+            orderToppings: [
                 {
                     id: i,
-                    topping:{
+                    topping: {
                         id: i,
                         name: `topping name${i}`,
                         priceM: i * 100,
                         priceL: i * 200,
                     },
-                    orderItemId:i
+                    orderItemId: i
                 },
             ],
             quantity: i,
@@ -70,7 +70,7 @@ let createOrderItems = (start: number, end: number) => {
 const orderItemsFromDB = createOrderItems(1, 3)
 
 const loginUserFromDB = {
-    id:20,
+    id: 20,
     name: "らくらくたろう",
     email: "test@test.com",
     zipcode: "1234567",
@@ -85,7 +85,7 @@ const server = setupServer(
             orderItems: orderItemsFromDB
         }))
     })),
-    rest.get(REST_URL + '/auth/user/',((req, res, ctx) =>  {
+    rest.get(REST_URL + '/auth/user/', ((req, res, ctx) => {
         return res(ctx.status(200), ctx.json({
             user: loginUserFromDB
         }))
@@ -136,7 +136,7 @@ const rendering = () => {
 
 //現在時刻の2時間後の値を返す
 const dateHour = (date: Date | null) => {
-    if (date){
+    if (date) {
         let hour = date.getHours() + 2
         return String(hour);
     }
@@ -160,8 +160,8 @@ const formatDateOfSlash = (date: Date | null) => {
     }
 }
 
-describe("OrderConfirm Component Test ", () => {
-    it("レンダリングテスト" , async () => {
+describe("OrderConfirm Component Test", () => {
+    it("レンダリングテスト", async () => {
         await rendering();
         //初期表示がローディング画面であること
         expect(screen.getByRole('progressbar')).toBeTruthy();
@@ -177,103 +177,103 @@ describe("OrderConfirm Component Test ", () => {
         //注文内容、ユーザー情報、合計金額が表示されているか
         expect(await screen.findByText(orderItemsFromDB[0].item.name)).toBeTruthy();
         expect(await screen.getAllByRole("img")[2]).toBeTruthy();
-        expect(await screen.getByRole("heading",{name:"お名前: " + loginUserFromDB.name})).toBeTruthy()
-        expect(await screen.getByRole("heading",{name:"電話番号: " + loginUserFromDB.telephone})).toBeTruthy();
-        expect(await screen.getByRole("heading",{name:"小計: 15,200 円"})).toBeTruthy()
-        expect(await screen.getByRole("heading",{name:"合計金額: 16,720 円"})).toBeTruthy()
+        expect(screen.getByRole("heading", {name: "お名前: " + loginUserFromDB.name})).toBeTruthy()
+        expect(screen.getByRole("heading", {name: "電話番号: " + loginUserFromDB.telephone})).toBeTruthy();
+        expect(screen.getByRole("heading", {name: "小計: 15,200 円"})).toBeTruthy()
+        expect(screen.getByRole("heading", {name: "合計金額: 16,720 円"})).toBeTruthy()
 
         //ローディング画面がレンダリングされていないこと
-        expect(await screen.queryByRole('progressbar')).toBeNull();
+        expect(screen.queryByRole('progressbar')).toBeNull();
     }, 15000)
 
 
-    it("ダイアログ(お届け先情報変更フォーム)の開閉　", async () => {
+    it("ダイアログ(お届け先情報変更フォーム)の開閉", async () => {
         await rendering();
-        await act( async () => {
+        await act(async () => {
             //変更ボタンを押下
-            const changeButton = await screen.findByRole("button",{name:"変更"});
+            const changeButton = await screen.findByRole("button", {name: "変更"});
             await userEvent.click(await changeButton);
 
             //お届け先情報の変更ダイアログの[ 閉じる ]ボタンが表示されているか
-            const closeButton = await screen.findByRole("button",{name:"閉じる"});
+            const closeButton = await screen.findByRole("button", {name: "閉じる"});
             expect(await closeButton).toBeTruthy();
 
             //ユーザー情報がセットされているか
-            expect(await screen.getByRole("textbox",{name:"名前"})).toHaveValue(loginUserFromDB.name);
-            expect(await screen.getByRole("textbox",{name:"メールアドレス"})).toHaveValue(loginUserFromDB.email);
-            expect(await screen.getByRole("textbox",{name:"郵便番号( ○○○ )"})).toHaveValue("123");
-            expect(await screen.getByRole("textbox",{name:"郵便番号( ○○○○ )"})).toHaveValue("4567");
-            expect(await screen.getByRole("textbox",{name:"住所"})).toHaveValue(loginUserFromDB.address);
-            expect(await screen.getAllByRole("textbox",{name:"電話番号"})[0]).toHaveValue("090");
-            expect(await screen.getAllByRole("textbox",{name:"電話番号"})[1]).toHaveValue("1234");
-            expect(await screen.getAllByRole("textbox",{name:"電話番号"})[2]).toHaveValue("5678");
+            expect(screen.getByRole("textbox", {name: "名前"})).toHaveValue(loginUserFromDB.name);
+            expect(screen.getByRole("textbox", {name: "メールアドレス"})).toHaveValue(loginUserFromDB.email);
+            expect(screen.getByRole("textbox", {name: "郵便番号( ○○○ )"})).toHaveValue("123");
+            expect(screen.getByRole("textbox", {name: "郵便番号( ○○○○ )"})).toHaveValue("4567");
+            expect(screen.getByRole("textbox", {name: "住所"})).toHaveValue(loginUserFromDB.address);
+            expect(await screen.getAllByRole("textbox", {name: "電話番号"})[0]).toHaveValue("090");
+            expect(await screen.getAllByRole("textbox", {name: "電話番号"})[1]).toHaveValue("1234");
+            expect(await screen.getAllByRole("textbox", {name: "電話番号"})[2]).toHaveValue("5678");
 
             //閉じるボタンを押下
             await userEvent.click(await closeButton);
             //変更ダイアログが存在していないか
-            expect( await screen.findByRole("button",{name:"変更"})).toBeTruthy();
-            expect( await screen.findByRole("button",{name:"この内容で注文する"})).toBeTruthy();
-            expect( screen.queryByRole("button",{name:"閉じる"})).toBeNull();
-            expect( screen.queryByRole("button",{name:"変更する"})).toBeNull();
+            expect(await screen.findByRole("button", {name: "変更"})).toBeTruthy();
+            expect(await screen.findByRole("button", {name: "この内容で注文する"})).toBeTruthy();
+            expect(screen.queryByRole("button", {name: "閉じる"})).toBeNull();
+            expect(screen.queryByRole("button", {name: "変更する"})).toBeNull();
         })
 
-    },30000)
+    }, 30000)
 
     it("お届け先情報を変更する", async () => {
         await rendering();
-        await act( async () => {
+        await act(async () => {
             //変更ボタンを押下
-            const changeButton = await screen.findByRole("button",{name:"変更"});
+            const changeButton = await screen.findByRole("button", {name: "変更"});
             await userEvent.click(await changeButton);
 
             //お届け先情報の変更ダイアログの[変更する]ボタンが表示されているか
-            const updateButton = await screen.findByRole("button",{name:"変更する"});
+            const updateButton = await screen.findByRole("button", {name: "変更する"});
             expect(await updateButton).toBeTruthy();
 
             //入力フォームの値によって[変更する]ボタンがdisabledになっているか
             //一文字削除
             await userEvent.type(await screen.findByRole('textbox', {name: '郵便番号( ○○○ )'}), '{backspace}');
-            expect(await screen.getByRole("textbox",{name:"郵便番号( ○○○ )"})).toHaveValue("12");
+            expect(screen.getByRole("textbox", {name: "郵便番号( ○○○ )"})).toHaveValue("12");
             //エラーメッセージが出てるか確認
-            expect(await screen.getByRole("heading",{name:"※3桁で入力して下さい"})).toBeTruthy();
+            expect(screen.getByRole("heading", {name: "※3桁で入力して下さい"})).toBeTruthy();
             //削除して空文字にする
             await userEvent.type(await screen.findByRole('textbox', {name: '郵便番号( ○○○ )'}), '{backspace}{backspace}');
-            expect(await screen.getByRole("textbox",{name:"郵便番号( ○○○ )"})).toHaveValue("");
+            expect(screen.getByRole("textbox", {name: "郵便番号( ○○○ )"})).toHaveValue("");
             //エラーメッセージが出てるか確認
-            expect(await screen.getByRole("heading",{name:"※郵便番号を入力して下さい"})).toBeTruthy();
+            expect(screen.getByRole("heading", {name: "※郵便番号を入力して下さい"})).toBeTruthy();
             //文字を入力
             await userEvent.type(await screen.findByRole('textbox', {name: '郵便番号( ○○○ )'}), 'あ');
             //エラーメッセージが出てるか確認
-            expect(await screen.getByRole("heading",{name:"※半角数字を入力して下さい"})).toBeTruthy();
+            expect(screen.getByRole("heading", {name: "※半角数字を入力して下さい"})).toBeTruthy();
 
             //[変更する]ボタンがdisabledになっているかの確認
-            expect(await screen.getByRole("button",{name:"変更する"})).toBeDisabled();
+            expect(screen.getByRole("button", {name: "変更する"})).toBeDisabled();
 
             //文字列「あ」を消して、郵便番号フォームに999を入力
             await userEvent.type(await screen.findByRole('textbox', {name: '郵便番号( ○○○ )'}), '{backspace}');
             await userEvent.type(await screen.findByRole('textbox', {name: '郵便番号( ○○○ )'}), "999");
-            expect(await screen.findByRole("textbox",{name:"郵便番号( ○○○ )"})).toHaveValue("999");
+            expect(await screen.findByRole("textbox", {name: "郵便番号( ○○○ )"})).toHaveValue("999");
 
             //[変更する]ボタンを押下
-            await userEvent.click(await screen.getByRole("button",{name:"変更する"}));
+            await userEvent.click(screen.getByRole("button", {name: "変更する"}));
 
         })
         //変更ダイアログが存在していないか
-        expect( await screen.findByRole("button",{name:"変更"})).toBeTruthy();
-        expect( await screen.findByRole("button",{name:"この内容で注文する"})).toBeTruthy();
-        expect( screen.queryByRole("button",{name:"閉じる"})).toBeNull();
-        expect( screen.queryByRole("button",{name:"変更する"})).toBeNull();
+        expect(await screen.findByRole("button", {name: "変更"})).toBeTruthy();
+        expect(await screen.findByRole("button", {name: "この内容で注文する"})).toBeTruthy();
+        expect(screen.queryByRole("button", {name: "閉じる"})).toBeNull();
+        expect(screen.queryByRole("button", {name: "変更する"})).toBeNull();
         //変更内容が反映されているか
         expect(await screen.findByText(orderItemsFromDB[0].item.name)).toBeTruthy();
-        expect(await screen.getByRole("heading",{name:"郵便番号: 999-4567"})).toBeTruthy()
-    },30000)
+        expect(screen.getByRole("heading", {name: "郵便番号: 999-4567"})).toBeTruthy()
+    }, 30000)
 
     it("お支払方法の操作確認", async () => {
         await rendering();
         //お支払方法とチェックボックスが表示されているか
-        expect(await screen.findByRole("heading",{name:"お支払方法"})).toBeTruthy();
-        expect(await screen.findByRole("heading",{name:"代金引換"})).toBeTruthy();
-        expect(await screen.findByRole("heading",{name:"クレジットカード決済"})).toBeTruthy();
+        expect(await screen.findByRole("heading", {name: "お支払方法"})).toBeTruthy();
+        expect(await screen.findByRole("heading", {name: "代金引換"})).toBeTruthy();
+        expect(await screen.findByRole("heading", {name: "クレジットカード決済"})).toBeTruthy();
 
         const cashedCheck = screen.getAllByRole("checkbox")[0];
         const creditCardCheck = screen.getAllByRole("checkbox")[1];
@@ -283,7 +283,7 @@ describe("OrderConfirm Component Test ", () => {
         //デフォルトで代金引換にチェックが入っているか
         await expect(await cashedCheck).toBeChecked();
 
-        await act( async () => {
+        await act(async () => {
             //お支払方法をクレジットカード決済に変更
             await userEvent.click(await creditCardCheck);
             //クレジットカード決済にチェックが入っているか
@@ -293,7 +293,7 @@ describe("OrderConfirm Component Test ", () => {
             //代金引換にチェックが入っているか
             await expect(await cashedCheck).toBeChecked();
         })
-    },30000)
+    }, 30000)
 
     it("配送日時を変更する", async () => {
         await rendering();
@@ -301,70 +301,73 @@ describe("OrderConfirm Component Test ", () => {
         //配送日時が表示されているか
         const deliveryHour = screen.findByText("時");
         const deliveryMinute = screen.findByText("分");
-        expect(await screen.findByRole("heading",{name:"配送日時"})).toBeTruthy();
-        expect(await screen.findByRole("textbox",{name:"配送日"})).toBeTruthy();
+        expect(await screen.findByRole("heading", {name: "配送日時"})).toBeTruthy();
+        expect(await screen.findByRole("textbox", {name: "配送日"})).toBeTruthy();
         expect(await deliveryHour).toBeTruthy();
         expect(await deliveryMinute).toBeTruthy();
 
         //デフォルトで現在時刻の2時間後が設定されているか
         const defaultDeliveryTime = formatDateOfSlash(new Date());
-        expect(await screen.findByRole("textbox",{name:"配送日"})).toHaveValue(defaultDeliveryTime);
+        expect(await screen.findByRole("textbox", {name: "配送日"})).toHaveValue(defaultDeliveryTime);
 
-        await act( async () => {
+        await act(async () => {
             //配送時間を押下 (~時)
-            await userEvent.click(await screen.getByRole("button",{name:dateHour(new Date())}));
+            await userEvent.click(screen.getByRole("button", {name: dateHour(new Date())}));
             //一覧から配送時間を選択する : 20時にセット
-            await userEvent.click(await screen.getByRole("option",{name:"20"}));
-            //20時がセットされているか
-            expect(await screen.findByRole("button",{name:"20"})).toBeTruthy();
-
-            //配送時間を押下 (~分)
-            await userEvent.click(await screen.getByRole("button",{name:"00"}));
-            //一覧から配送時間を選択する : 50分にセット
-            await userEvent.click(await screen.getByRole("option",{name:"50"}));
-            //50分がセットされているか
-            expect(await screen.findByRole("button",{name:"50"})).toBeTruthy();
-            //エラーメッセージが表示されていないか
-            expect(await screen.queryByRole("heading",{name:"現在時刻よりも後を選んでください"})).toBeNull();
+            await userEvent.click(screen.getByRole("option", {name: "20"}));
 
         })
-    },30000)
+        //20時がセットされているか
+        expect(await screen.findByRole("button", {name: "20"})).toBeTruthy();
+
+        await act(async () => {
+            //配送時間を押下 (~分)
+            await userEvent.click(screen.getByRole("button", {name: "00"}));
+            //一覧から配送時間を選択する : 50分にセット
+            await userEvent.click(screen.getByRole("option", {name: "50"}));
+        })
+        //50分がセットされているか
+        expect(await screen.findByRole("button", {name: "50"})).toBeTruthy();
+        //エラーメッセージが表示されていないか
+        expect(screen.queryByRole("heading", {name: "現在時刻よりも後を選んでください"})).toBeNull();
+    }, 30000)
 
     it("配送日時を変更する : エラーメッセージを発生", async () => {
         await rendering();
 
         //配送日時が表示されているか
-        expect(await screen.findByRole("heading",{name:"配送日時"})).toBeTruthy();
-        expect(await screen.findByRole("textbox",{name:"配送日"})).toBeTruthy();
+        expect(await screen.findByRole("heading", {name: "配送日時"})).toBeTruthy();
+        expect(await screen.findByRole("textbox", {name: "配送日"})).toBeTruthy();
         expect(await screen.findByText("時")).toBeTruthy();
         expect(await screen.findByText("分")).toBeTruthy();
 
         //デフォルトで現在時刻の2時間後が設定されているか
         const defaultDeliveryTime = formatDateOfSlash(new Date());
 
-        expect(await screen.findByRole("textbox",{name:"配送日"})).toHaveValue(defaultDeliveryTime);
+        expect(await screen.findByRole("textbox", {name: "配送日"})).toHaveValue(defaultDeliveryTime);
 
-        await act( async () => {
+        await act(async () => {
             //配送時間を押下 (~時)
-            await userEvent.click(await screen.getByRole("button",{name:dateHour(new Date())}));
+            await userEvent.click(screen.getByRole("button", {name: dateHour(new Date())}));
             //一覧から配送時間を選択する : 7時にセット
-            await userEvent.click(await screen.getByRole("option",{name:"7"}));
-            //7時がセットされているか
-            expect(await screen.findByRole("button",{name:"7"})).toBeTruthy();
-
-            //エラーメッセージが表示されているか
-            expect(await screen.findByRole("heading",{name:"現在時刻よりも後を選んでください"})).toBeTruthy();
-            //[この内容で注文する]ボタンがdisabledになっているか
-            await expect(await screen.findByRole("button",{name:"この内容で注文する"})).toBeDisabled();
+            await userEvent.click(screen.getByRole("option", {name: "7"}));
         })
-    },50000)
+        //7時がセットされているか
+        expect(await screen.findByRole("button", {name: "7"})).toBeTruthy();
+
+        //エラーメッセージが表示されているか
+        expect(await screen.findByRole("heading", {name: "現在時刻よりも後を選んでください"})).toBeTruthy();
+        //[この内容で注文する]ボタンがdisabledになっているか
+        await expect(await screen.findByRole("button", {name: "この内容で注文する"})).toBeDisabled();
+
+    }, 50000)
 
     it("注文する", async () => {
         await rendering();
         let deliveryDate = new Date();
         let deliveryHour = deliveryDate.getHours() - 7;
         let deliverySetHour;
-        if( deliveryHour < 10){
+        if (deliveryHour < 10) {
             deliverySetHour = "0" + String(deliveryHour);
         } else {
             deliverySetHour = String(deliveryHour);
@@ -372,8 +375,8 @@ describe("OrderConfirm Component Test ", () => {
         const a = "T" + deliverySetHour + ":00:00.000Z";
         const deliverySetDate = formatDateOfBar(deliveryDate) + a;
 
-        await act( async () => {
-            await userEvent.click(await screen.findByRole("button",{name:"この内容で注文する"}));
+        await act(async () => {
+            await userEvent.click(await screen.findByRole("button", {name: "この内容で注文する"}));
         })
         //loading画面になっていること
         await expect(await screen.findByRole('progressbar')).toBeTruthy();
@@ -393,8 +396,8 @@ describe("OrderConfirm Component Test ", () => {
         //注文完了画面に遷移するメソッドが呼び出されていること
         await expect(methodStatus.history).toStrictEqual(
             {
-                pathname:'/orderComplete',
-                state:{
+                pathname: '/orderComplete',
+                state: {
                     judge: true
                 }
             });

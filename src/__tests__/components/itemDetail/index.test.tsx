@@ -175,7 +175,7 @@ describe('商品詳細画面', () => {
             expect(screen.queryByRole('button', {name: 'トッピング選択はこちら'})).toBeNull()
             const modalButton_close = screen.getByRole('button', {name: 'close'})
             await expect(modalButton_close).toBeTruthy();
-            const r = screen.getByRole('', {hidden: true})
+            //const r = screen.getByRole('', {hidden: true})
             //DBから取得したトッピングがボタン表示されていること
             toppingsFromDB.forEach((t, i) => {
                 const toppingButton = screen.getByRole('button', {name: `${t.name} L : ${t.priceL}円`})

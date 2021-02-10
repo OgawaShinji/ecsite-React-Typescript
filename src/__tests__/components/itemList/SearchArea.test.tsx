@@ -72,6 +72,6 @@ describe('SearchArea Component Test', () => {
             </Provider>
         );
 
-        screen.debug();
+        //screen.debug();
     })
 })
