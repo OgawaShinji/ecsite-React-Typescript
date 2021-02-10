@@ -33,8 +33,7 @@ const ItemDetailGQL: React.FC = () => {
      * @param moveTo:遷移したいページ
      * @param selectedState:フォームに入力されている注文商品状態
      */
-    const handleOrderClick = async (moveTo: string, selectedState: itemEntryStateGQL) => {
-        if (displayItem === null) throw new Error()
+    const handleOrderClick = async (moveTo: 'cart' | 'confirm', selectedState: itemEntryStateGQL) => {
         let newOrderToppings: { topping: string }[] = []
         if (selectedState.toppings.length !== 0) selectedState.toppings.map((t) => newOrderToppings.push({topping: t!.id!}))
 
@@ -48,13 +47,8 @@ const ItemDetailGQL: React.FC = () => {
                     quantity: selectedState.quantity
                 },
             }
-        }).then(async () => {
-            if (moveTo === 'cart') await history.push(Path.cart)
-            if (moveTo === 'confirm') await history.push(Path.orderConfirm)
-        }).catch((e) => {
-            //catch処理書かないとErrorPageコンポーネントを返せない
-            console.log(e)
-        });
+        }).then(() => moveTo === 'confirm' ? history.push(Path.orderConfirm) : history.push(Path.cart)
+        ).catch((e) => console.log(e));
     }
 
     const classes = entryIndexStyle();
@@ -64,8 +58,8 @@ const ItemDetailGQL: React.FC = () => {
     if (fetchToppingError) return <ErrorPage code={fetchToppingError.graphQLErrors[0]!.extensions!.code}/>
     if (addCartError) return <ErrorPage code={addCartError.graphQLErrors[0]!.extensions!.code}/>
 
-    //Pathに存在しないIDを渡された場合BADREQUESTでは無くnullが返ってくる仕様なので404とみなす
-    if (!(displayItem?.item?.name) && !(isLoadAddCart || isLoadItem)) return <ErrorPage code={'NOT_FOUND'}/>;
+    //Pathに存在しないIDを渡された場合NOT_FOUNDでは無くnullが返ってくる仕様なので404とみなす
+    if (!(displayItem?.item?.id) && !(isLoadAddCart || isLoadItem)) return <ErrorPage code={'NOT_FOUND'}/>;
 
     if (isLoadItem || isLoadAddCart) return <LinearProgress className={classes.loading_progress}/>;
 
