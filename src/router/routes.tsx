@@ -11,6 +11,8 @@ import login from '../components/login';
 import orderComplete from '../components/orderComplete';
 import orderConfirm from '../components/orderConfirm';
 import register from '../components/register';
+import RegisterGQL from "~/components/register/index.gql";
+import OrderConfirmGQL from "~/components/orderConfirm/index.gql";
 
 export const Path = {
     itemList: '/',
@@ -31,8 +33,8 @@ const routes = (
         <GuardedRoute exact path={Path.itemDetail} component={ItemDetailGQL}/>
         <LoginGuardedRoute exact path={Path.login} component={login}/>
         <GuardedRoute exact path={Path.orderComplete} component={orderComplete}/>
-        <GuardedRoute exact path={Path.orderConfirm} component={orderConfirm}/>
-        <GuardedRoute exact path={Path.register} component={register}/>
+        <GuardedRoute exact path={Path.orderConfirm} component={OrderConfirmGQL}/>
+        <GuardedRoute exact path={Path.register} component={RegisterGQL}/>
         <Redirect to={Path.itemList}/>
     </Switch>
 );
