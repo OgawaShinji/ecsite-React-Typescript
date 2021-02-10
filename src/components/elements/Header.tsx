@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {
-    AppBar,
-    Button,
     createStyles,
-    Grid,
-    IconButton,
     makeStyles,
-    Menu,
-    MenuItem,
+    AppBar,
     Toolbar,
-    Typography
+    Typography,
+    IconButton,
+    MenuItem,
+    Menu,
+    Button,
+    Grid
 } from '@material-ui/core';
 
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -18,8 +18,8 @@ import {Link, RouteComponentProps, useHistory, withRouter} from 'react-router-do
 import {Path} from "~/router/routes";
 
 import {AppDispatch} from "~/store";
-import {useDispatch, useSelector} from "react-redux";
-import {logout, selectIsLogin} from "~/store/slices/App/auth.slice";
+import {useDispatch} from "react-redux";
+import {logout} from "~/store/slices/App/auth.slice";
 import {setError} from "~/store/slices/App/error.slice"
 
 interface Props {

@@ -25,9 +25,14 @@ const OrderItemFormGQL: React.FC<propsType> = (props) => {
         size: size,
         quantity: quantity,
         toppings: selectedToppings,
-        totalPrice: totalPrice
     }
 
+    /**
+     * 注文変更があった際に値段計算を行うメソッド
+     * @param selectedSize
+     * @param selectedQuantity
+     * @param newToppings
+     */
     const calcPrice = (selectedSize: string | null, selectedQuantity: number | null, newToppings: Topping[] | null) => {
         let newTotalPrice = 0;
         if ((newToppings ? newToppings : selectedToppings).length !== 0) (newToppings ? newToppings : selectedToppings).map(
@@ -39,29 +44,21 @@ const OrderItemFormGQL: React.FC<propsType> = (props) => {
     /**
      * サイズが変更された際にサイズと合計金額のStateを変更
      * @param inputSize:変更後のサイズ
-     */
-    const handleSizeChange = async (inputSize: string) => {
-        await setSize(inputSize);
-        await calcPrice(inputSize, null, null)
-    }
-
-    /**
+     *
      * 数量が変更された際に数量と合計金額のStateを変更
      * @param inputQuantity:変更後の数量
-     */
-    const handleQuantityChange = (inputQuantity: number) => {
-        setQuantity(inputQuantity);
-        calcPrice(null, inputQuantity, null)
-    }
-    /**
+     *
      * トッピングが変更された際にトッピングと合計金額のStateを変更
      * @param newToppings:変更後の選択済みのトッピング配列
+     *
+     * 変更がない部分はnullを渡す
      */
-    const handleToppingChange = (newToppings: Topping[]) => {
-        setSelectToppings(newToppings);
-        calcPrice(null, null, newToppings)
+    const handleChange = (inputSize: string | null, inputQuantity: number | null, newToppings: Topping[] | null) => {
+        if (inputSize) setSize(inputSize)
+        if (inputQuantity) setQuantity(inputQuantity)
+        if (newToppings) setSelectToppings(newToppings)
+        calcPrice(inputSize, inputQuantity, newToppings)
     }
-
     const handleOrderClick = (moveTo: string) => {
         props.handleOrderClick(moveTo, selectedState)
     }
@@ -74,9 +71,9 @@ const OrderItemFormGQL: React.FC<propsType> = (props) => {
                     <OrderItemEntryGQL
                         selectedState={selectedState}
                         parentComponent={"itemDetail"}
-                        onSizeChange={(s) => handleSizeChange(s)}
-                        onQuantityChange={(q) => handleQuantityChange(q)}
-                        onToppingChange={(t) => handleToppingChange(t)}/>
+                        onSizeChange={(s) => handleChange(s, null, null)}
+                        onQuantityChange={(q) => handleChange(null, q, null)}
+                        onToppingChange={(t) => handleChange(null, null, t)}/>
                     <CardContent className={classes.align_child}>
                         <ItemPrice price={totalPrice}/>
                     </CardContent>

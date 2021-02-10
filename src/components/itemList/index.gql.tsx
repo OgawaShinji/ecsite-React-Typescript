@@ -4,6 +4,7 @@ import {useLocation} from "react-router-dom";
 import ItemCardGQL from "~/components/itemList/ItemCard.gql";
 import SearchAreaGQL from "~/components/itemList/SearchArea.gql";
 import OptionFormGQL from "~/components/itemList/OptionForm.gql";
+import ErrorPage from "~/components/error";
 
 import {Button, Grid, LinearProgress, makeStyles, Paper, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
@@ -11,6 +12,7 @@ import {Pagination} from "@material-ui/lab";
 import {animateScroll as scroll} from 'react-scroll';
 
 import {useFetchItemsQuery, useFetchItemsTotalCountQuery} from '~/generated/graphql';
+
 
 const useStyles = makeStyles((theme) => ({
     itemCard: {
@@ -63,13 +65,13 @@ const ItemListGQL: React.FC = () => {
         sort: 'price_m'
     })
 
-    const {data: itemsData, loading: isLoadItemsData} = useFetchItemsQuery({
+    const {data: itemsData, loading: isLoadItemsData, error: fetchItemsError} = useFetchItemsQuery({
         variables: {
             itemName: searchArg.itemName,
             sort: searchArg.sort
         }
     })
-    const {data: totalCountData} = useFetchItemsTotalCountQuery();
+    const {data: totalCountData, error: fetchItemsTotalCountError} = useFetchItemsTotalCountQuery();
 
 
     useEffect(() => {
@@ -119,6 +121,17 @@ const ItemListGQL: React.FC = () => {
             showAll();
             location.state.judge = false;
         }
+    }
+
+    ///// ErrorHandling
+    if (fetchItemsError || fetchItemsTotalCountError) {
+        let code: string = '';
+        if (fetchItemsError) {
+            code = fetchItemsError.graphQLErrors[0].extensions?.code;
+        } else if (fetchItemsTotalCountError) {
+            code = fetchItemsTotalCountError.graphQLErrors[0].extensions?.code;
+        }
+        return <ErrorPage code={code}/>;
     }
 
     return (
