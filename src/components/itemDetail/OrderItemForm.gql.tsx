@@ -25,7 +25,6 @@ const OrderItemFormGQL: React.FC<propsType> = (props) => {
         size: size,
         quantity: quantity,
         toppings: selectedToppings,
-        totalPrice: totalPrice
     }
 
     const calcPrice = (selectedSize: string | null, selectedQuantity: number | null, newToppings: Topping[] | null) => {
