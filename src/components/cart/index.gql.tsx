@@ -46,11 +46,11 @@ const useStyles = makeStyles({
 const Index: React.FC = () => {
     const classes = useStyles();
 
-    const {data: displayFetchOrderItems, loading: isLoadingFetchOrderItems, error: isErrorFetchOrderItems, refetch} = useFetchOrderItemsQuery({fetchPolicy: "cache-and-network"})
-    const {error: errorFetchTopping} = useFetchToppingsQuery()
-    const [updateCart, {error: isErrorUpdateCart}] = useUpdateCartMutation()
-    const [deleteCart, {error: isErrorDeleteCart}] = useDeleteCartMutation()
-
+    // TODO：　エラーハンドリング実装追加
+    const {data: displayFetchOrderItems, loading: isLoadingFetchOrderItems, refetch} = useFetchOrderItemsQuery({fetchPolicy: "cache-and-network"})
+     useFetchToppingsQuery()
+    const [updateCart] = useUpdateCartMutation()
+    const [deleteCart] = useDeleteCartMutation()
 
     // orderOperatorにpropsで渡すorderItemsIdのList
     const displayOrderItemIdList: Array<string> = []
