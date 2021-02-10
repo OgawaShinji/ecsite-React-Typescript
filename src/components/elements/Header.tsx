@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {
-    createStyles,
-    makeStyles,
     AppBar,
-    Toolbar,
-    Typography,
-    IconButton,
-    MenuItem,
-    Menu,
     Button,
-    Grid
+    createStyles,
+    Grid,
+    IconButton,
+    makeStyles,
+    Menu,
+    MenuItem,
+    Toolbar,
+    Typography
 } from '@material-ui/core';
 
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -108,7 +108,7 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
         await dispatch(logout()).catch((e) => {
             dispatch(setError({isError: true, code: e.message}));
         });
-        props.history.push({pathname: '/login'});
+        props.history.push({pathname: Path.login});
     }
 
     /**
@@ -117,14 +117,14 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
      */
     const transitionOrderHistory = () => {
         handleClose();
-        props.history.push({pathname: '/history'});
+        props.history.push({pathname: Path.history});
     }
 
     /**
      * 商品一覧画面へ遷移する関数
      * @return void
      */
-    const toItemList = () => {
+    const transitionItemList = () => {
         props.history.push({pathname: Path.itemList, state: {judge: true}});
     }
 
@@ -134,7 +134,7 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
                 <Toolbar className={classes.header}>
                     <Grid container className={classes.header_content}>
                         <Grid item xs={6} container justify={"center"} alignItems={"center"}>
-                            <Typography align="center" className={classes.title} onClick={toItemList}>
+                            <Typography align="center" className={classes.title} onClick={transitionItemList}>
                                     <span style={{color: "red"}}>
                                        R
                                     </span>
@@ -153,7 +153,7 @@ const Header: React.FC<Props & RouteComponentProps> = (props) => {
                             <Grid item xs={3} container justify={"center"} alignItems={"center"}>
                                 <Grid item xs={1}/>
                                 <Grid item xs={5}>
-                                    <Button style={{color: 'white'}} onClick={toItemList}>商品一覧</Button>
+                                    <Button style={{color: 'white'}} onClick={transitionItemList}>商品一覧</Button>
                                 </Grid>
                                 <Grid item xs={5}>
                                     <Link to={Path.cart} style={{textDecoration: 'none'}}>
