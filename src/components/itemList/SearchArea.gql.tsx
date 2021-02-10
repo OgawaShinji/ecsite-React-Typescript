@@ -62,13 +62,6 @@ const SearchAreaGQL: React.FC<Props> = props => {
         if (key === 'Enter') search();
     }
 
-    // // Error画面の表示
-    // // BadRequest
-    // if (fetchItemsError?.graphQLErrors[0] && fetchItemsError?.graphQLErrors[0].extensions?.code === "BAD_REQUEST") return <ErrorPage
-    //     code={404}/>
-    // // BadRequest以外
-    // if (fetchItemsError) return <ErrorPage code={500}/>
-
     return (
         <div>
             <Grid container justify={"center"} alignItems={"center"}>

@@ -55,13 +55,19 @@ const ItemDetailGQL: React.FC = () => {
 
     const classes = entryIndexStyle();
 
-    //BadRequest時のエラーハンドリング
-    if (fetchItemError?.graphQLErrors[0] && fetchItemError?.graphQLErrors[0].extensions?.code === "BAD_REQUEST") return <ErrorPage
-        code={404}/>
-    //BadRequest以外はメンテナンス表示
-    if (fetchItemError || addCartError) return <ErrorPage code={500}/>;
+    ///// ErrorHandling
+    if (fetchItemError || addCartError) {
+        let code: string = '';
+        if (fetchItemError) {
+            code = fetchItemError.graphQLErrors[0].extensions?.code;
+        } else if (addCartError) {
+            code = addCartError.graphQLErrors[0].extensions?.code;
+        }
+        return <ErrorPage code={code}/>;
+    }
     //Pathに存在しないIDを渡された場合BADREQUESTでは無くnullが返ってくる仕様なので404とみなす
-    if (!(displayItem?.item?.name) && !(isLoadAddCart || isLoadItem)) return <ErrorPage code={404}/>;
+    if (!(displayItem?.item?.name) && !(isLoadAddCart || isLoadItem)) return <ErrorPage code={'NOT_FOUND'}/>;
+
 
     return (isLoadItem || isLoadAddCart ?
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
