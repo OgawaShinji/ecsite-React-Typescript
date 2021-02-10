@@ -8,11 +8,12 @@ gql(`query fetchOrderItems {
     totalPrice
     orderItems{
       pageInfo{
-        hasNextPage
-        hasPreviousPage
-      }
+           hasPreviousPage
+           hasNextPage
+           startCursor
+           endCursor
+        }
       edges{
-        cursor
         node{
           id
           size
@@ -29,11 +30,12 @@ gql(`query fetchOrderItems {
           }
           orderToppings{
             pageInfo{
-            hasNextPage
-            hasPreviousPage
-            }
+                hasPreviousPage
+                hasNextPage
+                startCursor
+                endCursor
+                  }
             edges{
-              cursor
               node{
                 id
                 topping{
@@ -43,9 +45,11 @@ gql(`query fetchOrderItems {
                   priceL
                 }
               }
+              cursor
             }
           }
         }
+        cursor
       }
     }
   }
@@ -57,97 +61,10 @@ mutation addCart($orderItem:OrderItemInput!){
   addCart(orderItem:$orderItem,status:0){
      order{
       id
-     }
+     }   
   }
 }
 `)
-
-gql(`
-mutation updateCart($orderItems: [OrderItemInput]!) {
-   updateCart(
-    orderItems: $orderItems
-    status: 0
-  ){
-    order {
-    totalPrice
-    orderItems{
-      edges{
-        node{
-          id
-          size
-          quantity
-          subTotalPrice
-          item{
-            id
-            name
-            description
-            priceM
-            priceL
-            imagePath
-            deleted
-          }
-          orderToppings{
-            edges{
-              node{
-                id
-                topping{
-                  id
-                  name
-                  priceM
-                  priceL
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  }
-}`)
-
-gql(`
-mutation deleteCart($orderItemId:ID!) {
-   deleteCart(
-    orderItemId:$orderItemId
-  ){
-    order {
-    totalPrice
-    orderItems{
-      edges{
-        node{
-          id
-          size
-          quantity
-          subTotalPrice
-          item{
-            id
-            name
-            description
-            priceM
-            priceL
-            imagePath
-            deleted
-          }
-          orderToppings{
-            edges{
-              node{
-                id
-                topping{
-                  id
-                  name
-                  priceM
-                  priceL
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  }
-}`)
 
 gql(`
 mutation order($order: OrderInput!){
@@ -168,6 +85,7 @@ mutation order($order: OrderInput!){
   }
 }
 `)
+
 // ============================= topping ====================================================================
 
 gql(`

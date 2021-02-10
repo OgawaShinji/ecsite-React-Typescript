@@ -5,11 +5,9 @@ import Axios from "~/store/api";
 
 type authState = {
     loginUser: null | User
-    isLogin: boolean
 }
 const initialAuthState: authState = {
-    loginUser: null,
-    isLogin: false
+    loginUser: null
 }
 export type loginForm = {
     email: string;
@@ -88,16 +86,12 @@ export const authSlice = createSlice({
     reducers: {
         setLoginUser: ((state: authState, action) => {
             state.loginUser = action.payload
-        }),
-        setIsLogin: ((state: authState, action) => {
-            state.isLogin = action.payload
         })
     },
     extraReducers: ((builder) => {
         //logout
         builder.addCase(logout.fulfilled, ((state, action) => {
             state.loginUser = null;
-            state.isLogin = false
             localStorage.removeItem("Authorization")
         }));
         builder.addCase(logout.rejected, (((state, action) => {
@@ -107,7 +101,6 @@ export const authSlice = createSlice({
         //login
         builder.addCase(login.fulfilled, (state, action) => {
             if (action.payload?.token) {
-                state.isLogin = true
                 localStorage.setItem("Authorization", action.payload.token)
                 action.payload = "200"
             }
@@ -126,6 +119,3 @@ export const authSlice = createSlice({
     })
 })
 export const selectLoginUser = (state: RootState) => state.auth.loginUser;
-export const selectIsLogin = (state: RootState) => state.auth.isLogin;
-
-export const {setIsLogin} = authSlice.actions

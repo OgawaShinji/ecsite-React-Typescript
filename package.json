@@ -74,5 +74,13 @@
     "@graphql-codegen/typescript-operations": "1.17.13",
     "@graphql-codegen/typescript-react-apollo": "2.2.1",
     "react-app-rewired": "^2.1.8"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^~/(.*)$": "<rootDir>/src/$1"
+    },
+    "testMatch": [
+      "**/__tests__/**/*.ts?(x)"
+    ]
   }
 }

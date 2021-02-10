@@ -12,9 +12,7 @@ import {BrowserRouter} from "react-router-dom";
 ReactDOM.render(
     <Provider store={store}>
         <BrowserRouter>
-            {/*<ApolloProvider client={client}>*/}
-                <App/>
-            {/*</ApolloProvider>*/}
+            <App/>
         </BrowserRouter>
     </Provider>,
     document.getElementById('root')
