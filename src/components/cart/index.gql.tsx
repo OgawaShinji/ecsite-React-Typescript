@@ -12,7 +12,6 @@ import {
     useFetchToppingsQuery,
     useUpdateCartMutation
 } from "~/generated/graphql";
-import ErrorPage from "~/components/error";
 
 const useStyles = makeStyles({
     root: {
@@ -45,10 +44,9 @@ const useStyles = makeStyles({
 
 
 const Index: React.FC = () => {
-
     const classes = useStyles();
 
-    const {data: displayFetchOrderItems, loading: isLoadingFetchOrderItems, error: isErrorFetchOrderItems,} = useFetchOrderItemsQuery()
+    const {data: displayFetchOrderItems, loading: isLoadingFetchOrderItems, error: isErrorFetchOrderItems, refetch} = useFetchOrderItemsQuery({fetchPolicy: "cache-and-network"})
     const {error: errorFetchTopping} = useFetchToppingsQuery()
     const [updateCart, {error: isErrorUpdateCart}] = useUpdateCartMutation()
     const [deleteCart, {error: isErrorDeleteCart}] = useDeleteCartMutation()
@@ -68,7 +66,7 @@ const Index: React.FC = () => {
         // updateCartの引数,orderItemInputの作成
         let updateOrderToppingIdList: Array<OrderToppingInput> = []
         orderItem.orderToppings?.edges?.forEach(ot => {
-            updateOrderToppingIdList.push({topping: ot!.node!.id!})
+            updateOrderToppingIdList.push({topping: ot!.node!.topping!.id})
         })
         const orderItemInput: OrderItemInput = {
             id: orderItem.id,
@@ -83,7 +81,7 @@ const Index: React.FC = () => {
                 variables: {
                     orderItems: [orderItemInput]
                 }
-            })
+            }).then(() => refetch())
     }
 
     /**
@@ -96,11 +94,11 @@ const Index: React.FC = () => {
         await deleteCart(
             {
                 variables: {
-                    orderItemId: orderItemId.toLocaleString()
+                    orderItemId: orderItemId
                 }
-            })
+                // 最後の一個を削除しようとすると、自動フェッチが削除したはずの商品もとってきてしまうので、手動でフェッチ処理
+            }).then(() => refetch())
     }
-
 
     // カートに商品があるかどうかでレイアウトを切り替えるため
     let styleCartList
@@ -110,8 +108,6 @@ const Index: React.FC = () => {
         styleCartList = classes.emptyCartList
     }
 
-    // errorハンドリング
-    if (isErrorFetchOrderItems || isErrorUpdateCart || isErrorDeleteCart) return <ErrorPage/>;
 
     return (isLoadingFetchOrderItems ?
             <LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>
