@@ -11,9 +11,10 @@ import {
 } from "@material-ui/core";
 import {AppDispatch} from "~/store";
 import {useDispatch} from "react-redux";
-import {login, loginForm} from "~/store/slices/App/auth.slice";
+import {fetchLoginUser, login, loginForm} from "~/store/slices/App/auth.slice";
 import {useHistory} from "react-router-dom"
 import {Path} from "~/router/routes";
+import {setError} from "~/store/slices/App/error.slice";
 import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
 import {makeStyles} from "@material-ui/core/styles";
 
@@ -60,6 +61,10 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
             const input: loginForm = {email: email.value, password: password.value}
             await dispatch(login(input)).then(async (body) => {
                 if (body?.payload) {
+                    await dispatch(fetchLoginUser()).then().catch((e) => {
+                        dispatch(setError({isError: true, code: e.message}))
+                    })
+
                     //loading画面表示可能にした後画面遷移
                     await props.setIsLoading(true).then(() => routeHistory.push(Path.itemList))
                 } else {

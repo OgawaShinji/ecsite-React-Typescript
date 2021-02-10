@@ -37,6 +37,7 @@ const ItemCardGQL: React.FC<Props> = props => {
     const classes = useStyles();
 
     const toItemDetail = () => {
+        console.log(props.item.id)
         history.push({pathname: `/itemDetail/${props.item.id}`});
     };
 

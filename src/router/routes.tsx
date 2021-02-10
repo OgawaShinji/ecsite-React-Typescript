@@ -4,7 +4,7 @@ import GuardedRoute from "~/router/guardedRoute";
 import LoginGuardedRoute from "~/router/LoginGuardedRoute";
 
 import ItemListGQL from "~/components/itemList/index.gql";
-import cart from '../components/cart';
+import cart from '~/components/cart/index.gql';
 import HistoryGQL from "~/components/history/index.gql";
 import ItemDetailGQL from "~/components/itemDetail/index.gql";
 import login from '../components/login';

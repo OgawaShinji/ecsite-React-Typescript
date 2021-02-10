@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 import TotalPrice from "~/components/elements/totalPrice/totalPrice";
 import {useDispatch, useSelector} from "react-redux";
-import {postOrder, selectOrderSubTotalPrice} from "~/store/slices/Domain/order.slice";
+import { selectOrderSubTotalPrice} from "~/store/slices/Domain/order.slice";
 import {User} from "~/types/interfaces";
 import ShippingDialog from "~/components/orderConfirm/shippingDialog";
 import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
@@ -175,48 +175,48 @@ const OrderForm: React.FC<Props> = (props) => {
         }
     }
     //[この内容で注文する]ボタン押下時の処理　
-    const handleOrder = async () => {
-        props.setLoading(true);
-        setSelectedDate({date: selectedDate.date, errorMessage: deliveryDateValidation(selectedDate.date)});
-        if (selectedDate.errorMessage.length === 0) {
-            const date = new Date();
-            if (selectedDate.date) {
-                const orderDate = formatDate(date);
-                const consumptionTax = orderSubTotalPrice * 0.1;
-                const totalPrice = orderSubTotalPrice + consumptionTax;
-                let paymentMethod;
-                let status;
-                if (checkedCash) {
-                    paymentMethod = "1";
-                    status = 1;
-                } else if (checkedCredit) {
-                    paymentMethod = "2";
-                    status = 2;
-                } else {
-                    paymentMethod = "1";
-                    status = 1;
-                }
-                const order = {
-                    status: status,
-                    totalPrice: totalPrice,
-                    orderDate: orderDate,
-                    destinationName: userInfo?.name,
-                    destinationEmail: userInfo?.email,
-                    destinationZipcode: userInfo?.zipcode,
-                    destinationAddress: userInfo?.address,
-                    destinationTel: userInfo?.telephone,
-                    deliveryTime: selectedDate.date,
-                    paymentMethod: paymentMethod
-                }
-                await dispatch(postOrder(order)).then((i) => {
-                    if (i.payload) routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
-                }).catch(async (e) => {
-                    await props.setLoading(false);
-                    dispatch(setError({isError: true, code: e.message}));
-                });
-            }
-        }
-    }
+    // const handleOrder = async () => {
+    //     props.setLoading(true);
+    //     setSelectedDate({date: selectedDate.date, errorMessage: deliveryDateValidation(selectedDate.date)});
+    //     if (selectedDate.errorMessage.length === 0) {
+    //         const date = new Date();
+    //         if (selectedDate.date) {
+    //             const orderDate = formatDate(date);
+    //             const consumptionTax = orderSubTotalPrice * 0.1;
+    //             const totalPrice = orderSubTotalPrice + consumptionTax;
+    //             let paymentMethod;
+    //             let status;
+    //             if (checkedCash) {
+    //                 paymentMethod = "1";
+    //                 status = 1;
+    //             } else if (checkedCredit) {
+    //                 paymentMethod = "2";
+    //                 status = 2;
+    //             } else {
+    //                 paymentMethod = "1";
+    //                 status = 1;
+    //             }
+    //             const order = {
+    //                 status: status,
+    //                 totalPrice: totalPrice,
+    //                 orderDate: orderDate,
+    //                 destinationName: userInfo?.name,
+    //                 destinationEmail: userInfo?.email,
+    //                 destinationZipcode: userInfo?.zipcode,
+    //                 destinationAddress: userInfo?.address,
+    //                 destinationTel: userInfo?.telephone,
+    //                 deliveryTime: selectedDate.date,
+    //                 paymentMethod: paymentMethod
+    //             }
+    //             await dispatch(postOrder(order)).then((i) => {
+    //                 if (i.payload) routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
+    //             }).catch(async (e) => {
+    //                 await props.setLoading(false);
+    //                 dispatch(setError({isError: true, code: e.message}));
+    //             });
+    //         }
+    //     }
+    // }
     //配送日時のバリデーションチェック
     const deliveryDateValidation = (date: Date | null): string => {
         if (date) {
@@ -231,6 +231,47 @@ const OrderForm: React.FC<Props> = (props) => {
         }
     }
     const classes = useStyles();
+
+    //mockサーバーにデータを送る
+    const [updateOrderMutation,{data,loading,error}] = useUpdateOrderMutation()
+    const handleClick = async () => {
+        props.setLoading(true);
+        const consumptionTax = orderSubTotalPrice * 0.1;
+        const totalPrice = orderSubTotalPrice + consumptionTax;
+        let paymentMethod;
+        let status;
+        if (checkedCash) {
+            paymentMethod = "1";
+            status = 1;
+        } else if (checkedCredit) {
+            paymentMethod = "2";
+            status = 2;
+        } else {
+            paymentMethod = "1";
+            status = 1;
+        }
+        const orderInfo = {
+            status: status,
+            orderDate: formatDate(new Date()),
+            destinationName: userInfo?.name,
+            destinationEmail: userInfo?.email,
+            destinationZipcode: userInfo?.zipcode,
+            destinationAddress: userInfo?.address,
+            destinationTel: userInfo?.telephone,
+            deliveryTime: selectedDate.date,
+            totalPrice: totalPrice,
+            paymentMethod: paymentMethod
+        }
+        console.log(orderInfo)
+        //入力されたしたお届け先情報を引数にセット
+        await updateOrderMutation({variables:{orderInfo:orderInfo}}).then( () => {
+            //送られたデータはモックサーバーのファイルで確認できる
+            routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
+        }).catch( async (e) => {
+            await props.setLoading(false);
+            dispatch(setError({isError: true, code: e.message}));
+        })
+    }
 
     return (
         <div>
@@ -375,7 +416,7 @@ const OrderForm: React.FC<Props> = (props) => {
                         <br/>
                         <Button variant="contained"
                                 fullWidth
-                                onClick={handleOrder}
+                                onClick={handleClick}
                                 className={classes.orderButton}
                                 disabled={selectedDate.errorMessage.length > 0 || selectedDate.date === null}
                         >この内容で注文する</Button>

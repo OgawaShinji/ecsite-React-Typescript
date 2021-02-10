@@ -7,7 +7,7 @@ const LoginGuardedRoute = (props: any) => {
     const token = localStorage.getItem('Authorization')
     if (token && props.path === '/login') {
         // TODO: snackbarがあればそれで
-        alert('ログアウトしてください')
+        alert('再度ログインするには、一度ログアウトしてください')
         return <Redirect to="/"/>
     }
 

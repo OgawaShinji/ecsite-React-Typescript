@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 
 import OrderInfoGQL from "~/components/history/OrderInfo.gql";
 import OrderHistoryDialogGQL from "~/components/history/OrderHistoryDialog.gql";
-import ErrorPage from "~/components/error";
 
 import {Divider, Grid, LinearProgress, List, ListItem, makeStyles, Typography} from "@material-ui/core";
 import {Pagination} from "@material-ui/lab";
@@ -40,9 +39,6 @@ const HistoryGQL: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
 
-    // 表示件数
-    const DISPLAY_COUNT = 5;
-
     // storeからstateを取得
     const ordersTotalCount = useSelector(selectOrderHistoryTotalCount);
 
@@ -51,20 +47,13 @@ const HistoryGQL: React.FC = () => {
     const [count, setCount] = useState(1);
     const [isOpen, setIsOpen] = useState(false);
     const [orderItems, setOrderItems] = useState<Array<OrderItemType>>([]);
-    const [pagingArg, setPagingArg] = useState<{
-        first: number | null;
-        after: string | null;
-        last: number | null;
-        before: string | null;
-    }>({
-        first: DISPLAY_COUNT,
-        after: null,
-        last: null,
-        before: null
-    })
+    const [offset, setOffset] = useState(0);
 
-    const {data: orderHistoryData, loading: isLoadOrderHistoryData, error: fetchOrderHistoryError} = useFetchOrderHistoryQuery({
-        variables: pagingArg
+    const {data: orderHistoryData, loading: isLoadOrderHistoryData} = useFetchOrderHistoryQuery({
+        variables: {
+            limit: 5,
+            offset: offset
+        }
     });
 
     useEffect(() => {
@@ -75,41 +64,25 @@ const HistoryGQL: React.FC = () => {
     }, [dispatch]);
 
     useEffect(() => {
+        setOffset((page - 1) * 5);
+    }, [page])
+
+    useEffect(() => {
+        //setIsLoading(true);
         if (ordersTotalCount) {
             // 注文履歴が存在する場合
             let totalPageCount;
 
             // 総ページ数をセット
-            if (ordersTotalCount % DISPLAY_COUNT === 0) {
-                totalPageCount = ordersTotalCount / DISPLAY_COUNT;
+            if (ordersTotalCount % 5 === 0) {
+                totalPageCount = ordersTotalCount / 5;
             } else {
-                totalPageCount = Math.floor(ordersTotalCount / DISPLAY_COUNT) + 1;
+                totalPageCount = Math.floor(ordersTotalCount / 5) + 1;
             }
             setCount(totalPageCount);
         }
     }, [ordersTotalCount]);
 
-
-    const changePage = (newPage: number) => {
-        if (page < newPage) {
-            // NextPage
-            setPagingArg({
-                first: 5,
-                after: orderHistoryData!.orderHistory!.pageInfo!.endCursor!,
-                last: null,
-                before: null
-            });
-        } else {
-            // PreviousPage
-            setPagingArg({
-                first: null,
-                after: null,
-                last: DISPLAY_COUNT,
-                before: orderHistoryData!.orderHistory!.pageInfo!.startCursor!
-            });
-        }
-        setPage(newPage);
-    }
 
     // 注文情報一覧のJSXを作成
     const orderInfoList = orderHistoryData?.orderHistory?.edges.map((order, index) => {
@@ -141,12 +114,6 @@ const HistoryGQL: React.FC = () => {
             )
         }
     });
-
-    ///// ErrorHandling
-    if (fetchOrderHistoryError) {
-        const code = fetchOrderHistoryError.graphQLErrors[0].extensions?.code;
-        return <ErrorPage code={code}/>
-    }
 
     return (
         <>
@@ -191,8 +158,9 @@ const HistoryGQL: React.FC = () => {
             {/*Pagination*/}
             {ordersTotalCount !== null && ordersTotalCount !== 0 && (
                 <Grid container justify={"center"} alignItems={"center"}>
-                    <Pagination count={count} page={page} onChange={(e, val) => changePage(val)}
-                                className={classes.pagination} size={"large"}/>
+                    <Pagination count={count} page={page} onChange={(e, val) => {
+                        setPage(val);
+                    }} className={classes.pagination} size={"large"}/>
                 </Grid>
             )}
 

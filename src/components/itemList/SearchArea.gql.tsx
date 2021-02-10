@@ -8,7 +8,6 @@ import {Search} from "@material-ui/icons";
 
 import {useFetchItemsQuery} from "~/generated/graphql";
 
-
 type Props = {
     itemName: string;
     sort: string;
@@ -30,7 +29,7 @@ const SearchAreaGQL: React.FC<Props> = props => {
         }
     ];
 
-    const {data: itemsData, loading: isLoadItemsData, error: fetchItemsError} = useFetchItemsQuery({
+    const {data: itemsData, loading: isLoadItemsData} = useFetchItemsQuery({
         variables: {
             itemName: '',
             sort: 'price_m'
@@ -40,11 +39,11 @@ const SearchAreaGQL: React.FC<Props> = props => {
     const [itemNames, setItemNames] = useState<Array<string>>([])
 
     useEffect(() => {
-        if (!isLoadItemsData && !fetchItemsError) {
+        if (!isLoadItemsData) {
             const itemNames = itemsData!.items!.edges.map((item) => item!.node!.name!)
             setItemNames(itemNames);
         }
-    }, [isLoadItemsData, fetchItemsError, itemsData]);
+    }, [isLoadItemsData, itemsData]);
 
     // methods
     /**
