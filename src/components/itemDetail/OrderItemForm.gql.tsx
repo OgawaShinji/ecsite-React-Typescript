@@ -8,7 +8,7 @@ import {ItemType as Item, ToppingType as Topping} from "~/generated/graphql";
 
 type propsType = {
     item: Item,
-    handleOrderClick: (moveTo: string, selectedState: itemEntryStateGQL) => void,
+    handleOrderClick: (moveTo: 'cart' | 'confirm', selectedState: itemEntryStateGQL) => void,
 }
 const OrderItemFormGQL: React.FC<propsType> = (props) => {
 
@@ -29,17 +29,22 @@ const OrderItemFormGQL: React.FC<propsType> = (props) => {
 
     /**
      * 注文変更があった際に値段計算を行うメソッド
-     * @param selectedSize
-     * @param selectedQuantity
-     * @param newToppings
+     * 変更がない部分の引数にはnullを入れる
+     * @param selectedSize :size変更された場合指定
+     * @param selectedQuantity: :quantity変更された場合指定
+     * @param newToppings :topping変更された場合指定
      */
-    const calcPrice = (selectedSize: string | null, selectedQuantity: number | null, newToppings: Topping[] | null) => {
-        let newTotalPrice = 0;
-        if ((newToppings ? newToppings : selectedToppings).length !== 0) (newToppings ? newToppings : selectedToppings).map(
+    const calcPrice = (selectedSize: string | null, selectedQuantity: number | null, newToppings: Topping[] | null): number => {
+        //下記全ての三項演算子は新しく選択されたものの有無での分岐(ある場合は引数の値:無い場合はuseStateの値)
+        let newTotalPrice = (selectedSize ? selectedSize : size) === 'M' ? Number(item.priceM) : Number(item.priceL);
+
+        //toppingが選択されている場合、それぞれの選択されているsizeでの値段の総和を求める
+        if ((newToppings ? newToppings : selectedToppings).length !== 0) (newToppings ? newToppings : selectedToppings).forEach(
             (t) => newTotalPrice += (selectedSize ? selectedSize : size) === 'M' ? t.priceM! : t.priceL!
         )
-        newTotalPrice += ((selectedSize ? selectedSize : size) === 'M' ? Number(item!.priceM!) : Number(item!.priceL!))
-        setTotalPrice(newTotalPrice * (selectedQuantity ? selectedQuantity : quantity));
+
+        //quantityとの積をとった値を返す
+        return (newTotalPrice * (selectedQuantity ? selectedQuantity : quantity))
     }
     /**
      * サイズが変更された際にサイズと合計金額のStateを変更
@@ -57,9 +62,9 @@ const OrderItemFormGQL: React.FC<propsType> = (props) => {
         if (inputSize) setSize(inputSize)
         if (inputQuantity) setQuantity(inputQuantity)
         if (newToppings) setSelectToppings(newToppings)
-        calcPrice(inputSize, inputQuantity, newToppings)
+        setTotalPrice(calcPrice(inputSize, inputQuantity, newToppings))
     }
-    const handleOrderClick = (moveTo: string) => {
+    const handleOrderClick = (moveTo: 'cart' | 'confirm') => {
         props.handleOrderClick(moveTo, selectedState)
     }
 
