@@ -25,7 +25,6 @@ const OrderItemForm: React.FC<propsType> = (props) => {
         size: size,
         quantity: quantity,
         toppings: selectedToppings,
-        totalPrice: totalPrice
     }
 
     /**
@@ -34,13 +33,16 @@ const OrderItemForm: React.FC<propsType> = (props) => {
      * @param selectedQuantity
      * @param newToppings
      */
-    const calcPrice = (selectedSize: string | null, selectedQuantity: number | null, newToppings: Topping[] | null) => {
-        let newTotalPrice = 0;
+    const calcPrice = (selectedSize: string | null, selectedQuantity: number | null, newToppings: Topping[] | null): number => {
+        //下記全ての三項演算子は新しく選択されたものの有無での分岐(ある場合は引数の値:無い場合はuseStateの値)
+        let newTotalPrice = (selectedSize ? selectedSize : size) === 'M' ? Number(item!.priceM) : Number(item!.priceL);
+
+        //toppingが選択されている場合、それぞれの選択されているsizeでの値段の総和を求める
         if ((newToppings ? newToppings : selectedToppings).length !== 0) (newToppings ? newToppings : selectedToppings).map(
             (t) => newTotalPrice += (selectedSize ? selectedSize : size) === 'M' ? t.priceM! : t.priceL!
         )
-        newTotalPrice += ((selectedSize ? selectedSize : size) === 'M' ? item!.priceM : item!.priceL)
-        setTotalPrice(newTotalPrice * (selectedQuantity ? selectedQuantity : quantity));
+        //quantityとの積をとった値を返す
+        return (newTotalPrice * (selectedQuantity ? selectedQuantity : quantity))
     }
     /**
      * サイズが変更された際にサイズと合計金額のStateを変更
@@ -56,10 +58,10 @@ const OrderItemForm: React.FC<propsType> = (props) => {
         if (inputSize) setSize(inputSize)
         if (inputQuantity) setQuantity(inputQuantity)
         if (newToppings) setSelectToppings(newToppings)
-        calcPrice(inputSize, inputQuantity, newToppings)
+        setTotalPrice(calcPrice(inputSize, inputQuantity, newToppings))
     }
 
-    const handleOrderClick = (moveTo: string) => {
+    const handleOrderClick = (moveTo: 'cart' | 'confirm') => {
         props.handleOrderClick(moveTo, selectedState)
     }
 
@@ -80,8 +82,7 @@ const OrderItemForm: React.FC<propsType> = (props) => {
                 </CardContent>
             </Grid>
 
-            {/*注文確定ボタン*/
-            }
+            {/*注文確定ボタン*/}
             <Grid item xs={12}>
                 <CardActions>
                     <Grid item xs={6} className={classes.align_child}>

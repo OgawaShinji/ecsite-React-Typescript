@@ -22,7 +22,6 @@ export type itemEntryState = {
     size: string;
     quantity: number;
     toppings: Topping[],
-    totalPrice?:number
 }
 export type entryProps = {
     selectedState: itemEntryState;
