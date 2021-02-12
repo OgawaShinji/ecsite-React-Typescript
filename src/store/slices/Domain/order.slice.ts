@@ -194,7 +194,6 @@ export const orderSlice = createSlice({
         // fetchOrderItems
         builder.addCase(asyncFetchOrderItems.fulfilled, (state, action) => {
             let _action: any
-            console.log(action.payload)
             if (action.payload.orderItems === undefined) {
                 _action = []
             } else {
