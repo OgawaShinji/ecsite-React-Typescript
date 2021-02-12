@@ -25,12 +25,16 @@ const TotalPrice: React.FC<Props> = props => {
 
 
     useEffect(() => {
-        if(props.subTotalPrice){
+        if (props.subTotalPrice) {
             const tax = props.subTotalPrice! * 0.1;
             const totalPrice = props.subTotalPrice! + tax;
             setSubTotalPrice(props.subTotalPrice!);
             setConsumptionTax(() => tax);
             setBilledAmount(() => totalPrice);
+        } else {
+            setSubTotalPrice(0);
+            setConsumptionTax(0);
+            setBilledAmount(0);
         }
     }, [props.subTotalPrice])
 
@@ -43,7 +47,7 @@ const TotalPrice: React.FC<Props> = props => {
             <Divider variant={"middle"}/>
             <Typography variant={"subtitle1"} align={"center"}
                         className={classes.control}>
-                <Box fontWeight="fontWeightBold" >
+                <Box fontWeight="fontWeightBold">
                     合計金額: {billedAmount.toLocaleString()} 円
                 </Box>
             </Typography>
