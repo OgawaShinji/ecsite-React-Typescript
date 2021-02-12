@@ -10,8 +10,8 @@ import {
     asyncDeleteOrderItem,
     asyncFetchOrderItems,
     asyncUpdateOrderItem,
-    OrderItemType as orderItem,
     OrderItemsToPost,
+    OrderItemType as orderItem,
     selectOrderItems,
     selectOrderSubTotalPrice
 } from "~/store/slices/Domain/order.slice"
@@ -57,6 +57,7 @@ const Cart: React.FC = () => {
     let orderSubTotalPrice = useSelector(selectOrderSubTotalPrice)
 
     const [isLoading, setIsLoading] = useState(false); // loading
+    const [orderItemIdList, setOrderItemIdList] = useState<Array<number>>([]) // orderOperatorに渡すprops
 
     // 初期表示
     useEffect(() => {
@@ -77,6 +78,17 @@ const Cart: React.FC = () => {
             clearTimeout(timerId);
         }
     }, [dispatch])
+
+    // orderItemIdListの算出
+    useEffect(() => {
+        if (orderItems) {
+            let _orderItemIdList: Array<number> = []
+            orderItems.forEach(orderItem => {
+                _orderItemIdList.push(orderItem.id!)
+            })
+            setOrderItemIdList(_orderItemIdList)
+        }
+    }, [orderItems])
 
     /**
      * 注文商品の内容を更新する関数
@@ -171,7 +183,7 @@ const Cart: React.FC = () => {
                             <div className={classes.orderOperator}>
                                 <OrderOperator
                                     subTotalPrice={orderSubTotalPrice}
-                                    orderItems={orderItems}
+                                    orderItemIdList={orderItemIdList}
                                     deleteOrderItem={(orderItemId: number) => deleteOrderItem(orderItemId)}
                                 />
                             </div>
