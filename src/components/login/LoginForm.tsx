@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
     Button,
     Card,
@@ -9,96 +9,99 @@ import {
     TextField,
     Typography
 } from "@material-ui/core";
-import {AppDispatch} from "~/store";
-import {useDispatch} from "react-redux";
-import {login, loginForm} from "~/store/slices/App/auth.slice";
-import {useHistory} from "react-router-dom"
-import {Path} from "~/router/routes";
-import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
-import {makeStyles} from "@material-ui/core/styles";
+import { AppDispatch } from "~/store";
+import { useDispatch } from "react-redux";
+import { fetchLoginUser, login, loginForm } from "~/store/slices/App/auth.slice";
+import { useHistory } from "react-router-dom"
+import { Path } from "~/router/routes";
+import { setError } from "~/store/slices/App/error.slice";
+import { THEME_COLOR_1, THEME_COLOR_2 } from "~/assets/color";
+import { makeStyles } from "@material-ui/core/styles";
 
 type loginFormProps = {
     setIsLoading: (is: boolean) => Promise<string>
 }
 const LoginForm: React.FC<loginFormProps> = (props) => {
     const dispatch: AppDispatch = useDispatch();
-    const [email, setEmail] = useState<{ value: string, errorMessage: string }>({
-        value: '',
-        errorMessage: ''
-    })
-    const [password, setPassword] = useState<{ value: string, errorMessage: string }>({
-        value: '',
-        errorMessage: ''
-    })
-    const [isIncorrectEntry, setIsIncorrectEntry] = useState<boolean>(false)
     const routeHistory = useHistory();
 
-    const handleEmailChange: React.ChangeEventHandler<HTMLInputElement> = async (event) => {
-        setEmail({value: event.target.value, errorMessage: emailValidation(event.target.value)});
-        if (isIncorrectEntry) setIsIncorrectEntry(false);
+    const initialValue = { email: '', password: '' }
+    const [inputValue, setInputValue] = useState<loginForm>(initialValue)
+
+    const initialError = {
+        failedLogin: false,
+        email: false,
+        password: false
     }
-    const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-        setPassword({value: event.target.value, errorMessage: passwordValidation(event.target.value)})
-        if (isIncorrectEntry) setIsIncorrectEntry(false)
+    const [hasError, setHasError] = useState(initialError)
+
+    const EMAIL_ERROR_MESSAGE = '※正しい形式でメールアドレスを入力してください'
+    const PASSWORD_ERROR_MESSAGE = '*6字以上16字以内で入力してください'
+    const FAILED_LOGIN_MESSAGE = 'メールアドレスもしくはパスワードが違います'
+
+    /**
+     * Inputタグに入力が行われた際に入力されたstateを更新するメソッド
+     * @param event
+     */
+    const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+        const name = event.target.name;
+        if (name === 'email' || 'password') setInputValue({ ...inputValue, [name]: event.target.value })
     }
 
     /**
+     * email入力値をバリデーションチェックし適切な形式であればtrueを返す
+     */
+    const isValidEmail = (): boolean => {
+        const regex = /^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        return regex.test(inputValue.email) && inputValue.email.length < 100;
+
+    }
+    /**
+     * password入力値をバリデーションチェックし適切な形式であればtrueを返す
+     */
+    const isValidPassword = (): boolean => {
+        return inputValue.password.length >= 6 && inputValue.password.length <= 16;
+
+    }
+    /**
      * keyが押される度に発火する
-     * 押されたKeyがEnterの時にみhandleLoginClickを呼び出す
+     * 押されたKeyがEnterの時のみhandleLoginClickを呼び出す
      * @param e:押されたKeyの値
      */
     const handleKeyPress = (e: string) => {
-        if (e === "Enter") handleLoginClick().then();
+        if (e === "Enter" && isValidEmail() && isValidPassword()) handleLoginClick().then();
     }
 
     /**
      * login button クリック時の処理
-     * errorMessageが空文字ならLogin処理を呼び出し、tokenが帰ってこれば商品一覧へ遷移、返ってこなければエラーメッセージ表示とパスワードを空に更新
+     * 入力値が適切な形ならLogin処理を呼び出し、tokenが帰ってこれば商品一覧へ遷移、返ってこなければエラーメッセージ表示とパスワードを空に更新
      */
     const handleLoginClick = async () => {
-        if (email.errorMessage.length === 0 && password.errorMessage.length === 0) {
-            const input: loginForm = {email: email.value, password: password.value}
-            await dispatch(login(input)).then(async (body) => {
+        if (isValidEmail && isValidPassword) {
+            await dispatch(login(inputValue)).then((body) => {
                 if (body?.payload) {
                     //loading画面表示可能にした後画面遷移
-                    await props.setIsLoading(true).then(() => routeHistory.push(Path.itemList))
-                } else {
-                    setIsIncorrectEntry(true);
-                    setPassword({value: "", errorMessage: ""})
-                }
+                    props.setIsLoading(true).then(() => {
+                        dispatch(fetchLoginUser()).then(() => {
+                            routeHistory.push(Path.itemList)
+                        }).catch((e) => {
+                            dispatch(setError({ isError: true, code: e.message }))
+                        })
+                    })
+                } else { throw new Error() }
             }).catch(() => {
-                setIsIncorrectEntry(true);
-                setPassword({value: "", errorMessage: ""})
+                setInputValue({ ...inputValue, password: '' })
+                setHasError({ ...initialError, failedLogin: true })
             })
+        } else {
+            if (!isValidEmail) setHasError({ ...hasError, email: true })
+            if (!isValidPassword) setHasError({ ...hasError, password: true })
         }
     }
 
-    /**
-     * email入力値に対するエラーメッセージを返すメソッド
-     *
-     * @param value :string
-     * @return errorMessage :string(エラーが無いときは空文字を返す)
-     */
-    const emailValidation = (value: string): string => {
-        if (!value) return '※メールアドレスを入力してください';
-        const regex = /^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-        if (!regex.test(value) || value.length > 100) return '※正しい形式でメールアドレスを入力してください';
-        return ''
-    }
-    /**
-     * password入力値に対するエラーメッセージを返すメソッド
-     *
-     * @param value :string
-     * @return errorMessage :string(エラーが無いときは空文字を返す)
-     */
-    const passwordValidation = (value: string): string => {
-        if (!value) return '*パスワードを入力してください'
-        if (value.length > 16 || value.length < 6) return '*6字以上16字以内で入力してください'
-        return ''
-    }
     //messageを渡せばエラーメッセージの形で表示してくれる
     const errorMessageCard = (message: string) => {
-        return (<Card style={{padding: "1%", backgroundColor: "#ffe0b2"}}>
+        return (<Card style={{ padding: "1%", backgroundColor: "#ffe0b2" }}>
             <Typography color={"secondary"}>{message}
             </Typography></Card>)
     }
@@ -108,35 +111,37 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
         <Card>
             <Grid container justify={"center"}>
                 <Grid item xs={12}>
-                    <CardHeader title="Login" style={{backgroundColor: THEME_COLOR_1}}/>
+                    <CardHeader title="Login" style={{ backgroundColor: THEME_COLOR_1 }} />
                 </Grid>
                 <Grid item xs={12}>
                     <CardContent>
-                        {isIncorrectEntry ? errorMessageCard("メールアドレスもしくはパスワードが違います") : ""}
-                        {email.errorMessage.length > 0 ? errorMessageCard(email.errorMessage) : ""}
+                        {hasError.failedLogin ? errorMessageCard(FAILED_LOGIN_MESSAGE) : null}
+                        {hasError.email ? errorMessageCard(EMAIL_ERROR_MESSAGE) : null}
                         <TextField
-                            error={email.errorMessage.length > 0}
+                            error={hasError.email}
                             fullWidth
                             id="email"
+                            name='email'
                             type="email"
                             label="e-mail"
                             placeholder="***@***.***"
                             margin="normal"
-                            value={email.value}
-                            onChange={handleEmailChange}
+                            value={inputValue.email}
+                            onChange={handleChange}
                             onKeyPress={(e) => handleKeyPress(e.key)}
                         />
-                        {password.errorMessage.length > 0 ? errorMessageCard(password.errorMessage) : ""}
+                        {hasError.password ? errorMessageCard(PASSWORD_ERROR_MESSAGE) : null}
                         <TextField
-                            error={password.errorMessage.length > 0}
+                            error={hasError.password || hasError.failedLogin}
                             fullWidth
                             id="password"
+                            name='password'
                             type="password"
-                            label="password"
-                            placeholder="Password"
+                            label="password (6 ~ 16字)"
+                            placeholder="password"
                             margin="normal"
-                            value={password.value}
-                            onChange={handlePasswordChange}
+                            value={inputValue.password}
+                            onChange={handleChange}
                             onKeyPress={(e) => handleKeyPress(e.key)}
                         />
                     </CardContent>
@@ -147,7 +152,7 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
                         size="large"
                         onClick={handleLoginClick}
                         className={classes.button}
-                        disabled={email.errorMessage.length > 0 || password.errorMessage.length > 0 || email.value === '' || password.value === ''}
+                        disabled={!isValidPassword() || !isValidEmail()}
                     >
                         Login
                     </Button>
@@ -158,9 +163,10 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
 };
 export default LoginForm;
 const login_form_style = makeStyles(() => createStyles({
-    button: {
-        marginBottom: "5%",
-        backgroundColor: THEME_COLOR_2,
-        color: "white",
-    }
+    button:
+        {
+            marginBottom: "5%",
+            backgroundColor: THEME_COLOR_2,
+            color: "white",
+        }
 }))
