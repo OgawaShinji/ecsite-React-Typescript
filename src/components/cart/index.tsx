@@ -110,8 +110,7 @@ const Cart: React.FC = () => {
         let updatedOrderItems: Array<orderItem> = [updatedOrderItem]
         const orderItemsToPost: OrderItemsToPost = {
             orderItems: updatedOrderItems,
-            status: 0,
-            newTotalPrice: orderSubTotalPrice
+            status: 0
         }
 
         await dispatch(asyncUpdateOrderItem(orderItemsToPost)).catch((e) => {
