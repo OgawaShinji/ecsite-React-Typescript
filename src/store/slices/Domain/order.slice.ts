@@ -45,8 +45,7 @@ export type OrderItemType = {
 
 export type OrderItemsToPost = {
     orderItems: Array<OrderItemType>,
-    status: 0,
-    newTotalPrice: number
+    status: 0
 }
 
 /**
@@ -64,7 +63,7 @@ export const asyncPostOrderItem = createAsyncThunk(
                 quantity: order.quantity,
                 size: order.size
             },
-            status: 0,
+            status: 0
         }, {
             method: 'POST',
             headers: {
@@ -87,8 +86,7 @@ export const asyncUpdateOrderItem = createAsyncThunk(
     async (order: OrderItemsToPost) => {
         await Axios.put(`/django/cart/`, {
             order_items: order.orderItems,
-            status: 0,
-            total_price: order.newTotalPrice
+            status: 0
         }, {
             method: 'PUT',
             headers: {
