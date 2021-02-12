@@ -171,18 +171,18 @@ export const orderSlice = createSlice({
                     const toppingQuantity = orderItem.orderToppings?.length
                     const orderItemQuantity = orderItem.quantity
                     let orderItemPrice: number
-                    let toppingTotalPrice: number
-                    let subTotalPrice: number
+                    let orderItemToppingTotalPrice: number
+                    let orderItemSubTotalPrice: number
 
                     if (orderItem.size === 'M') {
                         orderItemPrice = orderItem.item.priceM
-                        toppingTotalPrice = toppingQuantity! * 200
+                        orderItemToppingTotalPrice = toppingQuantity! * 200
                     } else if (orderItem.size === 'L') {
                         orderItemPrice = orderItem.item.priceL
-                        toppingTotalPrice = toppingQuantity! * 300
+                        orderItemToppingTotalPrice = toppingQuantity! * 300
                     }
-                    subTotalPrice = (orderItemPrice! + toppingTotalPrice!) * orderItemQuantity
-                    orderItem.subTotalPrice = subTotalPrice
+                    orderItemSubTotalPrice = (orderItemPrice! + orderItemToppingTotalPrice!) * orderItemQuantity
+                    orderItem.subTotalPrice = orderItemSubTotalPrice
                     orderSubTotalPrice += orderItem.subTotalPrice
                 })
                 state.orderSubTotalPrice = orderSubTotalPrice
