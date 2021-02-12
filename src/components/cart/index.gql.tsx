@@ -150,7 +150,7 @@ const Index: React.FC = () => {
                         <Grid item xs={4}>
                             <div className={classes.orderOperator}>
                                 <OrderOperator
-                                    subTotalPrice={displayFetchOrderItems?.cart?.totalPrice!}
+                                    subTotalPrice={displayFetchOrderItems?.cart?.totalPrice}
                                     orderItemIdList={displayOrderItemIdList!}
                                     deleteOrderItem={(orderItemId: string) => deleteOrderItem(orderItemId)}
                                 />

@@ -5,7 +5,7 @@ import {useHistory} from 'react-router-dom';
 import {Path} from "~/router/routes";
 
 interface Props {
-    subTotalPrice: number | null
+    subTotalPrice: number | undefined | null
     orderItemIdList: Array<string>
     deleteOrderItem: (orderItemId: string) => void
 }
@@ -47,7 +47,7 @@ const OrderOperator: React.FC<Props> = (props) => {
     return (
         <Card className={classes.root}>
             <CardContent>
-                <TotalPrice subTotalPrice={props.subTotalPrice!}/>
+                <TotalPrice subTotalPrice={props.subTotalPrice}/>
             </CardContent>
             <CardActions>
                 <Button
