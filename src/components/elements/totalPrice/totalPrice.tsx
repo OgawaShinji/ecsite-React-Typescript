@@ -24,12 +24,16 @@ const TotalPrice: React.FC<Props> = props => {
     const [billedAmount, setBilledAmount] = useState(0);
 
     useEffect(() => {
-        if(props.subTotalPrice){
+        if (props.subTotalPrice) {
             const tax = props.subTotalPrice! * 0.1;
             const totalPrice = props.subTotalPrice! + tax;
             setSubTotalPrice(props.subTotalPrice!);
             setConsumptionTax(() => tax);
             setBilledAmount(() => totalPrice);
+        } else {
+            setSubTotalPrice(0);
+            setConsumptionTax(0);
+            setBilledAmount(0);
         }
     }, [props.subTotalPrice])
 
