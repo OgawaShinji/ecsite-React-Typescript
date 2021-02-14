@@ -85,20 +85,13 @@ const CartItem: React.FC<Props> = (props) => {
     }
 
     /**
-     * 商品のサイズを変更する関数
-     * @Params inputSize: string
+     * onChangeイベント発火時それぞれのStateを変更する
+     * @param event{name:発火したタグのname属性, value:値}
      */
-    const handleSizeChange = (inputSize: string) => {
-        const changedOrderItem = {...orderItem, size: inputSize}
-        updateOrderItems({orderItem: changedOrderItem})
-    }
-
-    /**
-     * 商品の数量を変更する関数
-     * @Params inputQuantity: string
-     */
-    const handleQuantityChange = (inputQuantity: number) => {
-        const changedOrderItem = {...orderItem, quantity: inputQuantity}
+    const onChangeEvent = (event: React.ChangeEvent<{ name?: string, value: unknown }>) => {
+        const name = event.target.name as 'size' | 'quantity'
+        const value = event.target.value
+        const changedOrderItem = {...orderItem, [name]:value}
         updateOrderItems({orderItem: changedOrderItem})
     }
 
@@ -230,8 +223,7 @@ const CartItem: React.FC<Props> = (props) => {
                     <OrderItemEntry
                         selectedState={selectedState}
                         parentComponent={"CartItem"}
-                        onSizeChange={handleSizeChange}
-                        onQuantityChange={handleQuantityChange}
+                        onChangeEvent={onChangeEvent}
                         onToppingChange={(t) => handleToppingChange(t)}
                         onClickCloseOrderItemEntity={onClickCloseOrderItemEntry}
                     />

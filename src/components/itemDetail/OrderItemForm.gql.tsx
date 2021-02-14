@@ -1,10 +1,10 @@
-import {Button, CardActions, CardContent, createStyles, Grid, Typography} from "@material-ui/core";
-import React, {useState} from "react";
-import OrderItemEntryGQL, {itemEntryStateGQL} from "~/components/elements/orderItemEntry/OrderItemEntry.gql";
+import { Button, CardActions, CardContent, createStyles, Grid, Typography } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import OrderItemEntryGQL, { itemEntryStateGQL } from "~/components/elements/orderItemEntry/OrderItemEntry.gql";
 import ItemPrice from "~/components/itemDetail/ItemPrice";
-import {makeStyles} from "@material-ui/core/styles";
-import {THEME_COLOR_2} from "~/assets/color";
-import {ItemType as Item, ToppingType as Topping} from "~/generated/graphql";
+import { makeStyles } from "@material-ui/core/styles";
+import { THEME_COLOR_2 } from "~/assets/color";
+import { ItemType as Item, ToppingType as Topping } from "~/generated/graphql";
 
 type propsType = {
     item: Item,
@@ -15,72 +15,40 @@ const OrderItemFormGQL: React.FC<propsType> = (props) => {
     const classes = style();
 
     const item = props.item;
-    const [size, setSize] = useState<string>('M');
-    const [quantity, setQuantity] = useState<number>(1);
-    const [selectedToppings, setSelectToppings] = useState<Topping[]>([])
     const [totalPrice, setTotalPrice] = useState<number>(item?.priceM ? Number(item.priceM) : 0)
+    const [selectedState, setSelectedState] = useState<itemEntryStateGQL>({ size: 'M', quantity: 1, toppings: [] })
 
-    //OrderItemEntryにpropsで渡すためのデータ整形
-    const selectedState: itemEntryStateGQL = {
-        size: size,
-        quantity: quantity,
-        toppings: selectedToppings,
-    }
-
-    /**
-     * 注文変更があった際に値段計算を行うメソッド
-     * 変更がない部分の引数にはnullを入れる
-     * @param selectedSize :size変更された場合指定
-     * @param selectedQuantity: :quantity変更された場合指定
-     * @param newToppings :topping変更された場合指定
-     */
-    const calcPrice = (selectedSize: string | null, selectedQuantity: number | null, newToppings: Topping[] | null): number => {
-        //下記全ての三項演算子は新しく選択されたものの有無での分岐(ある場合は引数の値:無い場合はuseStateの値)
-        let newTotalPrice = (selectedSize ? selectedSize : size) === 'M' ? Number(item.priceM) : Number(item.priceL);
-
+    //selectedStateが変わる度に合計金額を変更する
+    useEffect(() => {
+        let newTotalPrice = selectedState.size === 'M' ? Number(item.priceM) : Number(item.priceL);
         //toppingが選択されている場合、それぞれの選択されているsizeでの値段の総和を求める
-        if ((newToppings ? newToppings : selectedToppings).length !== 0) (newToppings ? newToppings : selectedToppings).forEach(
-            (t) => newTotalPrice += (selectedSize ? selectedSize : size) === 'M' ? t.priceM! : t.priceL!
+        if (selectedState.toppings.length !== 0) selectedState.toppings.forEach(
+            (t) => newTotalPrice += selectedState.size === 'M' ? t.priceM! : t.priceL!
         )
+        setTotalPrice(newTotalPrice * selectedState.quantity)
+    }, [item, selectedState])
 
-        //quantityとの積をとった値を返す
-        return (newTotalPrice * (selectedQuantity ? selectedQuantity : quantity))
-    }
     /**
-     * サイズが変更された際にサイズと合計金額のStateを変更
-     * @param inputSize:変更後のサイズ
-     *
-     * 数量が変更された際に数量と合計金額のStateを変更
-     * @param inputQuantity:変更後の数量
-     *
-     * トッピングが変更された際にトッピングと合計金額のStateを変更
-     * @param newToppings:変更後の選択済みのトッピング配列
-     *
-     * 変更がない部分はnullを渡す
+     * onChangeイベント発火時それぞれのStateを変更する
+     * @param event{name:発火したタグのname属性, value:値}
      */
-    const handleChange = (inputSize: string | null, inputQuantity: number | null, newToppings: Topping[] | null) => {
-        if (inputSize) setSize(inputSize)
-        if (inputQuantity) setQuantity(inputQuantity)
-        if (newToppings) setSelectToppings(newToppings)
-        setTotalPrice(calcPrice(inputSize, inputQuantity, newToppings))
+    const onChangeEvent = (event: React.ChangeEvent<{ name?: string, value: unknown }>) => {
+        const name = event.target.name as 'size' | 'quantity'
+        const value = event.target.value
+        setSelectedState({ ...selectedState, [name]: value })
     }
-    const handleOrderClick = (moveTo: 'cart' | 'confirm') => {
-        props.handleOrderClick(moveTo, selectedState)
-    }
-
     return (
         <Grid container justify={"center"} alignItems={"center"}>
 
             <Grid item xs={12}>
-                <CardContent style={{height: "auto", width: "90%"}}>
+                <CardContent style={{ height: "auto", width: "90%" }}>
                     <OrderItemEntryGQL
                         selectedState={selectedState}
                         parentComponent={"itemDetail"}
-                        onSizeChange={(s) => handleChange(s, null, null)}
-                        onQuantityChange={(q) => handleChange(null, q, null)}
-                        onToppingChange={(t) => handleChange(null, null, t)}/>
+                        onChangeEvent={(e) => onChangeEvent(e)}
+                        onToppingChange={(t: Topping[]) => setSelectedState({ ...selectedState, toppings: t })} />
                     <CardContent className={classes.align_child}>
-                        <ItemPrice price={totalPrice}/>
+                        <ItemPrice price={totalPrice} />
                     </CardContent>
                 </CardContent>
             </Grid>
@@ -90,7 +58,7 @@ const OrderItemFormGQL: React.FC<propsType> = (props) => {
                 <CardActions>
                     <Grid item xs={6} className={classes.align_child}>
                         <Button variant={"contained"} className={classes.order_button} onClick={() => {
-                            handleOrderClick('cart')
+                            props.handleOrderClick('cart', selectedState)
                         }}>
                             <Typography className={classes.button_font}>
                                 商品をカートに入れる
@@ -99,7 +67,7 @@ const OrderItemFormGQL: React.FC<propsType> = (props) => {
                     </Grid>
                     <Grid item xs={6} className={classes.align_child}>
                         <Button variant={"contained"} className={classes.order_button} onClick={() => {
-                            handleOrderClick('confirm')
+                            props.handleOrderClick('confirm', selectedState)
                         }}>
                             <Typography className={classes.button_font}>
                                 すぐに注文確認画面へ進む
