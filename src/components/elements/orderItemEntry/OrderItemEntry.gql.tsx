@@ -27,33 +27,13 @@ export type itemEntryStateGQL = {
 export type entryProps = {
     selectedState: itemEntryStateGQL;
     parentComponent: string;
-    onSizeChange?: (size: string) => void;
-    onQuantityChange?: (quantity: number) => void;
-    onToppingChange?: (toppings: Topping[]) => void;
+    onToppingChange: (toppings: Topping[]) => void;
     onClickCloseOrderItemEntity?: () => void;
+    onChangeEvent: (event: React.ChangeEvent<{ name?: string, value: unknown }>) => void;
 };
 const OrderItemEntryGQL: React.FC<entryProps> = (props) => {
 
-
     const [modalIsOpen, setIsOpen] = useState<boolean>(false)
-    const [selectedToppings, setSelectedToppings] = useState<Topping[]>(props.selectedState.toppings)
-
-    const quantityList = [{value: 1, text: '1'}, {value: 2, text: '2'}, {value: 3, text: '3'},
-        {value: 4, text: '4'}, {value: 5, text: '5'}]
-
-    const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (typeof props.onSizeChange !== "undefined") props.onSizeChange(event.target.value)
-    }
-
-    const handleQuantityChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        if (typeof props.onQuantityChange !== "undefined") props.onQuantityChange(event.target.value as number)
-    }
-
-    const handleToppingChange = (toppings: Topping[]) => {
-        if (typeof props.onToppingChange !== "undefined") props.onToppingChange(toppings);
-        setSelectedToppings(toppings)
-    }
-
 
     //SelectToppingコンポーネントをModal表示する際にこのコンポーネントのref属性を渡す必要があるのでここで変数宣言
     const selectToppingRef = useRef<HTMLDivElement>(null);
@@ -64,7 +44,6 @@ const OrderItemEntryGQL: React.FC<entryProps> = (props) => {
     } else if (props.parentComponent === 'itemDetail') {
         classes = orderItemEntryStyle();
     }
-
 
     return (
         <Grid justify={"center"} container className={classes.modal}>
@@ -84,7 +63,7 @@ const OrderItemEntryGQL: React.FC<entryProps> = (props) => {
                                     サイズ
                                     <Divider/>
                                     <RadioGroup row aria-label="サイズ" name="size" value={props.selectedState.size}
-                                                onChange={handleSizeChange}>
+                                                onChange={props.onChangeEvent}>
                                         <FormControlLabel value="M" control={<Radio color={"primary"}/>}
                                                           labelPlacement={"start"}
                                                           label="M : "/>
@@ -105,14 +84,15 @@ const OrderItemEntryGQL: React.FC<entryProps> = (props) => {
                                     <Select
                                         labelId="quantity-label"
                                         id="quantity-select"
+                                        name="quantity"
                                         value={props.selectedState.quantity}
-                                        onChange={handleQuantityChange}
+                                        onChange={props.onChangeEvent}
                                         variant={"standard"}
                                         style={{height: "60%"}}
                                     >
-                                        {quantityList.map((i) => {
-                                            return <MenuItem value={i.value}
-                                                             key={"quantity-select" + i.text}>{i.text}</MenuItem>
+                                        {[1, 2, 3, 4, 5].map((i) => {
+                                            return <MenuItem value={i}
+                                                             key={"quantity-select" + i}>{i}</MenuItem>
                                         })}
                                     </Select>
                                 </FormControl>
@@ -133,7 +113,7 @@ const OrderItemEntryGQL: React.FC<entryProps> = (props) => {
                             </Button>
                         </Grid>
                         {/*選択済みトッピング表示部分*/}
-                        {selectedToppings.map((t) =>
+                        {props.selectedState.toppings.map((t) =>
                             <Grid item xs={12} className={classes.selected_topping_grid} key={t.name}>
                                 <Card key={t.name} className={classes.selected_topping_card}>
                                     <Typography variant={"body1"} style={{color: "white"}}
@@ -169,8 +149,8 @@ const OrderItemEntryGQL: React.FC<entryProps> = (props) => {
                     <div className={classes.dialog}>
                         <WrappedSelectToppingGQL selectedSize={props.selectedState.size}
                                                  onClickClose={() => setIsOpen(false)}
-                                                 customRef={selectToppingRef} propTopping={selectedToppings}
-                                                 onToppingChange={(t) => handleToppingChange(t)}/>
+                                                 customRef={selectToppingRef} propTopping={props.selectedState.toppings}
+                                                 onToppingChange={(t) => props.onToppingChange(t)}/>
                     </div>
                 </Modal>
 
