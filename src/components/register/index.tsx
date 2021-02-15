@@ -85,8 +85,8 @@ const Register: FC = () => {
     //登録処理でエラーをキャッチしたかどうか
     const [emailDuplicated, setEmailDuplicated] = useState(false);
     //ブラインドのステータス
-    const [passType, setPassType] = useState("");
-    const [confirmPassType, setConfirmPassType] = useState("");
+    const [passType, setPassType] = useState("password");
+    const [confirmPassType, setConfirmPassType] = useState("password");
     //ローディング処理
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -144,16 +144,12 @@ const Register: FC = () => {
     }
     const passwordValidation = (value: string): string => {
         if (!value) return '※パスワードを入力してください'
-        const regex = /^[0-9]+$/;
-        if (!regex.test(value)) return '※半角数字を入力してください'
         if (value.length < 6 || 16 < value.length) return '※6字以上16字以内で入力してください'
         return ''
     }
     const confirmationPasswordValidation = (value: string): string => {
         if (!value) return '※確認用パスワードを入力してください'
         if (value !== password.value) return '※パスワードと一致していません'
-        const regex = /^[0-9]+$/;
-        if (!regex.test(value)) return '※半角数字を入力してください'
         if (value.length < 6 || 16 < value.length) return '※6字以上16字以内で入力してください'
         return ''
     }
