@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
     Button,
     Card,
@@ -9,14 +9,14 @@ import {
     TextField,
     Typography
 } from "@material-ui/core";
-import { AppDispatch } from "~/store";
-import { useDispatch } from "react-redux";
-import { fetchLoginUser, login, loginForm } from "~/store/slices/App/auth.slice";
-import { useHistory } from "react-router-dom"
-import { Path } from "~/router/routes";
-import { setError } from "~/store/slices/App/error.slice";
-import { THEME_COLOR_1, THEME_COLOR_2 } from "~/assets/color";
-import { makeStyles } from "@material-ui/core/styles";
+import {AppDispatch} from "~/store";
+import {useDispatch} from "react-redux";
+import {fetchLoginUser, login, loginForm} from "~/store/slices/App/auth.slice";
+import {useHistory} from "react-router-dom"
+import {Path} from "~/router/routes";
+import {THEME_COLOR_1, THEME_COLOR_2} from "~/assets/color";
+import {makeStyles} from "@material-ui/core/styles";
+import {setError} from "~/store/slices/App/error.slice";
 
 type loginFormProps = {
     setIsLoading: (is: boolean) => Promise<string>
@@ -25,7 +25,7 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
     const dispatch: AppDispatch = useDispatch();
     const routeHistory = useHistory();
 
-    const initialValue = { email: '', password: '' }
+    const initialValue = {email: '', password: ''}
     const [inputValue, setInputValue] = useState<loginForm>(initialValue)
 
     const initialError = {
@@ -41,15 +41,15 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
 
     /**
      * Inputタグに入力が行われた際に入力されたstateを更新するメソッド
-     * @param event 
+     * @param event
      */
     const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         const name = event.target.name;
-        if (name === 'email' || 'password') setInputValue({ ...inputValue, [name]: event.target.value })
+        if (name === 'email' || 'password') setInputValue({...inputValue, [name]: event.target.value})
     }
 
     /**
-     * email入力値をバリデーションチェックし適切な形式であればtrueを返す
+     * email入力値をバリデーションチェックし適切な形式であればtrueを返す
      */
     const isValidEmail = (): boolean => {
         const regex = /^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -57,19 +57,22 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
 
     }
     /**
-     * password入力値をバリデーションチェックし適切な形式であればtrueを返す
+     * password入力値をバリデーションチェックし適切な形式であればtrueを返す
      */
     const isValidPassword = (): boolean => {
-        return inputValue.password.length >= 6 && inputValue.password.length <= 16;
-
+        const regex = /^[a-zA-Z0-9]{6,16}$/
+        return regex.test(inputValue.password)
     }
+
     /**
      * keyが押される度に発火する
      * 押されたKeyがEnterの時のみhandleLoginClickを呼び出す
      * @param e:押されたKeyの値
      */
-    const handleKeyPress = (e: string) => {
-        if (e === "Enter" && isValidEmail() && isValidPassword()) handleLoginClick().then();
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter" && inputValue.email) {
+            if (inputValue.password.length >= 6 && inputValue.password.length <= 16) handleLoginClick().then();
+        }
     }
 
     /**
@@ -77,7 +80,7 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
      * 入力値が適切な形ならLogin処理を呼び出し、tokenが帰ってこれば商品一覧へ遷移、返ってこなければエラーメッセージ表示とパスワードを空に更新
      */
     const handleLoginClick = async () => {
-        if (isValidEmail && isValidPassword) {
+        if (isValidEmail() && isValidPassword()) {
             await dispatch(login(inputValue)).then((body) => {
                 if (body?.payload) {
                     //loading画面表示可能にした後画面遷移
@@ -85,23 +88,30 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
                         dispatch(fetchLoginUser()).then(() => {
                             routeHistory.push(Path.itemList)
                         }).catch((e) => {
-                            dispatch(setError({ isError: true, code: e.message }))
+                            dispatch(setError({isError: true, code: e.message}))
                         })
                     })
-                } else { throw new Error() }
+                } else {
+                    props.setIsLoading(false)
+                    throw new Error()
+                }
             }).catch(() => {
-                setInputValue({ ...inputValue, password: '' })
-                setHasError({ ...initialError, failedLogin: true })
+                setInputValue({...inputValue, password: ''})
+                setHasError({...initialError, failedLogin: true})
             })
         } else {
-            if (!isValidEmail) setHasError({ ...hasError, email: true })
-            if (!isValidPassword) setHasError({ ...hasError, password: true })
+            setHasError(() => {
+                let returnError = {...initialError}
+                if (!isValidEmail()) returnError.email = true
+                if (!isValidPassword()) returnError.password = true
+                return returnError
+            })
         }
     }
 
     //messageを渡せばエラーメッセージの形で表示してくれる
-    const errorMessageCard = (message: string) => {
-        return (<Card style={{ padding: "1%", backgroundColor: "#ffe0b2" }}>
+    const ErrorMessageCard = (message: string) => {
+        return (<Card style={{padding: "1%", backgroundColor: "#ffe0b2"}}>
             <Typography color={"secondary"}>{message}
             </Typography></Card>)
     }
@@ -111,12 +121,12 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
         <Card>
             <Grid container justify={"center"}>
                 <Grid item xs={12}>
-                    <CardHeader title="Login" style={{ backgroundColor: THEME_COLOR_1 }} />
+                    <CardHeader title="LOGIN" style={{backgroundColor: THEME_COLOR_1}}/>
                 </Grid>
                 <Grid item xs={12}>
                     <CardContent>
-                        {hasError.failedLogin ? errorMessageCard(FAILED_LOGIN_MESSAGE) : null}
-                        {hasError.email ? errorMessageCard(EMAIL_ERROR_MESSAGE) : null}
+                        {hasError.failedLogin && ErrorMessageCard(FAILED_LOGIN_MESSAGE)}
+                        {hasError.email && ErrorMessageCard(EMAIL_ERROR_MESSAGE)}
                         <TextField
                             error={hasError.email}
                             fullWidth
@@ -128,9 +138,9 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
                             margin="normal"
                             value={inputValue.email}
                             onChange={handleChange}
-                            onKeyPress={(e) => handleKeyPress(e.key)}
+                            onKeyPress={(e) => handleKeyPress(e)}
                         />
-                        {hasError.password ? errorMessageCard(PASSWORD_ERROR_MESSAGE) : null}
+                        {hasError.password && ErrorMessageCard(PASSWORD_ERROR_MESSAGE)}
                         <TextField
                             error={hasError.password || hasError.failedLogin}
                             fullWidth
@@ -142,7 +152,7 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
                             margin="normal"
                             value={inputValue.password}
                             onChange={handleChange}
-                            onKeyPress={(e) => handleKeyPress(e.key)}
+                            onKeyPress={(e) => handleKeyPress(e)}
                         />
                     </CardContent>
                 </Grid>
@@ -152,7 +162,7 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
                         size="large"
                         onClick={handleLoginClick}
                         className={classes.button}
-                        disabled={!isValidPassword() || !isValidEmail()}
+                        disabled={!inputValue.email || inputValue.password.length < 6 || inputValue.password.length > 16}
                     >
                         Login
                     </Button>
@@ -164,9 +174,9 @@ const LoginForm: React.FC<loginFormProps> = (props) => {
 export default LoginForm;
 const login_form_style = makeStyles(() => createStyles({
     button:
-    {
-        marginBottom: "5%",
-        backgroundColor: THEME_COLOR_2,
-        color: "white",
-    }
+        {
+            marginBottom: "5%",
+            backgroundColor: THEME_COLOR_2,
+            color: "white",
+        }
 }))
