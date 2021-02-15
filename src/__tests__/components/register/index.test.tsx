@@ -5,7 +5,6 @@ import {act, cleanup, render, screen} from "@testing-library/react";
 import {Provider} from "react-redux";
 import {BrowserRouter} from "react-router-dom";
 import React from "react";
-//import store from "~/store";
 import Register from "~/components/register";
 import userEvent from "@testing-library/user-event";
 import {rest} from "msw";
@@ -79,7 +78,7 @@ describe("ユーザー登録画面", () => {
     it("レンダリングのテスト", async () => {
         await rendering();
         expect(screen.getByRole("heading", {name: "新規ユーザー登録"})).toBeTruthy()
-    });
+    },100000);
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 名前 )", async () => {
         await rendering();
@@ -94,7 +93,7 @@ describe("ユーザー登録画面", () => {
             await userEvent.type(await nameInputForm, "{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}{backspace}");
             expect(screen.getByRole("heading", {name: "※名前を入力してください"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( メールアドレス )", async () => {
         await rendering();
@@ -115,7 +114,7 @@ describe("ユーザー登録画面", () => {
             expect(emailInputForm).toHaveValue("");
             expect(screen.getByRole("heading", {name: "※メールアドレスを入力してください"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 郵便番号 : 上3桁 )", async () => {
         await rendering();
@@ -147,7 +146,7 @@ describe("ユーザー登録画面", () => {
             expect(zipcodeInputForm).toHaveValue("あ1");
             expect(screen.getByRole("heading", {name: "※半角数字を入力してください"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 郵便番号 : 上4桁 )", async () => {
         await rendering();
@@ -179,7 +178,7 @@ describe("ユーザー登録画面", () => {
             expect(zipcodeInputForm).toHaveValue("あ1");
             expect(screen.getByRole("heading", {name: "※半角数字を入力してください"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 住所 )", async () => {
         await rendering();
@@ -202,7 +201,7 @@ describe("ユーザー登録画面", () => {
             expect(addressInputForm).toHaveValue(text.repeat(34));//計204文字
             expect(screen.getByRole("heading", {name: "※200字以内で入力してください"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 電話番号: 最初 )", async () => {
         await rendering();
@@ -235,7 +234,7 @@ describe("ユーザー登録画面", () => {
             expect(telephoneInputForm).toHaveValue("111あ");
             expect(screen.getByRole("heading", {name: "※半角数字を入力してください"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 電話番号: 中 )", async () => {
         await rendering();
@@ -273,7 +272,7 @@ describe("ユーザー登録画面", () => {
             expect(telephoneInputForm).toHaveValue("1あ");
             expect(screen.getByRole("heading", {name: "※半角数字を入力してください"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 電話番号: 最後 )", async () => {
         await rendering();
@@ -311,7 +310,7 @@ describe("ユーザー登録画面", () => {
             expect(telephoneInputForm).toHaveValue("1あ");
             expect(screen.getByRole("heading", {name: "※半角数字を入力して下さい"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( パスワード )", async () => {
         await rendering();
@@ -339,7 +338,7 @@ describe("ユーザー登録画面", () => {
             expect(passwordInputForm).toHaveValue("1");
             expect(screen.getByRole("heading", {name: "※6字以上16字以内で入力してください"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 確認パスワード )", async () => {
         await rendering();
@@ -379,7 +378,7 @@ describe("ユーザー登録画面", () => {
             expect(confirmPasswordInputForm).toHaveValue("1");
             expect(screen.getAllByRole("heading")[10]).toHaveTextContent("※6字以上16字以内で入力してください");
         })
-    })
+    },100000)
 
 
     it("登録処理の確認", async () => {
@@ -411,5 +410,5 @@ describe("ユーザー登録画面", () => {
         })
         await expect(await screen.findByRole('progressbar')).toBeTruthy();
         await expect(methodStatus.history).toBe('/login')
-    })
+    },100000)
 })

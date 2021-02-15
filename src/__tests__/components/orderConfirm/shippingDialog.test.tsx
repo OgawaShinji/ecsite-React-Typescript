@@ -30,7 +30,7 @@ describe("ShippingDialog Component Test" , () => {
             <ShippingDialog open={open} close={handleClose} changeUserInfo={changeUserInfo} userInfo={userInfo}/>
         )
         await expect(screen.getByRole("heading",{name: "お届け先情報"})).toBeTruthy();
-    });
+    },100000);
 
     it("propsが正常に渡されているか",  async () => {
         render(
@@ -44,7 +44,7 @@ describe("ShippingDialog Component Test" , () => {
         await expect(screen.getAllByRole("textbox")[5]).toHaveValue("090")
         await expect(screen.getAllByRole("textbox")[6]).toHaveValue("1234")
         await expect(screen.getAllByRole("textbox")[7]).toHaveValue("5678")
-    });
+    },100000);
 
     //--------------------登録画面のテストと同様に入力の反映を確認------------------------------------------
 
@@ -61,7 +61,7 @@ describe("ShippingDialog Component Test" , () => {
             await userEvent.type(await nameInputForm,"らくすはなこ");
             expect(nameInputForm).toHaveValue("らくすはなこ");
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( メールアドレス )　",async () => {
         render(
@@ -81,7 +81,7 @@ describe("ShippingDialog Component Test" , () => {
             expect(emailInputForm).toHaveValue("rakus@rakus.");
             expect(screen.getByRole("heading",{name:"※正しい形式でメールアドレスを入力して下さい"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 郵便番号 : 上3桁 )　",async () => {
         render(
@@ -109,7 +109,7 @@ describe("ShippingDialog Component Test" , () => {
             expect(zipcodeInputForm).toHaveValue("あ1");
             expect(screen.getByRole("heading",{name:"※半角数字を入力して下さい"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 郵便番号 : 上4桁 )　",async () => {
         render(
@@ -138,7 +138,7 @@ describe("ShippingDialog Component Test" , () => {
             expect(zipcodeInputForm).toHaveValue("あ1");
             expect(screen.getByRole("heading",{name:"※半角数字を入力して下さい"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 住所 )　",async () => {
         render(
@@ -160,7 +160,7 @@ describe("ShippingDialog Component Test" , () => {
             expect(addressInputForm).toHaveValue(text.repeat(34));//計204文字
             expect(screen.getByRole("heading",{name:"※200字以内で入力して下さい"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 電話番号: 最初 )　",async () => {
         render(
@@ -195,7 +195,7 @@ describe("ShippingDialog Component Test" , () => {
             expect(telephoneInputForm).toHaveValue("11111");
             expect(screen.getByRole("heading",{name:"※2桁以上4桁以内で入力して下さい"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 電話番号: 中 )　",async () => {
         render(
@@ -230,7 +230,7 @@ describe("ShippingDialog Component Test" , () => {
             expect(telephoneInputForm).toHaveValue("11111");
             expect(screen.getByRole("heading",{name:"※4桁で入力して下さい"})).toBeTruthy()
         })
-    })
+    },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 電話番号: 最後 )　",async () => {
         render(
@@ -265,7 +265,7 @@ describe("ShippingDialog Component Test" , () => {
             expect(telephoneInputForm).toHaveValue("11111");
             expect(screen.getByRole("heading",{name:"※4桁で入力して下さい"})).toBeTruthy()
         })
-    })
+    },100000)
 
 })
 
