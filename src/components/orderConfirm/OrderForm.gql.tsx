@@ -5,9 +5,12 @@ import {
     Checkbox,
     createStyles,
     Grid,
-    InputLabel, LinearProgress,
-    makeStyles, MenuItem,
-    Paper, Select,
+    InputLabel,
+    LinearProgress,
+    makeStyles,
+    MenuItem,
+    Paper,
+    Select,
     Theme,
     Typography
 } from "@material-ui/core";
@@ -106,7 +109,7 @@ const OrderFormGQL: React.FC<Props> = (props) => {
             selectedDate.date?.setMilliseconds(Number("00"));
             selectedDate.errorMessage = deliveryDateValidation(selectedDate.date);
         }
-    }, [dispatch, props.user, selectedDate, deliveryHour, deliveryMinutes])
+    }, [dispatch, selectedDate, deliveryHour, deliveryMinutes, userInfo])
 
 
     //[変更]ボタン押下時の処理 お届け先情報変更用フォームダイアログを表示
@@ -164,6 +167,7 @@ const OrderFormGQL: React.FC<Props> = (props) => {
             errorMessage: deliveryDateValidation(selectedDate.date)
         })
     }
+
     // 日付をYYYY-MM-DDの書式で返す
     function formatDate(date: Date | null) {
         if (date) {
@@ -190,7 +194,7 @@ const OrderFormGQL: React.FC<Props> = (props) => {
     const classes = useStyles();
 
     //検証サーバーにデータを送る
-    const [executeOrderMutation,{ loading: executeOrderLoading ,error: executeOrderError }] = useOrderMutation()
+    const [executeOrderMutation, {loading: executeOrderLoading, error: executeOrderError}] = useOrderMutation()
     const handleClick = async () => {
         let paymentMethod;
         let status;
@@ -216,21 +220,21 @@ const OrderFormGQL: React.FC<Props> = (props) => {
             paymentMethod: paymentMethod!
         }
         //入力されたしたお届け先情報を引数にセット
-        await executeOrderMutation({variables:{order:orderInfo!}}).then( () => {
+        await executeOrderMutation({variables: {order: orderInfo!}}).then(() => {
             //送られたデータはモックサーバーのファイルで確認できる
             routeHistory.push({pathname: Path.orderComplete, state: {judge: true}});
-        }).catch((e) => {
+        }).catch(() => {
             // console.log(e)
         })
     }
 
     // エラーハンドリング
-    if (executeOrderError){
+    if (executeOrderError) {
         const code = executeOrderError.graphQLErrors[0].extensions?.code;
         return <ErrorPage code={code}/>
     }
 
-    return ( executeOrderLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (
+    return (executeOrderLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (
         <div>
             <div className={classes.root}>
                 <Grid container spacing={3} justify="center" alignItems="center">
@@ -254,7 +258,7 @@ const OrderFormGQL: React.FC<Props> = (props) => {
                                         >変更</Button>
                                         {/*お届け先情報変更用フォームのダイアログ*/}
                                         <ShippingDialogGQL open={open} userInfo={userInfo} close={handleClose}
-                                                        changeUserInfo={changeUserInfo}/>
+                                                           changeUserInfo={changeUserInfo}/>
                                     </Grid>
                                     <Grid item xs={6} sm={7}>
                                         <Typography component="h6" variant="h5" align={"center"}
