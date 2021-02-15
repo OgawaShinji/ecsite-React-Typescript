@@ -1,9 +1,9 @@
 import {Button, CardActions, CardContent, createStyles, Grid, Typography} from "@material-ui/core";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import OrderItemEntry, {itemEntryState} from "~/components/elements/orderItemEntry/OrderItemEntry";
 import ItemPrice from "~/components/itemDetail/ItemPrice";
 import {makeStyles} from "@material-ui/core/styles";
-import {Item, Topping} from "~/types/interfaces";
+import {Item} from "~/types/interfaces";
 import {THEME_COLOR_2} from "~/assets/color";
 
 type propsType = {
@@ -15,54 +15,26 @@ const OrderItemForm: React.FC<propsType> = (props) => {
     const classes = style();
 
     const item = props.item;
-    const [size, setSize] = useState<string>('M');
-    const [quantity, setQuantity] = useState<number>(1);
-    const [selectedToppings, setSelectToppings] = useState<Topping[]>([])
+    const [selectedState, setSelectedState] = useState<itemEntryState>({size: 'M', quantity: 1, toppings: []})
     const [totalPrice, setTotalPrice] = useState<number>(item?.priceM ? item.priceM : 0)
 
-    //OrderItemEntryにpropsで渡すためのデータ整形
-    const selectedState: itemEntryState = {
-        size: size,
-        quantity: quantity,
-        toppings: selectedToppings,
-    }
-
-    /**
-     * 注文変更があった際に値段計算を行うメソッド
-     * @param selectedSize
-     * @param selectedQuantity
-     * @param newToppings
-     */
-    const calcPrice = (selectedSize: string | null, selectedQuantity: number | null, newToppings: Topping[] | null): number => {
-        //下記全ての三項演算子は新しく選択されたものの有無での分岐(ある場合は引数の値:無い場合はuseStateの値)
-        let newTotalPrice = (selectedSize ? selectedSize : size) === 'M' ? Number(item!.priceM) : Number(item!.priceL);
-
+    //selectedStateが変わる度に合計金額を変更する
+    useEffect(() => {
+        let newTotalPrice = selectedState.size === 'M' ? Number(item!.priceM) : Number(item!.priceL);
         //toppingが選択されている場合、それぞれの選択されているsizeでの値段の総和を求める
-        if ((newToppings ? newToppings : selectedToppings).length !== 0) (newToppings ? newToppings : selectedToppings).map(
-            (t) => newTotalPrice += (selectedSize ? selectedSize : size) === 'M' ? t.priceM! : t.priceL!
-        )
-        //quantityとの積をとった値を返す
-        return (newTotalPrice * (selectedQuantity ? selectedQuantity : quantity))
-    }
-    /**
-     * サイズが変更された際にサイズと合計金額のStateを変更
-     * @param inputSize:変更後のサイズ
-     *
-     * 数量が変更された際に数量と合計金額のStateを変更
-     * @param inputQuantity:変更後の数量
-     *
-     * トッピングが変更された際にトッピングと合計金額のStateを変更
-     * @param newToppings:変更後の選択済みのトッピング配列
-     */
-    const handleChange = (inputSize: string | null, inputQuantity: number | null, newToppings: Topping[] | null) => {
-        if (inputSize) setSize(inputSize)
-        if (inputQuantity) setQuantity(inputQuantity)
-        if (newToppings) setSelectToppings(newToppings)
-        setTotalPrice(calcPrice(inputSize, inputQuantity, newToppings))
-    }
+        if (selectedState.toppings.length !== 0) selectedState.toppings.forEach(
+            (t) => newTotalPrice += selectedState.size === 'M' ? t.priceM! : t.priceL!)
+        setTotalPrice(newTotalPrice * selectedState.quantity)
+    }, [item, selectedState])
 
-    const handleOrderClick = (moveTo: 'cart' | 'confirm') => {
-        props.handleOrderClick(moveTo, selectedState)
+    /**
+     * onChangeイベント発火時それぞれのStateを変更する
+     * @param event{name:発火したタグのname属性, value:値}
+     */
+    const onChangeEvent = (event: React.ChangeEvent<{ name?: string, value: unknown }>) => {
+        const name = event.target.name as 'size' | 'quantity'
+        const value = event.target.value
+        setSelectedState({...selectedState, [name]: value})
     }
 
     return (
@@ -73,9 +45,8 @@ const OrderItemForm: React.FC<propsType> = (props) => {
                     <OrderItemEntry
                         selectedState={selectedState}
                         parentComponent={"itemDetail"}
-                        onSizeChange={(s) => handleChange(s, null, null)}
-                        onQuantityChange={(q) => handleChange(null, q, null)}
-                        onToppingChange={(t) => handleChange(null, null, t)}/>
+                        onChangeEvent={(e) => onChangeEvent(e)}
+                        onToppingChange={(t) => setSelectedState({...selectedState, toppings: t})}/>
                     < CardContent className={classes.align_child}>
                         <ItemPrice price={totalPrice}/>
                     </CardContent>
@@ -87,7 +58,7 @@ const OrderItemForm: React.FC<propsType> = (props) => {
                 <CardActions>
                     <Grid item xs={6} className={classes.align_child}>
                         <Button variant={"contained"} className={classes.order_button} onClick={() => {
-                            handleOrderClick('cart')
+                            props.handleOrderClick('cart', selectedState)
                         }}>
                             <Typography className={classes.button_font}>
                                 商品をカートに入れる
@@ -96,7 +67,7 @@ const OrderItemForm: React.FC<propsType> = (props) => {
                     </Grid>
                     <Grid item xs={6} className={classes.align_child}>
                         <Button variant={"contained"} className={classes.order_button} onClick={() => {
-                            handleOrderClick('confirm')
+                            props.handleOrderClick('confirm', selectedState)
                         }}>
                             <Typography className={classes.button_font}>
                                 すぐに注文確認画面へ進む
