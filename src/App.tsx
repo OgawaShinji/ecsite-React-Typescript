@@ -28,7 +28,7 @@ const App: React.FC<RouteComponentProps> = () => {
     const client = new ApolloClient({
         cache: new InMemoryCache(),
         link: new HttpLink({
-            uri: "http://34.84.118.239/django_ql/",
+            uri: "https://reacthon-pizza.tk/django_ql/",
             headers: {
                 Authorization: localStorage.getItem("Authorization")
             },
