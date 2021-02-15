@@ -315,6 +315,11 @@ describe("ユーザー登録画面", () => {
     it("入力フォーム：入力されたデータが反映されているかの確認 ( パスワード )", async () => {
         await rendering();
         await act(async () => {
+            //パスワードのブラインドを解除する
+            await userEvent.click( screen.getAllByRole("button")[0]);
+            await userEvent.click( screen.getAllByRole("button")[1]);
+            expect( await screen.findByRole("button",{name:"登録"})).toBeTruthy();
+
             const passwordInputForm = screen.getByRole("textbox", {name: "password"});
 
             //レンダリング後、フォームの初期値が "" であるか確認
@@ -327,22 +332,37 @@ describe("ユーザー登録画面", () => {
             expect(passwordInputForm).toHaveValue("");
             expect(screen.getAllByRole("heading", {name: "※パスワードを入力してください"})).toBeTruthy()
 
-            //エラーが表示されているか（文字入力）
+            //入力確認
             await userEvent.type(await passwordInputForm, "あ");
             expect(passwordInputForm).toHaveValue("あ");
-            expect(screen.getByRole("heading", {name: "※半角数字を入力してください"})).toBeTruthy()
-
-            //エラーが表示されているか（数字1桁入力）
             await userEvent.type(await passwordInputForm, "{backspace}");
             await userEvent.type(await passwordInputForm, "1");
             expect(passwordInputForm).toHaveValue("1");
+
+            //エラーメッセージの変動（字数関係）
+            await userEvent.type(await passwordInputForm, "{backspace}");
+            await userEvent.type(await passwordInputForm, "あいうえお");
             expect(screen.getByRole("heading", {name: "※6字以上16字以内で入力してください"})).toBeTruthy()
+            await userEvent.type(await passwordInputForm, "か");
+            expect(screen. queryByRole("heading", {name: "※6字以上16字以内で入力してください"})).toBeNull()
+            await userEvent.type(await passwordInputForm, "き");
+            expect(screen.queryByRole("heading", {name: "※6字以上16字以内で入力してください"})).toBeNull()
+            await userEvent.type(await passwordInputForm, "くけこ12３４Ab");
+            expect(screen.queryByRole("heading", {name: "※6字以上16字以内で入力してください"})).toBeNull()
+            await userEvent.type(await passwordInputForm, "c");
+            expect(screen.getByRole("heading", {name: "※6字以上16字以内で入力してください"})).toBeTruthy()
+
         })
     },100000)
 
     it("入力フォーム：入力されたデータが反映されているかの確認 ( 確認パスワード )", async () => {
         await rendering();
         await act(async () => {
+            //パスワードのブラインドを解除する
+            await userEvent.click( screen.getAllByRole("button")[0]);
+            await userEvent.click( screen.getAllByRole("button")[1]);
+            expect( await screen.findByRole("button",{name:"登録"})).toBeTruthy();
+
             const passwordInputForm = screen.getByRole("textbox", {name: "password"});
             const confirmPasswordInputForm = screen.getByRole("textbox", {name: "confirmationPassword"});
 
@@ -363,19 +383,31 @@ describe("ユーザー登録画面", () => {
 
             //エラーが表示されているか（パスワード、確認用パスワードに文字入力）
             await userEvent.clear(await confirmPasswordInputForm);
-            await userEvent.type(await passwordInputForm, "あ");
-            expect(passwordInputForm).toHaveValue("あ");
-            await userEvent.type(await confirmPasswordInputForm, "あ");
-            expect(confirmPasswordInputForm).toHaveValue("あ");
-            expect(screen.getAllByRole("heading")[10]).toHaveTextContent("※半角数字を入力してください");
+            await userEvent.type(await passwordInputForm, "あいうえお");
+            await userEvent.type(await confirmPasswordInputForm, "あいうえお");
 
-            //エラーが表示されているか（パスワード、確認用パスワードに数字1桁入力）
-            await userEvent.clear(await passwordInputForm);
-            await userEvent.clear(await confirmPasswordInputForm);
-            await userEvent.type(await passwordInputForm, "1");
-            expect(passwordInputForm).toHaveValue("1");
-            await userEvent.type(await confirmPasswordInputForm, "1");
-            expect(confirmPasswordInputForm).toHaveValue("1");
+            expect(screen.getAllByRole("heading")[9]).toHaveTextContent("※6字以上16字以内で入力してください");
+            expect(screen.getAllByRole("heading")[10]).toHaveTextContent("※6字以上16字以内で入力してください");
+
+            await userEvent.type(await passwordInputForm, "か");
+            await userEvent.type(await confirmPasswordInputForm, "か");
+            expect(screen.getAllByRole("heading")[9]).toHaveTextContent("");
+            expect(screen.getAllByRole("heading")[10]).toHaveTextContent("");
+            await userEvent.type(await passwordInputForm, "き");
+            await userEvent.type(await confirmPasswordInputForm, "き");
+            expect(screen.getAllByRole("heading")[9]).toHaveTextContent("");
+            expect(screen.getAllByRole("heading")[10]).toHaveTextContent("");
+
+            await userEvent.type(await passwordInputForm, "くけこ12３４Ab");
+            await userEvent.type(await confirmPasswordInputForm, "くけこ12３４Ab");
+
+            expect(screen.getAllByRole("heading")[9]).toHaveTextContent("");
+            expect(screen.getAllByRole("heading")[10]).toHaveTextContent("");
+
+            await userEvent.type(await passwordInputForm, "ｃ");
+            await userEvent.type(await confirmPasswordInputForm, "ｃ");
+
+            expect(screen.getAllByRole("heading")[9]).toHaveTextContent("※6字以上16字以内で入力してください");
             expect(screen.getAllByRole("heading")[10]).toHaveTextContent("※6字以上16字以内で入力してください");
         })
     },100000)
@@ -384,6 +416,11 @@ describe("ユーザー登録画面", () => {
     it("登録処理の確認", async () => {
         await rendering();
         await act(async () => {
+            //パスワードのブラインドを解除する
+            await userEvent.click( screen.getAllByRole("button")[0]);
+            await userEvent.click( screen.getAllByRole("button")[1]);
+            expect( await screen.findByRole("button",{name:"登録"})).toBeTruthy();
+
             const inputs = screen.getAllByRole("textbox");
             await userEvent.type(await inputs[0], "らくらくたろう");
             await userEvent.type(await inputs[1], "test@test.com");
