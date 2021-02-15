@@ -412,7 +412,6 @@ const RegisterGQL: FC = () => {
                             </Grid>
                             <Grid container alignItems={"center"}>
                                 <Grid item xs={1}>
-                                    <Typography></Typography>
                                     <IconButton
                                         id={"passIconButton"}
                                         type={"button"}
@@ -442,7 +441,6 @@ const RegisterGQL: FC = () => {
                             </Grid>
                             <Grid container alignItems={"center"}>
                                 <Grid item xs={1}>
-                                    <Typography></Typography>
                                     <IconButton
                                         id={"confirmPassIconButton"}
                                         name={"passIconButton"}
