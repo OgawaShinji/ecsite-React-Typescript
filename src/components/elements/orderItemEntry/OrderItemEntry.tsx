@@ -83,6 +83,7 @@ const OrderItemEntry: React.FC<entryProps> = (props) => {
                                     <Select
                                         labelId="quantity-label"
                                         id="quantity-select"
+                                        name={'quantity'}
                                         value={props.selectedState.quantity}
                                         onChange={props.onChangeEvent}
                                         variant={"standard"}
