@@ -184,7 +184,7 @@ describe("OrderConfirm Component Test", () => {
 
         //ローディング画面がレンダリングされていないこと
         expect(screen.queryByRole('progressbar')).toBeNull();
-    }, 15000)
+    }, 100000)
 
 
     it("ダイアログ(お届け先情報変更フォーム)の開閉", async () => {
@@ -217,7 +217,7 @@ describe("OrderConfirm Component Test", () => {
             expect(screen.queryByRole("button", {name: "変更する"})).toBeNull();
         })
 
-    }, 30000)
+    }, 100000)
 
     it("お届け先情報を変更する", async () => {
         await rendering();
@@ -266,7 +266,7 @@ describe("OrderConfirm Component Test", () => {
         //変更内容が反映されているか
         expect(await screen.findByText(orderItemsFromDB[0].item.name)).toBeTruthy();
         expect(screen.getByRole("heading", {name: "郵便番号: 999-4567"})).toBeTruthy()
-    }, 30000)
+    }, 100000)
 
     it("お支払方法の操作確認", async () => {
         await rendering();
@@ -293,7 +293,7 @@ describe("OrderConfirm Component Test", () => {
             //代金引換にチェックが入っているか
             await expect(await cashedCheck).toBeChecked();
         })
-    }, 30000)
+    }, 100000)
 
     it("配送日時を変更する", async () => {
         await rendering();
@@ -330,7 +330,7 @@ describe("OrderConfirm Component Test", () => {
         expect(await screen.findByRole("button", {name: "50"})).toBeTruthy();
         //エラーメッセージが表示されていないか
         expect(screen.queryByRole("heading", {name: "現在時刻よりも後を選んでください"})).toBeNull();
-    }, 30000)
+    }, 100000)
 
     it("配送日時を変更する : エラーメッセージを発生", async () => {
         await rendering();
@@ -360,7 +360,7 @@ describe("OrderConfirm Component Test", () => {
         //[この内容で注文する]ボタンがdisabledになっているか
         await expect(await screen.findByRole("button", {name: "この内容で注文する"})).toBeDisabled();
 
-    }, 50000)
+    }, 100000)
 
     it("注文する", async () => {
         await rendering();
@@ -401,5 +401,5 @@ describe("OrderConfirm Component Test", () => {
                     judge: true
                 }
             });
-    }, 10000);
+    }, 100000);
 })
