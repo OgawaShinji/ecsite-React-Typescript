@@ -1,6 +1,4 @@
-import React, {useEffect} from "react";
-import {useSelector} from "react-redux";
-import {selectLoginUser} from "~/store/slices/App/auth.slice";
+import React from "react";
 
 import {Grid, LinearProgress, makeStyles} from "@material-ui/core";
 import {RouteComponentProps, withRouter} from "react-router-dom";
@@ -19,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const OrderConfirmGQL: React.FC<RouteComponentProps> = (props) => {
+const OrderConfirmGQL: React.FC<RouteComponentProps> = () => {
 
     const classes = useStyles();
 
