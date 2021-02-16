@@ -80,8 +80,8 @@ const RegisterGQL: FC = () => {
     //登録処理でエラーをキャッチしたかどうか
     const [emailDuplicated, setEmailDuplicated] = useState(false);
     //ブラインドのステータス
-    const [passType, setPassType] = useState("");
-    const [confirmPassType, setConfirmPassType] = useState("");
+    const [passType, setPassType] = useState("password");
+    const [confirmPassType, setConfirmPassType] = useState("password");
 
     //-----------------------　バリデーション : ○○Validation　-------------------------------------------
     const nameValidation = (value: string): string => {
