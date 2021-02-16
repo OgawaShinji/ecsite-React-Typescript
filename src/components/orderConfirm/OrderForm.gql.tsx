@@ -29,7 +29,8 @@ import ShippingDialogGQL from "~/components/orderConfirm/shippingDialog.gql";
 
 type Props = {
     user: FetchUserQuery,
-    orderSubTotalPrice: number
+    orderSubTotalPrice: number,
+    executeOrder: () => void
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -234,7 +235,7 @@ const OrderFormGQL: React.FC<Props> = (props) => {
         return <ErrorPage code={code}/>
     }
 
-    return (executeOrderLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (
+    return( /*(executeOrderLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (*/
         <div>
             <div className={classes.root}>
                 <Grid container spacing={3} justify="center" alignItems="center">
@@ -385,7 +386,7 @@ const OrderFormGQL: React.FC<Props> = (props) => {
                 </Grid>
             </div>
         </div>
-    ))
+  /*  ))*/)
 }
 export default OrderFormGQL
 
