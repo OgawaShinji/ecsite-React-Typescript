@@ -220,10 +220,10 @@ const Register: FC = () => {
     }
     //変数としてブラインドアイコンを定義
     const passBlindIcon = () => {
-        return (passType === "password" ? <Visibility/> : <VisibilityOff/>);
+        return (passType === "password" ? <VisibilityOff/> : <Visibility/>);
     }
     const confirmPassBlindIcon = () => {
-        return (confirmPassType === "password" ? <Visibility/> : <VisibilityOff/>);
+        return (confirmPassType === "password" ? <VisibilityOff/> : <Visibility/>);
     }
     //パスワードのブラインドを切替
     const switchBlindPass = () => {
