@@ -6,7 +6,6 @@ import {
     createStyles,
     Grid,
     InputLabel,
-    LinearProgress,
     makeStyles,
     MenuItem,
     Paper,
@@ -195,8 +194,9 @@ const OrderFormGQL: React.FC<Props> = (props) => {
     const classes = useStyles();
 
     //検証サーバーにデータを送る
-    const [executeOrderMutation, {loading: executeOrderLoading, error: executeOrderError}] = useOrderMutation()
+    const [executeOrderMutation, { error: executeOrderError}] = useOrderMutation()
     const handleClick = async () => {
+        props.executeOrder();
         let paymentMethod;
         let status;
         if (checkedCash) {
