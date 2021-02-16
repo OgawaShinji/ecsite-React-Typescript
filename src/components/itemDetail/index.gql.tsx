@@ -48,7 +48,7 @@ const ItemDetailGQL: React.FC = () => {
                 },
             }
         }).then(() => moveTo === 'confirm' ? history.push(Path.orderConfirm) : history.push(Path.cart)
-        ).catch((e) => console.log(e));
+        ).catch();
     }
 
     const classes = entryIndexStyle();

@@ -21,7 +21,6 @@ import {AppDispatch} from "~/store";
 import {useDispatch} from "react-redux";
 import {logout} from "~/store/slices/App/auth.slice";
 import {setError} from "~/store/slices/App/error.slice"
-import {useFetchUserQuery} from "~/generated/graphql";
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -62,8 +61,6 @@ const Header: React.FC<RouteComponentProps> = (props) => {
 
     const dispatch: AppDispatch = useDispatch();
     const classes = useStyles();
-
-    const {error: fetchUserError} = useFetchUserQuery();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -138,7 +135,9 @@ const Header: React.FC<RouteComponentProps> = (props) => {
                             </Typography>
                         </Grid>
                         <Grid item xs={2}/>
-                        {!(fetchUserError) ? (
+                        {(history.location.pathname === '/login' || history.location.pathname === '/register') ? (
+                            <Grid item xs={3}/>
+                        ) : (
                             <Grid item xs={3} container justify={"center"} alignItems={"center"}>
                                 <Grid item xs={1}/>
                                 <Grid item xs={5}>
@@ -151,32 +150,34 @@ const Header: React.FC<RouteComponentProps> = (props) => {
                                 </Grid>
                                 <Grid item xs={1}/>
                             </Grid>
-                        ) : (
-                            <Grid item xs={3}/>
                         )}
                         <Grid item xs={1}>
-                            {!(fetchUserError) ? (
-                                <IconButton
-                                    aria-label="account of current user"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    onClick={handleMenu}
-                                    color="inherit"
-                                >
-                                    <AccountCircle/>
-                                </IconButton>
-                            ) : history.location.pathname !== '/login' ? (
-                                <Link to={Path.login} className={classes.login_btn}>
-                                    <Button
-                                        variant="outlined"
+                            {(history.location.pathname !== '/login') ?
+                                (history.location.pathname !== '/register') ? (
+                                    //login, register以外の画面
+                                    <IconButton
+                                        aria-label="account of current user"
+                                        aria-controls="menu-appbar"
+                                        aria-haspopup="true"
+                                        onClick={handleMenu}
                                         color="inherit"
                                     >
-                                        Login
-                                    </Button>
-                                </Link>
-                            ) : (
-                                <div/>
-                            )
+                                        <AccountCircle/>
+                                    </IconButton>
+                                ) : (
+                                    //register画面
+                                    <Link to={Path.login} className={classes.login_btn}>
+                                        <Button
+                                            variant="outlined"
+                                            color="inherit"
+                                        >
+                                            Login
+                                        </Button>
+                                    </Link>
+                                ) : (
+                                    //login画面
+                                    <div/>
+                                )
                             }
                         </Grid>
                     </Grid>
