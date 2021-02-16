@@ -122,9 +122,9 @@ const Header: React.FC<RouteComponentProps> = (props) => {
                         <Grid item xs={6} container justify={"center"} alignItems={"center"}>
                             <Typography align="center" className={classes.title} onClick={toItemList}>
                                     <span style={{color: "red"}}>
-                                       R
+                                       G
                                     </span>
-                                akuraku&nbsp;
+                                raphQL&nbsp;
                                 <span style={{color: "red"}}>
                                         P
                                     </span>
