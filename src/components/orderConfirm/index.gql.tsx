@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 
 import {Grid, LinearProgress, makeStyles} from "@material-ui/core";
 import {RouteComponentProps, withRouter} from "react-router-dom";
@@ -21,6 +21,12 @@ const OrderConfirmGQL: React.FC<RouteComponentProps> = () => {
 
     const classes = useStyles();
 
+    const [executeOrderLoading, setExecuteOrderLoading] = useState(false);
+
+    const setOrderLoading = () => {
+        setExecuteOrderLoading(true);
+    }
+
     //GraphQLでログイン中のユーザー情報を取得する
     const { data: fetchLoginUserData, loading: fetchLoginUserLoading, error: fetchLoginUserError } = useFetchUserQuery();
     //GraphQlでカートの中身を取得する
@@ -36,7 +42,9 @@ const OrderConfirmGQL: React.FC<RouteComponentProps> = () => {
         return <ErrorPage code={code}/>
     }
 
-    return ( fetchOrderItemLoading || fetchLoginUserLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (
+
+
+    return ( fetchOrderItemLoading || fetchLoginUserLoading || executeOrderLoading ? (<LinearProgress style={{width: "60%", marginTop: "20%", marginLeft: "20%"}}/>) : (
         <div>
             <Grid container justify={"center"} alignItems={"center"}>
                 <Grid item xs={9}>
@@ -48,7 +56,7 @@ const OrderConfirmGQL: React.FC<RouteComponentProps> = () => {
                 </Grid>
             </Grid>
             <div className={classes.pad}>
-                <OrderFormGQL user={fetchLoginUserData!}  orderSubTotalPrice={fetchOrderItemData?.cart?.totalPrice!}/>
+                <OrderFormGQL user={fetchLoginUserData!}  orderSubTotalPrice={fetchOrderItemData?.cart?.totalPrice!} executeOrder={setOrderLoading}/>
             </div>
         </div>
     ))
